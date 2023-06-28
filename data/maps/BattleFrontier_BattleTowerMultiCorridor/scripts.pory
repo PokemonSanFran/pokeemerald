@@ -1,0 +1,151 @@
+const PLAYER = 1
+const ATTENDANT_1 = 2
+const ATTENDANT_2 = 3
+const PARTNER = 4
+
+mapscripts BattleFrontier_BattleTowerMultiCorridor_MapScripts{
+    MAP_SCRIPT_ON_TRANSITION{
+        switch(var(VAR_FRONTIER_BATTLE_MODE)){
+            case FRONTIER_MODE_MULTIS: call(BattleFrontier_BattleTowerMultiCorridor_EventScript_SetObjGfx)
+            case FRONTIER_MODE_LINK_MULTIS: call(BattleFrontier_BattleTowerMultiCorridor_EventScript_SetLinkPlayerGfx)
+        }
+    }
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE[
+        VAR_TEMP_1, 0: BattleFrontier_BattleTowerMultiCorridor_EventScript_SetUpObjects
+    ]
+    MAP_SCRIPT_ON_FRAME_TABLE[
+        VAR_TEMP_1, 0: BattleFrontier_BattleTowerMultiCorridor_EventScript_EnterCorridor
+    ]
+}
+
+	// On this map the player (OBJ_EVENT_ID_PLAYER) is hidden
+	// The player is represented instead by PLAYER, and has the gfx id VAR_OBJ_GFX_ID_F
+	// The multi partner is represented by PARTNER, and has the gfx id VAR_OBJ_GFX_ID_E
+
+script BattleFrontier_BattleTowerMultiCorridor_EventScript_SetObjGfx{
+	tower_setpartnergfx
+	checkplayergender
+    if (var(VAR_RESULT) == FEMALE){
+        setvar(VAR_OBJ_GFX_ID_F, OBJ_EVENT_GFX_MAY_NORMAL)
+    }else{
+        setvar(VAR_OBJ_GFX_ID_F, OBJ_EVENT_GFX_BRENDAN_NORMAL)
+    }
+	return
+}
+
+script BattleFrontier_BattleTowerMultiCorridor_EventScript_SetLinkPlayerGfx{
+	special(SetBattleTowerLinkPlayerGfx)
+	return
+}
+
+script BattleFrontier_BattleTowerMultiCorridor_EventScript_SetUpObjects{
+	hideobjectat(OBJ_EVENT_ID_PLAYER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_CORRIDOR)
+	hideobjectat(PLAYER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_CORRIDOR)
+	hideobjectat(PARTNER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_CORRIDOR)
+	special(OffsetCameraForBattle)
+	end
+}
+
+script BattleFrontier_BattleTowerMultiCorridor_EventScript_SetDoorCoordinates{
+	setflag(FLAG_ENABLE_MULTI_CORRIDOR_DOOR)
+	setvar(VAR_0x8004, 14) // x coord of far door, used by DrawDoor
+	setvar(VAR_0x8005, 1) // y coord of far door, used by DrawDoor
+    return
+}
+
+script BattleFrontier_BattleTowerMultiCorridor_EventScript_EnterCorridor{
+	lockall
+    call(BattleFrontier_BattleTowerMultiCorridor_EventScript_SetDoorCoordinates)
+	opendoor(1, 1)
+	waitdooranim
+	clearflag(FLAG_ENABLE_MULTI_CORRIDOR_DOOR)
+	showobjectat(PLAYER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_CORRIDOR)
+	showobjectat(PARTNER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_CORRIDOR)
+	applymovement(PLAYER, BattleFrontier_BattleTowerMultiCorridor_Movement_ExitElevator)
+	applymovement(PARTNER, BattleFrontier_BattleTowerMultiCorridor_Movement_ExitElevator)
+	waitmovement(0)
+    call(BattleFrontier_BattleTowerMultiCorridor_EventScript_SetDoorCoordinates)
+	closedoor(1, 1)
+	waitdooranim
+	clearflag(FLAG_ENABLE_MULTI_CORRIDOR_DOOR)
+	applymovement(PLAYER, BattleFrontier_BattleTowerMultiCorridor_Movement_PlayerWalkToDoor)
+	applymovement(PARTNER, BattleFrontier_BattleTowerMultiCorridor_Movement_PartnerWalkToDoor)
+	applymovement(ATTENDANT_2, BattleFrontier_BattleTowerMultiCorridor_Movement_PlayerAttendantWalkToDoor)
+	applymovement(ATTENDANT_1, BattleFrontier_BattleTowerMultiCorridor_Movement_PartnerAttendantWalkToDoor)
+	waitmovement(0)
+	delay(40)
+	applymovement(ATTENDANT_2, Common_Movement_WalkInPlaceFasterUp)
+	applymovement(ATTENDANT_1, Common_Movement_WalkInPlaceFasterUp)
+	waitmovement(0)
+	opendoor(7, 1)
+	waitdooranim
+	applymovement(ATTENDANT_2, BattleFrontier_BattleTowerMultiCorridor_Movement_AttendantEnterDoor)
+	applymovement(ATTENDANT_1, BattleFrontier_BattleTowerMultiCorridor_Movement_AttendantEnterDoor)
+	applymovement(PLAYER, BattleFrontier_BattleTowerMultiCorridor_Movement_TrainerEnterDoor)
+	applymovement(PARTNER, BattleFrontier_BattleTowerMultiCorridor_Movement_TrainerEnterDoor)
+	waitmovement(0)
+	closedoor(7, 1)
+	waitdooranim
+	delay(30)
+	setvar(VAR_TEMP_1, 1)
+	call(BattleFrontier_BattleTowerMultiCorridor_EventScript_WarpToBattleRoom)
+	releaseall
+	end
+}
+
+script BattleFrontier_BattleTowerMultiCorridor_EventScript_WarpToBattleRoom{
+    switch (var(VAR_FRONTIER_BATTLE_MODE)){
+        case FRONTIER_MODE_SINGLES:
+        case FRONTIER_MODE_DOUBLES:
+            warp(MAP_BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM, 4, 8)
+        case FRONTIER_MODE_MULTIS:
+        case FRONTIER_MODE_LINK_MULTIS:
+            warp(MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_BATTLE_ROOM, 4, 5)
+    }
+    waitstate
+	return
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_PlayerWalkToDoor{
+	walk_down
+	walk_right * 6
+	step_end
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_PartnerWalkToDoor{
+	walk_down
+	walk_left * 6
+	step_end
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_PlayerAttendantWalkToDoor{
+	walk_right * 6
+	walk_up
+	walk_in_place_faster_right
+	step_end
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_PartnerAttendantWalkToDoor{
+	walk_left * 6
+	walk_up
+	walk_in_place_faster_left
+	step_end
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_TrainerEnterDoor{
+	delay_16
+	walk_up * 2
+	set_invisible
+	step_end
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_AttendantEnterDoor{
+	walk_up
+	set_invisible
+	step_end
+}
+
+movement BattleFrontier_BattleTowerMultiCorridor_Movement_ExitElevator{
+	walk_down
+	step_end
+}
