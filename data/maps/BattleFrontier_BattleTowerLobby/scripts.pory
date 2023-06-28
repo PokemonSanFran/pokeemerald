@@ -715,9 +715,7 @@ script BattleFrontier_BattleTowerLobby_EventScript_WalkToElevator{
 }
 
 movement BattleFrontier_BattleTowerLobby_Movement_WalkToElevator{
-    walk_up
-    walk_up
-    walk_up
+    walk_up * 3
     step_end
 }
 
@@ -728,8 +726,7 @@ movement BattleFrontier_BattleTowerLobby_Movement_AttendantEnterElevator{
 }
 
 movement BattleFrontier_BattleTowerLobby_Movement_PlayerEnterElevator{
-    walk_up
-    walk_up
+    walk_up * 2
     set_invisible
     step_end
 }
