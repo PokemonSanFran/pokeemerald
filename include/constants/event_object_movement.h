@@ -82,7 +82,10 @@
 #define MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_UP          0x4E
 #define MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_LEFT        0x4F
 #define MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_RIGHT       0x50
-#define NUM_MOVEMENT_TYPES                             0x51
+#define MOVEMENT_TYPE_RAISE_HAND_AND_STOP              0x51
+#define MOVEMENT_TYPE_RAISE_HAND_AND_JUMP              0x52
+#define MOVEMENT_TYPE_RAISE_HAND_AND_SWIM              0x53
+#define NUM_MOVEMENT_TYPES                             0x54
 
 #define MOVEMENT_ACTION_FACE_DOWN                       0x0
 #define MOVEMENT_ACTION_FACE_UP                         0x1
@@ -242,6 +245,11 @@
 #define MOVEMENT_ACTION_FIGURE_8                        0x9B
 #define MOVEMENT_ACTION_FLY_UP                          0x9C
 #define MOVEMENT_ACTION_FLY_DOWN                        0x9D
+#define MOVEMENT_ACTION_RAISE_HAND_AND_STOP             0x9E
+#define MOVEMENT_ACTION_RAISE_HAND_AND_JUMP             0x9F
+#define MOVEMENT_ACTION_RAISE_HAND_AND_SWIM             0xA0
+#define MOVEMENT_ACTION_EMOTE_X                         0xA2
+#define MOVEMENT_ACTION_EMOTE_DOUBLE_EXCL_MARK          0xA3
 
 #define MOVEMENT_ACTION_STEP_END 0xFE
 #define MOVEMENT_ACTION_NONE     0xFF
@@ -300,6 +308,8 @@
 #define ANIM_GET_ON_OFF_POKEMON_EAST  (ANIM_STD_COUNT + 3)
 
 #define ANIM_NURSE_BOW (ANIM_STD_COUNT + 0)
+#define ANIM_RAISE_HAND (ANIM_STD_COUNT + 0)
+#define ANIM_VS_SEEKER  0
 
 #define ANIM_FIELD_MOVE 0
 
