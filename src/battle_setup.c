@@ -1838,21 +1838,6 @@ u16 GetLastBeatenRematchTrainerId(u16 trainerId)
     return GetLastBeatenRematchTrainerIdFromTable(gRematchTable, trainerId);
 }
 
-/*
-bool8 ShouldTryRematchBattle(void)
-{
-    if (IsFirstTrainerIdReadyForRematch(gRematchTable, gTrainerBattleOpponent_A))
-        return TRUE;
-
-    return WasSecondRematchWon(gRematchTable, gTrainerBattleOpponent_A);
-}
-
-bool8 IsTrainerReadyForRematch(void)
-{
-    return IsTrainerReadyForRematch_(gRematchTable, gTrainerBattleOpponent_A);
-}
-*/
-
 static void HandleRematchVarsOnBattleEnd(void)
 {
     ClearTrainerWantRematchState(gRematchTable, gTrainerBattleOpponent_A);
