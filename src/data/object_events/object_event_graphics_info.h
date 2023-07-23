@@ -4653,7 +4653,7 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_HoOh = {
     .affineAnims = gDummySpriteAffineAnimTable,
 };
 
-
+/*
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_BrendanVSSeeker = {
     .tileTag = TAG_NONE,
     .paletteTag = OBJ_EVENT_PAL_TAG_BRENDAN,
@@ -4672,3 +4672,25 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_BrendanVSSeeker = 
     .images = sPicTable_BrendanVSSeeker,
     .affineAnims = gDummySpriteAffineAnimTable,
 };
+
+const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_MayVSSeeker = {
+    .tileTag = TAG_NONE,
+    .paletteTag = OBJ_EVENT_PAL_TAG_MAY,
+    .reflectionPaletteTag = OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION,
+    .size = 512,
+    .width = 32,
+    .height = 32,
+    .paletteSlot = PALSLOT_PLAYER,
+    .shadowSize = SHADOW_SIZE_M,
+    .inanimate = FALSE,
+    .disableReflectionPaletteLoad = FALSE,
+    .tracks = TRACKS_FOOT,
+    .oam = &gObjectEventBaseOam_32x32,
+    .subspriteTables = sOamTables_32x32,
+    .anims = sAnimTable_FieldMove,
+    .images = sPicTable_MayVSSeeker,
+    .affineAnims = gDummySpriteAffineAnimTable,
+};
+
+BRANCH_NOTE: This struct is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+*/

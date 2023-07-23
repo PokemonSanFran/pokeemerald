@@ -486,7 +486,8 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_LINK_RS_MAY] =              &gObjectEventGraphicsInfo_RubySapphireMay,
     [OBJ_EVENT_GFX_LUGIA] =                    &gObjectEventGraphicsInfo_Lugia,
     [OBJ_EVENT_GFX_HOOH] =                     &gObjectEventGraphicsInfo_HoOh,
-    [OBJ_EVENT_GFX_BRENDAN_VS_SEEKER] =        &gObjectEventGraphicsInfo_BrendanVSSeeker,
+    //[OBJ_EVENT_GFX_BRENDAN_VS_SEEKER] =        &gObjectEventGraphicsInfo_BrendanVSSeeker,
+    //BRANCH_NOTE: This struct is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
 };
 
 const struct ObjectEventGraphicsInfo *const gMauvilleOldManGraphicsInfoPointers[] = {

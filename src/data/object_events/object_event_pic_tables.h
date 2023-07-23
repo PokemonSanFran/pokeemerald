@@ -96,6 +96,7 @@ static const struct SpriteFrameImage sPicTable_BrendanFieldMove[] = {
     overworld_frame(gObjectEventPic_BrendanFieldMove, 4, 4, 4),
 };
 
+/*
 static const struct SpriteFrameImage sPicTable_BrendanVSSeeker[] = {
     overworld_frame(gObjectEventPic_BrendanVSSeeker, 4, 4, 0),
     overworld_frame(gObjectEventPic_BrendanVSSeeker, 4, 4, 1),
@@ -103,6 +104,10 @@ static const struct SpriteFrameImage sPicTable_BrendanVSSeeker[] = {
     overworld_frame(gObjectEventPic_BrendanVSSeeker, 4, 4, 3),
     overworld_frame(gObjectEventPic_BrendanVSSeeker, 4, 4, 4),
 };
+
+BRANCH_NOTE: This struct is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+
+*/
 
 static const struct SpriteFrameImage sPicTable_QuintyPlump[] = {
     overworld_frame(gObjectEventPic_QuintyPlump, 4, 4, 0),
@@ -1110,6 +1115,19 @@ static const struct SpriteFrameImage sPicTable_MayFieldMove[] = {
     overworld_frame(gObjectEventPic_MayFieldMove, 4, 4, 3),
     overworld_frame(gObjectEventPic_MayFieldMove, 4, 4, 4),
 };
+
+/*
+static const struct SpriteFrameImage sPicTable_MayVSSeeker[] = {
+    overworld_frame(gObjectEventPic_MayVSSeeker, 4, 4, 0),
+    overworld_frame(gObjectEventPic_MayVSSeeker, 4, 4, 1),
+    overworld_frame(gObjectEventPic_MayVSSeeker, 4, 4, 2),
+    overworld_frame(gObjectEventPic_MayVSSeeker, 4, 4, 3),
+    overworld_frame(gObjectEventPic_MayVSSeeker, 4, 4, 4),
+};
+
+BRANCH_NOTE: This struct is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+
+*/
 
 static const struct SpriteFrameImage sPicTable_Cameraman[] = {
     overworld_frame(gObjectEventPic_Cameraman, 2, 4, 0),
