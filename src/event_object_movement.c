@@ -286,9 +286,15 @@ static void (*const sMovementTypeCallbacks[])(struct Sprite *) =
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_UP] = MovementType_WalkSlowlyInPlace,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_LEFT] = MovementType_WalkSlowlyInPlace,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_RIGHT] = MovementType_WalkSlowlyInPlace,
+    /*
     [MOVEMENT_TYPE_RAISE_HAND_AND_STOP]                   = MovementType_RaiseHandAndStop,
     [MOVEMENT_TYPE_RAISE_HAND_AND_JUMP]                   = MovementType_RaiseHandAndJump,
     [MOVEMENT_TYPE_RAISE_HAND_AND_SWIM]                   = MovementType_RaiseHandAndSwim,
+    */
+    // BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
+    [MOVEMENT_TYPE_EXCLAIM_AND_STOP]                      = MovementType_ExclaimAndStop,
+    [MOVEMENT_TYPE_SPIN_CLOCKWISE]                        = MovementType_SpinClockwise,
+    [MOVEMENT_TYPE_SPIN_CLOCKWISE_SWIM]                   = MovementType_SpinClockwiseSwim,
 };
 
 static const bool8 sMovementTypeHasRange[NUM_MOVEMENT_TYPES] = {
@@ -417,9 +423,15 @@ const u8 gInitialMovementTypeFacingDirections[] = {
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_UP] = DIR_NORTH,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_LEFT] = DIR_WEST,
     [MOVEMENT_TYPE_WALK_SLOWLY_IN_PLACE_RIGHT] = DIR_EAST,
+    [MOVEMENT_TYPE_EXCLAIM_AND_STOP] = DIR_SOUTH,
+    [MOVEMENT_TYPE_SPIN_CLOCKWISE] = DIR_SOUTH,
+    [MOVEMENT_TYPE_SPIN_CLOCKWISE_SWIM] = DIR_SOUTH,
+    /*
     [MOVEMENT_TYPE_RAISE_HAND_AND_STOP] = DIR_SOUTH,
     [MOVEMENT_TYPE_RAISE_HAND_AND_JUMP] = DIR_SOUTH,
     [MOVEMENT_TYPE_RAISE_HAND_AND_SWIM] = DIR_SOUTH,
+    */
+    // BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
 };
 
 #define OBJ_EVENT_PAL_TAG_BRENDAN                 0x1100
@@ -8973,6 +8985,74 @@ u8 MovementAction_Fly_Finish(struct ObjectEvent *objectEvent, struct Sprite *spr
     return TRUE;
 }
 
+void MovementType_ExclaimAndStop(struct Sprite *sprite)
+{
+    UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_ExclaimAndStop_Callback);
+}
+
+void MovementType_SpinClockwise(struct Sprite *sprite)
+{
+    UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_SpinClockwise_Callback);
+}
+
+void MovementType_SpinClockwiseSwim(struct Sprite *sprite)
+{
+    UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_SpinClockwiseSwim_Callback);
+}
+
+static u8 MovementType_ExclaimAndStop_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return gMovementTypeFuncs_ExclaimAndStop[sprite->data[1]](objectEvent, sprite);
+}
+
+static u8 MovementType_SpinClockwise_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return gMovementTypeFuncs_SpinClockwise[sprite->data[1]](objectEvent,sprite);
+}
+
+static u8 MovementType_SpinClockwiseSwim_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return gMovementTypeFuncs_SpinClockwise[sprite->data[1]](objectEvent,sprite);
+}
+
+static bool8 MovementAction_Exclaim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    sprite->animPaused = FALSE;
+    objectEvent->disableAnim = FALSE;
+    sprite->data[2] = 1;
+    sprite->data[4] = 0;
+    sprite->data[5] = 0;
+    sprite->data[6] = 0;
+    sprite->data[7] = 0;
+    return FALSE;
+}
+
+static bool8 MovementAction_ExclaimAndStop_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
+    {
+        sprite->data[1] = 2;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static bool8 MovementAction_SpinClockwise_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ClearObjectEventMovement(objectEvent, sprite);
+    ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_SPIN_CLOCKWISE);
+    sprite->data[1] = 1;
+    return FALSE;
+}
+
+static bool8 MovementAction_SpinClockwiseSwim_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ClearObjectEventMovement(objectEvent, sprite);
+    ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_SPIN_CLOCKWISE_SWIM);
+    sprite->data[1] = 1;
+    return FALSE;
+}
+/*
 void MovementType_RaiseHandAndStop(struct Sprite *sprite)
 {
     UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_RaiseHandAndStop_Callback);
@@ -8986,22 +9066,6 @@ void MovementType_RaiseHandAndJump(struct Sprite *sprite)
 void MovementType_RaiseHandAndSwim(struct Sprite *sprite)
 {
     UpdateObjectEventCurrentMovement(&gObjectEvents[sprite->data[0]], sprite, MovementType_RaiseHandAndSwim_Callback);
-}
-
-bool8 MovementAction_EmoteX_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
-{
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_X_ICON);
-    sprite->sActionFuncId = 1;
-    return TRUE;
-}
-
-bool8 MovementAction_EmoteDoubleExclamationMark_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
-{
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_DOUBLE_EXCL_MARK_ICON);
-    sprite->sActionFuncId = 1;
-    return TRUE;
 }
 
 static u8 MovementType_RaiseHandAndStop_Callback(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -9142,4 +9206,22 @@ static bool8 MovementAction_RaiseHandAndSwim_Step1(struct ObjectEvent *objectEve
     else
         ret = FALSE;
     return ret;
+}
+*/
+// BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
+
+bool8 MovementAction_EmoteX_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
+    FieldEffectStart(FLDEFF_X_ICON);
+    sprite->sActionFuncId = 1;
+    return TRUE;
+}
+
+bool8 MovementAction_EmoteDoubleExclamationMark_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
+    FieldEffectStart(FLDEFF_DOUBLE_EXCL_MARK_ICON);
+    sprite->sActionFuncId = 1;
+    return TRUE;
 }

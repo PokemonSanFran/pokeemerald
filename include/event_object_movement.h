@@ -439,6 +439,7 @@ void SetVirtualObjectInvisibility(u8 virtualObjId, bool32 invisible);
 bool32 IsVirtualObjectInvisible(u8 virtualObjId);
 void SetVirtualObjectSpriteAnim(u8 virtualObjId, u8 animNum);
 bool32 IsVirtualObjectAnimating(u8 virtualObjId);
+/*
 static void MovementType_RaiseHandAndStop(struct Sprite *);
 static void MovementType_RaiseHandAndJump(struct Sprite *);
 static void MovementType_RaiseHandAndSwim(struct Sprite *);
@@ -453,6 +454,23 @@ static bool8 MovementType_RaiseHandAndStop_Step2(struct ObjectEvent *objectEvent
 static bool8 MovementType_RaiseHandAndJump_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
 static bool8 MovementType_RaiseHandAndSwim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
 static bool8 MovementType_RaiseHandAndMove_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+*/
+// BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
+static void MovementType_ExclaimAndStop(struct Sprite *);
+static void MovementType_SpinClockwise(struct Sprite *);
+static void MovementType_SpinClockwiseSwim(struct Sprite *);
+
+static u8 MovementType_ExclaimAndStop_Callback(struct ObjectEvent *, struct Sprite *);
+static u8 MovementType_SpinClockwise_Callback(struct ObjectEvent *, struct Sprite *);
+static u8 MovementType_SpinClockwiseSwim_Callback(struct ObjectEvent *, struct Sprite *);
+
+static bool8 MovementType_ExclaimAndStop_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+static bool8 MovementType_ExclaimAndStop_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+static bool8 MovementType_ExclaimAndStop_Step2(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+static bool8 MovementType_SpinClockwise_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+static bool8 MovementType_SpinClockwiseSwim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+static bool8 MovementType_RaiseHandAndMove_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+
 bool8 MovementAction_EmoteX_Step0(struct ObjectEvent *, struct Sprite *);
 bool8 MovementAction_EmoteDoubleExclamationMark_Step0(struct ObjectEvent *, struct Sprite *);
 

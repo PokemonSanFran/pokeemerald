@@ -162,9 +162,13 @@
 	create_movement_action figure_8, MOVEMENT_ACTION_FIGURE_8
 	create_movement_action fly_up, MOVEMENT_ACTION_FLY_UP
 	create_movement_action fly_down, MOVEMENT_ACTION_FLY_DOWN
-	create_movement_action raise_hand_and_stop, MOVEMENT_ACTION_RAISE_HAND_AND_STOP
-	create_movement_action raise_hand_and_jump, MOVEMENT_ACTION_RAISE_HAND_AND_JUMP
-	create_movement_action raise_hand_and_swim, MOVEMENT_ACTION_RAISE_HAND_AND_SWIM
+	// create_movement_action raise_hand_and_stop, MOVEMENT_ACTION_RAISE_HAND_AND_STOP
+	// create_movement_action raise_hand_and_jump, MOVEMENT_ACTION_RAISE_HAND_AND_JUMP
+	// create_movement_action raise_hand_and_swim, MOVEMENT_ACTION_RAISE_HAND_AND_SWIM
+    // BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
+    create_movement_action exclaim_and_stop, MOVEMENT_ACTION_EXCLAIM_AND_STOP
+    create_movement_action spin_clockwise, MOVEMENT_ACTION_SPIN_CLOCKWISE
+    create_movement_action spin_clockwise_swim, MOVEMENT_ACTION_SPIN_CLOCKWISE_SWIM
 	create_movement_action emote_double_exclamation_mark, MOVEMENT_ACTION_EMOTE_DOUBLE_EXCL_MARK
 	create_movement_action emote_x, MOVEMENT_ACTION_EMOTE_X
 

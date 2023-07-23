@@ -282,9 +282,9 @@ void VsSeekerResetObjectMovementAfterChargeComplete(void)
     {
         if ((templates[i].trainerType == TRAINER_TYPE_NORMAL
           || templates[i].trainerType == TRAINER_TYPE_BURIED)
-         && (templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_STOP
-          || templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_JUMP
-          || templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_SWIM))
+         && (templates[i].movementType == MOVEMENT_TYPE_EXCLAIM_AND_STOP
+          || templates[i].movementType == MOVEMENT_TYPE_SPIN_CLOCKWISE
+          || templates[i].movementType == MOVEMENT_TYPE_SPIN_CLOCKWISE_SWIM))
         {
             movementType = GetRandomFaceDirectionMovementType();
             TryGetObjectEventIdByLocalIdAndMap(templates[i].localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, &objEventId);
@@ -342,9 +342,9 @@ static void ResetMovementOfRematchableTrainers(void)
     for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
     {
         struct ObjectEvent * objectEvent = &gObjectEvents[i];
-        if (objectEvent->movementType == MOVEMENT_TYPE_RAISE_HAND_AND_STOP
-                || objectEvent->movementType == MOVEMENT_TYPE_RAISE_HAND_AND_JUMP
-                || objectEvent->movementType == MOVEMENT_TYPE_RAISE_HAND_AND_SWIM)
+        if (objectEvent->movementType == MOVEMENT_TYPE_EXCLAIM_AND_STOP
+                || objectEvent->movementType == MOVEMENT_TYPE_SPIN_CLOCKWISE
+                || objectEvent->movementType == MOVEMENT_TYPE_SPIN_CLOCKWISE_SWIM)
         {
             u8 movementType = GetRandomFaceDirectionMovementType();
             if (objectEvent->active && gSprites[objectEvent->spriteId].data[0] == i)
@@ -783,7 +783,7 @@ static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId)
         case OBJ_EVENT_GFX_MAN_3:
         case OBJ_EVENT_GFX_PICNICKER:
         case OBJ_EVENT_GFX_YOUNGSTER:
-            return MOVEMENT_TYPE_RAISE_HAND_AND_JUMP;
+            return MOVEMENT_TYPE_SPIN_CLOCKWISE;
       /* Jaizu: Needs to be adapted to Hoenn gfx
         case OBJ_EVENT_GFX_LITTLE_GIRL:
         case OBJ_EVENT_GFX_YOUNGSTER:
@@ -807,14 +807,14 @@ static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId)
         case OBJ_EVENT_GFX_BLACKBELT:
         case OBJ_EVENT_GFX_HIKER:
         case OBJ_EVENT_GFX_SAILOR:
-            return MOVEMENT_TYPE_RAISE_HAND_AND_JUMP;
+            return MOVEMENT_TYPE_SPIN_CLOCKWISE;
         case OBJ_EVENT_GFX_TUBER_M_WATER:
         case OBJ_EVENT_GFX_SWIMMER_M_WATER:
         case OBJ_EVENT_GFX_SWIMMER_F_WATER:
-            return MOVEMENT_TYPE_RAISE_HAND_AND_SWIM;
+            return MOVEMENT_TYPE_SPIN_CLOCKWISE_SWIM;
          */
         default:
-            return MOVEMENT_TYPE_RAISE_HAND_AND_STOP;
+            return MOVEMENT_TYPE_EXCLAIM_AND_STOP;
     }
 }
 
