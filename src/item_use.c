@@ -1145,6 +1145,7 @@ void FieldUseFunc_VsSeeker(u8 taskId)
     */
    if (gMapHeader.mapType != MAP_TYPE_ROUTE
       && gMapHeader.mapType != MAP_TYPE_TOWN
+      && gMapHeader.mapType != MAP_TYPE_OCEAN_ROUTE
       && gMapHeader.mapType != MAP_TYPE_CITY)
       {
         DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].data[3]);

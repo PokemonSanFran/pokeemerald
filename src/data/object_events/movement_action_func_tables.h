@@ -262,20 +262,10 @@ u8 MovementAction_Fly_Finish(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_FlyDown_Step0(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_FlyDown_Step1(struct ObjectEvent *, struct Sprite *);
 
-static bool8 MovementAction_Exclaim_Step0(struct ObjectEvent *, struct Sprite *);
-static bool8 MovementAction_ExclaimAndStop_Step0(struct ObjectEvent *, struct Sprite *);
-static bool8 MovementAction_ExclaimAndStop_Step1(struct ObjectEvent *, struct Sprite *);
-static bool8 MovementAction_ExclaimAndStop_Step2(struct ObjectEvent *, struct Sprite *);
-static bool8 MovementAction_SpinClockwise_Step1(struct ObjectEvent *, struct Sprite *);
-static bool8 MovementAction_SpinClockwiseSwim_Step1(struct ObjectEvent *, struct Sprite *);
-/*
 static bool8 MovementAction_RaiseHand_Step0(struct ObjectEvent *, struct Sprite *);
 static bool8 MovementAction_RaiseHandAndStop_Step1(struct ObjectEvent *, struct Sprite *);
 static bool8 MovementAction_RaiseHandAndJump_Step1(struct ObjectEvent *, struct Sprite *);
 static bool8 MovementAction_RaiseHandAndSwim_Step1(struct ObjectEvent *, struct Sprite *);
-
-// BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
-*/
 
 u8 (*const gMovementActionFuncs_FaceDown[])(struct ObjectEvent *, struct Sprite *);
 u8 (*const gMovementActionFuncs_FaceUp[])(struct ObjectEvent *, struct Sprite *);
@@ -437,15 +427,9 @@ u8 (*const gMovementActionFuncs_FlyUp[])(struct ObjectEvent *, struct Sprite *);
 u8 (*const gMovementActionFuncs_FlyDown[])(struct ObjectEvent *, struct Sprite *);
 u8 (*const gMovementActionFuncs_EmoteX[])(struct ObjectEvent *, struct Sprite *);
 u8 (*const gMovementActionFuncs_EmoteDoubleExclMark[])(struct ObjectEvent *, struct Sprite *);
-static bool8 (*const sMovementActionFuncs_ExclaimAndStop[])(struct ObjectEvent *, struct Sprite *);
-static bool8 (*const sMovementActionFuncs_SpinClockwise[])(struct ObjectEvent *, struct Sprite *);
-static bool8 (*const sMovementActionFuncs_SpinClockwiseSwim[])(struct ObjectEvent *, struct Sprite *);
-/*
 static bool8 (*const sMovementActionFuncs_RaiseHandAndStop[])(struct ObjectEvent *, struct Sprite *);
 static bool8 (*const sMovementActionFuncs_RaiseHandAndJump[])(struct ObjectEvent *, struct Sprite *);
 static bool8 (*const sMovementActionFuncs_RaiseHandAndSwim[])(struct ObjectEvent *, struct Sprite *);
-*/
-// BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
 
 u8 (*const *const gMovementActionFuncs[])(struct ObjectEvent *, struct Sprite *) = {
     [MOVEMENT_ACTION_FACE_DOWN] = gMovementActionFuncs_FaceDown,
@@ -606,15 +590,9 @@ u8 (*const *const gMovementActionFuncs[])(struct ObjectEvent *, struct Sprite *)
     [MOVEMENT_ACTION_FIGURE_8] = gMovementActionFuncs_Figure8,
     [MOVEMENT_ACTION_FLY_UP] = gMovementActionFuncs_FlyUp,
     [MOVEMENT_ACTION_FLY_DOWN] = gMovementActionFuncs_FlyDown,
-    [MOVEMENT_ACTION_EXCLAIM_AND_STOP]                   = sMovementActionFuncs_ExclaimAndStop,
-    [MOVEMENT_ACTION_SPIN_CLOCKWISE]                     = sMovementActionFuncs_SpinClockwise,
-    [MOVEMENT_ACTION_SPIN_CLOCKWISE_SWIM]                = sMovementActionFuncs_SpinClockwiseSwim,
-    /*
     [MOVEMENT_ACTION_RAISE_HAND_AND_STOP]                = sMovementActionFuncs_RaiseHandAndStop,
     [MOVEMENT_ACTION_RAISE_HAND_AND_JUMP]                = sMovementActionFuncs_RaiseHandAndJump,
     [MOVEMENT_ACTION_RAISE_HAND_AND_SWIM]                = sMovementActionFuncs_RaiseHandAndSwim,
-    */
-    // BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
     [MOVEMENT_ACTION_EMOTE_X]                            = gMovementActionFuncs_EmoteX,
     [MOVEMENT_ACTION_EMOTE_DOUBLE_EXCL_MARK]             = gMovementActionFuncs_EmoteDoubleExclMark,
 };
@@ -1557,22 +1535,6 @@ u8 (*const gMovementActionFuncs_StopLevitateAtTop[])(struct ObjectEvent *, struc
     MovementAction_Finish,
 };
 
-static bool8 (*const sMovementActionFuncs_ExclaimAndStop[])(struct ObjectEvent *, struct Sprite *) = {
-    MovementAction_Exclaim_Step0,
-    MovementAction_ExclaimAndStop_Step1,
-};
-
-static bool8 (*const sMovementActionFuncs_SpinClockwise[])(struct ObjectEvent *, struct Sprite *) = {
-    MovementAction_Exclaim_Step0,
-    MovementAction_SpinClockwise_Step1,
-};
-
-static bool8 (*const sMovementActionFuncs_SpinClockwiseSwim[])(struct ObjectEvent *, struct Sprite *) = {
-    MovementAction_Exclaim_Step0,
-    MovementAction_SpinClockwiseSwim_Step1,
-};
-
-/*
 static bool8 (*const sMovementActionFuncs_RaiseHandAndStop[])(struct ObjectEvent *, struct Sprite *) = {
     MovementAction_RaiseHand_Step0,
     MovementAction_RaiseHandAndStop_Step1,
@@ -1587,8 +1549,6 @@ static bool8 (*const sMovementActionFuncs_RaiseHandAndSwim[])(struct ObjectEvent
     MovementAction_RaiseHand_Step0,
     MovementAction_RaiseHandAndSwim_Step1,
 };
-*/
-// BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
 
 u8 (*const gMovementActionFuncs_EmoteX[])(struct ObjectEvent *, struct Sprite *) = {
     MovementAction_EmoteX_Step0,

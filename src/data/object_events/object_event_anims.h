@@ -848,8 +848,7 @@ static const union AnimCmd *const sAnimTable_Standard[] = {
     [ANIM_STD_GO_FASTEST_NORTH] = sAnim_GoFastestNorth,
     [ANIM_STD_GO_FASTEST_WEST] = sAnim_GoFastestWest,
     [ANIM_STD_GO_FASTEST_EAST] = sAnim_GoFastestEast,
-    //[ANIM_RAISE_HAND] = sAnim_RaiseHand,
-    // BRANCH_NOTE: This line is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+    [ANIM_RAISE_HAND] = sAnim_RaiseHand,
 };
 
 static const union AnimCmd *const sAnimTable_HoOh[] = {
