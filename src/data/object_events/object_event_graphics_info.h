@@ -4692,5 +4692,5 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_MayVSSeeker = {
     .affineAnims = gDummySpriteAffineAnimTable,
 };
 
-BRANCH_NOTE: This struct is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+BRANCH_NOTE: These lines are from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
 */

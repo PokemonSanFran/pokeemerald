@@ -783,39 +783,24 @@ static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId)
         case OBJ_EVENT_GFX_MAN_3:
         case OBJ_EVENT_GFX_PICNICKER:
         case OBJ_EVENT_GFX_YOUNGSTER:
-            return MOVEMENT_TYPE_SPIN_CLOCKWISE;
-      /* Jaizu: Needs to be adapted to Hoenn gfx
         case OBJ_EVENT_GFX_LITTLE_GIRL:
-        case OBJ_EVENT_GFX_YOUNGSTER:
-        case OBJ_EVENT_GFX_BOY:
-        case OBJ_EVENT_GFX_BUG_CATCHER:
         case OBJ_EVENT_GFX_LASS:
         case OBJ_EVENT_GFX_WOMAN_1:
-        case OBJ_EVENT_GFX_BATTLE_GIRL:
-        case OBJ_EVENT_GFX_MAN:
-        case OBJ_EVENT_GFX_ROCKER:
         case OBJ_EVENT_GFX_WOMAN_2:
-        case OBJ_EVENT_GFX_BEAUTY:
-        case OBJ_EVENT_GFX_BALDING_MAN:
-        case OBJ_EVENT_GFX_TUBER_F:
-        case OBJ_EVENT_GFX_CAMPER:
-        case OBJ_EVENT_GFX_PICNICKER:
-        case OBJ_EVENT_GFX_COOLTRAINER_M:
-        case OBJ_EVENT_GFX_COOLTRAINER_F:
-        case OBJ_EVENT_GFX_SWIMMER_M_LAND:
-        case OBJ_EVENT_GFX_SWIMMER_F_LAND:
-        case OBJ_EVENT_GFX_BLACKBELT:
         case OBJ_EVENT_GFX_HIKER:
         case OBJ_EVENT_GFX_SAILOR:
-            return MOVEMENT_TYPE_SPIN_CLOCKWISE;
-        case OBJ_EVENT_GFX_TUBER_M_WATER:
-        case OBJ_EVENT_GFX_SWIMMER_M_WATER:
-        case OBJ_EVENT_GFX_SWIMMER_F_WATER:
-            return MOVEMENT_TYPE_SPIN_CLOCKWISE_SWIM;
-         */
+            return MOVEMENT_TYPE_ROTATE_CLOCKWISE;
+            //return MOVEMENT_TYPE_RAISE_HAND_AND_JUMP;
+        case OBJ_EVENT_GFX_TUBER_M_SWIMMING:
+        case OBJ_EVENT_GFX_SWIMMER_M:
+        case OBJ_EVENT_GFX_SWIMMER_F:
+            //return MOVEMENT_TYPE_RAISE_HAND_AND_SWIM;
+            return MOVEMENT_TYPE_ROTATE_CLOCKWISE;
         default:
-            return MOVEMENT_TYPE_SPIN_CLOCKWISE;
+            //return MOVEMENT_TYPE_RAISE_HAND_AND_STOP;
+            return MOVEMENT_TYPE_FACE_DOWN;
     }
+    // BRANCH_NOTE: These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
 }
 
 static u16 GetTrainerFlagFromScript(const u8 *script)
