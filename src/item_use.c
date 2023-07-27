@@ -1131,25 +1131,27 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
 
 void FieldUseFunc_VsSeeker(u8 taskId)
 {
-    // Jaizu probably needs to be changed for Hoenn stuff
-    /*
-    if ((gMapHeader.mapType != MAP_TYPE_ROUTE
-      && gMapHeader.mapType != MAP_TYPE_TOWN
-      && gMapHeader.mapType != MAP_TYPE_CITY)
-     || (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(VIRIDIAN_FOREST)
-      && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(VIRIDIAN_FOREST)
-       || gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_EMBER_EXTERIOR)
-       || gSaveBlock1Ptr->location.mapNum == MAP_NUM(THREE_ISLAND_BERRY_FOREST)
-       || gSaveBlock1Ptr->location.mapNum == MAP_NUM(SIX_ISLAND_PATTERN_BUSH))))
-    {
-    */
-   if (gMapHeader.mapType != MAP_TYPE_ROUTE
-      && gMapHeader.mapType != MAP_TYPE_TOWN
-      && gMapHeader.mapType != MAP_TYPE_OCEAN_ROUTE
-      && gMapHeader.mapType != MAP_TYPE_CITY)
+    if (gMapHeader.mapType != MAP_TYPE_ROUTE
+            && gMapHeader.mapType != MAP_TYPE_TOWN
+            && gMapHeader.mapType != MAP_TYPE_OCEAN_ROUTE
+            && gMapHeader.mapType != MAP_TYPE_CITY
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(PETALBURG_WOODS) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(PETALBURG_WOODS))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(JAGGED_PASS) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(JAGGED_PASS))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MT_CHIMNEY) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_CHIMNEY))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MT_PYRE_SUMMIT) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_PYRE_SUMMIT))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTH) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTH))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTHEAST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTHEAST))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTHWEST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTHWEST))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTH) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTH))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTHEAST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTHEAST))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTHWEST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTHWEST))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SKY_PILLAR_TOP) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SKY_PILLAR_TOP))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOUTHERN_ISLAND_EXTERIOR) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOUTHERN_ISLAND_EXTERIOR))))
+            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOUTHERN_ISLAND_INTERIOR) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOUTHERN_ISLAND_INTERIOR))))
+       )
       {
-        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].data[3]);
-    }
+          DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].data[3]);
+      }
     else
     {
         sItemUseOnFieldCB = Task_VsSeeker_0;
