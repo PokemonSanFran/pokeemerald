@@ -1137,7 +1137,6 @@ void FieldUseFunc_VsSeeker(u8 taskId)
             && gMapHeader.mapType != MAP_TYPE_OCEAN_ROUTE
             && gMapHeader.mapType != MAP_TYPE_CITY
             && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(DEWFORD_TOWN_GYM))) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(DEWFORD_TOWN_GYM))))
-//YEP
             && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LAVARIDGE_TOWN_GYM_1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(LAVARIDGE_TOWN_GYM_1F)))))
             && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LAVARIDGE_TOWN_GYM_B1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(LAVARIDGE_TOWN_GYM_B1F)))))
             && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(PETALBURG_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(PETALBURG_CITY_GYM)))))
