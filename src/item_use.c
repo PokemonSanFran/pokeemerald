@@ -1132,30 +1132,30 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
 void FieldUseFunc_VsSeeker(u8 taskId)
 {
     if(
-            gMapHeader.mapType != MAP_TYPE_ROUTE
-            && gMapHeader.mapType != MAP_TYPE_TOWN
-            && gMapHeader.mapType != MAP_TYPE_OCEAN_ROUTE
-            && gMapHeader.mapType != MAP_TYPE_CITY
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(DEWFORD_TOWN_GYM))) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(DEWFORD_TOWN_GYM))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LAVARIDGE_TOWN_GYM_1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(LAVARIDGE_TOWN_GYM_1F)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LAVARIDGE_TOWN_GYM_B1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(LAVARIDGE_TOWN_GYM_B1F)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(PETALBURG_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(PETALBURG_CITY_GYM)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAUVILLE_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAUVILLE_CITY_GYM)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(RUSTBORO_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(RUSTBORO_CITY_GYM)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(FORTREE_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(FORTREE_CITY_GYM)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MOSSDEEP_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(MOSSDEEP_CITY_GYM)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOOTOPOLIS_CITY_GYM_1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOOTOPOLIS_CITY_GYM_1F)))))
-            && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOOTOPOLIS_CITY_GYM_B1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOOTOPOLIS_CITY_GYM_B1F)))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MT_PYRE_SUMMIT) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_PYRE_SUMMIT))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTH) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTH))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTHEAST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTHEAST))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTHWEST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTHWEST))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTH) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTH))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTHEAST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTHEAST))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTHWEST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTHWEST))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SKY_PILLAR_TOP) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SKY_PILLAR_TOP))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOUTHERN_ISLAND_EXTERIOR) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOUTHERN_ISLAND_EXTERIOR))))
-            || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOUTHERN_ISLAND_INTERIOR) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOUTHERN_ISLAND_INTERIOR))))
+        (gMapHeader.mapType != MAP_TYPE_ROUTE
+        && gMapHeader.mapType != MAP_TYPE_TOWN
+        && gMapHeader.mapType != MAP_TYPE_OCEAN_ROUTE
+        && gMapHeader.mapType != MAP_TYPE_CITY
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(DEWFORD_TOWN_GYM))) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(DEWFORD_TOWN_GYM))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LAVARIDGE_TOWN_GYM_1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(LAVARIDGE_TOWN_GYM_1F)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(LAVARIDGE_TOWN_GYM_B1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(LAVARIDGE_TOWN_GYM_B1F)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(PETALBURG_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(PETALBURG_CITY_GYM)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MAUVILLE_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(MAUVILLE_CITY_GYM)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(RUSTBORO_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(RUSTBORO_CITY_GYM)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(FORTREE_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(FORTREE_CITY_GYM)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MOSSDEEP_CITY_GYM)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(MOSSDEEP_CITY_GYM)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOOTOPOLIS_CITY_GYM_1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOOTOPOLIS_CITY_GYM_1F)))))
+        && ((gMapHeader.mapType == MAP_TYPE_INDOOR) && (!(gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOOTOPOLIS_CITY_GYM_B1F)) && (!(gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOOTOPOLIS_CITY_GYM_B1F))))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(MT_PYRE_SUMMIT) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(MT_PYRE_SUMMIT))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTH) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTH))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTHEAST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTHEAST))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_NORTHWEST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_NORTHWEST))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTH) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTH))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTHEAST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTHEAST))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SAFARI_ZONE_SOUTHWEST) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SAFARI_ZONE_SOUTHWEST))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SKY_PILLAR_TOP) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SKY_PILLAR_TOP))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOUTHERN_ISLAND_EXTERIOR) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOUTHERN_ISLAND_EXTERIOR))))
+        || ((gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SOUTHERN_ISLAND_INTERIOR) && (gSaveBlock1Ptr->location.mapNum == MAP_NUM(SOUTHERN_ISLAND_INTERIOR))))
       )
     {
         DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].data[3]);

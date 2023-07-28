@@ -54,7 +54,7 @@ typedef enum
 // static types
 typedef struct VsSeekerData
 {
-    u16 trainerIdxs[6];
+    u16 trainerIdxs[7];
     u16 mapGroup; // unused
     u16 mapNum; // unused
 } VsSeekerData;
