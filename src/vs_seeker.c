@@ -789,6 +789,7 @@ static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId)
         case OBJ_EVENT_GFX_WOMAN_2:
         case OBJ_EVENT_GFX_HIKER:
         case OBJ_EVENT_GFX_SAILOR:
+        case OBJ_EVENT_GFX_MAN_5:
             return MOVEMENT_TYPE_ROTATE_CLOCKWISE;
             //return MOVEMENT_TYPE_RAISE_HAND_AND_JUMP;
         case OBJ_EVENT_GFX_TUBER_M_SWIMMING:
