@@ -21,6 +21,7 @@
 #include "tv.h"
 #include "malloc.h"
 #include "field_screen_effect.h"
+#include "gym_leader_rematch.h"
 #include "sound.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
@@ -109,7 +110,8 @@ static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx);
 static bool32 IsThisTrainerRematchable(u32 localId);
 static void ClearAllTrainerRematchStates(void);
 static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
-static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 trainerFlagNo, u8 * idxPtr);
+//static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 trainerFlagNo, u8 * idxPtr);
+static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTable, u16 trainerFlagNo, u8 * idxPtr);
 static u8 GetRematchableTrainerLocalId(void);
 static void StartTrainerObjectMovementScript(struct VsSeekerTrainerInfo * trainerInfo, const u8 * script);
 static u8 GetCurVsSeekerResponse(s32 vsSeekerIdx, u16 trainerIdx);
@@ -524,7 +526,7 @@ static u8 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData)
                 vsSeekerIdx++;
                 continue;
             }
-            rematchTrainerIdx = GetNextAvailableRematchTrainer(vsSeekerData, trainerIdx, &unusedIdx);
+            rematchTrainerIdx = GetNextAvailableRematchTrainer(gRematchTable, trainerIdx, &unusedIdx);
             if (rematchTrainerIdx == 0)
             {
                 StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerNoRematch);
@@ -658,7 +660,7 @@ static bool8 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u1
 
     if (rematchIdx == -1)
         return FALSE;
-    if (rematchIdx >= 0 && rematchIdx < NELEMS(sVsSeekerData))
+    if (rematchIdx >= 0 && rematchIdx < NELEMS(gRematchTable))
     {
         if (IsThisTrainerRematchable(gSpecialVar_LastTalked))
             return TRUE;
@@ -687,14 +689,14 @@ static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u16 trainer
 {
     int i, j;
 
-    for (i = 0; i < NELEMS(sVsSeekerData); i++)
+    for (i = 0; i < NELEMS(gRematchTable); i++)
     {
         for (j = 0; j < 6; j++)
         {
             u16 testTrainerId;
-            if (array[i].trainerIdxs[j] == 0)
+            if (gRematchTable[i].trainerIds[j] == 0)
                 break;
-            testTrainerId = array[i].trainerIdxs[j];
+            testTrainerId = gRematchTable[i].trainerIds[j];
             if (testTrainerId == 0xFFFF)
                 continue;
             if (testTrainerId == trainerId)
@@ -709,7 +711,7 @@ int GetRematchTrainerIdVSSeeker(u16 trainerId)
 {
     u8 i;
     u8 j;
-    j = GetNextAvailableRematchTrainer(sVsSeekerData, trainerId, &i);
+    j = GetNextAvailableRematchTrainer(gRematchTable, trainerId, &i);
     if (!j)
         return 0;
     TryGetRematchTrainerIdGivenGameState(sVsSeekerData[i].trainerIdxs, &j);
@@ -727,7 +729,7 @@ static bool8 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u16 tr
 
     if (rematchTrainerIdx == -1)
         return FALSE;
-    if (rematchTrainerIdx >= NELEMS(sVsSeekerData))
+    if (rematchTrainerIdx >= NELEMS(gRematchTable))
         return FALSE;
     if (!IsThisTrainerRematchable(gSpecialVar_LastTalked))
         return FALSE;
@@ -826,7 +828,7 @@ static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx)
 {
     int i;
 
-    for (i = 0; i < NELEMS(sVsSeekerData); i++)
+    for (i = 0; i < NELEMS(gRematchTable); i++)
     {
         if (vsSeekerData[i].trainerIdxs[0] == trainerFlagIdx)
             return i;
@@ -868,22 +870,22 @@ static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo)
     return FALSE;
 }
 
-static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 trainerFlagNo, u8 * idxPtr)
+static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTable, u16 trainerFlagNo, u8 * idxPtr)
 {
     int i, j;
 
-    for (i = 0; i < NELEMS(sVsSeekerData); i++)
+    for (i = 0; i < REMATCH_TABLE_ENTRIES; i++)
     {
-        if (vsSeekerData[i].trainerIdxs[0] == trainerFlagNo)
+        if (gRematchTable[i].trainerIds[0] == trainerFlagNo)
         {
             *idxPtr = i;
             for (j = 1; j < 6; j++)
             {
-                if (vsSeekerData[i].trainerIdxs[j] == 0)
+                if (gRematchTable[i].trainerIds[j] == 0)
                     return j - 1;
-                if (vsSeekerData[i].trainerIdxs[j] == 0xffff)
+                if (gRematchTable[i].trainerIds[j] == 0xffff)
                     continue;
-                if (HasTrainerBeenFought(vsSeekerData[i].trainerIdxs[j]))
+                if (HasTrainerBeenFought(gRematchTable[i].trainerIds[j]))
                     continue;
                 return j;
             }
@@ -904,7 +906,7 @@ static u8 GetRematchableTrainerLocalId(void)
     {
         if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]) == 1)
         {
-            if (HasTrainerBeenFought(sVsSeeker->trainerInfo[i].trainerIdx) != 1 || GetNextAvailableRematchTrainer(sVsSeekerData, sVsSeeker->trainerInfo[i].trainerIdx, &idx))
+            if (HasTrainerBeenFought(sVsSeeker->trainerInfo[i].trainerIdx) != 1 || GetNextAvailableRematchTrainer(gRematchTable, sVsSeeker->trainerInfo[i].trainerIdx, &idx))
                 return sVsSeeker->trainerInfo[i].localId;
         }
     }
@@ -955,7 +957,7 @@ static void StartAllRespondantIdleMovements(void)
                 if (ObjectEventIdIsSane(sVsSeeker->trainerInfo[j].objectEventId) == 1)
                     SetTrainerMovementType(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
                 TryOverrideTemplateCoordsForObjectEvent(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
-                gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[j].localId] = GetNextAvailableRematchTrainer(sVsSeekerData, sVsSeeker->trainerInfo[j].trainerIdx, &dummy);
+                gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[j].localId] = GetNextAvailableRematchTrainer(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx, &dummy);
             }
         }
     }
