@@ -242,8 +242,7 @@
 #define OBJ_EVENT_GFX_HOOH                       238
 //#define OBJ_EVENT_GFX_BRENDAN_VS_SEEKER        239
 //#define OBJ_EVENT_GFX_MAY_VS_SEEKER            240
-//#define OBJ_EVENT_GFX_BRENDAN_VS_SEEKER_BIKE   241
-//#define OBJ_EVENT_GFX_MAY_VS_SEEKER_BIKE       242
+//
 // BRANCH_NOTE: These lines are from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
 
 // NOTE: By default, the max value for NUM_OBJ_EVENT_GFX is 239.

@@ -245,6 +245,7 @@ extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Giddy;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_UnusedMauvilleOldMan1;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_UnusedMauvilleOldMan2;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_BrendanVSSeeker;
+extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_MayVSSeeker;
 
 const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM_OBJ_EVENT_GFX] = {
     [OBJ_EVENT_GFX_BRENDAN_NORMAL] =           &gObjectEventGraphicsInfo_BrendanNormal,
@@ -487,7 +488,8 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_LUGIA] =                    &gObjectEventGraphicsInfo_Lugia,
     [OBJ_EVENT_GFX_HOOH] =                     &gObjectEventGraphicsInfo_HoOh,
     //[OBJ_EVENT_GFX_BRENDAN_VS_SEEKER] =        &gObjectEventGraphicsInfo_BrendanVSSeeker,
-    //BRANCH_NOTE: This struct is from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+    //[OBJ_EVENT_GFX_BRENDAN_VS_SEEKER] =        &gObjectEventGraphicsInfo_MayVSSeeker,
+    //BRANCH_NOTE: These lines are from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
 };
 
 const struct ObjectEventGraphicsInfo *const gMauvilleOldManGraphicsInfoPointers[] = {

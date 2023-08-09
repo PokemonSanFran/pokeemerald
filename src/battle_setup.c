@@ -1361,11 +1361,9 @@ static void CB2_EndRematchBattle(void)
     else
     {
         SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
-        /*
         RegisterTrainerInMatchCall();
         SetBattledTrainersFlags();
         HandleRematchVarsOnBattleEnd();
-        */
     }
 }
 
@@ -1837,6 +1835,23 @@ u16 GetLastBeatenRematchTrainerId(u16 trainerId)
 {
     return GetLastBeatenRematchTrainerIdFromTable(gRematchTable, trainerId);
 }
+
+/*
+These are the Match Call counterparts
+bool8 ShouldTryRematchBattle(void)
+{
+    if (IsFirstTrainerIdReadyForRematch(gRematchTable, gTrainerBattleOpponent_A))
+        return TRUE;
+
+    return WasSecondRematchWon(gRematchTable, gTrainerBattleOpponent_A);
+}
+
+bool8 IsTrainerReadyForRematch(void)
+{
+    return IsTrainerReadyForRematch_(gRematchTable, gTrainerBattleOpponent_A);
+}
+
+*/
 
 static void HandleRematchVarsOnBattleEnd(void)
 {
