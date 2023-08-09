@@ -106,7 +106,7 @@ static int LookupVsSeekerOpponentInArray(const VsSeekerData * array, u16 trainer
 static bool8 IsTrainerReadyForRematchInternal(const VsSeekerData * array, u16 trainerIdx);
 static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
 static u16 GetTrainerFlagFromScript(const u8 * script);
-static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx);
+static int GetRematchIdx(u16 trainerFlagIdx);
 static bool32 IsThisTrainerRematchable(u32 localId);
 static void ClearAllTrainerRematchStates(void);
 static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
@@ -656,7 +656,7 @@ bool8 ShouldTryRematchBattle(void)
 
 static bool8 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u16 trainerBattleOpponent)
 {
-    s32 rematchIdx = GetRematchIdx(vsSeekerData, trainerBattleOpponent);
+    s32 rematchIdx = GetRematchIdx(trainerBattleOpponent);
 
     if (rematchIdx == -1)
         return FALSE;
@@ -670,7 +670,7 @@ static bool8 ShouldTryRematchBattleInternal(const VsSeekerData *vsSeekerData, u1
 
 static bool8 HasRematchTrainerAlreadyBeenFought(const VsSeekerData *vsSeekerData, u16 trainerBattleOpponent)
 {
-    s32 rematchIdx = GetRematchIdx(vsSeekerData, trainerBattleOpponent);
+    s32 rematchIdx = GetRematchIdx(trainerBattleOpponent);
 
     if (rematchIdx == -1)
         return FALSE;
@@ -825,13 +825,13 @@ static u16 GetTrainerFlagFromScript(const u8 *script)
     return trainerFlag;
 }
 
-static int GetRematchIdx(const VsSeekerData * vsSeekerData, u16 trainerFlagIdx)
+static int GetRematchIdx(u16 trainerFlagIdx)
 {
     int i;
 
-    for (i = 0; i < NELEMS(gRematchTable); i++)
+    for (i = 0; i < REMATCH_TABLE_ENTRIES; i++)
     {
-        if (vsSeekerData[i].trainerIdxs[0] == trainerFlagIdx)
+        if (gRematchTable[i].trainerIds[0] == trainerFlagIdx)
             return i;
     }
 
