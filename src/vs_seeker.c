@@ -204,7 +204,8 @@ void VsSeekerResetObjectMovementAfterChargeComplete(void)
           || templates[i].trainerType == TRAINER_TYPE_BURIED)
          && (templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_STOP
           || templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_JUMP
-          || templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_SWIM))
+          || templates[i].movementType == MOVEMENT_TYPE_RAISE_HAND_AND_SWIM
+          || templates[i].movementType == MOVEMENT_TYPE_ROTATE_CLOCKWISE))
         {
             movementType = GetRandomFaceDirectionMovementType();
             TryGetObjectEventIdByLocalIdAndMap(templates[i].localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, &objEventId);
