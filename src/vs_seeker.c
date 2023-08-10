@@ -102,7 +102,7 @@ static u8 GetVsSeekerResponseInArea(void);
 static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchIdx);
 static u8 ShouldTryRematchBattleInternal(u16 trainerBattleOpponent);
 static u8 HasRematchTrainerAlreadyBeenFought(u16 trainerBattleOpponent);
-static int LookupVsSeekerOpponentInArray(const struct RematchTrainer *gRematchTable, u16 trainerId);
+static int LookupVsSeekerOpponentInArray(u16 trainerId);
 static bool8 IsTrainerReadyForRematchInternal(const struct RematchTrainer *gRematchTable, u16 trainerId);
 static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
 static u16 GetTrainerFlagFromScript(const u8 * script);
@@ -110,7 +110,6 @@ static int GetRematchIdx(u16 trainerFlagIdx);
 static bool32 IsThisTrainerRematchable(u32 localId);
 static void ClearAllTrainerRematchStates(void);
 static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
-//static u8 GetNextAvailableRematchTrainer(const VsSeekerData * vsSeekerData, u16 trainerFlagNo, u8 * idxPtr);
 static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTable, u16 trainerFlagNo, u8 * idxPtr);
 static u8 GetRematchableTrainerLocalId(void);
 static void StartTrainerObjectMovementScript(struct VsSeekerTrainerInfo * trainerInfo, const u8 * script);
@@ -496,7 +495,7 @@ void ClearRematchStateByTrainerId(void)
 {
     u8 objEventId = 0;
     struct ObjectEventTemplate *objectEventTemplates = gSaveBlock1Ptr->objectEventTemplates;
-    int vsSeekerDataIdx = LookupVsSeekerOpponentInArray(gRematchTable, gTrainerBattleOpponent_A);
+    int vsSeekerDataIdx = LookupVsSeekerOpponentInArray(gTrainerBattleOpponent_A);
 
     if (vsSeekerDataIdx != -1)
     {
@@ -506,7 +505,7 @@ void ClearRematchStateByTrainerId(void)
         {
             if ((objectEventTemplates[i].trainerType == TRAINER_TYPE_NORMAL
               || objectEventTemplates[i].trainerType == TRAINER_TYPE_BURIED)
-              && vsSeekerDataIdx == LookupVsSeekerOpponentInArray(gRematchTable, GetTrainerFlagFromScript(objectEventTemplates[i].script)))
+              && vsSeekerDataIdx == LookupVsSeekerOpponentInArray(GetTrainerFlagFromScript(objectEventTemplates[i].script)))
             {
                 struct ObjectEvent *objectEvent;
 
@@ -604,7 +603,7 @@ void ClearRematchStateOfLastTalked(void)
     SetBattledTrainerFlag();
 }
 
-static int LookupVsSeekerOpponentInArray(const struct RematchTrainer *gRematchTable, u16 trainerId)
+static int LookupVsSeekerOpponentInArray(u16 trainerId)
 {
     int i, j;
 
@@ -644,7 +643,7 @@ u8 IsTrainerReadyForRematch(void)
 
 static bool8 IsTrainerReadyForRematchInternal(const struct RematchTrainer *gRematchTable, u16 trainerId)
 {
-    int rematchTrainerIdx = LookupVsSeekerOpponentInArray(gRematchTable, trainerId);
+    int rematchTrainerIdx = LookupVsSeekerOpponentInArray(trainerId);
 
     if (rematchTrainerIdx == -1)
         return FALSE;
