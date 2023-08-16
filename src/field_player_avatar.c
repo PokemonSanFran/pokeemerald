@@ -1302,6 +1302,31 @@ bool8 PartyHasMonWithSurf(void)
     return FALSE;
 }
 
+//Start walk_on_water Branch
+bool32 PartyHasMonLearnsKnowsSurf(void)
+{
+    u32 i = 0, monSurfStatus = 0;
+    struct Pokemon *mon;
+
+    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+    {
+        for (i = 0; i < PARTY_SIZE; i++)
+        {
+            mon = &gPlayerParty[i];
+
+            if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
+                break;
+
+                monSurfStatus = CanMonLearnTMTutor(mon, ITEM_HM03, 0);
+
+            if (monSurfStatus == ALREADY_KNOWS_MOVE || monSurfStatus == CAN_LEARN_MOVE)
+                return TRUE;
+        }
+    }
+    return FALSE;
+}
+//End walk_on_water Branch
+
 bool8 IsPlayerSurfingNorth(void)
 {
     if (GetPlayerMovementDirection() == DIR_NORTH && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
@@ -2233,8 +2258,13 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *object, s16 *delayTimer)
 //Start walk_on_water Branch
 static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)
 {
-    if (IsPlayerFacingSurfableFishableWater()
-    && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT)
+    if (
+        IsPlayerFacingSurfableFishableWater()
+        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+        && PartyHasMonLearnsKnowsSurf()
+        && FlagGet(FLAG_BADGE05_GET)
+        //&& CheckBagHasItem(ITEM_SURFBOARD,1) When this line is uncommmented, the player will need the Surfboard in their bag
+       )
     {
         CreateStartSurfingTask(direction);
         return TRUE;
