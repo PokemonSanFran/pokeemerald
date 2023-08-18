@@ -64,5 +64,6 @@ u16 GetLastBeatenRematchTrainerId(u16 trainerId);
 void ShouldTryGetTrainerScript(void);
 u16 CountBattledRematchTeams(u16 trainerId);
 void SetBattledTrainerFlag(void);
+s32 TrainerIdToRematchTableId(const struct RematchTrainer *table, u16 trainerId);
 
 #endif // GUARD_BATTLE_SETUP_H
