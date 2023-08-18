@@ -8,6 +8,8 @@
 #include "field_effect_helpers.h"
 #include "field_player_avatar.h"
 #include "fieldmap.h"
+#include "event_scripts.h" // frictionless_field_moves Branch
+#include "fldeff.h" // frictionless_field_moves Branch
 #include "menu.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
@@ -143,6 +145,7 @@ static void AlignFishingAnimationFrames(void);
 static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
 //Start frictionless_field_moves Branch
+static bool8 CanStartCuttingTree(s16, s16, u8);
 static bool8 CanStartSurfing(s16, s16, u8);
 static void CreateStartSurfingTask(u8);
 static void Task_StartSurfingInit(u8);
@@ -698,6 +701,13 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     u8 collision = GetCollisionAtCoords(objectEvent, x, y, direction);
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStopSurfing(x, y, direction))
         return COLLISION_STOP_SURFING;
+
+    if(CanStartCuttingTree(x,y,direction))
+    {
+        LockPlayerFieldControls();
+        ScriptContext_SetupScript(EventScript_CutTreeDown);
+        return COLLISION_START_CUT;
+    }
 
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction)) // frictionless_field_moves Branch
         return COLLISION_START_SURFING; // frictionless_field_moves Branch
@@ -2283,6 +2293,20 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *object, s16 *delayTimer)
 
 
 //Start frictionless_field_moves Branch
+static bool8 CanStartCuttingTree(s16 x, s16 y, u8 direction)
+{
+    if (
+        CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE)
+        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM01)
+        && FlagGet(FLAG_BADGE01_GET)
+        //&& CheckBagHasItem(ITEM_AXE,1) // When this line is uncommmented, the player will need this item to automatically perform
+       )
+        return TRUE;
+
+    return FALSE;
+}
+
 static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)
 {
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)){
