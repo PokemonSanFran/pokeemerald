@@ -2351,6 +2351,7 @@ static bool8 CanStartClimbingWaterfall(u8 direction)
     if (
         IsPlayerFacingWaterfall()
         && (direction == DIR_SOUTH)
+        && IsPlayerSurfingNorth()
         && PartyHasMonLearnsKnowsFieldMove(ITEM_HM07)
         && FlagGet(FLAG_BADGE08_GET)
         //&& CheckBagHasItem(ITEM_GRAPPLING_HOOK,1) // When this line is uncommmented, the player will need this item to automatically perform
