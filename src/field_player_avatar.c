@@ -143,12 +143,17 @@ static void AlignFishingAnimationFrames(void);
 static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
 //Start walk_on_water Branch
-static void Task_WaitStopSurfing(u8 taskId);
-static void CreateStartSurfingTask(u8);
-static void Task_StartSurfingInit(u8 taskId);
-static void Task_WaitStartSurfing(u8 taskId);
-static bool8 CanStopSurfing(s16, s16, u8);
 static bool8 CanStartSurfing(s16, s16, u8);
+static void CreateStartSurfingTask(u8);
+static void Task_StartSurfingInit(u8);
+static void Task_WaitStartSurfing(u8);
+
+static bool8 CanStartClimbingWaterfall(u8);
+static void CreateClimbWaterfallTask(void);
+static void Task_UseWaterfallWithoutMon(u8);
+static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *, struct ObjectEvent *);
+static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
+static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
 //End walk_on_water Branch
 
 static bool8 (*const sForcedMovementTestFuncs[NUM_FORCED_MOVEMENTS])(u8) =
@@ -452,6 +457,16 @@ static bool8 DoForcedMovement(u8 direction, void (*moveFunc)(u8))
     u8 collision = CheckForPlayerAvatarCollision(direction);
 
     playerAvatar->flags |= PLAYER_AVATAR_FLAG_FORCED_MOVE;
+
+    //Start walk_on_water Branch
+    if (CanStartClimbingWaterfall(direction))
+    {
+        playerAvatar->runningState = MOVING;
+        CreateClimbWaterfallTask();
+        return TRUE;
+    }
+    //End walk_on_water Branch
+
     if (collision)
     {
         ForcedMovement_None();
@@ -1303,28 +1318,40 @@ bool8 PartyHasMonWithSurf(void)
 }
 
 //Start walk_on_water Branch
-bool32 PartyHasMonLearnsKnowsSurf(void)
+bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine)
 {
-    u32 i = 0, monSurfStatus = 0;
+    u32 i = 0, monMoveStatus = 0;
     struct Pokemon *mon;
 
-    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+    for (i = 0; i < PARTY_SIZE; i++)
     {
-        for (i = 0; i < PARTY_SIZE; i++)
-        {
-            mon = &gPlayerParty[i];
+        mon = &gPlayerParty[i];
 
-            if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
-                break;
+        if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
+            break;
 
-                monSurfStatus = CanMonLearnTMTutor(mon, ITEM_HM03, 0);
+        monMoveStatus = CanMonLearnTMTutor(mon, machine, 0);
 
-            if (monSurfStatus == ALREADY_KNOWS_MOVE || monSurfStatus == CAN_LEARN_MOVE)
-                return TRUE;
-        }
+        if (monMoveStatus == ALREADY_KNOWS_MOVE || monMoveStatus == CAN_LEARN_MOVE)
+            return TRUE;
     }
     return FALSE;
 }
+
+bool8 IsPlayerFacingWaterfall(void)
+{
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x = playerObjEvent->currentCoords.x;
+    s16 y = playerObjEvent->currentCoords.y;
+
+    MoveCoords(playerObjEvent->facingDirection, &x, &y);
+    if (GetCollisionAtCoords(playerObjEvent, x, y, playerObjEvent->facingDirection) == COLLISION_NONE
+     && MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)))
+        return TRUE;
+    else
+        return FALSE;
+}
+
 //End walk_on_water Branch
 
 bool8 IsPlayerSurfingNorth(void)
@@ -2258,16 +2285,18 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *object, s16 *delayTimer)
 //Start walk_on_water Branch
 static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)
 {
-    if (
-        IsPlayerFacingSurfableFishableWater()
-        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-        && PartyHasMonLearnsKnowsSurf()
-        && FlagGet(FLAG_BADGE05_GET)
-        //&& CheckBagHasItem(ITEM_SURFBOARD,1) When this line is uncommmented, the player will need the Surfboard in their bag
-       )
-    {
-        CreateStartSurfingTask(direction);
-        return TRUE;
+    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)){
+        if (
+                IsPlayerFacingSurfableFishableWater()
+                && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+                && PartyHasMonLearnsKnowsFieldMove(ITEM_HM03)
+                && FlagGet(FLAG_BADGE05_GET)
+                //&& CheckBagHasItem(ITEM_SURFBOARD,1) // When this line is uncommmented, the player will need this item to automatically perform
+           )
+        {
+            CreateStartSurfingTask(direction);
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -2316,4 +2345,75 @@ static void Task_WaitStartSurfing(u8 taskId)
         DestroyTask(taskId);
     }
 }
+
+static bool8 CanStartClimbingWaterfall(u8 direction)
+{
+    if (
+        IsPlayerFacingWaterfall()
+        && (direction == DIR_SOUTH)
+        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM07)
+        && FlagGet(FLAG_BADGE08_GET)
+        //&& CheckBagHasItem(ITEM_GRAPPLING_HOOK,1) // When this line is uncommmented, the player will need this item to automatically perform
+       )
+        return TRUE;
+
+    return FALSE;
+}
+
+static bool8 (*const sWaterfallWithoutMonFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
+{
+    WaterfallWithoutMonFieldEffect_Init,
+    WaterfallWithoutMonFieldEffect_RideUp,
+    WaterfallWithoutMonFieldEffect_ContinueRideOrEnd,
+};
+
+static void CreateClimbWaterfallTask(void)
+{
+    u8 taskId;
+    taskId = CreateTask(Task_UseWaterfallWithoutMon, 0xFF);
+    Task_UseWaterfallWithoutMon(taskId);
+}
+
+static void Task_UseWaterfallWithoutMon(u8 taskId)
+{
+    while (sWaterfallWithoutMonFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]));
+}
+
+static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    LockPlayerFieldControls();
+    gPlayerAvatar.preventStep = TRUE;
+    task->tState++;
+    return FALSE;
+}
+
+static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    ObjectEventSetHeldMovement(objectEvent, GetWalkSlowMovementAction(DIR_NORTH));
+    task->tState++;
+    return FALSE;
+}
+
+static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    if (!ObjectEventClearHeldMovementIfFinished(objectEvent))
+        return FALSE;
+
+    if (MetatileBehavior_IsWaterfall(objectEvent->currentMetatileBehavior))
+    {
+        // Still ascending waterfall, back to WaterfallFieldEffect_RideUp
+        task->tState = 1;
+        return TRUE;
+    }
+
+    UnlockPlayerFieldControls();
+    gPlayerAvatar.preventStep = FALSE;
+    DestroyTask(FindTaskIdByFunc(Task_UseWaterfallWithoutMon));
+    FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL);
+    return FALSE;
+}
+
+#undef tState
+#undef tMonId
+
 //End walk_on_water Branch
