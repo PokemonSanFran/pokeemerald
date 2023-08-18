@@ -4,7 +4,7 @@
 #include "main.h"
 #include "task.h"
 
-// Start walk_on_water Branch
+// Start frictionless_field_moves Branch
 // Moved from src/party_menu.c
 enum {
     CAN_LEARN_MOVE,
@@ -12,7 +12,7 @@ enum {
     ALREADY_KNOWS_MOVE,
     CANNOT_LEARN_MOVE_IS_EGG
 };
-// End walk_on_water Branch
+// End frictionless_field_moves Branch
 
 // seems like the last two fields may have been left as all-purpose vars
 // and the second of the two just happens to only be used in one case
@@ -52,7 +52,7 @@ bool8 IsPartyMenuTextPrinterActive(void);
 void PartyMenuModifyHP(u8 taskId, u8 slot, s8 hpIncrement, s16 HPDifference, TaskFunc task);
 u8 GetAilmentFromStatus(u32 status);
 u8 GetMonAilment(struct Pokemon *mon);
-u8 CanMonLearnTMTutor(struct Pokemon *, u16, u8); // walk_on_water Branch, moved from src/party_menu.c and made non-static
+u8 CanMonLearnTMTutor(struct Pokemon *, u16, u8); // frictionless_field_moves Branch, moved from src/party_menu.c and made non-static
 void DisplayPartyMenuStdMessage(u32 stringId);
 bool8 FieldCallback_PrepareFadeInFromMenu(void);
 void CB2_ReturnToPartyMenuFromFlyMap(void);

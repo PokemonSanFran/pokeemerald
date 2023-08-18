@@ -142,7 +142,7 @@ static void AlignFishingAnimationFrames(void);
 
 static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
-//Start walk_on_water Branch
+//Start frictionless_field_moves Branch
 static bool8 CanStartSurfing(s16, s16, u8);
 static void CreateStartSurfingTask(u8);
 static void Task_StartSurfingInit(u8);
@@ -154,7 +154,7 @@ static void Task_UseWaterfallWithoutMon(u8);
 static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
-//End walk_on_water Branch
+//End frictionless_field_moves Branch
 
 static bool8 (*const sForcedMovementTestFuncs[NUM_FORCED_MOVEMENTS])(u8) =
 {
@@ -458,14 +458,14 @@ static bool8 DoForcedMovement(u8 direction, void (*moveFunc)(u8))
 
     playerAvatar->flags |= PLAYER_AVATAR_FLAG_FORCED_MOVE;
 
-    //Start walk_on_water Branch
+    //Start frictionless_field_moves Branch
     if (CanStartClimbingWaterfall(direction))
     {
         playerAvatar->runningState = MOVING;
         CreateClimbWaterfallTask();
         return TRUE;
     }
-    //End walk_on_water Branch
+    //End frictionless_field_moves Branch
 
     if (collision)
     {
@@ -699,8 +699,8 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStopSurfing(x, y, direction))
         return COLLISION_STOP_SURFING;
 
-    if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction)) // walk_on_water Branch
-        return COLLISION_START_SURFING; // walk_on_water Branch
+    if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction)) // frictionless_field_moves Branch
+        return COLLISION_START_SURFING; // frictionless_field_moves Branch
 
     if (ShouldJumpLedge(x, y, direction))
     {
@@ -1317,7 +1317,7 @@ bool8 PartyHasMonWithSurf(void)
     return FALSE;
 }
 
-//Start walk_on_water Branch
+//Start frictionless_field_moves Branch
 bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine)
 {
     u32 i = 0, monMoveStatus = 0;
@@ -1352,7 +1352,7 @@ bool8 IsPlayerFacingWaterfall(void)
         return FALSE;
 }
 
-//End walk_on_water Branch
+//End frictionless_field_moves Branch
 
 bool8 IsPlayerSurfingNorth(void)
 {
@@ -2282,7 +2282,7 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *object, s16 *delayTimer)
 }
 
 
-//Start walk_on_water Branch
+//Start frictionless_field_moves Branch
 static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)
 {
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)){
@@ -2416,4 +2416,4 @@ static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *task,
 #undef tState
 #undef tMonId
 
-//End walk_on_water Branch
+//End frictionless_field_moves Branch

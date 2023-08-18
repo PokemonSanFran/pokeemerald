@@ -2022,7 +2022,7 @@ static void Task_HandleCancelParticipationYesNoInput(u8 taskId)
     }
 }
 
-u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) // walk_on_water Branch, made non-static
+u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) // frictionless_field_moves Branch, made non-static
 {
     u16 move;
 
