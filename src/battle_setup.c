@@ -1136,12 +1136,12 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
     case TRAINER_BATTLE_REMATCH_DOUBLE:
         TrainerBattleLoadArgs(sDoubleBattleParams, data);
         SetMapVarsToTrainer();
-        gTrainerBattleOpponent_A = GetRematchTrainerIdVSSeeker(gTrainerBattleOpponent_A);
+        gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
         return EventScript_TryDoDoubleRematchBattle;
     case TRAINER_BATTLE_REMATCH:
         TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
         SetMapVarsToTrainer();
-        gTrainerBattleOpponent_A = GetRematchTrainerIdVSSeeker(gTrainerBattleOpponent_A);
+        gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
         return EventScript_TryDoRematchBattle;
     case TRAINER_BATTLE_PYRAMID:
         if (gApproachingTrainerId == 0)
@@ -1167,7 +1167,7 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
         {
             TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
             SetMapVarsToTrainer();
-            gTrainerBattleOpponent_A = GetRematchTrainerIdVSSeeker(gTrainerBattleOpponent_A);
+        gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
 
         }
         else

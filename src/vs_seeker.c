@@ -602,17 +602,6 @@ void ClearRematchStateOfLastTalked(void)
     SetBattledTrainerFlag();
 }
 
-int GetRematchTrainerIdVSSeeker(u16 trainerId)
-{
-    u8 i;
-    u8 j;
-    j = GetNextAvailableRematchTrainer(gRematchTable, trainerId, &i);
-    if (!j)
-        return 0;
-    TryGetRematchTrainerIdGivenGameState(gRematchTable[i].trainerIds, &j);
-    return gRematchTable[i].trainerIds[j];
-}
-
 u8 IsTrainerReadyForRematch(void)
 {
     return IsTrainerReadyForRematchInternal(gRematchTable, gTrainerBattleOpponent_A);
