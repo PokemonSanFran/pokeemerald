@@ -1543,7 +1543,7 @@ static const u8 *GetTrainerCantBattleSpeech(void)
     return ReturnEmptyStringIfNull(sTrainerCannotBattleSpeech);
 }
 
-static s32 FirstBattleTrainerIdToRematchTableId(const struct RematchTrainer *table, u16 trainerId)
+s32 FirstBattleTrainerIdToRematchTableId(const struct RematchTrainer *table, u16 trainerId)
 {
     s32 i;
 
@@ -1689,7 +1689,7 @@ static bool8 IsTrainerReadyForRematch_(const struct RematchTrainer *table, u16 t
     return TRUE;
 }
 
-static u16 GetRematchTrainerIdFromTable(const struct RematchTrainer *table, u16 firstBattleTrainerId)
+u16 GetRematchTrainerIdFromTable(const struct RematchTrainer *table, u16 firstBattleTrainerId)
 {
     const struct RematchTrainer *trainerEntry;
     s32 i;

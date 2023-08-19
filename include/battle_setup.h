@@ -65,5 +65,7 @@ void ShouldTryGetTrainerScript(void);
 u16 CountBattledRematchTeams(u16 trainerId);
 void SetBattledTrainerFlag(void);
 s32 TrainerIdToRematchTableId(const struct RematchTrainer *table, u16 trainerId);
+s32 FirstBattleTrainerIdToRematchTableId(const struct RematchTrainer *table, u16 trainerId);
+u16 GetRematchTrainerIdFromTable(const struct RematchTrainer *table, u16 firstBattleTrainerId);
 
 #endif // GUARD_BATTLE_SETUP_H

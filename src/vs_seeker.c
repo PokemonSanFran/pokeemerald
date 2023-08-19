@@ -443,7 +443,7 @@ static u8 GetVsSeekerResponseInArea(void)
                 vsSeekerIdx++;
                 continue;
             }
-            rematchTrainerIdx = GetNextAvailableRematchTrainer(gRematchTable, trainerIdx, &unusedIdx);
+            rematchTrainerIdx = GetRematchTrainerIdFromTable(gRematchTable,trainerIdx);
             if (rematchTrainerIdx == 0)
             {
                 StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerNoRematch);
@@ -770,10 +770,9 @@ static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTa
 {
     int i, j;
 
-    for (i = 0; i < REMATCH_TABLE_ENTRIES; i++)
-    {
-        if (gRematchTable[i].trainerIds[0] == trainerFlagNo)
-        {
+    i = FirstBattleTrainerIdToRematchTableId(gRematchTable,trainerFlagNo);
+
+    if (gRematchTable[i].trainerIds[0] == trainerFlagNo)
             *idxPtr = i;
             for (j = 1; j < 6; j++)
             {
@@ -786,10 +785,7 @@ static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTa
                 return j;
             }
             return j - 1;
-        }
-    }
 
-    *idxPtr = 0;
     return 0;
 }
 
@@ -802,7 +798,7 @@ static u8 GetRematchableTrainerLocalId(void)
     {
         if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]) == 1)
         {
-            if (HasTrainerBeenFought(sVsSeeker->trainerInfo[i].trainerIdx) != 1 || GetNextAvailableRematchTrainer(gRematchTable, sVsSeeker->trainerInfo[i].trainerIdx, &idx))
+            if (HasTrainerBeenFought(sVsSeeker->trainerInfo[i].trainerIdx) != 1 || GetRematchTrainerIdFromTable(gRematchTable, sVsSeeker->trainerInfo[i].trainerIdx))
                 return sVsSeeker->trainerInfo[i].localId;
         }
     }
@@ -853,7 +849,7 @@ static void StartAllRespondantIdleMovements(void)
                 if (ObjectEventIdIsSane(sVsSeeker->trainerInfo[j].objectEventId) == 1)
                     SetTrainerMovementType(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
                 TryOverrideTemplateCoordsForObjectEvent(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
-                gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[j].localId] = GetNextAvailableRematchTrainer(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx, &dummy);
+                gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[j].localId] = GetRematchTrainerIdFromTable(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx);
             }
         }
     }
