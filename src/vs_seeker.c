@@ -109,7 +109,6 @@ static int GetRematchIdx(u16 trainerFlagIdx);
 static bool32 IsThisTrainerRematchable(u32 localId);
 static void ClearAllTrainerRematchStates(void);
 static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
-static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTable, u16 trainerFlagNo, u8 * idxPtr);
 static u8 GetRematchableTrainerLocalId(void);
 static void StartTrainerObjectMovementScript(struct VsSeekerTrainerInfo * trainerInfo, const u8 * script);
 static u8 GetCurVsSeekerResponse(s32 vsSeekerIdx, u16 trainerIdx);
@@ -457,7 +456,7 @@ static u8 GetVsSeekerResponseInArea(void)
                     rval = 100; // Definitely yes
                 else if (response == VSSEEKER_SINGLE_RESP_NO)
                     rval = 0; // Definitely no
-                // Otherwise it's a 70% chance to want a rematch
+                              // Otherwise it's a 70% chance to want a rematch
                 if (rval < 30)
                 {
                     StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerNoRematch);
@@ -753,29 +752,6 @@ static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo)
         && ObjectEventIdIsSane(trainerInfo->objectEventId) == 1)
         return TRUE;
     return FALSE;
-}
-
-static u8 GetNextAvailableRematchTrainer(const struct RematchTrainer *gRematchTable, u16 trainerFlagNo, u8 * idxPtr)
-{
-    int i, j;
-
-    i = FirstBattleTrainerIdToRematchTableId(gRematchTable,trainerFlagNo);
-
-    if (gRematchTable[i].trainerIds[0] == trainerFlagNo)
-            *idxPtr = i;
-            for (j = 1; j < 6; j++)
-            {
-                if (gRematchTable[i].trainerIds[j] == 0)
-                    return j - 1;
-                if (gRematchTable[i].trainerIds[j] == 0xffff)
-                    continue;
-                if (HasTrainerBeenFought(gRematchTable[i].trainerIds[j]))
-                    continue;
-                return j;
-            }
-            return j - 1;
-
-    return 0;
 }
 
 static u8 GetRematchableTrainerLocalId(void)
