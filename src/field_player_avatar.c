@@ -148,6 +148,7 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 static bool8 CanStartCuttingTree(s16, s16, u8);
 static bool8 CanPushBoulder(void);
 static bool8 CanStartSurfing(s16, s16, u8);
+static bool8 CanStartSmashingRock(s16, s16, u8);
 static void CreateStartSurfingTask(u8);
 static void Task_StartSurfingInit(u8);
 static void Task_WaitStartSurfing(u8);
@@ -709,6 +710,13 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         LockPlayerFieldControls();
         ScriptContext_SetupScript(EventScript_CutTreeDown);
         return COLLISION_START_CUT;
+    }
+
+    if(CanStartSmashingRock(x,y,direction))
+    {
+        LockPlayerFieldControls();
+        ScriptContext_SetupScript(EventScript_SmashRock);
+        return COLLISION_START_SMASH;
     }
 
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction))
@@ -2390,6 +2398,20 @@ static void Task_WaitStartSurfing(u8 taskId)
         ScriptContext_Stop();
         DestroyTask(taskId);
     }
+}
+
+static bool8 CanStartSmashingRock(s16 x, s16 y, u8 direction)
+{
+    if (
+        CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_BREAKABLE_ROCK)
+        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM06)
+        && FlagGet(FLAG_BADGE03_GET)
+        //&& CheckBagHasItem(ITEM_HAMMER,1) // When this line is uncommmented, the player will need this item to automatically perform
+       )
+        return TRUE;
+
+    return FALSE;
 }
 
 static bool8 CanStartClimbingWaterfall(u8 direction)

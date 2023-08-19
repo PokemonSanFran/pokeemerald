@@ -283,7 +283,6 @@ enum
     COLLISION_IMPASSABLE,
     COLLISION_ELEVATION_MISMATCH,
     COLLISION_OBJECT_EVENT,
-    COLLISION_START_SURFING, // frictionless_field_moves
     COLLISION_STOP_SURFING,
     COLLISION_LEDGE_JUMP,
     COLLISION_PUSHED_BOULDER,
@@ -293,7 +292,11 @@ enum
     COLLISION_ISOLATED_HORIZONTAL_RAIL,
     COLLISION_VERTICAL_RAIL,
     COLLISION_HORIZONTAL_RAIL,
-    COLLISION_START_CUT, // frictionless_field_moves
+    //Start frictionless_field_moves Branch
+    COLLISION_START_SURFING,
+    COLLISION_START_CUT,
+    COLLISION_START_SMASH
+    //End frictionless_field_moves Branch
 };
 
 // player running states
