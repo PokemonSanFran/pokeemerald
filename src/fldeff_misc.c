@@ -490,7 +490,7 @@ static void Task_ComputerScreenCloseEffect(u8 taskId)
 #undef tBlendCnt
 #undef tBlendY
 
-static void SetCurrentSecretBase(void)
+void SetCurrentSecretBase(void) // frictionless_field_moves Branch made non-static
 {
     SetCurSecretBaseIdFromPosition(&gPlayerFacingPosition, gMapHeader.events);
     TrySetCurSecretBaseIndex();
@@ -652,6 +652,7 @@ static void FieldCallback_SecretBaseTree(void)
 bool8 FldEff_UseSecretPowerTree(void)
 {
     u8 taskId = CreateFieldMoveTask();
+    // frictionless_field_moves if we comment out the above line and replace it with CreateFieldMoveNoMonTask, the sequence plays without pokemon or pose
 
     gTasks[taskId].data[8] = (u32)StartSecretBaseTreeFieldEffect >> 16;
     gTasks[taskId].data[9] = (u32)StartSecretBaseTreeFieldEffect;

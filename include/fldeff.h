@@ -50,4 +50,5 @@ u8 CreateFieldMoveTask(void);
 bool8 SetUpFieldMove_RockSmash(void);
 bool8 FldEff_UseRockSmash(void);
 
+u8 CreateFieldMoveNoMonTask(void); // frictionless_field_moves Branch
 #endif // GUARD_FLDEFF_H

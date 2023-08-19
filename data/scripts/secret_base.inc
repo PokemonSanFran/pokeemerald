@@ -185,6 +185,49 @@ SecretBase_EventScript_EnterPlayersBase::
 	waitstate
 	end
 
+// Start frictionless_field_moves Branch
+SecretBaseNoMon_EventScript_CheckEntrance::
+	special GetSecretBaseTypeInFrontOfPlayer
+	special CheckPlayerHasSecretBase
+	goto_if_eq VAR_RESULT, TRUE, SecretBaseNoMon_EventScript_AlreadyHasSecretBase
+	setfieldeffectargument 0, VAR_RESULT
+	buffermovename STR_VAR_2, MOVE_SECRET_POWER
+	goto_if_eq VAR_0x8007, SECRET_BASE_RED_CAVE, SecretBase_EventScript_Cave
+	goto_if_eq VAR_0x8007, SECRET_BASE_BROWN_CAVE, SecretBase_EventScript_Cave
+	goto_if_eq VAR_0x8007, SECRET_BASE_BLUE_CAVE, SecretBase_EventScript_Cave
+	goto_if_eq VAR_0x8007, SECRET_BASE_YELLOW_CAVE, SecretBase_EventScript_Cave
+	goto_if_eq VAR_0x8007, SECRET_BASE_TREE, SecretBase_EventScript_Tree
+	goto_if_eq VAR_0x8007, SECRET_BASE_SHRUB, SecretBase_EventScript_Shrub
+	end
+
+SecretBaseNoMon_EventScript_AlreadyHasSecretBase::
+	lockall
+	special GetSecretBaseNearbyMapName
+	msgbox SecretBase_Text_WouldYouLikeToMoveBases, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, SecretBase_EventScript_CancelOnEntrance
+	msgbox SecretBase_Text_AllDecorationsWillBeReturned, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, SecretBase_EventScript_CancelOnEntrance
+	fadescreenswapbuffers FADE_TO_BLACK
+	special MoveOutOfSecretBaseFromOutside
+	closemessage
+	fadescreenswapbuffers FADE_FROM_BLACK
+	msgbox SecretBase_Text_MovingCompletedUseSecretPower, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, SecretBase_EventScript_CancelOnEntrance
+	bufferpartymonnick STR_VAR_1, VAR_0x8004
+	buffermovename STR_VAR_2, MOVE_SECRET_POWER
+	msgbox Text_MonUsedFieldMove, MSGBOX_DEFAULT
+	closemessage
+	closemessage
+	goto_if_eq VAR_0x8007, SECRET_BASE_RED_CAVE, SecretBase_EventScript_CaveUseSecretPower
+	goto_if_eq VAR_0x8007, SECRET_BASE_BROWN_CAVE, SecretBase_EventScript_CaveUseSecretPower
+	goto_if_eq VAR_0x8007, SECRET_BASE_BLUE_CAVE, SecretBase_EventScript_CaveUseSecretPower
+	goto_if_eq VAR_0x8007, SECRET_BASE_YELLOW_CAVE, SecretBase_EventScript_CaveUseSecretPower
+	goto_if_eq VAR_0x8007, SECRET_BASE_TREE, SecretBase_EventScript_TreeUseSecretPower
+	goto_if_eq VAR_0x8007, SECRET_BASE_SHRUB, SecretBase_EventScript_ShrubUseSecretPower
+	releaseall
+	end
+// End frictionless_field_moves Branch
+
 SecretBase_EventScript_AlreadyHasSecretBase::
 	checkpartymove MOVE_SECRET_POWER
 	goto_if_eq VAR_RESULT, PARTY_SIZE, SecretBase_EventScript_NoSecretPower

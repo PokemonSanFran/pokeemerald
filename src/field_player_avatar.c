@@ -10,6 +10,7 @@
 #include "fieldmap.h"
 #include "event_scripts.h" // frictionless_field_moves Branch
 #include "fldeff.h" // frictionless_field_moves Branch
+#include "fldeff_misc.h" // frictionless_field_moves Branch
 #include "menu.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
@@ -149,6 +150,7 @@ static bool8 CanStartCuttingTree(s16, s16, u8);
 static bool8 CanPushBoulder(void);
 static bool8 CanStartSurfing(s16, s16, u8);
 static bool8 CanStartSmashingRock(s16, s16, u8);
+static bool8 CanUseSecretPower(s16, s16, u8);
 static void CreateStartSurfingTask(u8);
 static void Task_StartSurfingInit(u8);
 static void Task_WaitStartSurfing(u8);
@@ -704,7 +706,7 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStopSurfing(x, y, direction))
         return COLLISION_STOP_SURFING;
 
-    // Start frictionless_field_moves
+    // Start frictionless_field_moves Branch
     if(CanStartCuttingTree(x,y,direction))
     {
         LockPlayerFieldControls();
@@ -719,10 +721,17 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         return COLLISION_START_SMASH;
     }
 
+    if(CanUseSecretPower(x,y,direction))
+    {
+        SetCurrentSecretBase();
+        LockPlayerFieldControls();
+        ScriptContext_SetupScript(SecretBaseNoMon_EventScript_CheckEntrance);
+    }
+
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction))
         return COLLISION_START_SURFING;
 
-    // End frictionless_field_moves
+    // End frictionless_field_moves Branch
 
     if (ShouldJumpLedge(x, y, direction))
     {
@@ -2428,6 +2437,29 @@ static bool8 CanStartClimbingWaterfall(u8 direction)
 
     return FALSE;
 }
+
+static bool8 CanUseSecretPower(s16 x, s16 y, u8 direction)
+{
+    u32 mb;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
+    mb = MapGridGetMetatileBehaviorAt(gPlayerFacingPosition.x, gPlayerFacingPosition.y);
+
+    if (
+        (
+         MetatileBehavior_IsSecretBaseCave(mb)
+         || MetatileBehavior_IsSecretBaseTree(mb)
+         || MetatileBehavior_IsSecretBaseShrub(mb)
+        )
+        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+        && PartyHasMonLearnsKnowsFieldMove(ITEM_TM43)
+        //&& CheckBagHasItem(ITEM_EXCAVATOR,1) // When this line is uncommmented, the player will need this item to automatically perform
+       )
+        return TRUE;
+
+    return FALSE;
+}
+
 
 static bool8 (*const sWaterfallWithoutMonFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
 {
