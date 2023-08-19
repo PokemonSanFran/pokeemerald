@@ -66,6 +66,8 @@
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
+#include "field_player_avatar.h" // frictionless_field_moves Branch
+#include "constants/items.h"// frictionless_field_moves Branch
 
 struct CableClubPlayer
 {
@@ -967,6 +969,29 @@ bool32 Overworld_IsBikingAllowed(void)
         return TRUE;
 }
 
+// Start frictionless_field_moves Branch
+bool32 CanUseFlashOnMap(void)
+{
+    if(
+        gMapHeader.cave == TRUE
+        && !FlagGet(FLAG_SYS_USE_FLASH)
+        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM05)
+        && FlagGet(FLAG_BADGE02_GET)
+        && (GetFlashLevel() == (gMaxFlashLevel - 1))
+        //&& CheckBagHasItem(ITEM_LANTERN,1) // When this line is uncommmented, the player will need this item to automatically perform
+      ) return TRUE;
+
+    return FALSE;
+}
+
+void UseFlashOnMap(void)
+{
+    PlaySE(SE_M_REFLECT);
+    FlagSet(FLAG_SYS_USE_FLASH);
+    ScriptContext_SetupScript(EventScript_UseFlash);
+}
+// End frictionless_field_moves Branch
+
 // Flash level of 0 is fully bright
 // Flash level of 1 is the largest flash radius
 // Flash level of 7 is the smallest flash radius
@@ -979,6 +1004,9 @@ void SetDefaultFlashLevel(void)
         gSaveBlock1Ptr->flashLevel = 1;
     else
         gSaveBlock1Ptr->flashLevel = gMaxFlashLevel - 1;
+
+    if (CanUseFlashOnMap()) // frictionless_field_moves Branch
+        UseFlashOnMap(); // frictionless_field_moves Branch
 }
 
 void SetFlashLevel(s32 flashLevel)
