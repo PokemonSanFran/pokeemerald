@@ -187,6 +187,18 @@ static void Task_ResetObjectsRematchWantedState(u8 taskId)
     }
 }
 
+u16 VsSeekerConvertLocalIdToTrainerId(u16 localId)
+{
+    u32 localIdIndex = 0;
+
+    for (localIdIndex = 0; localIdIndex < OBJECT_EVENTS_COUNT ; localIdIndex++)
+    {
+        if (sVsSeeker->trainerInfo[localIdIndex].localId == localId)
+            return sVsSeeker->trainerInfo[localIdIndex].trainerIdx;
+    }
+    return -1;
+}
+
 void VsSeekerResetObjectMovementAfterChargeComplete(void)
 {
     struct ObjectEventTemplate * templates = gSaveBlock1Ptr->objectEventTemplates;
@@ -464,7 +476,8 @@ static u8 GetVsSeekerResponseInArea(void)
                 }
                 else
                 {
-                    gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = rematchTrainerIdx;
+                    //SetRematchIdForTrainer(gRematchTable,trainerIdx);
+                    gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].trainerIdx] = rematchTrainerIdx;
                     ShiftStillObjectEventCoords(&gObjectEvents[sVsSeeker->trainerInfo[vsSeekerIdx].objectEventId]);
                     StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerRematch);
                     sVsSeeker->trainerIdxArray[sVsSeeker->numRematchableTrainers] = trainerIdx;
@@ -492,6 +505,7 @@ static u8 GetVsSeekerResponseInArea(void)
 void ClearRematchStateByTrainerId(void)
 {
     u8 objEventId = 0;
+    u8 holding = 0;
     struct ObjectEventTemplate *objectEventTemplates = gSaveBlock1Ptr->objectEventTemplates;
     int vsSeekerDataIdx = TrainerIdToRematchTableId(gRematchTable, gTrainerBattleOpponent_A);
 
@@ -511,6 +525,9 @@ void ClearRematchStateByTrainerId(void)
                 objectEvent = &gObjectEvents[objEventId];
                 GetRandomFaceDirectionMovementType(&objectEventTemplates[i]); // You are using this function incorrectly.  Please consult the manual.
                 TryOverrideTemplateCoordsForObjectEvent(objectEvent, sFaceDirectionMovementTypeByFacingDirection[objectEvent->facingDirection]);
+
+
+
                 gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId] = 0;
                 if (gSelectedObjectEvent == objEventId)
                     objectEvent->movementType = sFaceDirectionMovementTypeByFacingDirection[objectEvent->facingDirection];
