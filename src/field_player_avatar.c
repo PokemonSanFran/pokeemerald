@@ -146,6 +146,7 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
 //Start frictionless_field_moves Branch
 static bool8 CanStartCuttingTree(s16, s16, u8);
+static bool8 CanPushBoulder(void);
 static bool8 CanStartSurfing(s16, s16, u8);
 static void CreateStartSurfingTask(u8);
 static void Task_StartSurfingInit(u8);
@@ -702,6 +703,7 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStopSurfing(x, y, direction))
         return COLLISION_STOP_SURFING;
 
+    // Start frictionless_field_moves
     if(CanStartCuttingTree(x,y,direction))
     {
         LockPlayerFieldControls();
@@ -709,14 +711,22 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         return COLLISION_START_CUT;
     }
 
-    if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction)) // frictionless_field_moves Branch
-        return COLLISION_START_SURFING; // frictionless_field_moves Branch
+    if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction))
+        return COLLISION_START_SURFING;
+
+    // End frictionless_field_moves
 
     if (ShouldJumpLedge(x, y, direction))
     {
         IncrementGameStat(GAME_STAT_JUMPED_DOWN_LEDGES);
         return COLLISION_LEDGE_JUMP;
     }
+
+    // Start frictionless_field_moves
+    if(CanPushBoulder())
+        FlagSet(FLAG_SYS_USE_STRENGTH);
+
+    // End frictionless_field_moves
     if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
         return COLLISION_PUSHED_BOULDER;
 
@@ -2293,6 +2303,18 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *object, s16 *delayTimer)
 
 
 //Start frictionless_field_moves Branch
+static bool8 CanPushBoulder(void)
+{
+    if(
+        PartyHasMonLearnsKnowsFieldMove(ITEM_HM04)
+        && FlagGet(FLAG_BADGE04_GET)
+        //&& CheckBagHasItem(ITEM_POWER_GLOVE,1) // When this line is uncommmented, the player will need this item to automatically perform
+      )
+        return TRUE;
+
+    return FALSE;
+}
+
 static bool8 CanStartCuttingTree(s16 x, s16 y, u8 direction)
 {
     if (
