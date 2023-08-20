@@ -71,6 +71,16 @@ static void Task_CloseCantUseKeyItemMessage(u8);
 static void SetDistanceOfClosestHiddenItem(u8, s16, s16);
 static void CB2_OpenPokeblockFromBag(void);
 
+// Start frictionless_field_moves Branch
+static void ItemUseOnFieldCB_Cut_Tool(u8);
+static void ItemUseOnFieldCB_Surf_Tool(u8);
+static void ItemUseOnFieldCB_Strength_Tool(u8);
+static void ItemUseOnFieldCB_RockSmash_Tool(u8);
+static void ItemUseOnFieldCB_Waterfall_Tool(u8);
+static void ItemUseOnFieldCB_Dive_Tool(u8);
+static void ItemUseOnFieldCB_SecretPower_Tool(u8);
+// End frictionless_field_moves Branch
+
 // EWRAM variables
 EWRAM_DATA static void(*sItemUseOnFieldCB)(u8 taskId) = NULL;
 
@@ -1127,4 +1137,50 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
     DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
 }
 
+//Start frictionless_field_moves Branch
+void ItemUseOutOfBattle_Cut_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Fly_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Surf_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Strength_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Flash_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_RockSmash_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Waterfall_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Dive_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_Teleport_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_SweetScent_Tool(u8 taskId)
+{
+	return;
+}
+void ItemUseOutOfBattle_SecretPower_Tool(u8 taskId)
+{
+	return;
+}
+//End frictionless_field_moves Branch
 #undef tUsingRegisteredKeyItem

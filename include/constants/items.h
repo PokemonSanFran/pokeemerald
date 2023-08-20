@@ -270,17 +270,19 @@
 #define ITEM_0F0 240
 #define ITEM_0F1 241
 #define ITEM_0F2 242
-#define ITEM_0F3 243
-#define ITEM_0F4 244
-#define ITEM_0F5 245
-#define ITEM_0F6 246
-#define ITEM_0F7 247
-#define ITEM_0F8 248
-#define ITEM_0F9 249
-#define ITEM_0FA 250
-#define ITEM_0FB 251
-#define ITEM_0FC 252
-#define ITEM_0FD 253
+// Start frictionless_field_moves Brancha
+#define ITEM_CUT_TOOL 243
+#define ITEM_FLY_TOOL 244
+#define ITEM_SURF_TOOL 245
+#define ITEM_STRENGTH_TOOL 246
+#define ITEM_FLASH_TOOL 247
+#define ITEM_ROCKSMASH_TOOL 248
+#define ITEM_WATERFALL_TOOL 249
+#define ITEM_DIVE_TOOL 250
+#define ITEM_TELEPORT_TOOL 251
+#define ITEM_SWEETSCENT_TOOL 252
+#define ITEM_SECRETPOWER_TOOL 253
+// End frictionless_field_moves Branch
 
 // Contest held items
 #define ITEM_RED_SCARF 254

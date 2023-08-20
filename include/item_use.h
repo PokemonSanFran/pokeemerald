@@ -34,4 +34,18 @@ void Task_UseDigEscapeRopeOnField(u8 taskId);
 u8 CanUseDigOrEscapeRopeOnCurMap(void);
 u8 CheckIfItemIsTMHMOrEvolutionStone(u16 itemId);
 
+// Start frictionless_field_moves Branch
+void ItemUseOutOfBattle_Cut_Tool(u8);
+void ItemUseOutOfBattle_Fly_Tool(u8);
+void ItemUseOutOfBattle_Surf_Tool(u8);
+void ItemUseOutOfBattle_Strength_Tool(u8);
+void ItemUseOutOfBattle_Flash_Tool(u8);
+void ItemUseOutOfBattle_RockSmash_Tool(u8);
+void ItemUseOutOfBattle_Waterfall_Tool(u8);
+void ItemUseOutOfBattle_Dive_Tool(u8);
+void ItemUseOutOfBattle_Teleport_Tool(u8);
+void ItemUseOutOfBattle_SweetScent_Tool(u8);
+void ItemUseOutOfBattle_SecretPower_Tool(u8);
+// End frictionless_field_moves Branch
+
 #endif // GUARD_ITEM_USE_H
