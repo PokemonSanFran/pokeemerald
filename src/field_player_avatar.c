@@ -11,6 +11,7 @@
 #include "event_scripts.h" // frictionless_field_moves Branch
 #include "fldeff.h" // frictionless_field_moves Branch
 #include "fldeff_misc.h" // frictionless_field_moves Branch
+#include "item.h" // frictionless_field_moves Branch
 #include "menu.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
@@ -146,7 +147,7 @@ static void AlignFishingAnimationFrames(void);
 static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
 //Start frictionless_field_moves Branch
-static bool8 CanStartCuttingTree(s16, s16, u8);
+static u32 CanStartCuttingTree(s16, s16, u8);
 static bool8 CanPushBoulder(void);
 static bool8 CanStartSurfing(s16, s16, u8);
 static bool8 CanStartSmashingRock(s16, s16, u8);
@@ -702,15 +703,29 @@ static u8 CheckForPlayerAvatarStaticCollision(u8 direction)
 
 u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u8 direction, u8 metatileBehavior)
 {
+    u32 fieldMoveStatus = 0;
+
     u8 collision = GetCollisionAtCoords(objectEvent, x, y, direction);
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStopSurfing(x, y, direction))
         return COLLISION_STOP_SURFING;
 
     // Start frictionless_field_moves Branch
-    if(CanStartCuttingTree(x,y,direction))
+    fieldMoveStatus = CanStartCuttingTree(x,y,direction);
+    if (fieldMoveStatus > FIELD_MOVE_FAIL)
     {
         LockPlayerFieldControls();
-        ScriptContext_SetupScript(EventScript_CutTreeDown);
+        gFieldEffectArguments[0] = gSpecialVar_Result;
+
+        if (FlagGet(FLAG_SYS_USE_CUT))
+            ScriptContext_SetupScript(EventScript_CutTreeDown);
+
+        else if (fieldMoveStatus == FIELD_MOVE_POKEMON)
+            ScriptContext_SetupScript(EventScript_UseCut);
+
+        else if (fieldMoveStatus == FIELD_MOVE_TOOL)
+            ScriptContext_SetupScript(EventScript_UseCutTool);
+
+        FlagSet(FLAG_SYS_USE_CUT);
         return COLLISION_START_CUT;
     }
 
@@ -730,7 +745,6 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
 
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction))
         return COLLISION_START_SURFING;
-
     // End frictionless_field_moves Branch
 
     if (ShouldJumpLedge(x, y, direction))
@@ -1355,22 +1369,42 @@ bool8 PartyHasMonWithSurf(void)
 }
 
 //Start frictionless_field_moves Branch
-bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine)
+bool32 PartyCanLearnMoveLevelUp(u16 species, u16 moveId)
 {
-    u32 i = 0, monMoveStatus = 0;
+    u32 i = 0;
+    for (i = 0; gLevelUpLearnsets[species][i] != LEVEL_UP_END; i++)
+    {
+        if ((gLevelUpLearnsets[species][i] & LEVEL_UP_MOVE_ID) == moveId)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+bool32 PartyHasMonLearnsKnowsFieldMove(u16 itemId)
+{
     struct Pokemon *mon;
+    u32 species = 0, i = 0;
+    u16 moveId = ItemIdToBattleMoveId(itemId);
+    gSpecialVar_Result = PARTY_SIZE;
+    gSpecialVar_0x8004 = 0;
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
         mon = &gPlayerParty[i];
+        species = GetMonData(mon,MON_DATA_SPECIES,NULL);
 
-        if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
+        if (species == SPECIES_NONE)
             break;
 
-        monMoveStatus = CanMonLearnTMTutor(mon, machine, 0);
-
-        if (monMoveStatus == ALREADY_KNOWS_MOVE || monMoveStatus == CAN_LEARN_MOVE)
+        if (PartyCanLearnMoveLevelUp(species, moveId)
+            || (CanMonLearnTMTutor(mon, itemId,0) == ALREADY_KNOWS_MOVE)
+            || (CanMonLearnTMTutor(mon, itemId,0) == CAN_LEARN_MOVE)
+           )
+        {
+            gSpecialVar_Result = i;
+            gSpecialVar_0x8004 = species;
             return TRUE;
+        }
     }
     return FALSE;
 }
@@ -2332,18 +2366,23 @@ static bool8 CanPushBoulder(void)
     return FALSE;
 }
 
-static bool8 CanStartCuttingTree(s16 x, s16 y, u8 direction)
+static u32 CanStartCuttingTree(s16 x, s16 y, u8 direction)
 {
-    if (
-        CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE)
-        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM01)
-        && FlagGet(FLAG_BADGE01_GET)
-        //&& CheckBagHasItem(ITEM_AXE,1) // When this line is uncommmented, the player will need this item to automatically perform
-       )
-        return TRUE;
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM01);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_CUT_TOOL,1);
 
-    return FALSE;
+    if (
+            CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE)
+            && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+            && (monHasMove || bagHasItem)
+            && FlagGet(FLAG_BADGE01_GET)
+       )
+
+    {
+        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+    }
+
+    return FIELD_MOVE_FAIL;
 }
 
 static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)

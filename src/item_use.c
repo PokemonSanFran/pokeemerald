@@ -1140,7 +1140,19 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
 //Start frictionless_field_moves Branch
 void ItemUseOutOfBattle_Cut_Tool(u8 taskId)
 {
-	return;
+    if (SetUpFieldMove_CutTool())
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_Cut_Tool;
+		SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+void ItemUseOnFieldCB_Cut_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    ScriptContext_SetupScript(EventScript_UseCutTool);
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Fly_Tool(u8 taskId)
 {

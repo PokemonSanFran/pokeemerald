@@ -2,7 +2,12 @@
 EventScript_CutTree::
 	lockall
 	goto_if_unset FLAG_BADGE01_GET, EventScript_CheckTreeCantCut
-	checkpartymove MOVE_CUT
+	//checkpartymove MOVE_CUT
+    // Start frictionless_field_moves Branch
+    checkitem ITEM_CUT_TOOL, 1
+    goto_if_eq VAR_RESULT, TRUE, EventScript_UseCutTool
+    checkpartylearnknowsfieldmove ITEM_HM01
+    // End frictionless_field_moves Branch
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CheckTreeCantCut
 	setfieldeffectargument 0, VAR_RESULT
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
@@ -24,7 +29,19 @@ EventScript_UseCut::
 	goto EventScript_CutTreeDown
 	end
 
+// Start frictionless_field_moves Branch
+@ Use cut with item
+EventScript_UseCutTool::
+    lockall
+	bufferitemname STR_VAR_2, ITEM_CUT_TOOL
+    msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
+    closemessage
+    goto EventScript_CutTreeDown
+	end
+// End frictionless_field_moves Branch
+
 EventScript_CutTreeDown::
+    setflag FLAG_SYS_USE_CUT
 	applymovement VAR_LAST_TALKED, Movement_CutTreeDown
 	waitmovement 0
 	removeobject VAR_LAST_TALKED
@@ -52,6 +69,9 @@ Text_WantToCut:
 
 Text_MonUsedFieldMove:
 	.string "{STR_VAR_1} used {STR_VAR_2}!$"
+
+Text_PlayerUsedFieldTool: // frictionless_field_moves Branch
+    .string "{PLAYER} used {STR_VAR_2}!$" // frictionless_field_moves Branch
 
 Text_CantCut:
 	.string "This tree looks like it can be\n"

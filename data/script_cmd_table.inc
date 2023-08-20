@@ -227,6 +227,7 @@ gScriptCmdTable::
 	.4byte ScrCmd_warpwhitefade                     @ 0xe0
 	.4byte ScrCmd_buffercontestname                 @ 0xe1
 	.4byte ScrCmd_bufferitemnameplural              @ 0xe2
+    .4byte ScrCmd_checkpartylearnknowsfieldmove     @ 0xe3 //frictionless_field_moves Branch
 
 gScriptCmdTableEnd::
 	.4byte ScrCmd_nop

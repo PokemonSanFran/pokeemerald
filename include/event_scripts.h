@@ -378,9 +378,12 @@ extern const u8 EventScript_UseFlash[];
 extern const u8 EventScript_UseCut[];
 extern const u8 EventScript_UseRockSmash[];
 
-extern const u8 EventScript_CutTreeDown[]; // frictionless_field_moves Branch
-extern const u8 EventScript_SmashRock[]; // frictionless_field_moves Branch
-extern const u8 SecretBaseNoMon_EventScript_CheckEntrance[]; // frictionless_field_moves Branch
+//Start frictionless_field_moves Branch
+extern const u8 EventScript_CutTreeDown[];
+extern const u8 EventScript_UseCutTool[];
+extern const u8 EventScript_SmashRock[];
+extern const u8 SecretBaseNoMon_EventScript_CheckEntrance[];
+//End frictionless_field_moves Branch
 
 //player pc
 extern const u8 LittlerootTown_BrendansHouse_2F_EventScript_TurnOffPlayerPC[];

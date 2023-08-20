@@ -66,4 +66,11 @@ u8 player_get_pos_including_state_based_drift(s16 *x, s16 *y);
 void StartFishing(u8 rod);
 bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine); // frictionless_field_moves Branch
 
+enum
+{
+    FIELD_MOVE_FAIL,
+    FIELD_MOVE_POKEMON,
+    FIELD_MOVE_TOOL
+};
+
 #endif // GUARD_FIELD_PLAYER_AVATAR_H

@@ -274,6 +274,26 @@ bool8 SetUpFieldMove_Cut(void)
         return ret;
     }
 }
+ // Start frictionless_field_moves Branch
+
+bool8 SetUpFieldMove_CutTool(void)
+{
+    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE) == TRUE)
+    {
+        // Standing in front of cuttable tree.
+        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+        gPostMenuFieldCallback = FieldCallback_CutTreeWithTool;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void FieldCallback_CutTreeWithTool(void)
+{
+    ScriptContext_SetupScript(EventScript_UseCutTool);
+}
+
+// End frictionless_field_moves Branch
 
 static void FieldCallback_CutGrass(void)
 {

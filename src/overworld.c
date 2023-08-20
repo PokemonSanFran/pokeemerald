@@ -378,6 +378,12 @@ void Overworld_ResetStateAfterFly(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
+    // Start frictionless_field_moves Branch
+    FlagClear(FLAG_SYS_USE_CUT);
+    FlagClear(FLAG_SYS_USE_SURF);
+    FlagClear(FLAG_SYS_USE_ROCK_SMASH);
+    FlagClear(FLAG_SYS_USE_WATERFALL);
+    // End frictionless_field_moves Branch
 }
 
 void Overworld_ResetStateAfterTeleport(void)
@@ -388,6 +394,12 @@ void Overworld_ResetStateAfterTeleport(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
+    // Start frictionless_field_moves Branch
+    FlagClear(FLAG_SYS_USE_CUT);
+    FlagClear(FLAG_SYS_USE_SURF);
+    FlagClear(FLAG_SYS_USE_ROCK_SMASH);
+    FlagClear(FLAG_SYS_USE_WATERFALL);
+    // End frictionless_field_moves Branch
     RunScriptImmediately(EventScript_ResetMrBriney);
 }
 
@@ -399,6 +411,12 @@ void Overworld_ResetStateAfterDigEscRope(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
+    // Start frictionless_field_moves Branch
+    FlagClear(FLAG_SYS_USE_CUT);
+    FlagClear(FLAG_SYS_USE_SURF);
+    FlagClear(FLAG_SYS_USE_ROCK_SMASH);
+    FlagClear(FLAG_SYS_USE_WATERFALL);
+    // End frictionless_field_moves Branch
 }
 
 static void Overworld_ResetStateAfterWhiteOut(void)
@@ -409,6 +427,12 @@ static void Overworld_ResetStateAfterWhiteOut(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
+    // Start frictionless_field_moves Branch
+    FlagClear(FLAG_SYS_USE_CUT);
+    FlagClear(FLAG_SYS_USE_SURF);
+    FlagClear(FLAG_SYS_USE_ROCK_SMASH);
+    FlagClear(FLAG_SYS_USE_WATERFALL);
+    // End frictionless_field_moves Branch
     // If you were defeated by Kyogre/Groudon and the step counter has
     // maxed out, end the abnormal weather.
     if (VarGet(VAR_SHOULD_END_ABNORMAL_WEATHER) == 1)
