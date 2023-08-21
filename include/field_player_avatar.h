@@ -64,7 +64,12 @@ bool32 IsPlayerSpinExitActive(void);
 void SetPlayerInvisibility(bool8 invisible);
 u8 player_get_pos_including_state_based_drift(s16 *x, s16 *y);
 void StartFishing(u8 rod);
-bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine); // frictionless_field_moves Branch
+// Start frictionless_field_moves Branch
+bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine);
+void CreateStartSurfingTask();
+u32 CanStartSurfing(s16, s16, u8);
+u32 CanPushBoulder(void);
+// End frictionless_field_moves
 
 enum
 {

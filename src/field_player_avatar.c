@@ -148,11 +148,8 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
 //Start frictionless_field_moves Branch
 static u32 CanStartCuttingTree(s16, s16, u8);
-static bool8 CanPushBoulder(void);
-static bool8 CanStartSurfing(s16, s16, u8);
 static bool8 CanStartSmashingRock(s16, s16, u8);
 static bool8 CanUseSecretPower(s16, s16, u8);
-static void CreateStartSurfingTask(u8);
 static void Task_StartSurfingInit(u8);
 static void Task_WaitStartSurfing(u8);
 
@@ -743,8 +740,24 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         ScriptContext_SetupScript(SecretBaseNoMon_EventScript_CheckEntrance);
     }
 
-    if (collision == COLLISION_ELEVATION_MISMATCH && CanStartSurfing(x, y, direction))
+    fieldMoveStatus = CanStartSurfing(x,y,direction);
+
+    if ((collision == COLLISION_ELEVATION_MISMATCH) && (fieldMoveStatus > FIELD_MOVE_FAIL))
+    {
+        LockPlayerFieldControls();
+        gFieldEffectArguments[0] = gSpecialVar_Result;
+        if (FlagGet(FLAG_SYS_USE_SURF))
+            CreateStartSurfingTask();
+
+        else if (fieldMoveStatus == FIELD_MOVE_POKEMON)
+            ScriptContext_SetupScript(EventScript_UseSurfWithMon);
+
+        else if (fieldMoveStatus == FIELD_MOVE_TOOL)
+            ScriptContext_SetupScript(EventScript_UseSurfToolMessage);
+
+        FlagSet(FLAG_SYS_USE_SURF);
         return COLLISION_START_SURFING;
+    }
     // End frictionless_field_moves Branch
 
     if (ShouldJumpLedge(x, y, direction))
@@ -754,10 +767,21 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     }
 
     // Start frictionless_field_moves
-    if(CanPushBoulder())
-        FlagSet(FLAG_SYS_USE_STRENGTH);
+    fieldMoveStatus = CanPushBoulder();
+    if ((fieldMoveStatus > FIELD_MOVE_FAIL) && (!FlagGet(FLAG_SYS_USE_STRENGTH)))
+    {
+        LockPlayerFieldControls();
+        gFieldEffectArguments[0] = gSpecialVar_Result;
 
+        if (fieldMoveStatus == FIELD_MOVE_POKEMON)
+            ScriptContext_SetupScript(EventScript_UseStrength);
+
+        else if (fieldMoveStatus == FIELD_MOVE_TOOL)
+            ScriptContext_SetupScript(EventScript_ActivateStrengthTool);
+
+    }
     // End frictionless_field_moves
+
     if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
         return COLLISION_PUSHED_BOULDER;
 
@@ -2354,16 +2378,20 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *object, s16 *delayTimer)
 
 
 //Start frictionless_field_moves Branch
-static bool8 CanPushBoulder(void)
+u32 CanPushBoulder(void)
 {
-    if(
-        PartyHasMonLearnsKnowsFieldMove(ITEM_HM04)
-        && FlagGet(FLAG_BADGE04_GET)
-        //&& CheckBagHasItem(ITEM_POWER_GLOVE,1) // When this line is uncommmented, the player will need this item to automatically perform
-      )
-        return TRUE;
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM04);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_STRENGTH_TOOL,1);
 
-    return FALSE;
+    if (
+        CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_PUSHABLE_BOULDER)
+        && (monHasMove || bagHasItem)
+        && FlagGet(FLAG_BADGE04_GET)
+       )
+    {
+        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+    }
+    return FIELD_MOVE_FAIL;
 }
 
 static u32 CanStartCuttingTree(s16 x, s16 y, u8 direction)
@@ -2385,25 +2413,24 @@ static u32 CanStartCuttingTree(s16 x, s16 y, u8 direction)
     return FIELD_MOVE_FAIL;
 }
 
-static bool8 CanStartSurfing(s16 x, s16 y, u8 direction)
+u32 CanStartSurfing(s16 x, s16 y, u8 direction)
 {
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM02);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_SURF_TOOL,1);
+
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)){
         if (
                 IsPlayerFacingSurfableFishableWater()
                 && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-                && PartyHasMonLearnsKnowsFieldMove(ITEM_HM03)
+                && (monHasMove || bagHasItem)
                 && FlagGet(FLAG_BADGE05_GET)
-                //&& CheckBagHasItem(ITEM_SURFBOARD,1) // When this line is uncommmented, the player will need this item to automatically perform
            )
-        {
-            CreateStartSurfingTask(direction);
-            return TRUE;
-        }
+            return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
     }
-    return FALSE;
+    return FIELD_MOVE_FAIL;
 }
 
-static void CreateStartSurfingTask(u8 direction)
+void CreateStartSurfingTask()
 {
     u8 taskId;
 
@@ -2414,7 +2441,7 @@ static void CreateStartSurfingTask(u8 direction)
     gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_SURFING;
     gPlayerAvatar.preventStep = TRUE;
     taskId = CreateTask(Task_StartSurfingInit,0);
-    gTasks[taskId].data[0] = direction;
+    gTasks[taskId].data[0] = GetPlayerFacingDirection();
     Task_StartSurfingInit(taskId);
 }
 

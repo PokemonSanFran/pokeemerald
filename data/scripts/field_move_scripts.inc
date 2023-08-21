@@ -71,7 +71,7 @@ Text_MonUsedFieldMove:
 	.string "{STR_VAR_1} used {STR_VAR_2}!$"
 
 Text_PlayerUsedFieldTool: // frictionless_field_moves Branch
-    .string "{PLAYER} used {STR_VAR_2}!$" // frictionless_field_moves Branch
+    .string "{PLAYER} used {STR_VAR_2}!$" @ frictionless_field_moves Branch
 
 Text_CantCut:
 	.string "This tree looks like it can be\n"

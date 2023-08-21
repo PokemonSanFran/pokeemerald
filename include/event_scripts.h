@@ -381,7 +381,14 @@ extern const u8 EventScript_UseRockSmash[];
 //Start frictionless_field_moves Branch
 extern const u8 EventScript_CutTreeDown[];
 extern const u8 EventScript_UseCutTool[];
+
+extern const u8 EventScript_UseSurfWithMon[];
+extern const u8 EventScript_UseSurfToolMessage[];
+
+extern const u8 EventScript_ActivateStrengthTool[];
+
 extern const u8 EventScript_SmashRock[];
+
 extern const u8 SecretBaseNoMon_EventScript_CheckEntrance[];
 //End frictionless_field_moves Branch
 

@@ -41,6 +41,7 @@
 #include "constants/item_effects.h"
 #include "constants/items.h"
 #include "constants/songs.h"
+#include "fldeff.h" // Start frictionless_field_moves Branch
 
 static void SetUpItemUseCallback(u8);
 static void FieldCB_UseItemOnField(void);
@@ -1160,11 +1161,29 @@ void ItemUseOutOfBattle_Fly_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Surf_Tool(u8 taskId)
 {
-	return;
+    if (IsPlayerFacingSurfableFishableWater())
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_Surf_Tool;
+        SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+void ItemUseOnFieldCB_Surf_Tool(u8 taskId)
+{
+    ScriptContext_SetupScript(EventScript_UseSurfToolMessage);
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Strength_Tool(u8 taskId)
 {
-	return;
+    sItemUseOnFieldCB = ItemUseOnFieldCB_Strength_Tool;
+    SetUpItemUseOnFieldCallback(taskId);
+}
+void ItemUseOnFieldCB_Strength_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    ScriptContext_SetupScript(EventScript_ActivateStrengthTool);
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Flash_Tool(u8 taskId)
 {

@@ -1386,10 +1386,13 @@
 #define FLAG_UNUSED_0x881                           (SYSTEM_FLAGS + 0x21) // Unused Flag
 #define FLAG_UNUSED_0x882                           (SYSTEM_FLAGS + 0x22) // Unused Flag
 #define FLAG_UNUSED_0x883                           (SYSTEM_FLAGS + 0x23) // Unused Flag
-#define FLAG_SYS_USE_CUT                            (SYSTEM_FLAGS + 0x24) // frictionless_field_moves Branch
-#define FLAG_SYS_USE_SURF                           (SYSTEM_FLAGS + 0x25) // frictionless_field_moves Branch
-#define FLAG_SYS_USE_ROCK_SMASH                     (SYSTEM_FLAGS + 0x26) // frictionless_field_moves Branch
-#define FLAG_SYS_USE_WATERFALL                      (SYSTEM_FLAGS + 0x27) // frictionless_field_moves Branch
+
+// Start frictionless_field_moves Branch
+#define FLAG_SYS_USE_CUT                            (SYSTEM_FLAGS + 0x24)
+#define FLAG_SYS_USE_SURF                           (SYSTEM_FLAGS + 0x25)
+#define FLAG_SYS_USE_ROCK_SMASH                     (SYSTEM_FLAGS + 0x26)
+#define FLAG_SYS_USE_WATERFALL                      (SYSTEM_FLAGS + 0x27)
+// End frictionless_field_moves Branch
 
 #define FLAG_SYS_USE_FLASH                          (SYSTEM_FLAGS + 0x28)
 #define FLAG_SYS_USE_STRENGTH                       (SYSTEM_FLAGS + 0x29)
