@@ -148,7 +148,6 @@ static u8 TrySpinPlayerForWarp(struct ObjectEvent *, s16 *);
 
 //Start frictionless_field_moves Branch
 static u32 CanStartCuttingTree(s16, s16, u8);
-static bool8 CanStartSmashingRock(s16, s16, u8);
 static bool8 CanUseSecretPower(s16, s16, u8);
 static void Task_StartSurfingInit(u8);
 static void Task_WaitStartSurfing(u8);
@@ -726,10 +725,20 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         return COLLISION_START_CUT;
     }
 
-    if(CanStartSmashingRock(x,y,direction))
+    fieldMoveStatus = CanStartSmashingRock(x,y,direction);
+    if (fieldMoveStatus > FIELD_MOVE_FAIL)
     {
         LockPlayerFieldControls();
-        ScriptContext_SetupScript(EventScript_SmashRock);
+        gFieldEffectArguments[0] = gSpecialVar_Result;
+        if (FlagGet(FLAG_SYS_USE_ROCK_SMASH))
+            ScriptContext_SetupScript(EventScript_SmashRock);
+
+        else if (fieldMoveStatus == FIELD_MOVE_POKEMON)
+            ScriptContext_SetupScript(EventScript_UseRockSmash);
+
+        else if (fieldMoveStatus == FIELD_MOVE_TOOL)
+            ScriptContext_SetupScript(EventScript_UseRockSmashTool);
+
         return COLLISION_START_SMASH;
     }
 
@@ -2474,18 +2483,23 @@ static void Task_WaitStartSurfing(u8 taskId)
     }
 }
 
-static bool8 CanStartSmashingRock(s16 x, s16 y, u8 direction)
+bool8 CanStartSmashingRock(s16 x, s16 y, u8 direction)
 {
-    if (
-        CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_BREAKABLE_ROCK)
-        && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM06)
-        && FlagGet(FLAG_BADGE03_GET)
-        //&& CheckBagHasItem(ITEM_HAMMER,1) // When this line is uncommmented, the player will need this item to automatically perform
-       )
-        return TRUE;
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM06);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_ROCKSMASH_TOOL,1);
 
-    return FALSE;
+    if (
+            CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_BREAKABLE_ROCK)
+            && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+            && (monHasMove || bagHasItem)
+            && FlagGet(FLAG_BADGE03_GET)
+       )
+
+    {
+        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+    }
+
+    return FIELD_MOVE_FAIL;
 }
 
 static bool8 CanStartClimbingWaterfall(u8 direction)

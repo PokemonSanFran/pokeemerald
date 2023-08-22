@@ -41,7 +41,10 @@
 #include "constants/item_effects.h"
 #include "constants/items.h"
 #include "constants/songs.h"
-#include "fldeff.h" // Start frictionless_field_moves Branch
+//Start frictionless_field_moves Branch
+#include "fldeff.h"
+#include "overworld.h"
+//End frictionless_field_moves Branch
 
 static void SetUpItemUseCallback(u8);
 static void FieldCB_UseItemOnField(void);
@@ -1204,7 +1207,19 @@ void ItemUseOnFieldCB_Flash_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_RockSmash_Tool(u8 taskId)
 {
-	return;
+    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_BREAKABLE_ROCK))
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_RockSmash_Tool;
+        SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+static void ItemUseOnFieldCB_RockSmash_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    ScriptContext_SetupScript(EventScript_UseRockSmashTool);
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Waterfall_Tool(u8 taskId)
 {

@@ -96,7 +96,10 @@ void ResetInitialPlayerAvatarState(void);
 void StoreInitialPlayerAvatarState(void);
 bool32 Overworld_IsBikingAllowed(void);
 void SetDefaultFlashLevel(void);
-void CheckAndDoFrictionlessFlash(void); // frictionless_field_moves Branch
+//Start frictionless_field_moves Branch
+void CheckAndDoFrictionlessFlash(void);
+u32 CanUseFlashOnMap(void);
+//End frictionless_field_moves Branch
 void SetFlashLevel(s32 flashLevel);
 u8 GetFlashLevel(void);
 void SetCurrentMapLayout(u16 mapLayoutId);

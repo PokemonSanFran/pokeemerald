@@ -389,6 +389,8 @@ extern const u8 EventScript_ActivateStrengthTool[];
 extern const u8 EventScript_UseFlashTool[];
 
 extern const u8 EventScript_SmashRock[];
+extern const u8 EventScript_UseRockSmash[];
+extern const u8 EventScript_UseRockSmashTool[];
 
 extern const u8 SecretBaseNoMon_EventScript_CheckEntrance[];
 //End frictionless_field_moves Branch

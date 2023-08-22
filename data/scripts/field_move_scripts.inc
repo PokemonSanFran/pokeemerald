@@ -81,7 +81,12 @@ Text_CantCut:
 EventScript_RockSmash::
 	lockall
 	goto_if_unset FLAG_BADGE03_GET, EventScript_CantSmashRock
-	checkpartymove MOVE_ROCK_SMASH
+	//checkpartymove MOVE_ROCK_SMASH
+    // Start frictionless_field_moves Branch
+    checkitem ITEM_ROCKSMASH_TOOL, 1
+    goto_if_eq VAR_RESULT, TRUE, EventScript_UseRockSmashTool
+    checkpartylearnknowsfieldmove ITEM_HM06
+    // End frictionless_field_moves Branch
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantSmashRock
 	setfieldeffectargument 0, VAR_RESULT
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
@@ -95,6 +100,17 @@ EventScript_RockSmash::
 	goto EventScript_SmashRock
 	end
 
+// Start frictionless_field_moves Branch
+@ Use rock smash with item
+EventScript_UseRockSmashTool::
+    lockall
+	bufferitemname STR_VAR_2,ITEM_ROCKSMASH_TOOL
+    msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
+    closemessage
+    goto EventScript_SmashRock
+	end
+// End frictionless_field_moves Branch
+
 @ Use rock smash from party menu
 EventScript_UseRockSmash::
 	lockall
@@ -104,6 +120,7 @@ EventScript_UseRockSmash::
 	end
 
 EventScript_SmashRock::
+    setflag FLAG_SYS_USE_ROCK_SMASH // frictionless_field_moves Branch
 	applymovement VAR_LAST_TALKED, Movement_SmashRock
 	waitmovement 0
 	removeobject VAR_LAST_TALKED
