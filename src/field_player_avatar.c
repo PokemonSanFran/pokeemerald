@@ -778,7 +778,6 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
 
         else if (fieldMoveStatus == FIELD_MOVE_TOOL)
             ScriptContext_SetupScript(EventScript_ActivateStrengthTool);
-
     }
     // End frictionless_field_moves
 

@@ -386,6 +386,7 @@ extern const u8 EventScript_UseSurfWithMon[];
 extern const u8 EventScript_UseSurfToolMessage[];
 
 extern const u8 EventScript_ActivateStrengthTool[];
+extern const u8 EventScript_UseFlashTool[];
 
 extern const u8 EventScript_SmashRock[];
 

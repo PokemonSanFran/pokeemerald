@@ -9,7 +9,14 @@ bool8 FldEff_CutGrass(void);
 void FixLongGrassMetatilesWindowTop(s16 x, s16 y);
 void FixLongGrassMetatilesWindowBottom(s16 x, s16 y);
 static void FieldCallback_CutTreeWithTool(void);
-bool8 SetUpFieldMove_CutTool(void); // Start frictionless_field_moves Branch
+// Start frictionless_field_moves Branch
+bool8 SetUpFieldMove_CutTool(void);
+bool8 SetUpFieldMove_FrictionlessFlash(void);
+void FldEff_UseFlashTool(void);
+void FieldCallback_UseFrictionlessFlash(void);
+void FieldCallback_FlashMon(void);
+void SetUpFieldMove_FlashMon(void);
+// End frictionless_field_moves
 
 extern const struct SpritePalette gSpritePalette_CutGrass;
 extern struct MapPosition gPlayerFacingPosition;

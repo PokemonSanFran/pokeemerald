@@ -75,6 +75,7 @@ static void CB2_OpenPokeblockFromBag(void);
 // Start frictionless_field_moves Branch
 static void ItemUseOnFieldCB_Cut_Tool(u8);
 static void ItemUseOnFieldCB_Surf_Tool(u8);
+void ItemUseOnFieldCB_Flash_Tool(u8 taskId);
 static void ItemUseOnFieldCB_Strength_Tool(u8);
 static void ItemUseOnFieldCB_RockSmash_Tool(u8);
 static void ItemUseOnFieldCB_Waterfall_Tool(u8);
@@ -1187,7 +1188,19 @@ void ItemUseOnFieldCB_Strength_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Flash_Tool(u8 taskId)
 {
-	return;
+    if (CanUseFlashOnMap())
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_Flash_Tool;
+        SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+void ItemUseOnFieldCB_Flash_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    FldEff_UseFlashTool();
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_RockSmash_Tool(u8 taskId)
 {

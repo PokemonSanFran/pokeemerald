@@ -16,6 +16,11 @@
 #include "constants/songs.h"
 #include "constants/map_types.h"
 
+// Start frictionless_field_moves Branch
+#include "map_name_popup.h"
+#include "field_player_avatar.h"
+#include "constants/items.h"
+// End frictionless_field_moves Branch
 struct FlashStruct
 {
     u8 fromType;
@@ -363,3 +368,42 @@ static void Task_EnterCaveTransition4(u8 taskId)
         SetMainCallback2(gMain.savedCallback);
     }
 }
+
+// Start frictionless_field_moves Branch
+bool8 SetUpFieldMove_FrictionlessFlash(void)
+{
+    gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+    gPostMenuFieldCallback = FieldCallback_UseFrictionlessFlash;
+}
+
+void FieldCallback_UseFrictionlessFlash(void)
+{
+    u8 taskId = CreateFieldMoveNoMonTask();
+    gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlashTool >> 16;
+    gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlashTool;
+}
+
+void FldEff_UseFlashTool(void)
+{
+    HideMapNamePopUpWindow();
+    PlaySE(SE_M_REFLECT);
+    FlagSet(FLAG_SYS_USE_FLASH);
+    ScriptContext_SetupScript(EventScript_UseFlashTool);
+}
+
+void SetUpFieldMove_FlashMon(void)
+{
+    gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+    gPostMenuFieldCallback = FieldCallback_FlashMon;
+}
+
+void FieldCallback_FlashMon(void)
+{
+    PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
+    gFieldEffectArguments[0] = gSpecialVar_Result;
+    u8 taskId = CreateFieldMoveTask();
+
+    gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlash >> 16;
+    gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlash;
+}
+// End frictionless_field_moves Branch

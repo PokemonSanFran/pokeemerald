@@ -145,7 +145,12 @@ EventScript_StrengthBoulder::
 	lockall
 	goto_if_unset FLAG_BADGE04_GET, EventScript_CantStrength
 	goto_if_set FLAG_SYS_USE_STRENGTH, EventScript_CheckActivatedBoulder
-	checkpartymove MOVE_STRENGTH
+    // Start frictionless_field_moves
+	//checkpartymove MOVE_STRENGTH
+    checkitem ITEM_STRENGTH_TOOL, 1
+    goto_if_eq VAR_RESULT, TRUE, EventScript_ActivateStrengthTool
+    checkpartylearnknowsfieldmove ITEM_HM04
+    // End frictionless_field_moves
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantStrength
 	setfieldeffectargument 0, VAR_RESULT
 	msgbox Text_WantToStrength, MSGBOX_YESNO
@@ -168,6 +173,17 @@ EventScript_ActivateStrength::
 	msgbox Text_MonUsedStrength, MSGBOX_DEFAULT
 	releaseall
 	end
+
+// Start frictionless_field_moves Branch
+EventScript_ActivateStrengthTool::
+    lockall
+    setflag FLAG_SYS_USE_STRENGTH
+	bufferitemname STR_VAR_2, ITEM_STRENGTH_TOOL
+    msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
+    msgbox Text_StrengthToolMade, MSGBOX_DEFAULT
+    releaseall
+    end
+// End frictionless_field_moves Branch
 
 EventScript_CantStrength::
 	msgbox Text_CantStrength, MSGBOX_DEFAULT
@@ -201,6 +217,12 @@ Text_CantStrength:
 Text_StrengthActivated:
 	.string "STRENGTH made it possible to move\n"
 	.string "boulders around.$"
+
+// Start frictionless_field_moves Branch
+Text_StrengthToolMade:
+    .string "{STR_VAR_2} made it possible to move \n"
+	.string "boulders around.$"
+// End frictionless_field_moves Branch
 
 EventScript_UseWaterfall::
 	lockall

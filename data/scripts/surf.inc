@@ -19,11 +19,11 @@ EventScript_ReleaseUseSurf::
 EventScript_EndUseSurf::
 	end
 
-    // Start frictionless_field_moves
+    // Start frictionless_field_moves Branch
 EventScript_UseSurfToolMessage::
 	bufferitemname STR_VAR_2,ITEM_SURF_TOOL
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
     callnative(CreateStartSurfingTask)
     releaseall
     end
-    //End frictionless_field_moves
+    //End frictionless_field_moves Branch

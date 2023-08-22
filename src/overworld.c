@@ -66,8 +66,12 @@
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
-#include "field_player_avatar.h" // frictionless_field_moves Branch
-#include "constants/items.h"// frictionless_field_moves Branch
+// Start frictionless_field_moves Branch
+#include "field_player_avatar.h"
+#include "item.h"
+#include "constants/items.h"
+#include "event_scripts.h"
+// End frictionless_field_moves Branch
 
 struct CableClubPlayer
 {
@@ -994,25 +998,38 @@ bool32 Overworld_IsBikingAllowed(void)
 }
 
 // Start frictionless_field_moves Branch
-bool32 CanUseFlashOnMap(void)
+u32 CanUseFlashOnMap(void)
 {
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_FLASH_TOOL,1);
     if(
         gMapHeader.cave == TRUE
-        && !FlagGet(FLAG_SYS_USE_FLASH)
-        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM05)
+        && (monHasMove || bagHasItem)
         && FlagGet(FLAG_BADGE02_GET)
+        && !FlagGet(FLAG_SYS_USE_FLASH)
         && (GetFlashLevel() == (gMaxFlashLevel - 1))
-        //&& CheckBagHasItem(ITEM_LANTERN,1) // When this line is uncommmented, the player will need this item to automatically perform
-      ) return TRUE;
-
-    return FALSE;
+      )
+    {
+        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+    }
+    return FIELD_MOVE_FAIL;
 }
 
-void UseFlashOnMap(void)
+void CheckAndDoFrictionlessFlash(void)
 {
-    PlaySE(SE_M_REFLECT);
-    FlagSet(FLAG_SYS_USE_FLASH);
-    ScriptContext_SetupScript(EventScript_UseFlash);
+    u32 fieldMoveStatus = CanUseFlashOnMap();
+
+    if ((fieldMoveStatus != FIELD_MOVE_FAIL))
+    {
+        LockPlayerFieldControls();
+        gFieldEffectArguments[0] = gSpecialVar_Result;
+
+        if (fieldMoveStatus == FIELD_MOVE_POKEMON)
+            SetUpFieldMove_FlashMon();
+
+        else if (fieldMoveStatus == FIELD_MOVE_TOOL)
+            SetUpFieldMove_FrictionlessFlash();
+    }
 }
 // End frictionless_field_moves Branch
 
@@ -1029,8 +1046,7 @@ void SetDefaultFlashLevel(void)
     else
         gSaveBlock1Ptr->flashLevel = gMaxFlashLevel - 1;
 
-    if (CanUseFlashOnMap()) // frictionless_field_moves Branch
-        UseFlashOnMap(); // frictionless_field_moves Branch
+    CheckAndDoFrictionlessFlash(); // frictionless_field_moves Branch
 }
 
 void SetFlashLevel(s32 flashLevel)
