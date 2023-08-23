@@ -199,6 +199,22 @@ u16 VsSeekerConvertLocalIdToTrainerId(u16 localId)
     return -1;
 }
 
+u16 VsSeekerConvertLocalIdToTableId(u16 localId)
+{
+    u32 localIdIndex = 0;
+    u32 trainerId = 0;
+
+    for (localIdIndex = 0; localIdIndex < OBJECT_EVENTS_COUNT ; localIdIndex++)
+    {
+        if (sVsSeeker->trainerInfo[localIdIndex].localId == localId)
+        {
+            trainerId = sVsSeeker->trainerInfo[localIdIndex].trainerIdx;
+            return TrainerIdToRematchTableId(gRematchTable,trainerId);
+        }
+    }
+    return -1;
+}
+
 void VsSeekerResetObjectMovementAfterChargeComplete(void)
 {
     struct ObjectEventTemplate * templates = gSaveBlock1Ptr->objectEventTemplates;
