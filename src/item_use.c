@@ -1223,7 +1223,19 @@ static void ItemUseOnFieldCB_RockSmash_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Waterfall_Tool(u8 taskId)
 {
-	return;
+    if (CanStartWaterfallTool())
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_Waterfall_Tool;
+        SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+void ItemUseOnFieldCB_Waterfall_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    ScriptContext_SetupScript(EventScript_UseWaterfallTool);
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Dive_Tool(u8 taskId)
 {

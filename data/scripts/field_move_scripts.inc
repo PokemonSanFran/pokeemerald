@@ -2,8 +2,8 @@
 EventScript_CutTree::
 	lockall
 	goto_if_unset FLAG_BADGE01_GET, EventScript_CheckTreeCantCut
-	//checkpartymove MOVE_CUT
     // Start frictionless_field_moves Branch
+	//checkpartymove MOVE_CUT
     checkitem ITEM_CUT_TOOL, 1
     goto_if_eq VAR_RESULT, TRUE, EventScript_UseCutTool
     checkpartylearnknowsfieldmove ITEM_HM01
@@ -243,15 +243,43 @@ Text_StrengthToolMade:
 
 EventScript_UseWaterfall::
 	lockall
-	checkpartymove MOVE_WATERFALL
+    // Start frictionless_field_moves Branch
+	//checkpartymove MOVE_WATERFALL
+    checkitem ITEM_WATERFALL_TOOL, 1
+    goto_if_eq VAR_RESULT, TRUE, EventScript_UseWaterfallTool
+    checkpartylearnknowsfieldmove ITEM_HM07
+    // End frictionless_field_moves Branch
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantWaterfall
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
 	setfieldeffectargument 0, VAR_RESULT
 	msgbox Text_WantToWaterfall, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, EventScript_EndWaterfall
 	msgbox Text_MonUsedWaterfall, MSGBOX_DEFAULT
+EventScript_UseWaterfallMon::
 	dofieldeffect FLDEFF_USE_WATERFALL
+    setflag FLAG_SYS_USE_WATERFALL
 	goto EventScript_EndWaterfall
+
+// Start frictionless_field_moves Branch
+@ Use waterfall with tool by walking into it
+EventScript_WalkWaterfallTool::
+    lockall
+	bufferitemname STR_VAR_2, ITEM_WATERFALL_TOOL
+    msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
+    setflag FLAG_SYS_USE_WATERFALL
+    waitmessage
+	goto EventScript_EndWaterfall
+
+@ Use waterfall with tool through menu
+EventScript_UseWaterfallTool::
+    lockall
+	bufferitemname STR_VAR_2, ITEM_WATERFALL_TOOL
+    msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
+    waitmessage
+    setflag FLAG_SYS_USE_WATERFALL
+    callnative CreateClimbWaterfallTask
+	goto EventScript_EndWaterfall
+// End frictionless_field_moves Branch
 
 EventScript_CannotUseWaterfall::
 	lockall

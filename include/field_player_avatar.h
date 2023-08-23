@@ -67,9 +67,11 @@ void StartFishing(u8 rod);
 // Start frictionless_field_moves Branch
 bool32 PartyHasMonLearnsKnowsFieldMove(u16 machine);
 void CreateStartSurfingTask();
-u32 CanStartSurfing(s16, s16, u8);
+u32 CanStartSurfing(s16, s16);
 u32 CanPushBoulder(void);
 bool8 CanStartSmashingRock(s16, s16, u8);
+void CreateClimbWaterfallTask(void);
+bool32 CanStartWaterfallTool(void);
 // End frictionless_field_moves
 
 enum

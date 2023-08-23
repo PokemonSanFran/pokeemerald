@@ -152,8 +152,7 @@ static bool8 CanUseSecretPower(s16, s16, u8);
 static void Task_StartSurfingInit(u8);
 static void Task_WaitStartSurfing(u8);
 
-static bool8 CanStartClimbingWaterfall(u8);
-static void CreateClimbWaterfallTask(void);
+u32 CanStartClimbingWaterfall(u8);
 static void Task_UseWaterfallWithoutMon(u8);
 static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
@@ -459,14 +458,32 @@ static bool8 DoForcedMovement(u8 direction, void (*moveFunc)(u8))
 {
     struct PlayerAvatar *playerAvatar = &gPlayerAvatar;
     u8 collision = CheckForPlayerAvatarCollision(direction);
+    u32 fieldMoveStatus = 0; // frictionless_field_moves Branch
 
     playerAvatar->flags |= PLAYER_AVATAR_FLAG_FORCED_MOVE;
 
     //Start frictionless_field_moves Branch
-    if (CanStartClimbingWaterfall(direction))
+    fieldMoveStatus = CanStartClimbingWaterfall(direction);
+
+    if (fieldMoveStatus > FIELD_MOVE_FAIL)
     {
+        LockPlayerFieldControls();
+        gFieldEffectArguments[0] = gSpecialVar_Result;
         playerAvatar->runningState = MOVING;
-        CreateClimbWaterfallTask();
+
+        if (FlagGet(FLAG_SYS_USE_WATERFALL))
+            CreateClimbWaterfallTask();
+
+        else if (fieldMoveStatus == FIELD_MOVE_POKEMON){
+            LockPlayerFieldControls();
+            FldEff_UseWaterfall();
+        }
+
+        else if (fieldMoveStatus == FIELD_MOVE_TOOL){
+            ScriptContext_SetupScript(EventScript_WalkWaterfallTool);
+            CreateClimbWaterfallTask();
+        }
+
         return TRUE;
     }
     //End frictionless_field_moves Branch
@@ -749,7 +766,7 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         ScriptContext_SetupScript(SecretBaseNoMon_EventScript_CheckEntrance);
     }
 
-    fieldMoveStatus = CanStartSurfing(x,y,direction);
+    fieldMoveStatus = CanStartSurfing(x,y);
 
     if ((collision == COLLISION_ELEVATION_MISMATCH) && (fieldMoveStatus > FIELD_MOVE_FAIL))
     {
@@ -2421,17 +2438,17 @@ static u32 CanStartCuttingTree(s16 x, s16 y, u8 direction)
     return FIELD_MOVE_FAIL;
 }
 
-u32 CanStartSurfing(s16 x, s16 y, u8 direction)
+u32 CanStartSurfing(s16 x, s16 y)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM02);
     bool32 bagHasItem = CheckBagHasItem(ITEM_SURF_TOOL,1);
 
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)){
         if (
-                IsPlayerFacingSurfableFishableWater()
-                && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-                && (monHasMove || bagHasItem)
-                && FlagGet(FLAG_BADGE05_GET)
+            IsPlayerFacingSurfableFishableWater()
+            && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
+            && (monHasMove || bagHasItem)
+            && FlagGet(FLAG_BADGE05_GET)
            )
             return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
     }
@@ -2502,17 +2519,41 @@ bool8 CanStartSmashingRock(s16 x, s16 y, u8 direction)
     return FIELD_MOVE_FAIL;
 }
 
-static bool8 CanStartClimbingWaterfall(u8 direction)
+u32 CanStartClimbingWaterfall(u8 direction)
 {
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM07);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_WATERFALL_TOOL,1);
+
     if (
         IsPlayerFacingWaterfall()
-        && (direction == DIR_SOUTH)
         && IsPlayerSurfingNorth()
-        && PartyHasMonLearnsKnowsFieldMove(ITEM_HM07)
-        && FlagGet(FLAG_BADGE08_GET)
-        //&& CheckBagHasItem(ITEM_GRAPPLING_HOOK,1) // When this line is uncommmented, the player will need this item to automatically perform
+        && (direction == DIR_SOUTH)
+        && (monHasMove || bagHasItem)
+        && FlagGet(FLAG_BADGE03_GET)
        )
+
+    {
+        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+    }
+
+    return FIELD_MOVE_FAIL;
+}
+
+bool32 CanStartWaterfallTool(void)
+{
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM07);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_WATERFALL_TOOL,1);
+
+    if (
+        IsPlayerFacingWaterfall()
+        && IsPlayerSurfingNorth()
+        && (monHasMove || bagHasItem)
+        && FlagGet(FLAG_BADGE03_GET)
+       )
+
+    {
         return TRUE;
+    }
 
     return FALSE;
 }
@@ -2547,7 +2588,7 @@ static bool8 (*const sWaterfallWithoutMonFieldEffectFuncs[])(struct Task *, stru
     WaterfallWithoutMonFieldEffect_ContinueRideOrEnd,
 };
 
-static void CreateClimbWaterfallTask(void)
+void CreateClimbWaterfallTask(void)
 {
     u8 taskId;
     taskId = CreateTask(Task_UseWaterfallWithoutMon, 0xFF);

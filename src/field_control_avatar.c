@@ -449,7 +449,11 @@ static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metati
 {
     // Start frictionless_field_moves Branch
     //if (FlagGet(FLAG_BADGE05_GET) == TRUE && PartyHasMonWithSurf() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
-    if (CanStartSurfing != FIELD_MOVE_FAIL)
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x = playerObjEvent->currentCoords.x;
+    s16 y = playerObjEvent->currentCoords.y;
+
+    if (CanStartSurfing(x,y) != FIELD_MOVE_FAIL)
     // End frictionless_field_moves Branch
         return EventScript_UseSurf;
 
