@@ -492,8 +492,7 @@ static u8 GetVsSeekerResponseInArea(void)
                 }
                 else
                 {
-                    //SetRematchIdForTrainer(gRematchTable,trainerIdx);
-                    gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].trainerIdx] = rematchTrainerIdx;
+                    gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = rematchTrainerIdx;
                     ShiftStillObjectEventCoords(&gObjectEvents[sVsSeeker->trainerInfo[vsSeekerIdx].objectEventId]);
                     StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerRematch);
                     sVsSeeker->trainerIdxArray[sVsSeeker->numRematchableTrainers] = trainerIdx;
