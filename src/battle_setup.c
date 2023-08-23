@@ -1364,6 +1364,7 @@ static void CB2_EndRematchBattle(void)
         RegisterTrainerInMatchCall();
         SetBattledTrainersFlags();
         HandleRematchVarsOnBattleEnd();
+        ClearRematchStateOfLastTalked();
     }
 }
 

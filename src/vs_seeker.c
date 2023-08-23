@@ -492,7 +492,10 @@ static u8 GetVsSeekerResponseInArea(void)
                 }
                 else
                 {
+DebugPrintf("before gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = %d",gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId]);
                     gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = rematchTrainerIdx;
+DebugPrintf("rematchTrainerIdx = %d",rematchTrainerIdx);
+DebugPrintf("sVsSeeker->trainerInfo[vsSeekerIdx].localId = %d",sVsSeeker->trainerInfo[vsSeekerIdx].localId);
                     //gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = rematchTrainerIdx;
                     ShiftStillObjectEventCoords(&gObjectEvents[sVsSeeker->trainerInfo[vsSeekerIdx].objectEventId]);
                     StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerRematch);
@@ -544,7 +547,9 @@ void ClearRematchStateByTrainerId(void)
 
 
 
+DebugPrintf("gSaveBlock1Ptr trainerRematches fpr this trainer before clearing state = %d",gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId]);
                 gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId] = 0;
+DebugPrintf("objectEventTemplates = %d",objectEventTemplates[i].localId);
                 //gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId] = 0;
                 if (gSelectedObjectEvent == objEventId)
                     objectEvent->movementType = sFaceDirectionMovementTypeByFacingDirection[objectEvent->facingDirection];
@@ -632,6 +637,7 @@ static bool8 HasRematchTrainerAlreadyBeenFought(u16 trainerBattleOpponent)
 void ClearRematchStateOfLastTalked(void)
 {
     gSaveBlock1Ptr->trainerRematches[gSpecialVar_LastTalked] = 0;
+DebugPrintf("gSpecialVar_LastTalked= %d",gSpecialVar_LastTalked);
     //gSaveBlock1Ptr->trainerRematches[gSpecialVar_LastTalked] = 0;
     SetBattledTrainerFlag();
 }
@@ -758,6 +764,7 @@ static int GetRematchIdx(u16 trainerFlagIdx)
 
 static bool32 IsThisTrainerRematchable(u32 localId)
 {
+DebugPrintf("localId= %d",localId);
     if (!gSaveBlock1Ptr->trainerRematches[localId])
     //if (!gSaveBlock1Ptr->trainerRematches[localId])
         return FALSE;
