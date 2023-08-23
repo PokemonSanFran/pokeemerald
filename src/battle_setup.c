@@ -1856,6 +1856,9 @@ bool8 IsTrainerReadyForRematch(void)
 
 static void HandleRematchVarsOnBattleEnd(void)
 {
+        if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+            ClearRematchStateByTrainerId();
+
     ClearTrainerWantRematchState(gRematchTable, gTrainerBattleOpponent_A);
     SetBattledTrainersFlags();
 }

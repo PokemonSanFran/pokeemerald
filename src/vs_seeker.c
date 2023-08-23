@@ -493,6 +493,7 @@ static u8 GetVsSeekerResponseInArea(void)
                 else
                 {
                     gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = rematchTrainerIdx;
+                    //gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[vsSeekerIdx].localId] = rematchTrainerIdx;
                     ShiftStillObjectEventCoords(&gObjectEvents[sVsSeeker->trainerInfo[vsSeekerIdx].objectEventId]);
                     StartTrainerObjectMovementScript(&sVsSeeker->trainerInfo[vsSeekerIdx], sMovementScript_TrainerRematch);
                     sVsSeeker->trainerIdxArray[sVsSeeker->numRematchableTrainers] = trainerIdx;
@@ -544,6 +545,7 @@ void ClearRematchStateByTrainerId(void)
 
 
                 gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId] = 0;
+                //gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId] = 0;
                 if (gSelectedObjectEvent == objEventId)
                     objectEvent->movementType = sFaceDirectionMovementTypeByFacingDirection[objectEvent->facingDirection];
                 else
@@ -630,6 +632,7 @@ static bool8 HasRematchTrainerAlreadyBeenFought(u16 trainerBattleOpponent)
 void ClearRematchStateOfLastTalked(void)
 {
     gSaveBlock1Ptr->trainerRematches[gSpecialVar_LastTalked] = 0;
+    //gSaveBlock1Ptr->trainerRematches[gSpecialVar_LastTalked] = 0;
     SetBattledTrainerFlag();
 }
 
@@ -756,6 +759,7 @@ static int GetRematchIdx(u16 trainerFlagIdx)
 static bool32 IsThisTrainerRematchable(u32 localId)
 {
     if (!gSaveBlock1Ptr->trainerRematches[localId])
+    //if (!gSaveBlock1Ptr->trainerRematches[localId])
         return FALSE;
     return TRUE;
 }
@@ -847,6 +851,7 @@ static void StartAllRespondantIdleMovements(void)
                     SetTrainerMovementType(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
                 TryOverrideTemplateCoordsForObjectEvent(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
                 gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[j].localId] = GetRematchTrainerIdFromTable(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx);
+                //gSaveBlock1Ptr->trainerRematches[sVsSeeker->trainerInfo[j].localId] = GetRematchTrainerIdFromTable(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx);
             }
         }
     }
