@@ -8,10 +8,13 @@
 #include "field_effect_helpers.h"
 #include "field_player_avatar.h"
 #include "fieldmap.h"
-#include "event_scripts.h" // frictionless_field_moves Branch
-#include "fldeff.h" // frictionless_field_moves Branch
-#include "fldeff_misc.h" // frictionless_field_moves Branch
-#include "item.h" // frictionless_field_moves Branch
+// Start frictionless_field_moves Branch
+#include "event_scripts.h"
+#include "fldeff.h"
+#include "fldeff_misc.h"
+#include "item.h"
+#include "field_control_avatar.h"
+// End frictionless_field_moves Branch
 #include "menu.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
@@ -157,6 +160,9 @@ static void Task_UseWaterfallWithoutMon(u8);
 static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
+
+static bool8 DiveWithoutMonFieldEffect_Init(struct Task *task);
+static bool8 DiveWithoutMonFieldEffect_TryWarp(struct Task *task);
 //End frictionless_field_moves Branch
 
 static bool8 (*const sForcedMovementTestFuncs[NUM_FORCED_MOVEMENTS])(u8) =
@@ -2636,5 +2642,42 @@ static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *task,
 
 #undef tState
 #undef tMonId
+
+static bool8 (*const sDiveWithoutMonFieldEffectFuncs[])(struct Task *) =
+{
+    DiveWithoutMonFieldEffect_Init,
+    DiveWithoutMonFieldEffect_TryWarp,
+};
+
+bool8 FldEff_UseDiveWithoutMon(void)
+{
+    u8 taskId;
+    taskId = CreateTask(Task_UseDiveWithoutMon, 0xff);
+    Task_UseDiveWithoutMon(taskId);
+    return FALSE;
+}
+
+void Task_UseDiveWithoutMon(u8 taskId)
+{
+    while (sDiveWithoutMonFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
+}
+
+static bool8 DiveWithoutMonFieldEffect_Init(struct Task *task)
+{
+    gPlayerAvatar.preventStep = TRUE;
+    task->data[0]++;
+    return FALSE;
+}
+
+static bool8 DiveWithoutMonFieldEffect_TryWarp(struct Task *task)
+{
+    struct MapPosition mapPosition;
+    PlayerGetDestCoords(&mapPosition.x, &mapPosition.y);
+
+    TryDoDiveWarp(&mapPosition, gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior);
+    DestroyTask(FindTaskIdByFunc(Task_UseDiveWithoutMon));
+    //FieldEffectActiveListRemove(FLDEFF_USE_DIVE);
+    return FALSE;
+}
 
 //End frictionless_field_moves Branch

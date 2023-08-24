@@ -108,7 +108,6 @@ static bool8 WaterfallFieldEffect_ShowMon(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallFieldEffect_WaitForShowMon(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
-
 static void Task_UseDive(u8);
 static bool8 DiveFieldEffect_Init(struct Task *);
 static bool8 DiveFieldEffect_ShowMon(struct Task *);

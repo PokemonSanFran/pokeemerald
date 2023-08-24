@@ -44,6 +44,7 @@
 //Start frictionless_field_moves Branch
 #include "fldeff.h"
 #include "overworld.h"
+#include "field_control_avatar.h"
 //End frictionless_field_moves Branch
 
 static void SetUpItemUseCallback(u8);
@@ -1239,7 +1240,20 @@ void ItemUseOnFieldCB_Waterfall_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Dive_Tool(u8 taskId)
 {
-	return;
+    if (TrySetDiveWarp())
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_Dive_Tool;
+        SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+
+void ItemUseOnFieldCB_Dive_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    ScriptContext_SetupScript(EventScript_UseDiveTool);
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Teleport_Tool(u8 taskId)
 {

@@ -304,7 +304,12 @@ Text_MonUsedWaterfall:
 
 EventScript_UseDive::
 	lockall
-	checkpartymove MOVE_DIVE
+    // Start frictionless_field_moves Branch
+	//checkpartymove MOVE_DIVE
+    checkitem ITEM_DIVE_TOOL, 1
+    goto_if_eq VAR_RESULT, TRUE, EventScript_UseDiveTool
+    checkpartylearnknowsfieldmove ITEM_HM08
+    // End frictionless_field_moves Branch
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantDive
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
 	setfieldeffectargument 0, VAR_RESULT
@@ -327,7 +332,12 @@ EventScript_EndDive::
 
 EventScript_UseDiveUnderwater::
 	lockall
-	checkpartymove MOVE_DIVE
+    // Start frictionless_field_moves Branch
+	//checkpartymove MOVE_DIVE
+    checkitem ITEM_DIVE_TOOL, 1
+    goto_if_eq VAR_RESULT, TRUE, EventScript_UseDiveTool
+    checkpartylearnknowsfieldmove ITEM_HM08
+    // End frictionless_field_moves Branch
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantSurface
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
 	setfieldeffectargument 0, VAR_RESULT
@@ -348,6 +358,14 @@ EventScript_CantSurface::
 EventScript_EndSurface::
 	releaseall
 	end
+
+EventScript_UseDiveTool::
+    lockall
+	bufferitemname STR_VAR_2, ITEM_DIVE_TOOL
+    msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
+    waitmessage
+    callnative FldEff_UseDiveWithoutMon
+	goto EventScript_EndDive
 
 Text_CantDive:
 	.string "The sea is deep here. A POKéMON\n"

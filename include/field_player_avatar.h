@@ -72,6 +72,7 @@ u32 CanPushBoulder(void);
 bool8 CanStartSmashingRock(s16, s16, u8);
 void CreateClimbWaterfallTask(void);
 bool32 CanStartWaterfallTool(void);
+void Task_UseDiveWithoutMon(u8 taskId);
 // End frictionless_field_moves
 
 enum

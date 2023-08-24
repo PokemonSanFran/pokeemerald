@@ -399,9 +399,10 @@ void SetUpFieldMove_FlashMon(void)
 
 void FieldCallback_FlashMon(void)
 {
+    u32 taskId = 0;
     PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
     gFieldEffectArguments[0] = gSpecialVar_Result;
-    u8 taskId = CreateFieldMoveTask();
+    taskId = CreateFieldMoveTask();
 
     gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlash >> 16;
     gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlash;
