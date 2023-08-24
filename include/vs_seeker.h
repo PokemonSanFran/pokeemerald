@@ -4,9 +4,9 @@
 #include "global.h"
 
 void Task_VsSeeker_0(u8 taskId);
-void ClearRematchStateByTrainerId(void);
-void ClearRematchStateOfLastTalked(void);
 bool8 UpdateVsSeekerStepCounter(void);
 void MapResetTrainerRematches(u16 mapGroup, u16 mapNum);
+void ClearRematchMovementByTrainerId(void);
+u16 VsSeekerConvertLocalIdToTableId(u16 localId);
 
 #endif //GUARD_VS_SEEKER_H

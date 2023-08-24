@@ -1364,7 +1364,8 @@ static void CB2_EndRematchBattle(void)
         RegisterTrainerInMatchCall();
         SetBattledTrainersFlags();
         HandleRematchVarsOnBattleEnd();
-        ClearRematchStateOfLastTalked();
+        gSaveBlock1Ptr->trainerRematches[VsSeekerConvertLocalIdToTableId(gSpecialVar_LastTalked)] = 0;
+        //ClearRematchStateOfLastTalked();
     }
 }
 
@@ -1858,7 +1859,7 @@ bool8 IsTrainerReadyForRematch(void)
 static void HandleRematchVarsOnBattleEnd(void)
 {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-            ClearRematchStateByTrainerId();
+            ClearRematchMovementByTrainerId();
 
     ClearTrainerWantRematchState(gRematchTable, gTrainerBattleOpponent_A);
     SetBattledTrainersFlags();
