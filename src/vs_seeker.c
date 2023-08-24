@@ -102,7 +102,6 @@ static u8 GetVsSeekerResponseInArea(void);
 static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchIdx);
 static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
 static u16 GetTrainerFlagFromScript(const u8 * script);
-static bool32 IsThisTrainerRematchable(u32 localId);
 static void ClearAllTrainerRematchStates(void);
 static bool8 IsTrainerVisibleOnScreen(struct VsSeekerTrainerInfo * trainerInfo);
 static u8 GetRematchableTrainerLocalId(void);
@@ -677,15 +676,6 @@ static u16 GetTrainerFlagFromScript(const u8 *script)
     trainerFlag = script[0];
     trainerFlag |= script[1] << 8;
     return trainerFlag;
-}
-
-static bool32 IsThisTrainerRematchable(u32 localId)
-{
-DebugPrintf("localId= %d",localId);
-    if (!gSaveBlock1Ptr->trainerRematches[VsSeekerConvertLocalIdToTableId(localId)])
-    //if (!gSaveBlock1Ptr->trainerRematches[localId])
-        return FALSE;
-    return TRUE;
 }
 
 static void ClearAllTrainerRematchStates(void)
