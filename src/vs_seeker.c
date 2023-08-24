@@ -100,7 +100,6 @@ static void Task_VsSeeker_3(u8 taskId);
 static bool8 CanUseVsSeeker(void);
 static u8 GetVsSeekerResponseInArea(void);
 static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchIdx);
-static bool8 IsTrainerReadyForRematchInternal(const struct RematchTrainer *gRematchTable, u16 trainerId);
 static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
 static u16 GetTrainerFlagFromScript(const u8 * script);
 static int GetRematchIdx(u16 trainerFlagIdx);
@@ -590,24 +589,6 @@ static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchId
             return rematchIdx;
     }
     return 0;
-}
-
-u8 IsTrainerReadyForRematch(void)
-{
-    return IsTrainerReadyForRematchInternal(gRematchTable, gTrainerBattleOpponent_A);
-}
-
-static bool8 IsTrainerReadyForRematchInternal(const struct RematchTrainer *gRematchTable, u16 trainerId)
-{
-    int rematchTrainerIdx = TrainerIdToRematchTableId(gRematchTable, trainerId);
-
-    if (rematchTrainerIdx == -1)
-        return FALSE;
-    if (rematchTrainerIdx >= REMATCH_TABLE_ENTRIES)
-        return FALSE;
-    if (!IsThisTrainerRematchable(gSpecialVar_LastTalked))
-        return FALSE;
-    return TRUE;
 }
 
 static bool8 ObjectEventIdIsSane(u8 objectEventId)

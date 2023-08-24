@@ -1846,16 +1846,11 @@ bool8 ShouldTryRematchBattle(void)
 
     return WasSecondRematchWon(gRematchTable, gTrainerBattleOpponent_A);
 }
-/*
-These are the Match Call counterparts
 
 bool8 IsTrainerReadyForRematch(void)
 {
     return IsTrainerReadyForRematch_(gRematchTable, gTrainerBattleOpponent_A);
 }
-
-*/
-
 static void HandleRematchVarsOnBattleEnd(void)
 {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
