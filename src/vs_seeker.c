@@ -100,7 +100,6 @@ static void Task_VsSeeker_3(u8 taskId);
 static bool8 CanUseVsSeeker(void);
 static u8 GetVsSeekerResponseInArea(void);
 static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchIdx);
-static u8 ShouldTryRematchBattleInternal(u16 trainerBattleOpponent);
 static u8 HasRematchTrainerAlreadyBeenFought(u16 trainerBattleOpponent);
 static bool8 IsTrainerReadyForRematchInternal(const struct RematchTrainer *gRematchTable, u16 trainerId);
 static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
@@ -592,30 +591,6 @@ static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchId
             return rematchIdx;
     }
     return 0;
-}
-
-bool8 ShouldTryRematchBattle(void)
-{
-    if (ShouldTryRematchBattleInternal(gTrainerBattleOpponent_A))
-    {
-        return TRUE;
-    }
-    //return WasSecondRematchWon(gRematchTable,gTrainerBattleOpponent_A);
-    return HasRematchTrainerAlreadyBeenFought(gTrainerBattleOpponent_A);
-}
-
-static bool8 ShouldTryRematchBattleInternal(u16 trainerBattleOpponent)
-{
-    s32 rematchIdx = GetRematchIdx(trainerBattleOpponent);
-
-    if (rematchIdx == -1)
-        return FALSE;
-    if (rematchIdx >= 0 && rematchIdx < REMATCH_TABLE_ENTRIES)
-    {
-        if (IsThisTrainerRematchable(gSpecialVar_LastTalked))
-            return TRUE;
-    }
-    return FALSE;
 }
 
 static bool8 HasRematchTrainerAlreadyBeenFought(u16 trainerBattleOpponent)

@@ -1839,8 +1839,6 @@ u16 GetLastBeatenRematchTrainerId(u16 trainerId)
     return GetLastBeatenRematchTrainerIdFromTable(gRematchTable, trainerId);
 }
 
-/*
-These are the Match Call counterparts
 bool8 ShouldTryRematchBattle(void)
 {
     if (IsFirstTrainerIdReadyForRematch(gRematchTable, gTrainerBattleOpponent_A))
@@ -1848,6 +1846,8 @@ bool8 ShouldTryRematchBattle(void)
 
     return WasSecondRematchWon(gRematchTable, gTrainerBattleOpponent_A);
 }
+/*
+These are the Match Call counterparts
 
 bool8 IsTrainerReadyForRematch(void)
 {
