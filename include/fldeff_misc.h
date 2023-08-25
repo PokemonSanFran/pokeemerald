@@ -34,6 +34,8 @@ extern const struct SpritePalette gSpritePalette_SecretPower_Plant;
 extern const struct SpritePalette gFieldEffectObjectPaletteInfo9;
 extern const u16 gTilesetPalettes_SecretBase[][16];
 
-void SetCurrentSecretBase(void); // frictionless_field_moves Branch made non-static
+// Start frictionless_field_moves Branch
+void SetCurrentSecretBase(void);
+// End frictionless_field_moves Branch
 
 #endif //GUARD_FLDEFF_MISC_H

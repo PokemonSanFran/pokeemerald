@@ -17,6 +17,8 @@ void FieldCallback_UseFrictionlessFlash(void);
 void FieldCallback_FlashMon(void);
 void SetUpFieldMove_FlashMon(void);
 bool8 FldEff_UseWaterfall(void);
+bool8 FldEff_SweetScentNoMon(void);
+bool8 FldEff_UseTeleportNoMon(void);
 // End frictionless_field_moves
 
 extern const struct SpritePalette gSpritePalette_CutGrass;

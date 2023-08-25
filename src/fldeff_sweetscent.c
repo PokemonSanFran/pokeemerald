@@ -97,3 +97,14 @@ static void FailSweetScentEncounter(u8 taskId)
         DestroyTask(taskId);
     }
 }
+
+bool8 FldEff_SweetScentNoMon(void)
+{
+    u8 taskId;
+
+    SetWeatherScreenFadeOut();
+    taskId = CreateFieldMoveNoMonTask();
+    gTasks[taskId].data[8] = (u32)StartSweetScentFieldEffect >> 16;
+    gTasks[taskId].data[9] = (u32)StartSweetScentFieldEffect;
+    return FALSE;
+}

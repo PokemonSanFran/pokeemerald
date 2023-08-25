@@ -42,3 +42,12 @@ static void StartTeleportFieldEffect(void)
     FieldEffectActiveListRemove(FLDEFF_USE_TELEPORT);
     FldEff_TeleportWarpOut();
 }
+
+bool8 FldEff_UseTeleportNoMon(void)
+{
+    u8 taskId = CreateFieldMoveNoMonTask();
+    gTasks[taskId].data[8] = (u32)StartTeleportFieldEffect >> 16;
+    gTasks[taskId].data[9] = (u32)StartTeleportFieldEffect;
+    SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
+    return FALSE;
+}

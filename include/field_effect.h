@@ -47,7 +47,4 @@ void FreeResourcesAndDestroySprite(struct Sprite *sprite, u8 spriteId);
 u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y, u8 subpriority);
 void StartEscapeRopeFieldEffect(void);
 
-// Start frictionless_field_moves Branch
-void Task_UseDive(u8 taskId);
-// End frictionless_field_moves Branch
 #endif // GUARD_FIELD_EFFECTS_H
