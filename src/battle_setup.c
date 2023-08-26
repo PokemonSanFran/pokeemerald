@@ -1610,6 +1610,9 @@ static bool32 UpdateRandomTrainerRematches(const struct RematchTrainer *table, u
     s32 i;
     bool32 ret = FALSE;
 
+    if (CheckBagHasItem(ITEM_VS_SEEKER, 1) == TRUE)
+        return ret;
+
     for (i = 0; i <= REMATCH_SPECIAL_TRAINER_START; i++)
     {
         if (table[i].mapGroup == mapGroup && table[i].mapNum == mapNum && !IsRematchForbidden(i))

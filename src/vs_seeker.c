@@ -729,6 +729,9 @@ static void ClearAllTrainerRematchStates(void)
 {
     u8 i;
 
+    if (!CheckBagHasItem(ITEM_VS_SEEKER, 1) == TRUE)
+        return;
+
     for (i = 0; i < NELEMS(gSaveBlock1Ptr->trainerRematches); i++)
         gSaveBlock1Ptr->trainerRematches[i] = 0;
 }
