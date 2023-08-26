@@ -38,6 +38,7 @@
 #include "field_screen_effect.h"
 #include "data.h"
 #include "vs_seeker.h"
+#include "item.h"
 #include "constants/battle_frontier.h"
 #include "constants/battle_setup.h"
 #include "constants/game_stat.h"
@@ -47,7 +48,6 @@
 #include "constants/trainers.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
-#include "item.h"
 
 enum {
     TRANSITION_TYPE_NORMAL,
@@ -87,8 +87,8 @@ static void CB2_StartFirstBattle(void);
 static void CB2_EndFirstBattle(void);
 static void CB2_EndTrainerBattle(void);
 static bool32 IsPlayerDefeated(u32 battleOutcome);
-static void RegisterTrainerInMatchCall(void);
 static u16 GetRematchTrainerId(u16 trainerId);
+static void RegisterTrainerInMatchCall(void);
 static void HandleRematchVarsOnBattleEnd(void);
 static const u8 *GetIntroSpeechOfApproachingTrainer(void);
 static const u8 *GetTrainerCantBattleSpeech(void);
@@ -1144,7 +1144,6 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
         TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
         SetMapVarsToTrainer();
         gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
-        //gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
         return EventScript_TryDoRematchBattle;
     case TRAINER_BATTLE_PYRAMID:
         if (gApproachingTrainerId == 0)
@@ -1170,7 +1169,7 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
         {
             TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
             SetMapVarsToTrainer();
-        gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
+            gTrainerBattleOpponent_A = LocalIdToHillTrainerId(gSpecialVar_LastTalked);
 
         }
         else
@@ -1252,7 +1251,7 @@ static void SetBattledTrainersFlags(void)
     FlagSet(GetTrainerAFlag());
 }
 
-void SetBattledTrainerFlag(void)
+static void SetBattledTrainerFlag(void)
 {
     FlagSet(GetTrainerAFlag());
 }
@@ -1800,7 +1799,7 @@ static bool32 HasAtLeastFiveBadges(void)
 
 void IncrementRematchStepCounter(void)
 {
-    if (HasAtLeastFiveBadges())
+    if (HasAtLeastFiveBadges() && (!CheckBagHasItem(ITEM_VS_SEEKER, 1)))
     {
         if (gSaveBlock1Ptr->trainerRematchStepCounter >= STEP_COUNTER_MAX)
             gSaveBlock1Ptr->trainerRematchStepCounter = STEP_COUNTER_MAX;
@@ -1858,6 +1857,7 @@ bool8 IsTrainerReadyForRematch(void)
 {
     return IsTrainerReadyForRematch_(gRematchTable, gTrainerBattleOpponent_A);
 }
+
 static void HandleRematchVarsOnBattleEnd(void)
 {
         if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)

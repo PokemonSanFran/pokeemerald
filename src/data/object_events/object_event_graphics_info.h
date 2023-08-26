@@ -4652,7 +4652,6 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_HoOh = {
     .images = sPicTable_HoOh,
     .affineAnims = gDummySpriteAffineAnimTable,
 };
-
 /*
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_BrendanVSSeeker = {
     .tileTag = TAG_NONE,

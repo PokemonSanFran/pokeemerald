@@ -137,15 +137,15 @@ static const struct SpriteFrameImage sSpriteImageTable_ExclamationQuestionMark[]
     },
     {
         .data = sEmotion_QuestionMarkGfx,
-        .size = 0x80
+        .size = sizeof(sEmotion_QuestionMarkGfx)
         },
     {
         .data = sEmotion_DoubleExclamationMarkGfx,
-        .size = 0x80
+        .size = sizeof(sEmotion_DoubleExclamationMarkGfx)
     },
     {
         .data = sEmotion_XGfx,
-        .size = 0x80
+        .size = sizeof(sEmotion_XGfx)
     }
 };
 

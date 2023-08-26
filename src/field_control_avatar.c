@@ -541,7 +541,7 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
         return FALSE;
     }
 
-    //IncrementRematchStepCounter();
+    IncrementRematchStepCounter();
     UpdateFriendshipStepCounter();
     UpdateFarawayIslandStepCounter();
 

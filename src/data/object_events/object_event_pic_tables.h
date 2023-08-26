@@ -1128,7 +1128,6 @@ static const struct SpriteFrameImage sPicTable_MayVSSeeker[] = {
 BRANCH_NOTE: These lines are from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
 
 */
-
 static const struct SpriteFrameImage sPicTable_Cameraman[] = {
     overworld_frame(gObjectEventPic_Cameraman, 2, 4, 0),
     overworld_frame(gObjectEventPic_Cameraman, 2, 4, 1),

@@ -5076,12 +5076,12 @@ static void HandleEndTurn_FinishBattle(void)
     if (gCurrentActionFuncId == B_ACTION_TRY_FINISH || gCurrentActionFuncId == B_ACTION_FINISHED)
     {
         if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
-                        | BATTLE_TYPE_RECORDED_LINK
-                        | BATTLE_TYPE_FIRST_BATTLE
-                        | BATTLE_TYPE_SAFARI
-                        | BATTLE_TYPE_EREADER_TRAINER
-                        | BATTLE_TYPE_WALLY_TUTORIAL
-                        | BATTLE_TYPE_FRONTIER)))
+                    | BATTLE_TYPE_RECORDED_LINK
+                    | BATTLE_TYPE_FIRST_BATTLE
+                    | BATTLE_TYPE_SAFARI
+                    | BATTLE_TYPE_EREADER_TRAINER
+                    | BATTLE_TYPE_WALLY_TUTORIAL
+                    | BATTLE_TYPE_FRONTIER)))
         {
             for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
             {
@@ -5103,14 +5103,14 @@ static void HandleEndTurn_FinishBattle(void)
         }
 
         if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
-                        | BATTLE_TYPE_RECORDED_LINK
-                        | BATTLE_TYPE_TRAINER
-                        | BATTLE_TYPE_FIRST_BATTLE
-                        | BATTLE_TYPE_SAFARI
-                        | BATTLE_TYPE_FRONTIER
-                        | BATTLE_TYPE_EREADER_TRAINER
-                        | BATTLE_TYPE_WALLY_TUTORIAL))
-                && gBattleResults.shinyWildMon)
+                    | BATTLE_TYPE_RECORDED_LINK
+                    | BATTLE_TYPE_TRAINER
+                    | BATTLE_TYPE_FIRST_BATTLE
+                    | BATTLE_TYPE_SAFARI
+                    | BATTLE_TYPE_FRONTIER
+                    | BATTLE_TYPE_EREADER_TRAINER
+                    | BATTLE_TYPE_WALLY_TUTORIAL))
+            && gBattleResults.shinyWildMon)
         {
             TryPutBreakingNewsOnAir();
         }
