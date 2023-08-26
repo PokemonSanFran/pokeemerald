@@ -99,7 +99,6 @@ static void GatherNearbyTrainerInfo(void);
 static void Task_VsSeeker_3(u8 taskId);
 static bool8 CanUseVsSeeker(void);
 static u8 GetVsSeekerResponseInArea(void);
-static u8 GetRematchTrainerIdGivenGameState(const u16 *trainerIdxs, u8 rematchIdx);
 static u8 GetRunningBehaviorFromGraphicsId(u8 graphicsId);
 static u16 GetTrainerFlagFromScript(const u8 * script);
 static void ClearAllTrainerRematchStates(void);
@@ -178,18 +177,6 @@ static void Task_ResetObjectsRematchWantedState(u8 taskId)
         StopPlayerAvatar();
         ScriptContext_Enable();
     }
-}
-
-u16 VsSeekerConvertLocalIdToTrainerId(u16 localId)
-{
-    u32 localIdIndex = 0;
-
-    for (localIdIndex = 0; localIdIndex < OBJECT_EVENTS_COUNT ; localIdIndex++)
-    {
-        if (sVsSeeker->trainerInfo[localIdIndex].localId == localId)
-            return sVsSeeker->trainerInfo[localIdIndex].trainerIdx;
-    }
-    return -1;
 }
 
 u16 VsSeekerConvertLocalIdToTableId(u16 localId)
@@ -762,7 +749,7 @@ static void StartAllRespondantIdleMovements(void)
                 if (ObjectEventIdIsSane(sVsSeeker->trainerInfo[j].objectEventId) == 1)
                     SetTrainerMovementType(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
                 TryOverrideTemplateCoordsForObjectEvent(objectEvent, sVsSeeker->runningBehaviourEtcArray[i]);
-                gSaveBlock1Ptr->trainerRematches[VsSeekerConvertLocalIdToTrainerId(sVsSeeker->trainerInfo[j].localId)] = GetRematchTrainerIdFromTable(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx);
+                gSaveBlock1Ptr->trainerRematches[VsSeekerConvertLocalIdToTableId(sVsSeeker->trainerInfo[j].localId)] = GetRematchTrainerIdFromTable(gRematchTable, sVsSeeker->trainerInfo[j].trainerIdx);
             }
         }
     }
