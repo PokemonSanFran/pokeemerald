@@ -48,7 +48,6 @@
 #include "trig.h"
 #include "tv.h"
 #include "util.h"
-#include "vs_seeker.h"
 #include "window.h"
 #include "constants/abilities.h"
 #include "constants/battle_move_effects.h"
@@ -645,16 +644,19 @@ static void CB2_InitBattleInternal(void)
         gBattle_WIN0V = WIN_RANGE(DISPLAY_HEIGHT / 2, DISPLAY_HEIGHT / 2 + 1);
         ScanlineEffect_Clear();
 
-        for (i = 0; i < DISPLAY_HEIGHT / 2; i++)
+        i = 0;
+        while (i < 80)
         {
             gScanlineEffectRegBuffers[0][i] = 0xF0;
             gScanlineEffectRegBuffers[1][i] = 0xF0;
+            i++;
         }
 
-        for (; i < DISPLAY_HEIGHT; i++)
+        while (i < 160)
         {
             gScanlineEffectRegBuffers[0][i] = 0xFF10;
             gScanlineEffectRegBuffers[1][i] = 0xFF10;
+            i++;
         }
 
         ScanlineEffect_SetParams(sIntroScanlineParams16Bit);
@@ -5076,12 +5078,12 @@ static void HandleEndTurn_FinishBattle(void)
     if (gCurrentActionFuncId == B_ACTION_TRY_FINISH || gCurrentActionFuncId == B_ACTION_FINISHED)
     {
         if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
-                    | BATTLE_TYPE_RECORDED_LINK
-                    | BATTLE_TYPE_FIRST_BATTLE
-                    | BATTLE_TYPE_SAFARI
-                    | BATTLE_TYPE_EREADER_TRAINER
-                    | BATTLE_TYPE_WALLY_TUTORIAL
-                    | BATTLE_TYPE_FRONTIER)))
+                                  | BATTLE_TYPE_RECORDED_LINK
+                                  | BATTLE_TYPE_FIRST_BATTLE
+                                  | BATTLE_TYPE_SAFARI
+                                  | BATTLE_TYPE_EREADER_TRAINER
+                                  | BATTLE_TYPE_WALLY_TUTORIAL
+                                  | BATTLE_TYPE_FRONTIER)))
         {
             for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
             {
@@ -5103,13 +5105,13 @@ static void HandleEndTurn_FinishBattle(void)
         }
 
         if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
-                    | BATTLE_TYPE_RECORDED_LINK
-                    | BATTLE_TYPE_TRAINER
-                    | BATTLE_TYPE_FIRST_BATTLE
-                    | BATTLE_TYPE_SAFARI
-                    | BATTLE_TYPE_FRONTIER
-                    | BATTLE_TYPE_EREADER_TRAINER
-                    | BATTLE_TYPE_WALLY_TUTORIAL))
+                                  | BATTLE_TYPE_RECORDED_LINK
+                                  | BATTLE_TYPE_TRAINER
+                                  | BATTLE_TYPE_FIRST_BATTLE
+                                  | BATTLE_TYPE_SAFARI
+                                  | BATTLE_TYPE_FRONTIER
+                                  | BATTLE_TYPE_EREADER_TRAINER
+                                  | BATTLE_TYPE_WALLY_TUTORIAL))
             && gBattleResults.shinyWildMon)
         {
             TryPutBreakingNewsOnAir();
