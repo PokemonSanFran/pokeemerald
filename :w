@@ -549,38 +549,38 @@ void ClearRematchMovementByTrainerId(void)
     }
 }
 
-#define MAX_NUM_PROGRESS_FLAGS 4
-
-u32 GetGameProgressFlags()
+u32 CountCompletionFlags()
 {
-    u32 numGameProgressFlags = MAX_NUM_PROGRESS_FLAGS;
+    u32 numCompletionFlag = 0;
 
-    if (!FlagGet(FLAG_VISITED_LAVARIDGE_TOWN))
-        numGameProgressFlags--;
-    if (!FlagGet(FLAG_VISITED_FORTREE_CITY))
-        numGameProgressFlags--;
-    if (!FlagGet(FLAG_SYS_GAME_CLEAR))
-        numGameProgressFlags--;
-    if (!FlagGet(FLAG_DEFEATED_METEOR_FALLS_STEVEN))
-        numGameProgressFlags--;
+    if (FlagGet(FLAG_VISITED_LAVARIDGE_TOWN))
+        numCompletionFlag++;
+    if (FlagGet(FLAG_VISITED_FORTREE_CITY))
+        numCompletionFlag++;
+    if (FlagGet(FLAG_SYS_GAME_CLEAR))
+        numCompletionFlag++;
+    if (FlagGet(FLAG_DEFEATED_METEOR_FALLS_STEVEN))
+        numCompletionFlag++;
 
-    return numGameProgressFlags;
+    return numCompletionFlag;
 }
 
 u16 GetRematchTrainerIdVSSeeker(u16 trainerId)
 {
     u32 tableId = FirstBattleTrainerIdToRematchTableId(gRematchTable, trainerId);
-    u32 rematchTrainerIdx = GetGameProgressFlags();
+    u32 numCompletionFlag = CountCompletionFlags();
+    u32 targetTrainer = gRematchTable[tableId].trainerIds[0];
 
-    while (!HasTrainerBeenFought(gRematchTable[tableId].trainerIds[rematchTrainerIdx-1]))
+    while (!HasTrainerBeenFought(gRematchTable[tableId].trainerIds[(numCompletionFlag)]))
     {
-        if (rematchTrainerIdx== 0)
-            break;
+        numCompletionFlag--;
 
-        rematchTrainerIdx--;
-    }
+    if (numCompletionFlag < 1)
+        numCompletionFlag = 0;
 
-    return gRematchTable[tableId].trainerIds[rematchTrainerIdx];
+    targetTrainer = gRematchTable[tableId].trainerIds[numCompletionFlag + 1];
+
+    return targetTrainer;
 }
 
 /*

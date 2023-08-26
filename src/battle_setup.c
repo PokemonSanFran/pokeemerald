@@ -87,6 +87,7 @@ static void CB2_EndFirstBattle(void);
 static void CB2_EndTrainerBattle(void);
 static bool32 IsPlayerDefeated(u32 battleOutcome);
 static void RegisterTrainerInMatchCall(void);
+static u16 GetRematchTrainerId(u16 trainerId);
 static void HandleRematchVarsOnBattleEnd(void);
 static const u8 *GetIntroSpeechOfApproachingTrainer(void);
 static const u8 *GetTrainerCantBattleSpeech(void);
@@ -1136,12 +1137,13 @@ const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
     case TRAINER_BATTLE_REMATCH_DOUBLE:
         TrainerBattleLoadArgs(sDoubleBattleParams, data);
         SetMapVarsToTrainer();
-        gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
+        gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
         return EventScript_TryDoDoubleRematchBattle;
     case TRAINER_BATTLE_REMATCH:
         TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
         SetMapVarsToTrainer();
-        gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
+        gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
+        //gTrainerBattleOpponent_A = GetRematchTrainerIdFromTable(gRematchTable,gTrainerBattleOpponent_A);
         return EventScript_TryDoRematchBattle;
     case TRAINER_BATTLE_PYRAMID:
         if (gApproachingTrainerId == 0)
@@ -1829,7 +1831,10 @@ bool32 IsRematchTrainerIn(u16 mapGroup, u16 mapNum)
 
 static u16 GetRematchTrainerId(u16 trainerId)
 {
-    return GetRematchTrainerIdFromTable(gRematchTable, trainerId);
+    if (FlagGet(FLAG_SYS_VS_SEEKER_CHARGING))
+        return GetRematchTrainerIdVSSeeker(trainerId);
+    else
+        return GetRematchTrainerIdFromTable(gRematchTable, trainerId);
 }
 
 u16 GetLastBeatenRematchTrainerId(u16 trainerId)
