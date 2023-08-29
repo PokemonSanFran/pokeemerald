@@ -85,8 +85,8 @@ struct BagMenu
 extern struct BagMenu *gBagMenu;
 extern u16 gSpecialVar_ItemId;
 
-#define FIELD 1
-#define BAG 2
+#define FIELD 1 // frictionless_field_moves Branch
+#define BAG 2 // frictionless_field_moves Branch
 
 void CB2_GoToItemDepositMenu(void);
 void FavorLadyOpenBagMenu(void);

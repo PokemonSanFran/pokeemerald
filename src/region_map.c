@@ -2018,7 +2018,7 @@ static void CB_ExitFlyMap(void)
                 }
                 ReturnToFieldFromFlyMapSelect();
             }
-            //else if (FlagGet(FLAG_SYS_USE_FLY))
+            //Start frictionless_field_moves Branch
             else if (VarGet(VAR_FLY_TOOL_SOURCE) > 0)
             {
                 if (VarGet(VAR_FLY_TOOL_SOURCE) == BAG)
@@ -2026,6 +2026,7 @@ static void CB_ExitFlyMap(void)
                 else if (VarGet(VAR_FLY_TOOL_SOURCE) == FIELD)
                     SetMainCallback2(CB2_ReturnToField);
             }
+            // End frictionless_field_moves Branch
             else
             {
                 SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);
