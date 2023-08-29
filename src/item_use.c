@@ -79,7 +79,8 @@ static void CB2_OpenPokeblockFromBag(void);
 
 // Start frictionless_field_moves Branch
 static void ItemUseOnFieldCB_Cut_Tool(u8);
-static void ItemUseOnFieldCB_Fly_Tool(u8);
+static void CB2_OpenFly_ToolFromBag(void);
+static void Task_OpenRegisteredFly_Tool(u8 taskId);
 static void ItemUseOnFieldCB_Surf_Tool(u8);
 void ItemUseOnFieldCB_Flash_Tool(u8 taskId);
 static void ItemUseOnFieldCB_Strength_Tool(u8);
@@ -1166,39 +1167,35 @@ void ItemUseOnFieldCB_Cut_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Fly_Tool(u8 taskId)
 {
-    if (FlagGet(FLAG_BADGE06_GET))
-    {
-        sItemUseOnFieldCB = ItemUseOnFieldCB_Fly_Tool;
-		SetUpItemUseOnFieldCallback(taskId);
-    }
-    else
-        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
-}
-void ItemUseOnFieldCB_Fly_Tool(u8 taskId)
-{
-    LockPlayerFieldControls();
-    FlagSet(FLAG_VISITED_OLDALE_TOWN);
-
     if (MenuHelpers_IsLinkActive() == TRUE)
     {
         DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
     }
     else if (gTasks[taskId].tUsingRegisteredKeyItem != TRUE)
     {
-        VarSet(VAR_FLY_TOOL_SOURCE,BAG);
+        gBagMenu->newScreenCallback = CB2_OpenFly_ToolFromBag;
         Task_FadeAndCloseBagMenu(taskId);
-        SetMainCallback2(CB2_OpenFlyMap);
     }
     else
     {
-        if (!gPaletteFade.active)
-        {
-            VarSet(VAR_FLY_TOOL_SOURCE,FIELD);
-            CleanupOverworldWindowsAndTilemaps();
-            SetMainCallback2(CB2_OpenFlyMap);
-        }
+        FadeScreen(FADE_TO_BLACK, 0);
+        gTasks[taskId].func = Task_OpenRegisteredFly_Tool;
     }
-    DestroyTask(taskId);
+}
+static void CB2_OpenFly_ToolFromBag(void)
+{
+    VarSet(VAR_FLY_TOOL_SOURCE,BAG);
+    CB2_OpenFlyMap();
+}
+static void Task_OpenRegisteredFly_Tool(u8 taskId)
+{
+    VarSet(VAR_FLY_TOOL_SOURCE,FIELD);
+    if (!gPaletteFade.active)
+    {
+        CleanupOverworldWindowsAndTilemaps();
+        SetMainCallback2(CB2_OpenFlyMap);
+        DestroyTask(taskId);
+    }
 }
 void ItemUseOutOfBattle_Surf_Tool(u8 taskId)
 {
