@@ -45,6 +45,7 @@
 #include "fldeff.h"
 #include "overworld.h"
 #include "field_control_avatar.h"
+#include "region_map.h"
 //End frictionless_field_moves Branch
 
 static void SetUpItemUseCallback(u8);
@@ -1165,7 +1166,39 @@ void ItemUseOnFieldCB_Cut_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Fly_Tool(u8 taskId)
 {
-	return;
+    if (FlagGet(FLAG_BADGE06_GET))
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_Fly_Tool;
+		SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+}
+void ItemUseOnFieldCB_Fly_Tool(u8 taskId)
+{
+    LockPlayerFieldControls();
+    FlagSet(FLAG_VISITED_OLDALE_TOWN);
+
+    if (MenuHelpers_IsLinkActive() == TRUE)
+    {
+        DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
+    }
+    else if (gTasks[taskId].tUsingRegisteredKeyItem != TRUE)
+    {
+        VarSet(VAR_FLY_TOOL_SOURCE,BAG);
+        Task_FadeAndCloseBagMenu(taskId);
+        SetMainCallback2(CB2_OpenFlyMap);
+    }
+    else
+    {
+        if (!gPaletteFade.active)
+        {
+            VarSet(VAR_FLY_TOOL_SOURCE,FIELD);
+            CleanupOverworldWindowsAndTilemaps();
+            SetMainCallback2(CB2_OpenFlyMap);
+        }
+    }
+    DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_Surf_Tool(u8 taskId)
 {

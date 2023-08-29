@@ -85,6 +85,9 @@ struct BagMenu
 extern struct BagMenu *gBagMenu;
 extern u16 gSpecialVar_ItemId;
 
+#define FIELD 1
+#define BAG 2
+
 void CB2_GoToItemDepositMenu(void);
 void FavorLadyOpenBagMenu(void);
 void QuizLadyOpenBagMenu(void);

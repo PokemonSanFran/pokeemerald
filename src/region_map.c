@@ -27,6 +27,7 @@
 #include "constants/map_types.h"
 #include "constants/rgb.h"
 #include "constants/weather.h"
+#include "item_menu.h" // frictionless_field_moves Branch
 
 /*
  *  This file handles region maps generally, and the map used when selecting a fly destination.
@@ -2017,10 +2018,19 @@ static void CB_ExitFlyMap(void)
                 }
                 ReturnToFieldFromFlyMapSelect();
             }
+            //else if (FlagGet(FLAG_SYS_USE_FLY))
+            else if (VarGet(VAR_FLY_TOOL_SOURCE) > 0)
+            {
+                if (VarGet(VAR_FLY_TOOL_SOURCE) == BAG)
+                    GoToBagMenu(ITEMMENULOCATION_LAST,KEYITEMS_POCKET,CB2_ReturnToFieldWithOpenMenu);
+                else if (VarGet(VAR_FLY_TOOL_SOURCE) == FIELD)
+                    SetMainCallback2(CB2_ReturnToField);
+            }
             else
             {
                 SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);
             }
+            VarSet(VAR_FLY_TOOL_SOURCE,0);
             TRY_FREE_AND_SET_NULL(sFlyMap);
             FreeAllWindowBuffers();
         }
