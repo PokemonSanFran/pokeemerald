@@ -2016,9 +2016,14 @@ static void CB_ExitFlyMap(void)
                         SetWarpDestinationToMapWarp(sMapHealLocations[sFlyMap->regionMap.mapSecId][0], sMapHealLocations[sFlyMap->regionMap.mapSecId][1], WARP_ID_NONE);
                     break;
                 }
-                ReturnToFieldFromFlyMapSelect();
-            }
+
             //Start frictionless_field_moves Branch
+                if (VarGet(VAR_FLY_TOOL_SOURCE) > 0)
+                    ReturnToFieldFromFlyNoMonMapSelect();
+                else
+                    ReturnToFieldFromFlyMapSelect();
+
+            }
             else if (VarGet(VAR_FLY_TOOL_SOURCE) > 0)
             {
                 if (VarGet(VAR_FLY_TOOL_SOURCE) == BAG)

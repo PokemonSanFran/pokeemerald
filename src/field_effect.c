@@ -1412,6 +1412,43 @@ static void Task_FlyIntoMap(u8 taskId)
     }
 }
 
+static void FieldCallback_UseFlyNoMon(void);
+static void Task_UseFlyNoMon(void);
+static void FieldCallback_FlyNoMonIntoMap(void);
+
+void ReturnToFieldFromFlyNoMonMapSelect(void)
+{
+    SetMainCallback2(CB2_ReturnToField);
+    gFieldCallback = Task_UseFlyNoMon;
+}
+
+static void FieldCallback_UseFlyNoMon(void)
+{
+    LockPlayerFieldControls();
+    FreezeObjectEvents();
+    gFieldCallback = NULL;
+}
+
+static void Task_UseFlyNoMon(void)
+{
+    Overworld_ResetStateAfterFly();
+    WarpIntoMap();
+    SetMainCallback2(CB2_LoadMap);
+    gFieldCallback = FieldCallback_FlyNoMonIntoMap;
+}
+
+static void FieldCallback_FlyNoMonIntoMap(void)
+{
+    Overworld_PlaySpecialMapMusic();
+    FadeInFromBlack();
+    if (gPaletteFade.active)
+            return;
+
+    UnlockPlayerFieldControls();
+    UnfreezeObjectEvents();
+    gFieldCallback = NULL;
+}
+
 #define tState      data[0]
 #define tFallOffset data[1]
 #define tTotalFall  data[2]
