@@ -271,16 +271,18 @@
 #define ITEM_0F1 241
 #define ITEM_0F2 242
 #define ITEM_0F3 243
-#define ITEM_0F4 244
-#define ITEM_0F5 245
-#define ITEM_0F6 246
-#define ITEM_0F7 247
-#define ITEM_0F8 248
-#define ITEM_0F9 249
-#define ITEM_0FA 250
-#define ITEM_0FB 251
-#define ITEM_0FC 252
-#define ITEM_0FD 253
+//Start qol_field_moves
+#define ITEM_CUT_TOOL 244
+#define ITEM_FLY_TOOL 245
+#define ITEM_SURF_TOOL 246
+#define ITEM_STRENGTH_TOOL 247
+#define ITEM_FLASH_TOOL 248
+#define ITEM_ROCKSMASH_TOOL 249
+#define ITEM_WATERFALL_TOOL 250
+#define ITEM_DIVE_TOOL 251
+#define ITEM_TELEPORT_TOOL 252
+#define ITEM_SWEETSCENT_TOOL 253
+//End qol_field_moves
 
 // Contest held items
 #define ITEM_RED_SCARF 254

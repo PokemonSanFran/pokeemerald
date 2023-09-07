@@ -22,7 +22,7 @@
 static void Task_DoFieldMove_Init(u8 taskId);
 static void Task_DoFieldMove_ShowMonAfterPose(u8 taskId);
 static void Task_DoFieldMove_WaitForMon(u8 taskId);
-static void Task_DoFieldMove_RunFunc(u8 taskId);
+//static void Task_DoFieldMove_RunFunc(u8 taskId); // qol_field_moves
 
 static void FieldCallback_RockSmash(void);
 static void FieldMove_RockSmash(void);
@@ -106,7 +106,10 @@ static void Task_DoFieldMove_WaitForMon(u8 taskId)
     }
 }
 
-static void Task_DoFieldMove_RunFunc(u8 taskId)
+// Start qol_field_moves
+//static void Task_DoFieldMove_RunFunc(u8 taskId)
+void Task_DoFieldMove_RunFunc(u8 taskId)
+// End qol_field_moves
 {
     // The function for the field move to do is stored in halves across data[8] and data[9]
     void (*fieldMoveFunc)(void) = (void (*)(void))(((u16)gTasks[taskId].data[8] << 16) | (u16)gTasks[taskId].data[9]);

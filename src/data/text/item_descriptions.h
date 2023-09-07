@@ -947,6 +947,60 @@ static const u8 sStickDesc[] = _(
     "raises FARFETCH'D's\n"
     "critical-hit ratio.");
 
+// Start qol_field_moves
+
+static const u8 sCut_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "cutting trees.");
+
+static const u8 sFly_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "going places.");
+
+static const u8 sSurf_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "riding waves.");
+
+static const u8 sStrength_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "moving boulders.");
+
+static const u8 sFlash_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "lighting caves.");
+
+static const u8 sRockSmash_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "smashing rocks.");
+
+static const u8 sWaterfall_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "climbing waterfalls.");
+
+static const u8 sDive_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "diving underwater.");
+
+static const u8 sTeleport_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "getting to safety.");
+
+static const u8 sSweetScent_ToolDesc[] = _(
+	"This tool\n"
+    "is used for\n"
+    "luring pokemon.");
+
+// End qol_field_moves
+
 static const u8 sRedScarfDesc[] = _(
     "A hold item that\n"
     "raises COOL in\n"

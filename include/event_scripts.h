@@ -378,6 +378,21 @@ extern const u8 EventScript_UseFlash[];
 extern const u8 EventScript_UseCut[];
 extern const u8 EventScript_UseRockSmash[];
 
+//Start qol_field_moves
+extern const u8 EventScript_CutTreeDown[];
+extern const u8 EventScript_UseCutTool[];
+extern const u8 EventScript_UseSurfMon[];
+extern const u8 EventScript_UseSurfTool[];
+extern const u8 EventScript_UseStrengthTool[];
+extern const u8 EventScript_UseFlashTool[];
+extern const u8 EventScript_SmashRock[];
+extern const u8 EventScript_UseRockSmash[];
+extern const u8 EventScript_UseRockSmashTool[];
+extern const u8 EventScript_UseWaterfallMon[];
+extern const u8 EventScript_UseWaterfallTool[];
+extern const u8 EventScript_UseDiveTool[];
+//End qol_field_moves
+
 //player pc
 extern const u8 LittlerootTown_BrendansHouse_2F_EventScript_TurnOffPlayerPC[];
 extern const u8 LittlerootTown_MaysHouse_2F_EventScript_TurnOffPlayerPC[];
