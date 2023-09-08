@@ -1136,7 +1136,7 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
 // Start qol_field_moves
 void ItemUseOutOfBattle_Cut_Tool(u8 taskId)
 {
-    if (SetUpFieldMove_CutTool())
+    if (SetUpFieldMove_UseCutTool())
     {
         sItemUseOnFieldCB = ItemUseOnFieldCB_Cut_Tool;
 		SetUpItemUseOnFieldCallback(taskId);
@@ -1210,7 +1210,7 @@ void ItemUseOnFieldCB_Strength_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Flash_Tool(u8 taskId)
 {
-    if (CanUseFlashOnMap())
+    if (CanUseFlash())
     {
         sItemUseOnFieldCB = ItemUseOnFieldCB_Flash_Tool;
         SetUpItemUseOnFieldCallback(taskId);
@@ -1242,7 +1242,7 @@ static void ItemUseOnFieldCB_RockSmash_Tool(u8 taskId)
 }
 void ItemUseOutOfBattle_Waterfall_Tool(u8 taskId)
 {
-    if (CanStartWaterfallTool())
+    if (CanUseWaterfallTool())
     {
         sItemUseOnFieldCB = ItemUseOnFieldCB_Waterfall_Tool;
         SetUpItemUseOnFieldCallback(taskId);
@@ -1286,7 +1286,7 @@ void ItemUseOutOfBattle_Teleport_Tool(u8 taskId)
 void ItemUseOnFieldCB_Teleport_Tool(u8 taskId)
 {
     LockPlayerFieldControls();
-    FldEff_UseTeleportNoMon();
+    FldEff_UseTeleportTool();
     DestroyTask(taskId);
 }
 void ItemUseOutOfBattle_SweetScent_Tool(u8 taskId)
@@ -1297,7 +1297,7 @@ void ItemUseOutOfBattle_SweetScent_Tool(u8 taskId)
 void ItemUseOnFieldCB_SweetScent_Tool(u8 taskId)
 {
     LockPlayerFieldControls();
-    FldEff_SweetScentNoMon();
+    FldEff_SweetScentTool();
     DestroyTask(taskId);
 }
 // End qol_field_moves

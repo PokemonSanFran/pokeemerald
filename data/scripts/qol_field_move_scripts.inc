@@ -30,7 +30,7 @@ EventScript_UseWaterfallTool::
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
     waitmessage
     setflag FLAG_SYS_USE_WATERFALL
-    callnative CreateClimbWaterfallTask // update before release
+    callnative CreateUseWaterfallTask // update before release
     releaseall
     end
 
@@ -45,7 +45,7 @@ EventScript_UseDiveTool::
     bufferitemname STR_VAR_2, ITEM_DIVE_TOOL
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
     waitmessage
-    callnative FldEff_UseDiveWithoutMon // update before release
+    callnative FldEff_UseDiveTool // update before release
     goto EventScript_EndDive
 
 EventScript_UseFlashTool::
@@ -59,6 +59,6 @@ EventScript_UseFlashTool::
 EventScript_UseSurfTool::
     bufferitemname STR_VAR_2, ITEM_SURF_TOOL
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
-    callnative CreateStartSurfingTask // update before release
+    callnative CreateUseSurfTask // update before release
     releaseall
     end

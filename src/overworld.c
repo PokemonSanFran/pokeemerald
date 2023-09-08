@@ -377,7 +377,7 @@ void Overworld_ResetStateAfterFly(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
-    ClearQoLFieldMovesFlags(); // qol_field_moves
+    ClearFieldMoveFlags(); // qol_field_moves
 }
 
 void Overworld_ResetStateAfterTeleport(void)
@@ -388,7 +388,7 @@ void Overworld_ResetStateAfterTeleport(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
-    ClearQoLFieldMovesFlags(); // qol_field_moves
+    ClearFieldMoveFlags(); // qol_field_moves
     RunScriptImmediately(EventScript_ResetMrBriney);
 }
 
@@ -400,7 +400,7 @@ void Overworld_ResetStateAfterDigEscRope(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
-    ClearQoLFieldMovesFlags(); // qol_field_moves
+    ClearFieldMoveFlags(); // qol_field_moves
 }
 
 static void Overworld_ResetStateAfterWhiteOut(void)
@@ -411,7 +411,7 @@ static void Overworld_ResetStateAfterWhiteOut(void)
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
     FlagClear(FLAG_SYS_USE_FLASH);
-    ClearQoLFieldMovesFlags(); // qol_field_moves
+    ClearFieldMoveFlags(); // qol_field_moves
     // If you were defeated by Kyogre/Groudon and the step counter has
     // maxed out, end the abnormal weather.
     if (VarGet(VAR_SHOULD_END_ABNORMAL_WEATHER) == 1)
@@ -985,7 +985,7 @@ void SetDefaultFlashLevel(void)
     else
         gSaveBlock1Ptr->flashLevel = gMaxFlashLevel - 1;
 
-    CheckAndDoQoLFlash(); // qol_field_moves
+    CheckAndUseFlash(); // qol_field_moves
 }
 
 void SetFlashLevel(s32 flashLevel)
@@ -1549,7 +1549,7 @@ void CB2_NewGame(void)
     PlayTimeCounter_Start();
     ScriptContext_Init();
     UnlockPlayerFieldControls();
-    gFieldCallback = ExecuteTruckSequence;
+    //gFieldCallback = ExecuteTruckSequence;
     gFieldCallback2 = NULL;
     DoMapLoadLoop(&gMain.state);
     SetFieldVBlankCallback();

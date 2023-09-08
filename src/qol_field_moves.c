@@ -33,36 +33,49 @@
 #include "metatile_behavior.h"
 #include "fieldmap.h"
 
-static u8 CreateFieldMoveNoMonTask(void);
-static void Task_DoFieldMoveNoMon_Init(u8);
+// TODO reset gitignore
+/*
+// TODO add  the following
+        deleted:    data/layouts/layouts.json
+        deleted:    data/maps/.gitignore
+        deleted:    data/maps/map_groups.json
+        deleted:    include/constants/layouts.h
+        deleted:    include/constants/map_groups.h
+        deleted:    src/data/wild_encounters.json
+        deleted:    src/new_game.c
+        */
 
-static u32 CanStartCuttingTree(s16, s16, u8);
-static void FieldCallback_CutTreeWithTool(void);
+// uncomment execute truck sequence
+
+static u8 CreateUseToolTask(void);
+static void Task_UseTool_Init(u8);
+
+static void FieldCallback_UseCutTool(void);
 
 static void FieldCallback_UseFlyTool(void);
 static void Task_UseFlyTool(void);
-static void FieldCallback_FlyToolIntoMap(void);
+static void FieldCallback_UseFlyToolIntoMap(void);
 
-static void Task_StartSurfingInit(u8);
-static void Task_WaitStartSurfing(u8);
+static void Task_UseSurfInit(u8);
+static void Task_WaitUseSurf(u8);
 
-static bool8 SetUpFieldMove_QoLFlash(void);
-static void FieldCallback_UseQoLFlash(void);
-static void SetUpFieldMove_FlashMon(void);
-static void FieldCallback_FlashMon(void);
+static bool8 SetUpFieldMove_UseFlash(void);
+static void FieldCallback_UseFlash(void);
+static void SetUpFieldMove_UseFlashMove(void);
+static void FieldCallback_UseFlashMove(void);
 
-static bool8 CanStartSmashingRock(s16, s16, u8);
+static bool8 UseRockSmash(s16, s16, u8);
 
-static void Task_UseWaterfallWithoutMon(u8);
-static u32 CanStartClimbingWaterfall(u8);
-static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *, struct ObjectEvent *);
-static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
-static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
+static void Task_UseWaterfallTool(u8);
+static u32 CanUseWaterfall(u8);
+static bool8 WaterfallToolFieldEffect_Init(struct Task *, struct ObjectEvent *);
+static bool8 WaterfallToolFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
+static bool8 WaterfallToolFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
 static bool8 IsPlayerFacingWaterfall(void);
 
-static void Task_UseDiveWithoutMon(u8);
-static bool8 DiveWithoutMonFieldEffect_Init(struct Task *task);
-static bool8 DiveWithoutMonFieldEffect_TryWarp(struct Task *task);
+static void Task_UseDiveTool(u8);
+static bool8 DiveToolFieldEffect_Init(struct Task *task);
+static bool8 DiveToolFieldEffect_TryWarp(struct Task *task);
 
 static bool32 PartyCanLearnMoveLevelUp(u16, u16);
 
@@ -70,13 +83,13 @@ static bool32 PartyCanLearnMoveLevelUp(u16, u16);
 #define tFallOffset data[1]
 #define tTotalFall  data[2]
 
-static u8 CreateFieldMoveNoMonTask(void)
+static u8 CreateUseToolTask(void)
 {
     GetXYCoordsOneStepInFrontOfPlayer(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
-    return CreateTask(Task_DoFieldMoveNoMon_Init, 8);
+    return CreateTask(Task_UseTool_Init, 8);
 }
 
-static void Task_DoFieldMoveNoMon_Init(u8 taskId)
+static void Task_UseTool_Init(u8 taskId)
 {
     u8 objEventId;
 
@@ -100,34 +113,16 @@ static void Task_DoFieldMoveNoMon_Init(u8 taskId)
 }
 
 // Cut
-bool8 SetUpFieldMove_CutTool(void)
-{
-    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE) == TRUE)
-    {
-        // Standing in front of cuttable tree.
-        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-        gPostMenuFieldCallback = FieldCallback_CutTreeWithTool;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static void FieldCallback_CutTreeWithTool(void)
-{
-    ScriptContext_SetupScript(EventScript_UseCutTool);
-}
-
-
-static u32 CanStartCuttingTree(s16 x, s16 y, u8 direction)
+u32 CanUseCut(s16 x, s16 y, u8 direction)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM01);
     bool32 bagHasItem = CheckBagHasItem(ITEM_CUT_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE01_GET);
 
     if (
             CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE)
             && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-            && (monHasMove || bagHasItem)
-            && FlagGet(FLAG_BADGE01_GET)
+            && ((monHasMove && playerHasBadge) || bagHasItem)
        )
 
     {
@@ -137,6 +132,38 @@ static u32 CanStartCuttingTree(s16 x, s16 y, u8 direction)
     return FIELD_MOVE_FAIL;
 }
 
+bool8 SetUpFieldMove_UseCutTool(void)
+{
+    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE) == TRUE)
+    {
+        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+        gPostMenuFieldCallback = FieldCallback_UseCutTool;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void FieldCallback_UseCutTool(void)
+{
+    ScriptContext_SetupScript(EventScript_UseCutTool);
+}
+
+u32 UseCut(u32 fieldMoveStatus)
+{
+    LockPlayerFieldControls();
+    gFieldEffectArguments[0] = gSpecialVar_Result;
+
+    if (FlagGet(FLAG_SYS_USE_CUT))
+        ScriptContext_SetupScript(EventScript_CutTreeDown);
+    else if(fieldMoveStatus == FIELD_MOVE_POKEMON)
+        ScriptContext_SetupScript(EventScript_UseCut);
+    else if(fieldMoveStatus == FIELD_MOVE_TOOL)
+        ScriptContext_SetupScript(EventScript_UseCutTool);
+
+    FlagSet(FLAG_SYS_USE_CUT);
+    return COLLISION_START_CUT;
+}
+
 // Fly
 void ReturnToFieldFromFlyToolMapSelect(void)
 {
@@ -144,7 +171,7 @@ void ReturnToFieldFromFlyToolMapSelect(void)
     gFieldCallback = Task_UseFlyTool;
 }
 
-static void FieldCallback_UseFlyTool(void)
+static void FieldCallback_UseFlyToolIntoMap(void)
 {
     LockPlayerFieldControls();
     FreezeObjectEvents();
@@ -156,10 +183,10 @@ static void Task_UseFlyTool(void)
     Overworld_ResetStateAfterFly();
     WarpIntoMap();
     SetMainCallback2(CB2_LoadMap);
-    gFieldCallback = FieldCallback_FlyToolIntoMap;
+    gFieldCallback = FieldCallback_UseFlyTool;
 }
 
-static void FieldCallback_FlyToolIntoMap(void)
+static void FieldCallback_UseFlyTool(void)
 {
     Overworld_PlaySpecialMapMusic();
     FadeInFromBlack();
@@ -171,7 +198,7 @@ static void FieldCallback_FlyToolIntoMap(void)
     gFieldCallback = NULL;
 }
 
-u32 CanStartSurfing(s16 x, s16 y)
+u32 CanUseSurf(s16 x, s16 y)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM02);
     bool32 bagHasItem = CheckBagHasItem(ITEM_SURF_TOOL,1);
@@ -188,7 +215,7 @@ u32 CanStartSurfing(s16 x, s16 y)
     return FIELD_MOVE_FAIL;
 }
 
-void CreateStartSurfingTask(void)
+void CreateUseSurfTask(void)
 {
     u8 taskId;
 
@@ -198,12 +225,12 @@ void CreateStartSurfingTask(void)
     gPlayerAvatar.flags ^= PLAYER_AVATAR_FLAG_ON_FOOT;
     gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_SURFING;
     gPlayerAvatar.preventStep = TRUE;
-    taskId = CreateTask(Task_StartSurfingInit,0);
+    taskId = CreateTask(Task_UseSurfInit,0);
     gTasks[taskId].data[0] = GetPlayerFacingDirection();
-    Task_StartSurfingInit(taskId);
+    Task_UseSurfInit(taskId);
 }
 
-static void Task_StartSurfingInit(u8 taskId)
+static void Task_UseSurfInit(u8 taskId)
 {
     struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
 
@@ -216,10 +243,10 @@ static void Task_StartSurfingInit(u8 taskId)
     ObjectEventSetGraphicsId(playerObjEvent, GetPlayerAvatarGraphicsIdByStateId(3));
     ObjectEventClearHeldMovementIfFinished(playerObjEvent);
     ObjectEventSetHeldMovement(playerObjEvent, GetJumpSpecialMovementAction((u8)gTasks[taskId].data[0]));
-    gTasks[taskId].func = Task_WaitStartSurfing;
+    gTasks[taskId].func = Task_WaitUseSurf;
 }
 
-static void Task_WaitStartSurfing(u8 taskId)
+static void Task_WaitUseSurf(u8 taskId)
 {
     struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
 
@@ -235,7 +262,7 @@ static void Task_WaitStartSurfing(u8 taskId)
 
 // Strength
 
-u32 CanPushBoulder(void)
+u32 CanUseStrength(void)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM04);
     bool32 bagHasItem = CheckBagHasItem(ITEM_STRENGTH_TOOL,1);
@@ -254,15 +281,15 @@ u32 CanPushBoulder(void)
 
 // Flash
 
-bool8 SetUpFieldMove_QoLFlash(void)
+bool8 SetUpFieldMove_UseFlash(void)
 {
     gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-    gPostMenuFieldCallback = FieldCallback_UseQoLFlash;
+    gPostMenuFieldCallback = FieldCallback_UseFlash;
 }
 
-void FieldCallback_UseQoLFlash(void)
+void FieldCallback_UseFlash(void)
 {
-    u8 taskId = CreateFieldMoveNoMonTask();
+    u8 taskId = CreateUseToolTask();
     gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlashTool >> 16;
     gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlashTool;
 }
@@ -275,13 +302,13 @@ void FldEff_UseFlashTool(void)
     ScriptContext_SetupScript(EventScript_UseFlashTool);
 }
 
-void SetUpFieldMove_FlashMon(void)
+void SetUpFieldMove_UseFlashMove(void)
 {
     gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-    gPostMenuFieldCallback = FieldCallback_FlashMon;
+    gPostMenuFieldCallback = FieldCallback_UseFlashMove;
 }
 
-void FieldCallback_FlashMon(void)
+void FieldCallback_UseFlashMove(void)
 {
     u32 taskId = 0;
     PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
@@ -292,7 +319,7 @@ void FieldCallback_FlashMon(void)
     gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlash;
 }
 
-u32 CanUseFlashOnMap(void)
+u32 CanUseFlash(void)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
     bool32 bagHasItem = CheckBagHasItem(ITEM_FLASH_TOOL,1);
@@ -309,9 +336,9 @@ u32 CanUseFlashOnMap(void)
     return FIELD_MOVE_FAIL;
 }
 
-void CheckAndDoQoLFlash(void)
+void CheckAndUseFlash(void)
 {
-    u32 fieldMoveStatus = CanUseFlashOnMap();
+    u32 fieldMoveStatus = CanUseFlash();
 
     if ((fieldMoveStatus != FIELD_MOVE_FAIL))
     {
@@ -319,16 +346,16 @@ void CheckAndDoQoLFlash(void)
         gFieldEffectArguments[0] = gSpecialVar_Result;
 
         if (fieldMoveStatus == FIELD_MOVE_POKEMON)
-            SetUpFieldMove_FlashMon();
+            SetUpFieldMove_UseFlashMove();
 
         else if (fieldMoveStatus == FIELD_MOVE_TOOL)
-            SetUpFieldMove_QoLFlash();
+            SetUpFieldMove_UseFlash();
     }
 }
 
 // Rock Smash
 
-static bool8 CanStartSmashingRock(s16 x, s16 y, u8 direction)
+static bool8 UseRockSmash(s16 x, s16 y, u8 direction)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM06);
     bool32 bagHasItem = CheckBagHasItem(ITEM_ROCKSMASH_TOOL,1);
@@ -349,7 +376,7 @@ static bool8 CanStartSmashingRock(s16 x, s16 y, u8 direction)
 
 // Waterfall
 
-static u32 CanStartClimbingWaterfall(u8 direction)
+static u32 CanUseWaterfall(u8 direction)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM07);
     bool32 bagHasItem = CheckBagHasItem(ITEM_WATERFALL_TOOL,1);
@@ -369,7 +396,7 @@ static u32 CanStartClimbingWaterfall(u8 direction)
     return FIELD_MOVE_FAIL;
 }
 
-bool32 CanStartWaterfallTool(void)
+bool32 CanUseWaterfallTool(void)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM07);
     bool32 bagHasItem = CheckBagHasItem(ITEM_WATERFALL_TOOL,1);
@@ -388,26 +415,26 @@ bool32 CanStartWaterfallTool(void)
     return FALSE;
 }
 
-static bool8 (*const sWaterfallWithoutMonFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
+static bool8 (*const sWaterfallToolFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
 {
-    WaterfallWithoutMonFieldEffect_Init,
-    WaterfallWithoutMonFieldEffect_RideUp,
-    WaterfallWithoutMonFieldEffect_ContinueRideOrEnd,
+    WaterfallToolFieldEffect_Init,
+    WaterfallToolFieldEffect_RideUp,
+    WaterfallToolFieldEffect_ContinueRideOrEnd,
 };
 
-void CreateClimbWaterfallTask(void)
+void CreateUseWaterfallTask(void)
 {
     u8 taskId;
-    taskId = CreateTask(Task_UseWaterfallWithoutMon, 0xFF);
-    Task_UseWaterfallWithoutMon(taskId);
+    taskId = CreateTask(Task_UseWaterfallTool, 0xFF);
+    Task_UseWaterfallTool(taskId);
 }
 
-static void Task_UseWaterfallWithoutMon(u8 taskId)
+static void Task_UseWaterfallTool(u8 taskId)
 {
-    while (sWaterfallWithoutMonFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]));
+    while (sWaterfallToolFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]));
 }
 
-static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *task, struct ObjectEvent *objectEvent)
+static bool8 WaterfallToolFieldEffect_Init(struct Task *task, struct ObjectEvent *objectEvent)
 {
     LockPlayerFieldControls();
     gPlayerAvatar.preventStep = TRUE;
@@ -415,14 +442,14 @@ static bool8 WaterfallWithoutMonFieldEffect_Init(struct Task *task, struct Objec
     return FALSE;
 }
 
-static bool8 WaterfallWithoutMonFieldEffect_RideUp(struct Task *task, struct ObjectEvent *objectEvent)
+static bool8 WaterfallToolFieldEffect_RideUp(struct Task *task, struct ObjectEvent *objectEvent)
 {
     ObjectEventSetHeldMovement(objectEvent, GetWalkSlowMovementAction(DIR_NORTH));
     task->tState++;
     return FALSE;
 }
 
-static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent)
+static bool8 WaterfallToolFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent)
 {
     if (!ObjectEventClearHeldMovementIfFinished(objectEvent))
         return FALSE;
@@ -436,7 +463,7 @@ static bool8 WaterfallWithoutMonFieldEffect_ContinueRideOrEnd(struct Task *task,
 
     UnlockPlayerFieldControls();
     gPlayerAvatar.preventStep = FALSE;
-    DestroyTask(FindTaskIdByFunc(Task_UseWaterfallWithoutMon));
+    DestroyTask(FindTaskIdByFunc(Task_UseWaterfallTool));
     FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL);
     return FALSE;
 }
@@ -461,48 +488,48 @@ bool8 IsPlayerFacingWaterfall(void)
 
 // Dive
 
-static bool8 (*const sDiveWithoutMonFieldEffectFuncs[])(struct Task *) =
+static bool8 (*const sDiveToolFieldEffectFuncs[])(struct Task *) =
 {
-    DiveWithoutMonFieldEffect_Init,
-    DiveWithoutMonFieldEffect_TryWarp,
+    DiveToolFieldEffect_Init,
+    DiveToolFieldEffect_TryWarp,
 };
 
-bool8 FldEff_UseDiveWithoutMon(void)
+bool8 FldEff_UseDiveTool(void)
 {
     u8 taskId;
-    taskId = CreateTask(Task_UseDiveWithoutMon, 0xff);
-    Task_UseDiveWithoutMon(taskId);
+    taskId = CreateTask(Task_UseDiveTool, 0xff);
+    Task_UseDiveTool(taskId);
     return FALSE;
 }
 
-static void Task_UseDiveWithoutMon(u8 taskId)
+static void Task_UseDiveTool(u8 taskId)
 {
-    while (sDiveWithoutMonFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
+    while (sDiveToolFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
 }
 
-static bool8 DiveWithoutMonFieldEffect_Init(struct Task *task)
+static bool8 DiveToolFieldEffect_Init(struct Task *task)
 {
     gPlayerAvatar.preventStep = TRUE;
     task->data[0]++;
     return FALSE;
 }
 
-static bool8 DiveWithoutMonFieldEffect_TryWarp(struct Task *task)
+static bool8 DiveToolFieldEffect_TryWarp(struct Task *task)
 {
     struct MapPosition mapPosition;
     PlayerGetDestCoords(&mapPosition.x, &mapPosition.y);
 
     TryDoDiveWarp(&mapPosition, gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior);
-    DestroyTask(FindTaskIdByFunc(Task_UseDiveWithoutMon));
+    DestroyTask(FindTaskIdByFunc(Task_UseDiveTool));
     //FieldEffectActiveListRemove(FLDEFF_USE_DIVE);
     return FALSE;
 }
 
 // Teleport
 
-bool8 FldEff_UseTeleportNoMon(void)
+bool8 FldEff_UseTeleportTool(void)
 {
-    u8 taskId = CreateFieldMoveNoMonTask();
+    u8 taskId = CreateUseToolTask();
     gTasks[taskId].data[8] = (u32)StartTeleportFieldEffect >> 16;
     gTasks[taskId].data[9] = (u32)StartTeleportFieldEffect;
     SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
@@ -511,12 +538,12 @@ bool8 FldEff_UseTeleportNoMon(void)
 
 // Sweet Scent
 
-bool8 FldEff_SweetScentNoMon(void)
+bool8 FldEff_SweetScentTool(void)
 {
     u8 taskId;
 
     SetWeatherScreenFadeOut();
-    taskId = CreateFieldMoveNoMonTask();
+    taskId = CreateUseToolTask();
     gTasks[taskId].data[8] = (u32)StartSweetScentFieldEffect >> 16;
     gTasks[taskId].data[9] = (u32)StartSweetScentFieldEffect;
     return FALSE;
@@ -525,7 +552,7 @@ bool8 FldEff_SweetScentNoMon(void)
 
 
 
-void ClearQoLFieldMovesFlags(void)
+void ClearFieldMoveFlags(void)
 {
     FlagClear(FLAG_SYS_USE_CUT);
     FlagClear(FLAG_SYS_USE_SURF);

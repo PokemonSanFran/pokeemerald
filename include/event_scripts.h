@@ -380,8 +380,9 @@ extern const u8 EventScript_UseRockSmash[];
 
 //Start qol_field_moves
 extern const u8 EventScript_CutTreeDown[];
+extern const u8 EventScript_UseCut[];
 extern const u8 EventScript_UseCutTool[];
-extern const u8 EventScript_UseSurfMon[];
+extern const u8 EventScript_UseSurfMove[];
 extern const u8 EventScript_UseSurfTool[];
 extern const u8 EventScript_UseStrengthTool[];
 extern const u8 EventScript_UseFlashTool[];

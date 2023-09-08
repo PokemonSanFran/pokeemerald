@@ -454,7 +454,7 @@ static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metati
     s16 x = playerObjEvent->currentCoords.x;
     s16 y = playerObjEvent->currentCoords.y;
 
-    if (CanStartSurfing(x,y) != FIELD_MOVE_FAIL)
+    if (CanUseSurf(x,y) != FIELD_MOVE_FAIL)
     // End qol_field_moves
         return EventScript_UseSurf;
 

@@ -12,7 +12,7 @@ EventScript_UseSurf::
 	msgbox gText_WantToUseSurf, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, EventScript_ReleaseUseSurf
 	msgbox gText_PlayerUsedSurf, MSGBOX_DEFAULT
-EventScript_UseSurfMon:: @ qol_field_moves
+EventScript_UseSurfMove:: @ qol_field_moves
 	dofieldeffect FLDEFF_USE_SURF
 EventScript_ReleaseUseSurf::
 	releaseall
