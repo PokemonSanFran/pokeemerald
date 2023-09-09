@@ -449,12 +449,8 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
 static const u8 *GetInteractedWaterScript(struct MapPosition *unused1, u8 metatileBehavior, u8 direction)
 {
     // Start qol_field_moves
+    if (CanUseSurfFromInteractedWater())
     //if (FlagGet(FLAG_BADGE05_GET) == TRUE && PartyHasMonWithSurf() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
-    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-    s16 x = playerObjEvent->currentCoords.x;
-    s16 y = playerObjEvent->currentCoords.y;
-
-    if (CanUseSurf(x,y) != FIELD_MOVE_FAIL)
     // End qol_field_moves
         return EventScript_UseSurf;
 

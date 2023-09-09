@@ -7,7 +7,9 @@ bool32 IsFlyToolUsed(void);
 bool32 ReturnToFieldOrBagFromFlyTool(void);
 void ResetFlyTool(void);
 
-u32 CanUseSurf(s16, s16);
+u32 CanUseSurf(s16, s16, u8);
+u32 CanUseSurfFromInteractedWater(void);
+u32 UseSurf(u32);
 void CreateUseSurfTask(void);
 
 u32 CanUseStrength(void);

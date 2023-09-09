@@ -678,10 +678,15 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     if (collision == COLLISION_ELEVATION_MISMATCH && CanStopSurfing(x, y, direction))
         return COLLISION_STOP_SURFING;
 
-    //Start qol_field_moves
+    // Start qol_field_moves
     fieldMoveStatus = CanUseCut(x,y,direction);
     if (fieldMoveStatus)
         return UseCut(fieldMoveStatus);
+
+    fieldMoveStatus = CanUseSurf(x,y,collision);
+    if (fieldMoveStatus)
+        return UseSurf(fieldMoveStatus);
+    // End qol_field_moves
 
     if (ShouldJumpLedge(x, y, direction))
     {

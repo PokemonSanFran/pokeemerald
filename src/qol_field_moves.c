@@ -210,21 +210,51 @@ void ResetFlyTool(void)
 }
 
 // Surf
-u32 CanUseSurf(s16 x, s16 y)
+u32 CanUseSurf(s16 x, s16 y, u8 collision)
 {
-    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM02);
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM03);
     bool32 bagHasItem = CheckBagHasItem(ITEM_SURF_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE05_GET);
+    bool32 collisionHasMismatch = (collision == COLLISION_ELEVATION_MISMATCH);
 
-    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING)){
-        if (
+    if (
             IsPlayerFacingSurfableFishableWater()
+            && collisionHasMismatch
+            && (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
             && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-            && (monHasMove || bagHasItem)
-            && FlagGet(FLAG_BADGE05_GET)
-           )
-            return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+            && ((monHasMove && playerHasBadge) || bagHasItem)
+       )
+
+    {
+        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
     }
+
     return FIELD_MOVE_FAIL;
+}
+
+u32 CanUseSurfFromInteractedWater()
+{
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x = playerObjEvent->currentCoords.x;
+    s16 y = playerObjEvent->currentCoords.y;
+
+    return CanUseSurf(x,y,COLLISION_ELEVATION_MISMATCH);
+}
+
+u32 UseSurf(u32 fieldMoveStatus)
+{
+    LockPlayerFieldControls();
+    gFieldEffectArguments[0] = gSpecialVar_Result;
+
+    if (FlagGet(FLAG_SYS_USE_SURF))
+        CreateUseSurfTask();
+    else if(fieldMoveStatus == FIELD_MOVE_POKEMON)
+        ScriptContext_SetupScript(EventScript_UseSurfMove);
+    else if(fieldMoveStatus == FIELD_MOVE_TOOL)
+        ScriptContext_SetupScript(EventScript_UseSurfTool);
+
+    FlagSet(FLAG_SYS_USE_SURF);
+    return COLLISION_START_SURFING;
 }
 
 void CreateUseSurfTask(void)
