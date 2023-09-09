@@ -34,6 +34,8 @@ void Task_UseDigEscapeRopeOnField(u8 taskId);
 u8 CanUseDigOrEscapeRopeOnCurMap(void);
 u8 CheckIfItemIsTMHMOrEvolutionStone(u16 itemId);
 
+// Start qol_field_moves
+
 void ItemUseOutOfBattle_CutTool(u8);
 static void ItemUseOnFieldCB_CutTool(u8);
 
@@ -60,9 +62,10 @@ void ItemUseOutOfBattle_DiveTool(u8);
 static void ItemUseOnFieldCB_DiveTool(u8);
 
 void ItemUseOutOfBattle_TeleportTool(u8);
-static void ItemUseOnFieldCB_TeleportTool(u8);
 
 void ItemUseOutOfBattle_SweetScentTool(u8);
 static void ItemUseOnFieldCB_SweetScentTool(u8);
+
+// End qol_field_moves
 
 #endif // GUARD_ITEM_USE_H

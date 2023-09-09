@@ -603,9 +603,6 @@ bool8 FldEff_SweetScentTool(void)
     return FALSE;
 }
 
-
-
-
 void ClearFieldMoveFlags(void)
 {
     FlagClear(FLAG_SYS_USE_CUT);

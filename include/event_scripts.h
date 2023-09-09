@@ -392,6 +392,7 @@ extern const u8 EventScript_UseRockSmashTool[];
 extern const u8 EventScript_UseWaterfallMon[];
 extern const u8 EventScript_UseWaterfallTool[];
 extern const u8 EventScript_UseDiveTool[];
+extern const u8 EventScript_AskTeleportTool[];
 //End qol_field_moves
 
 //player pc

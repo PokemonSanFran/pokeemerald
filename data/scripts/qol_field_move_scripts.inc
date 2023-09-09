@@ -63,3 +63,13 @@ EventScript_UseSurfTool::
     callnative CreateUseSurfTask // update before release
     releaseall
     end
+
+EventScript_AskTeleportTool::
+    lock
+    msgbox gStringVar4, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, EventScript_CancelTeleportTool
+EventScript_UseTeleportTool::
+    callnative FldEff_UseTeleportTool // update before release
+EventScript_CancelTeleportTool::
+    releaseall
+    end
