@@ -27,10 +27,7 @@
 #include "constants/map_types.h"
 #include "constants/rgb.h"
 #include "constants/weather.h"
-// Start qol_field_moves
-#include "qol_field_moves.h"
-#include "item_menu.h"
-// End qol_field_moves
+#include "qol_field_moves.h" // qol_field_moves
 
 /*
  *  This file handles region maps generally, and the map used when selecting a fly destination.
@@ -2019,26 +2016,22 @@ static void CB_ExitFlyMap(void)
                         SetWarpDestinationToMapWarp(sMapHealLocations[sFlyMap->regionMap.mapSecId][0], sMapHealLocations[sFlyMap->regionMap.mapSecId][1], WARP_ID_NONE);
                     break;
                 }
-                // Start qol_field_moves
-                // ReturnToFieldFromFlyMapSelect();
-                if (VarGet(VAR_FLY_TOOL_SOURCE) > 0)
+            // Start qol_field_moves
+                if (IsFlyToolUsed())
                     ReturnToFieldFromFlyToolMapSelect();
                 else
                     ReturnToFieldFromFlyMapSelect();
             }
-            else if (VarGet(VAR_FLY_TOOL_SOURCE))
+            else if (IsFlyToolUsed())
             {
-                if (VarGet(VAR_FLY_TOOL_SOURCE) == FLY_SOURCE_BAG)
-                    GoToBagMenu(ITEMMENULOCATION_LAST,KEYITEMS_POCKET,CB2_ReturnToFieldWithOpenMenu);
-                else if (VarGet(VAR_FLY_TOOL_SOURCE) == FLY_SOURCE_FIELD)
-                    SetMainCallback2(CB2_ReturnToField);
+                ReturnToFieldOrBagFromFlyTool();
             // End qol_field_moves
             }
             else
             {
                 SetMainCallback2(CB2_ReturnToPartyMenuFromFlyMap);
             }
-            VarSet(VAR_FLY_TOOL_SOURCE,0); // qol_field_moves
+            ResetFlyTool(); // qol_field_moves
             TRY_FREE_AND_SET_NULL(sFlyMap);
             FreeAllWindowBuffers();
         }

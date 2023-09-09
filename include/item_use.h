@@ -34,35 +34,35 @@ void Task_UseDigEscapeRopeOnField(u8 taskId);
 u8 CanUseDigOrEscapeRopeOnCurMap(void);
 u8 CheckIfItemIsTMHMOrEvolutionStone(u16 itemId);
 
-void ItemUseOutOfBattle_Cut_Tool(u8);
-static void ItemUseOnFieldCB_Cut_Tool(u8);
+void ItemUseOutOfBattle_CutTool(u8);
+static void ItemUseOnFieldCB_CutTool(u8);
 
-void ItemUseOutOfBattle_Fly_Tool(u8);
-static void CB2_OpenFly_ToolFromBag(void);
-static void Task_OpenRegisteredFly_Tool(u8 taskId);
+void ItemUseOutOfBattle_FlyTool(u8);
+static void CB2_OpenFlyToolFromBag(void);
+static void Task_OpenRegisteredFlyTool(u8 taskId);
 
-void ItemUseOutOfBattle_Surf_Tool(u8);
-static void ItemUseOnFieldCB_Surf_Tool(u8);
+void ItemUseOutOfBattle_SurfTool(u8);
+static void ItemUseOnFieldCB_SurfTool(u8);
 
-void ItemUseOutOfBattle_Strength_Tool(u8);
-static void ItemUseOnFieldCB_Strength_Tool(u8);
+void ItemUseOutOfBattle_StrengthTool(u8);
+static void ItemUseOnFieldCB_StrengthTool(u8);
 
-void ItemUseOutOfBattle_Flash_Tool(u8);
-void ItemUseOnFieldCB_Flash_Tool(u8 taskId);
+void ItemUseOutOfBattle_FlashTool(u8);
+void ItemUseOnFieldCB_FlashTool(u8 taskId);
 
-void ItemUseOutOfBattle_RockSmash_Tool(u8);
-static void ItemUseOnFieldCB_RockSmash_Tool(u8);
+void ItemUseOutOfBattle_RockSmashTool(u8);
+static void ItemUseOnFieldCB_RockSmashTool(u8);
 
-void ItemUseOutOfBattle_Waterfall_Tool(u8);
-static void ItemUseOnFieldCB_Waterfall_Tool(u8);
+void ItemUseOutOfBattle_WaterfallTool(u8);
+static void ItemUseOnFieldCB_WaterfallTool(u8);
 
-void ItemUseOutOfBattle_Dive_Tool(u8);
-static void ItemUseOnFieldCB_Dive_Tool(u8);
+void ItemUseOutOfBattle_DiveTool(u8);
+static void ItemUseOnFieldCB_DiveTool(u8);
 
-void ItemUseOutOfBattle_Teleport_Tool(u8);
-static void ItemUseOnFieldCB_Teleport_Tool(u8);
+void ItemUseOutOfBattle_TeleportTool(u8);
+static void ItemUseOnFieldCB_TeleportTool(u8);
 
-void ItemUseOutOfBattle_SweetScent_Tool(u8);
-static void ItemUseOnFieldCB_SweetScent_Tool(u8);
+void ItemUseOutOfBattle_SweetScentTool(u8);
+static void ItemUseOnFieldCB_SweetScentTool(u8);
 
 #endif // GUARD_ITEM_USE_H

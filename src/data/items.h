@@ -2980,10 +2980,10 @@ const struct Item gItems[] =
         .itemId = ITEM_CUT_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sCut_ToolDesc,
+        .description = sCutToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Cut_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_CutTool,
     },
 
     [ITEM_FLY_TOOL] =
@@ -2992,10 +2992,10 @@ const struct Item gItems[] =
         .itemId = ITEM_FLY_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sFly_ToolDesc,
+        .description = sFlyToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Fly_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_FlyTool,
     },
 
     [ITEM_SURF_TOOL] =
@@ -3004,10 +3004,10 @@ const struct Item gItems[] =
         .itemId = ITEM_SURF_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sSurf_ToolDesc,
+        .description = sSurfToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Surf_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_SurfTool,
     },
 
     [ITEM_STRENGTH_TOOL] =
@@ -3016,10 +3016,10 @@ const struct Item gItems[] =
         .itemId = ITEM_STRENGTH_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sStrength_ToolDesc,
+        .description = sStrengthToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Strength_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_StrengthTool,
     },
 
     [ITEM_FLASH_TOOL] =
@@ -3028,10 +3028,10 @@ const struct Item gItems[] =
         .itemId = ITEM_FLASH_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sFlash_ToolDesc,
+        .description = sFlashToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Flash_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_FlashTool,
     },
 
     [ITEM_ROCKSMASH_TOOL] =
@@ -3040,10 +3040,10 @@ const struct Item gItems[] =
         .itemId = ITEM_ROCKSMASH_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sRockSmash_ToolDesc,
+        .description = sRockSmashToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_RockSmash_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_RockSmashTool,
     },
 
     [ITEM_WATERFALL_TOOL] =
@@ -3052,10 +3052,10 @@ const struct Item gItems[] =
         .itemId = ITEM_WATERFALL_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sWaterfall_ToolDesc,
+        .description = sWaterfallToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Waterfall_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_WaterfallTool,
     },
 
     [ITEM_DIVE_TOOL] =
@@ -3064,10 +3064,10 @@ const struct Item gItems[] =
         .itemId = ITEM_DIVE_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sDive_ToolDesc,
+        .description = sDiveToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Dive_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_DiveTool,
     },
 
     [ITEM_TELEPORT_TOOL] =
@@ -3076,10 +3076,10 @@ const struct Item gItems[] =
         .itemId = ITEM_TELEPORT_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sTeleport_ToolDesc,
+        .description = sTeleportToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_Teleport_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_TeleportTool,
     },
 
     [ITEM_SWEETSCENT_TOOL] =
@@ -3088,10 +3088,10 @@ const struct Item gItems[] =
         .itemId = ITEM_SWEETSCENT_TOOL,
         .price = 0,
         .importance = 1,
-        .description = sSweetScent_ToolDesc,
+        .description = sSweetScentToolDesc,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = ItemUseOutOfBattle_SweetScent_Tool,
+        .fieldUseFunc = ItemUseOutOfBattle_SweetScentTool,
     },
 
     //End qol_field_moves

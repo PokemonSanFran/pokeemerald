@@ -949,52 +949,52 @@ static const u8 sStickDesc[] = _(
 
 // Start qol_field_moves
 
-static const u8 sCut_ToolDesc[] = _(
+static const u8 sCutToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "cutting trees.");
 
-static const u8 sFly_ToolDesc[] = _(
+static const u8 sFlyToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "going places.");
 
-static const u8 sSurf_ToolDesc[] = _(
+static const u8 sSurfToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "riding waves.");
 
-static const u8 sStrength_ToolDesc[] = _(
+static const u8 sStrengthToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "moving boulders.");
 
-static const u8 sFlash_ToolDesc[] = _(
+static const u8 sFlashToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "lighting caves.");
 
-static const u8 sRockSmash_ToolDesc[] = _(
+static const u8 sRockSmashToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "smashing rocks.");
 
-static const u8 sWaterfall_ToolDesc[] = _(
+static const u8 sWaterfallToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "climbing waterfalls.");
 
-static const u8 sDive_ToolDesc[] = _(
+static const u8 sDiveToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "diving underwater.");
 
-static const u8 sTeleport_ToolDesc[] = _(
+static const u8 sTeleportToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "getting to safety.");
 
-static const u8 sSweetScent_ToolDesc[] = _(
+static const u8 sSweetScentToolDesc[] = _(
 	"This tool\n"
     "is used for\n"
     "luring pokemon.");

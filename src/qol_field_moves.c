@@ -32,10 +32,11 @@
 #include "constants/field_effects.h"
 #include "metatile_behavior.h"
 #include "fieldmap.h"
+#include "item_menu.h"
 
 // TODO reset gitignore
 /*
-// TODO add  the following
+ TODO add  the following back to the git cache
         deleted:    data/layouts/layouts.json
         deleted:    data/maps/.gitignore
         deleted:    data/maps/map_groups.json
@@ -54,7 +55,6 @@ static void FieldCallback_UseCutTool(void);
 
 static void FieldCallback_UseFlyTool(void);
 static void Task_UseFlyTool(void);
-static void FieldCallback_UseFlyToolIntoMap(void);
 
 static void Task_UseSurfInit(u8);
 static void Task_WaitUseSurf(u8);
@@ -171,13 +171,6 @@ void ReturnToFieldFromFlyToolMapSelect(void)
     gFieldCallback = Task_UseFlyTool;
 }
 
-static void FieldCallback_UseFlyToolIntoMap(void)
-{
-    LockPlayerFieldControls();
-    FreezeObjectEvents();
-    gFieldCallback = NULL;
-}
-
 static void Task_UseFlyTool(void)
 {
     Overworld_ResetStateAfterFly();
@@ -198,6 +191,25 @@ static void FieldCallback_UseFlyTool(void)
     gFieldCallback = NULL;
 }
 
+bool32 IsFlyToolUsed(void)
+{
+    return (VarGet(VAR_FLY_TOOL_SOURCE));
+}
+
+bool32 ReturnToFieldOrBagFromFlyTool(void)
+{
+    if (VarGet(VAR_FLY_TOOL_SOURCE) == FLY_SOURCE_BAG)
+        GoToBagMenu(ITEMMENULOCATION_LAST,KEYITEMS_POCKET,CB2_ReturnToFieldWithOpenMenu);
+    else if (VarGet(VAR_FLY_TOOL_SOURCE) == FLY_SOURCE_FIELD)
+        SetMainCallback2(CB2_ReturnToField);
+}
+
+void ResetFlyTool(void)
+{
+    VarSet(VAR_FLY_TOOL_SOURCE,0);
+}
+
+// Surf
 u32 CanUseSurf(s16 x, s16 y)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM02);

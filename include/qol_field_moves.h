@@ -3,6 +3,9 @@ bool8 SetUpFieldMove_UseCutTool(void);
 u32 UseCut(u32);
 
 void ReturnToFieldFromFlyToolMapSelect(void);
+bool32 IsFlyToolUsed(void);
+bool32 ReturnToFieldOrBagFromFlyTool(void);
+void ResetFlyTool(void);
 
 u32 CanUseSurf(s16, s16);
 void CreateUseSurfTask(void);
@@ -34,6 +37,7 @@ enum FieldMoveActionSource
 
 enum FlyToolSource
 {
+    FLY_SOURCE_MOVE,
     FLY_SOURCE_FIELD,
     FLY_SOURCE_BAG
 };
