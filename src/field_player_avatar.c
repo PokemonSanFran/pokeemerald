@@ -683,6 +683,10 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     if (fieldMoveStatus)
         return UseCut(fieldMoveStatus);
 
+    fieldMoveStatus = CanUseRockSmash(x,y);
+    if (fieldMoveStatus)
+        return UseRockSmash(fieldMoveStatus);
+
     fieldMoveStatus = CanUseSurf(x,y,collision);
     if (fieldMoveStatus)
         return UseSurf(fieldMoveStatus);

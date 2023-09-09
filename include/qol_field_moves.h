@@ -1,5 +1,4 @@
 u32 CanUseCut(s16, s16);
-bool8 SetUpFieldMove_UseCutTool(void);
 u32 UseCut(u32);
 
 void ReturnToFieldFromFlyToolMapSelect(void);
@@ -15,13 +14,12 @@ void CreateUseSurfTask(void);
 u32 CanUseStrength(u8);
 u32 UseStrength(u32);
 
-bool8 SetUpFieldMove_UseFlashTool(void);
-void SetUpFieldMove_UseFlashMove(void);
-void FieldCallback_UseFlashTool(void);
-void FieldCallback_UseFlashMove(void);
 void FldEff_UseFlashTool(void);
 u32 CanUseFlash(void);
 void TryUseFlash(void);
+
+u32 CanUseRockSmash(s16 x, s16 y);
+u32 UseRockSmash(u32 fieldMoveStatus);
 
 bool32 CanUseWaterfallTool(void);
 void CreateUseWaterfallTask(void);

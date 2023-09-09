@@ -52,17 +52,16 @@ static u8 CreateUseToolTask(void);
 static void Task_UseTool_Init(u8);
 static void LockPlayerAndLoadMon(void);
 
-static void FieldCallback_UseCutTool(void);
-
 static void FieldCallback_UseFlyTool(void);
 static void Task_UseFlyTool(void);
 
 static void Task_UseSurfInit(u8);
 static void Task_WaitUseSurf(u8);
 
+static void SetUpFieldMove_UseFlash(u32);
 static void UseFlash(u32 fieldMoveStatus);
-
-static bool8 UseRockSmash(s16, s16, u8);
+static void FieldCallback_UseFlashTool(void);
+static void FieldCallback_UseFlashMove(void);
 
 static void Task_UseWaterfallTool(u8);
 static u32 CanUseWaterfall(u8);
@@ -134,22 +133,6 @@ u32 CanUseCut(s16 x, s16 y)
     }
 
     return FIELD_MOVE_FAIL;
-}
-
-bool8 SetUpFieldMove_UseCutTool(void)
-{
-    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_CUTTABLE_TREE) == TRUE)
-    {
-        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-        gPostMenuFieldCallback = FieldCallback_UseCutTool;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static void FieldCallback_UseCutTool(void)
-{
-    ScriptContext_SetupScript(EventScript_UseCutTool);
 }
 
 u32 UseCut(u32 fieldMoveStatus)
@@ -340,7 +323,7 @@ u32 UseStrength(u32 fieldMoveStatus)
 
 // Flash
 
-void SetUpFieldMove_UseFlash(u32 fieldMoveStatus)
+static void SetUpFieldMove_UseFlash(u32 fieldMoveStatus)
 {
     gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 
@@ -350,14 +333,14 @@ void SetUpFieldMove_UseFlash(u32 fieldMoveStatus)
         gPostMenuFieldCallback = FieldCallback_UseFlashTool;
 }
 
-void FieldCallback_UseFlashTool(void)
+static void FieldCallback_UseFlashTool(void)
 {
     u8 taskId = CreateUseToolTask();
     gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlashTool >> 16;
     gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlashTool;
 }
 
-void FieldCallback_UseFlashMove(void)
+static void FieldCallback_UseFlashMove(void)
 {
     u8 taskId = CreateFieldMoveTask();
     PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
@@ -411,23 +394,38 @@ void TryUseFlash(void)
 
 // Rock Smash
 
-static bool8 UseRockSmash(s16 x, s16 y, u8 direction)
+u32 CanUseRockSmash(s16 x, s16 y)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM06);
     bool32 bagHasItem = CheckBagHasItem(ITEM_ROCKSMASH_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE03_GET);
 
     if (
             CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_BREAKABLE_ROCK)
             && GetObjectEventIdByPosition(x, y, 1) == OBJECT_EVENTS_COUNT
-            && (monHasMove || bagHasItem)
-            && FlagGet(FLAG_BADGE03_GET)
+            && ((monHasMove && playerHasBadge) || bagHasItem)
        )
 
     {
-        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
     }
 
     return FIELD_MOVE_FAIL;
+}
+
+u32 UseRockSmash(u32 fieldMoveStatus)
+{
+    LockPlayerAndLoadMon();
+
+    if (FlagGet(FLAG_SYS_USE_ROCK_SMASH))
+        ScriptContext_SetupScript(EventScript_SmashRock);
+    else if(fieldMoveStatus == FIELD_MOVE_POKEMON)
+        ScriptContext_SetupScript(EventScript_UseRockSmash);
+    else if(fieldMoveStatus == FIELD_MOVE_TOOL)
+        ScriptContext_SetupScript(EventScript_UseRockSmashTool);
+
+    FlagSet(FLAG_SYS_USE_ROCK_SMASH);
+    return COLLISION_START_ROCK_SMASH;
 }
 
 // Waterfall

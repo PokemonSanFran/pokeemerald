@@ -295,7 +295,7 @@ enum
     //Start qol_field_moves
     COLLISION_START_SURFING,
     COLLISION_START_CUT,
-    COLLISION_START_SMASH
+    COLLISION_START_ROCK_SMASH
     //End qol_field_moves
 };
 
