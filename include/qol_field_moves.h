@@ -1,4 +1,4 @@
-u32 CanUseCut(s16, s16, u8);
+u32 CanUseCut(s16, s16);
 bool8 SetUpFieldMove_UseCutTool(void);
 u32 UseCut(u32);
 
@@ -12,7 +12,8 @@ u32 CanUseSurfFromInteractedWater(void);
 u32 UseSurf(u32);
 void CreateUseSurfTask(void);
 
-u32 CanUseStrength(void);
+u32 CanUseStrength(u8);
+u32 UseStrength(u32);
 
 void FldEff_UseFlashTool(void);
 u32 CanUseFlash(void);

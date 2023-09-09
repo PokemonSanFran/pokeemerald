@@ -113,7 +113,7 @@ static void Task_UseTool_Init(u8 taskId)
 }
 
 // Cut
-u32 CanUseCut(s16 x, s16 y, u8 direction)
+u32 CanUseCut(s16 x, s16 y)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM01);
     bool32 bagHasItem = CheckBagHasItem(ITEM_CUT_TOOL,1);
@@ -126,7 +126,7 @@ u32 CanUseCut(s16 x, s16 y, u8 direction)
        )
 
     {
-        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
     }
 
     return FIELD_MOVE_FAIL;
@@ -226,7 +226,7 @@ u32 CanUseSurf(s16 x, s16 y, u8 collision)
        )
 
     {
-        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
     }
 
     return FIELD_MOVE_FAIL;
@@ -304,22 +304,38 @@ static void Task_WaitUseSurf(u8 taskId)
 
 // Strength
 
-u32 CanUseStrength(void)
+u32 CanUseStrength(u8 collision)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM04);
     bool32 bagHasItem = CheckBagHasItem(ITEM_STRENGTH_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE04_GET);
+    bool32 playerUsedStrength = FlagGet(FLAG_SYS_USE_STRENGTH);
+    bool32 collisionEvent = (collision == COLLISION_OBJECT_EVENT);
 
     if (
         CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_PUSHABLE_BOULDER)
-        && (monHasMove || bagHasItem)
-        && FlagGet(FLAG_BADGE04_GET)
+        && !playerUsedStrength
+        && collisionEvent
+        && ((monHasMove && playerHasBadge) || bagHasItem)
        )
     {
-        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
     }
     return FIELD_MOVE_FAIL;
 }
 
+u32 UseStrength(u32 fieldMoveStatus)
+{
+    LockPlayerFieldControls();
+    gFieldEffectArguments[0] = gSpecialVar_Result;
+
+    if(fieldMoveStatus == FIELD_MOVE_POKEMON)
+        ScriptContext_SetupScript(EventScript_UseStrength);
+    else
+        ScriptContext_SetupScript(EventScript_UseStrengthTool);
+
+    return COLLISION_PUSHED_BOULDER;
+}
 
 // Flash
 

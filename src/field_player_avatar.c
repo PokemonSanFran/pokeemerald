@@ -679,7 +679,7 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         return COLLISION_STOP_SURFING;
 
     // Start qol_field_moves
-    fieldMoveStatus = CanUseCut(x,y,direction);
+    fieldMoveStatus = CanUseCut(x,y);
     if (fieldMoveStatus)
         return UseCut(fieldMoveStatus);
 
@@ -693,8 +693,16 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         IncrementGameStat(GAME_STAT_JUMPED_DOWN_LEDGES);
         return COLLISION_LEDGE_JUMP;
     }
-    if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
+    // Start qol_field_moves
+    fieldMoveStatus = CanUseStrength(collision);
+    if (fieldMoveStatus)
+    {
+        UseStrength(fieldMoveStatus);
+        TryPushBoulder(x,y,direction);
+    //if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
         return COLLISION_PUSHED_BOULDER;
+    }
+    // End qol_field_moves
 
     if (collision == COLLISION_NONE)
     {
