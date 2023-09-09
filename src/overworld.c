@@ -985,7 +985,7 @@ void SetDefaultFlashLevel(void)
     else
         gSaveBlock1Ptr->flashLevel = gMaxFlashLevel - 1;
 
-    CheckAndUseFlash(); // qol_field_moves
+    TryUseFlash(); // qol_field_moves
 }
 
 void SetFlashLevel(s32 flashLevel)

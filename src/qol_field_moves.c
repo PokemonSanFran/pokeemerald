@@ -50,6 +50,7 @@
 
 static u8 CreateUseToolTask(void);
 static void Task_UseTool_Init(u8);
+static void LockPlayerAndLoadMon(void);
 
 static void FieldCallback_UseCutTool(void);
 
@@ -59,10 +60,7 @@ static void Task_UseFlyTool(void);
 static void Task_UseSurfInit(u8);
 static void Task_WaitUseSurf(u8);
 
-static bool8 SetUpFieldMove_UseFlash(void);
-static void FieldCallback_UseFlash(void);
-static void SetUpFieldMove_UseFlashMove(void);
-static void FieldCallback_UseFlashMove(void);
+static void UseFlash(u32 fieldMoveStatus);
 
 static bool8 UseRockSmash(s16, s16, u8);
 
@@ -112,6 +110,12 @@ static void Task_UseTool_Init(u8 taskId)
     gTasks[taskId].func = Task_DoFieldMove_RunFunc;
 }
 
+static void LockPlayerAndLoadMon(void)
+{
+    LockPlayerFieldControls();
+    gFieldEffectArguments[0] = gSpecialVar_Result;
+}
+
 // Cut
 u32 CanUseCut(s16 x, s16 y)
 {
@@ -150,8 +154,7 @@ static void FieldCallback_UseCutTool(void)
 
 u32 UseCut(u32 fieldMoveStatus)
 {
-    LockPlayerFieldControls();
-    gFieldEffectArguments[0] = gSpecialVar_Result;
+    LockPlayerAndLoadMon();
 
     if (FlagGet(FLAG_SYS_USE_CUT))
         ScriptContext_SetupScript(EventScript_CutTreeDown);
@@ -243,8 +246,7 @@ u32 CanUseSurfFromInteractedWater()
 
 u32 UseSurf(u32 fieldMoveStatus)
 {
-    LockPlayerFieldControls();
-    gFieldEffectArguments[0] = gSpecialVar_Result;
+    LockPlayerAndLoadMon();
 
     if (FlagGet(FLAG_SYS_USE_SURF))
         CreateUseSurfTask();
@@ -326,8 +328,7 @@ u32 CanUseStrength(u8 collision)
 
 u32 UseStrength(u32 fieldMoveStatus)
 {
-    LockPlayerFieldControls();
-    gFieldEffectArguments[0] = gSpecialVar_Result;
+    LockPlayerAndLoadMon();
 
     if(fieldMoveStatus == FIELD_MOVE_POKEMON)
         ScriptContext_SetupScript(EventScript_UseStrength);
@@ -339,17 +340,31 @@ u32 UseStrength(u32 fieldMoveStatus)
 
 // Flash
 
-bool8 SetUpFieldMove_UseFlash(void)
+void SetUpFieldMove_UseFlash(u32 fieldMoveStatus)
 {
     gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-    gPostMenuFieldCallback = FieldCallback_UseFlash;
+
+    if (fieldMoveStatus == FIELD_MOVE_POKEMON)
+        gPostMenuFieldCallback = FieldCallback_UseFlashMove;
+    else if (fieldMoveStatus == FIELD_MOVE_TOOL)
+        gPostMenuFieldCallback = FieldCallback_UseFlashTool;
 }
 
-void FieldCallback_UseFlash(void)
+void FieldCallback_UseFlashTool(void)
 {
     u8 taskId = CreateUseToolTask();
     gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlashTool >> 16;
     gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlashTool;
+}
+
+void FieldCallback_UseFlashMove(void)
+{
+    u8 taskId = CreateFieldMoveTask();
+    PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
+    gFieldEffectArguments[0] = gSpecialVar_Result;
+
+    gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlash >> 16;
+    gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlash;
 }
 
 void FldEff_UseFlashTool(void)
@@ -360,55 +375,38 @@ void FldEff_UseFlashTool(void)
     ScriptContext_SetupScript(EventScript_UseFlashTool);
 }
 
-void SetUpFieldMove_UseFlashMove(void)
-{
-    gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
-    gPostMenuFieldCallback = FieldCallback_UseFlashMove;
-}
-
-void FieldCallback_UseFlashMove(void)
-{
-    u32 taskId = 0;
-    PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
-    gFieldEffectArguments[0] = gSpecialVar_Result;
-    taskId = CreateFieldMoveTask();
-
-    gTasks[taskId].data[8] = (uintptr_t)FldEff_UseFlash >> 16;
-    gTasks[taskId].data[9] = (uintptr_t)FldEff_UseFlash;
-}
-
 u32 CanUseFlash(void)
 {
+    bool32 playerIsInCave = (gMapHeader.cave == TRUE);
+    bool32 mapIsNotLit = (GetFlashLevel() == (gMaxFlashLevel - 1));
+    bool32 playerHasUsedFlash = FlagGet(FLAG_SYS_USE_FLASH);
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM05);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE02_GET);
     bool32 bagHasItem = CheckBagHasItem(ITEM_FLASH_TOOL,1);
+
     if(
-        gMapHeader.cave == TRUE
-        && (monHasMove || bagHasItem)
-        && FlagGet(FLAG_BADGE02_GET)
-        && !FlagGet(FLAG_SYS_USE_FLASH)
-        && (GetFlashLevel() == (gMaxFlashLevel - 1))
+            playerIsInCave
+            && mapIsNotLit
+            && !playerHasUsedFlash
+            && ((monHasMove && playerHasBadge) || bagHasItem)
       )
     {
-        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
     }
     return FIELD_MOVE_FAIL;
 }
 
-void CheckAndUseFlash(void)
+static void UseFlash(u32 fieldMoveStatus)
+{
+    LockPlayerAndLoadMon();
+    SetUpFieldMove_UseFlash(fieldMoveStatus);
+}
+
+void TryUseFlash(void)
 {
     u32 fieldMoveStatus = CanUseFlash();
-
-    if ((fieldMoveStatus != FIELD_MOVE_FAIL))
-    {
-        LockPlayerFieldControls();
-        gFieldEffectArguments[0] = gSpecialVar_Result;
-
-        if (fieldMoveStatus == FIELD_MOVE_POKEMON)
-            SetUpFieldMove_UseFlashMove();
-
-        else if (fieldMoveStatus == FIELD_MOVE_TOOL)
-            SetUpFieldMove_UseFlash();
-    }
+    if (fieldMoveStatus)
+        UseFlash(fieldMoveStatus);
 }
 
 // Rock Smash

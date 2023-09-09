@@ -15,9 +15,13 @@ void CreateUseSurfTask(void);
 u32 CanUseStrength(u8);
 u32 UseStrength(u32);
 
+bool8 SetUpFieldMove_UseFlashTool(void);
+void SetUpFieldMove_UseFlashMove(void);
+void FieldCallback_UseFlashTool(void);
+void FieldCallback_UseFlashMove(void);
 void FldEff_UseFlashTool(void);
 u32 CanUseFlash(void);
-void CheckAndUseFlash(void);
+void TryUseFlash(void);
 
 bool32 CanUseWaterfallTool(void);
 void CreateUseWaterfallTask(void);

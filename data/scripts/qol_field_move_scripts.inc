@@ -55,6 +55,7 @@ EventScript_UseFlashTool::
     bufferitemname STR_VAR_2, ITEM_FLASH_TOOL
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
     closemessage
+    end
 
 EventScript_UseSurfTool::
     bufferitemname STR_VAR_2, ITEM_SURF_TOOL
