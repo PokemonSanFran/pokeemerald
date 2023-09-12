@@ -30,7 +30,7 @@ EventScript_UseWaterfallTool::
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
     waitmessage
     setflag FLAG_SYS_USE_WATERFALL
-    callnative CreateUseWaterfallTask // update before release
+    dofieldeffect FLDEFF_USE_WATERFALL_TOOL
     releaseall
     end
 
@@ -60,7 +60,7 @@ EventScript_UseFlashTool::
 EventScript_UseSurfTool::
     bufferitemname STR_VAR_2, ITEM_SURF_TOOL
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
-    callnative CreateUseSurfTask // update before release
+    dofieldeffect FLDEFF_USE_SURF_TOOL
     releaseall
     end
 

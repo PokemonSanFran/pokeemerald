@@ -68,6 +68,12 @@
 #define FLDEFF_RAYQUAZA_SPOTLIGHT        64
 #define FLDEFF_DESTROY_DEOXYS_ROCK       65
 #define FLDEFF_MOVE_DEOXYS_ROCK          66
+// Start qol_field_moves
+#define FLDEFF_USE_SURF_TOOL             67
+#define FLDEFF_USE_WATERFALL_TOOL        68
+#define FLDEFF_USE_DIVE_TOOL             69
+#define FLDEFF_USE_TELEPORT_TOOL         70
+// End qol_field_moves
 
 #define FLDEFFOBJ_SHADOW_S              0
 #define FLDEFFOBJ_SHADOW_M              1

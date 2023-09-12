@@ -47,4 +47,17 @@ void FreeResourcesAndDestroySprite(struct Sprite *sprite, u8 spriteId);
 u8 CreateMonSprite_PicBox(u16 species, s16 x, s16 y, u8 subpriority);
 void StartEscapeRopeFieldEffect(void);
 
+// Start qol_field_moves
+#include "task.h"
+
+void Task_SurfFieldEffect(u8);
+void SurfFieldEffect_Init(struct Task *);
+void SurfFieldEffect_JumpOnSurfBlob(struct Task *);
+void SurfFieldEffect_End(struct Task *);
+
+bool8 WaterfallFieldEffect_Init(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 WaterfallFieldEffect_RideUp(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 WaterfallFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent);
+// End qol_field_moves
+
 #endif // GUARD_FIELD_EFFECTS_H

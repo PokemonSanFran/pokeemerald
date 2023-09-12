@@ -442,8 +442,15 @@ static bool8 DoForcedMovement(u8 direction, void (*moveFunc)(u8))
 {
     struct PlayerAvatar *playerAvatar = &gPlayerAvatar;
     u8 collision = CheckForPlayerAvatarCollision(direction);
+    u32 fieldMoveStatus;
 
     playerAvatar->flags |= PLAYER_AVATAR_FLAG_FORCED_MOVE;
+
+    fieldMoveStatus = CanUseWaterfall(direction);
+    if (fieldMoveStatus)
+        return UseWaterfall(gPlayerAvatar, fieldMoveStatus);
+
+    // End qol_field_moves
     if (collision)
     {
         ForcedMovement_None();

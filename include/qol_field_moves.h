@@ -9,7 +9,8 @@ void ResetFlyTool(void);
 u32 CanUseSurf(s16, s16, u8);
 u32 CanUseSurfFromInteractedWater(void);
 u32 UseSurf(u32);
-void CreateUseSurfTask(void);
+void RemoveRelevantSurfFieldEffect(void);
+void Task_SurfToolFieldEffect(u8 taskId);
 
 u32 CanUseStrength(u8);
 u32 UseStrength(u32);
@@ -21,7 +22,9 @@ void TryUseFlash(void);
 u32 CanUseRockSmash(s16 x, s16 y);
 u32 UseRockSmash(u32 fieldMoveStatus);
 
+u32 CanUseWaterfall(u8);
 bool32 CanUseWaterfallTool(void);
+u32 UseWaterfall(struct PlayerAvatar, u32);
 void CreateUseWaterfallTask(void);
 
 bool8 FldEff_UseDiveTool(void);

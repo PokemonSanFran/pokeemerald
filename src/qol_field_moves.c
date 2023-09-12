@@ -55,8 +55,7 @@ static void LockPlayerAndLoadMon(void);
 static void FieldCallback_UseFlyTool(void);
 static void Task_UseFlyTool(void);
 
-static void Task_UseSurfInit(u8);
-static void Task_WaitUseSurf(u8);
+static void SurfToolFieldEffect_Init(struct Task *task); //qol_field_moves
 
 static void SetUpFieldMove_UseFlash(u32);
 static void UseFlash(u32 fieldMoveStatus);
@@ -64,10 +63,6 @@ static void FieldCallback_UseFlashTool(void);
 static void FieldCallback_UseFlashMove(void);
 
 static void Task_UseWaterfallTool(u8);
-static u32 CanUseWaterfall(u8);
-static bool8 WaterfallToolFieldEffect_Init(struct Task *, struct ObjectEvent *);
-static bool8 WaterfallToolFieldEffect_RideUp(struct Task *, struct ObjectEvent *);
-static bool8 WaterfallToolFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *);
 static bool8 IsPlayerFacingWaterfall(void);
 
 static void Task_UseDiveTool(u8);
@@ -227,12 +222,40 @@ u32 CanUseSurfFromInteractedWater()
     return CanUseSurf(x,y,COLLISION_ELEVATION_MISMATCH);
 }
 
+u8 FldEff_UseSurfTool(void)
+{
+    u8 taskId = CreateTask(Task_SurfToolFieldEffect, 0);
+    Overworld_ClearSavedMusic();
+    Overworld_ChangeMusicTo(MUS_SURF);
+    return FALSE;
+}
+
+static void SurfToolFieldEffect_CheckHeldMovementStatus(struct Task *task)
+{
+    struct ObjectEvent *objectEvent;
+    objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    if (ObjectEventCheckHeldMovementStatus(objectEvent))
+        task->tState++;
+}
+
+static void (*const sSurfToolFieldEffectFuncs[])(struct Task *) = {
+    SurfFieldEffect_Init,
+    SurfToolFieldEffect_CheckHeldMovementStatus,
+    SurfFieldEffect_JumpOnSurfBlob,
+    SurfFieldEffect_End,
+};
+
+void Task_SurfToolFieldEffect(u8 taskId)
+{
+    sSurfToolFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId]);
+}
+
 u32 UseSurf(u32 fieldMoveStatus)
 {
     LockPlayerAndLoadMon();
 
     if (FlagGet(FLAG_SYS_USE_SURF))
-        CreateUseSurfTask();
+        FieldEffectStart(FLDEFF_USE_SURF_TOOL);
     else if(fieldMoveStatus == FIELD_MOVE_POKEMON)
         ScriptContext_SetupScript(EventScript_UseSurfMove);
     else if(fieldMoveStatus == FIELD_MOVE_TOOL)
@@ -242,48 +265,17 @@ u32 UseSurf(u32 fieldMoveStatus)
     return COLLISION_START_SURFING;
 }
 
-void CreateUseSurfTask(void)
+void RemoveRelevantSurfFieldEffect(void)
 {
-    u8 taskId;
-
-    ScriptContext_Enable();
-    Overworld_ClearSavedMusic();
-    Overworld_ChangeMusicTo(MUS_SURF);
-    gPlayerAvatar.flags ^= PLAYER_AVATAR_FLAG_ON_FOOT;
-    gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_SURFING;
-    gPlayerAvatar.preventStep = TRUE;
-    taskId = CreateTask(Task_UseSurfInit,0);
-    gTasks[taskId].data[0] = GetPlayerFacingDirection();
-    Task_UseSurfInit(taskId);
-}
-
-static void Task_UseSurfInit(u8 taskId)
-{
-    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-
-    if (ObjectEventIsMovementOverridden(playerObjEvent))
+    if (FieldEffectActiveListContains(FLDEFF_USE_SURF))
     {
-        if (!ObjectEventClearHeldMovementIfFinished(playerObjEvent))
-            return;
+        FieldEffectActiveListRemove(FLDEFF_USE_SURF);
+        DestroyTask(FindTaskIdByFunc(Task_SurfFieldEffect));
     }
-    SetPlayerAvatarStateMask(8);
-    ObjectEventSetGraphicsId(playerObjEvent, GetPlayerAvatarGraphicsIdByStateId(3));
-    ObjectEventClearHeldMovementIfFinished(playerObjEvent);
-    ObjectEventSetHeldMovement(playerObjEvent, GetJumpSpecialMovementAction((u8)gTasks[taskId].data[0]));
-    gTasks[taskId].func = Task_WaitUseSurf;
-}
-
-static void Task_WaitUseSurf(u8 taskId)
-{
-    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-
-    if (ObjectEventClearHeldMovementIfFinished(playerObjEvent))
+    else if(FieldEffectActiveListContains(FLDEFF_USE_SURF_TOOL))
     {
-        ObjectEventSetHeldMovement(playerObjEvent, GetFaceDirectionMovementAction(playerObjEvent->facingDirection));
-        PlayerAvatarTransition_Surfing(playerObjEvent);
-        gPlayerAvatar.preventStep = FALSE;
-        ScriptContext_Stop();
-        DestroyTask(taskId);
+        FieldEffectActiveListRemove(FLDEFF_USE_SURF_TOOL);
+        DestroyTask(FindTaskIdByFunc(Task_SurfToolFieldEffect));
     }
 }
 
@@ -428,79 +420,62 @@ u32 UseRockSmash(u32 fieldMoveStatus)
     return COLLISION_START_ROCK_SMASH;
 }
 
-// Waterfall
+//Waterfall
 
-static u32 CanUseWaterfall(u8 direction)
+bool8 IsPlayerFacingWaterfall(void)
+{
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x = playerObjEvent->currentCoords.x;
+    s16 y = playerObjEvent->currentCoords.y;
+
+    MoveCoords(playerObjEvent->facingDirection, &x, &y);
+    if (GetCollisionAtCoords(playerObjEvent, x, y, playerObjEvent->facingDirection) == COLLISION_NONE
+     && MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)))
+        return TRUE;
+    else
+       return FALSE;
+}
+
+u32 CanUseWaterfall(u8 direction)
 {
     bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM07);
     bool32 bagHasItem = CheckBagHasItem(ITEM_WATERFALL_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE08_GET);
+    bool32 isPlayerPushedSouth = (direction == DIR_SOUTH);
 
     if (
-        IsPlayerFacingWaterfall()
-        && IsPlayerSurfingNorth()
-        && (direction == DIR_SOUTH)
-        && (monHasMove || bagHasItem)
-        && FlagGet(FLAG_BADGE03_GET)
+            IsPlayerFacingWaterfall()
+            && IsPlayerSurfingNorth()
+            && isPlayerPushedSouth
+            && ((monHasMove && playerHasBadge) || bagHasItem)
        )
 
     {
-        return monHasMove ? FIELD_MOVE_POKEMON : FIELD_MOVE_TOOL;
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
     }
 
     return FIELD_MOVE_FAIL;
 }
 
-bool32 CanUseWaterfallTool(void)
+u32 CanUseWaterfallTool(void)
 {
-    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM07);
-    bool32 bagHasItem = CheckBagHasItem(ITEM_WATERFALL_TOOL,1);
-
-    if (
-        IsPlayerFacingWaterfall()
-        && IsPlayerSurfingNorth()
-        && (monHasMove || bagHasItem)
-        && FlagGet(FLAG_BADGE03_GET)
-       )
-
-    {
-        return TRUE;
-    }
-
-    return FALSE;
+    return CanUseWaterfall(DIR_SOUTH);
 }
 
-static bool8 (*const sWaterfallToolFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
+u32 UseWaterfall(struct PlayerAvatar playerAvatar, u32 fieldMoveStatus)
 {
-    WaterfallToolFieldEffect_Init,
-    WaterfallToolFieldEffect_RideUp,
-    WaterfallToolFieldEffect_ContinueRideOrEnd,
-};
+    LockPlayerAndLoadMon();
+    playerAvatar.runningState = MOVING;
 
-void CreateUseWaterfallTask(void)
-{
-    u8 taskId;
-    taskId = CreateTask(Task_UseWaterfallTool, 0xFF);
-    Task_UseWaterfallTool(taskId);
-}
+    if (FlagGet(FLAG_SYS_USE_WATERFALL))
+        FieldEffectStart(FLDEFF_USE_WATERFALL_TOOL);
+    else if(fieldMoveStatus == FIELD_MOVE_POKEMON)
+        ScriptContext_SetupScript(EventScript_UseWaterfallMon);
+    else if(fieldMoveStatus == FIELD_MOVE_TOOL)
+        ScriptContext_SetupScript(EventScript_UseWaterfallTool);
 
-static void Task_UseWaterfallTool(u8 taskId)
-{
-    while (sWaterfallToolFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]));
-}
-
-static bool8 WaterfallToolFieldEffect_Init(struct Task *task, struct ObjectEvent *objectEvent)
-{
-    LockPlayerFieldControls();
-    gPlayerAvatar.preventStep = TRUE;
-    task->tState++;
-    return FALSE;
-}
-
-static bool8 WaterfallToolFieldEffect_RideUp(struct Task *task, struct ObjectEvent *objectEvent)
-{
-    ObjectEventSetHeldMovement(objectEvent, GetWalkSlowMovementAction(DIR_NORTH));
-    task->tState++;
-    return FALSE;
+    FlagSet(FLAG_SYS_USE_WATERFALL);
+    return TRUE;
 }
 
 static bool8 WaterfallToolFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent)
@@ -518,27 +493,28 @@ static bool8 WaterfallToolFieldEffect_ContinueRideOrEnd(struct Task *task, struc
     UnlockPlayerFieldControls();
     gPlayerAvatar.preventStep = FALSE;
     DestroyTask(FindTaskIdByFunc(Task_UseWaterfallTool));
-    FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL);
+    FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL_TOOL);
     return FALSE;
 }
 
-bool8 IsPlayerFacingWaterfall(void)
+static bool8 (*const sWaterfallToolFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
 {
-    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-    s16 x = playerObjEvent->currentCoords.x;
-    s16 y = playerObjEvent->currentCoords.y;
+    WaterfallFieldEffect_Init,
+    WaterfallFieldEffect_RideUp,
+    WaterfallToolFieldEffect_ContinueRideOrEnd,
+};
 
-    MoveCoords(playerObjEvent->facingDirection, &x, &y);
-    if (GetCollisionAtCoords(playerObjEvent, x, y, playerObjEvent->facingDirection) == COLLISION_NONE
-     && MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)))
-        return TRUE;
-    else
-        return FALSE;
+static void Task_UseWaterfallTool(u8 taskId)
+{
+    while (sWaterfallToolFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]));
 }
 
-
-#undef tState
-#undef tMonId
+u8 FldEff_UseWaterfallTool(void)
+{
+    u8 taskId = CreateTask(Task_UseWaterfallTool, 0);
+    Task_UseWaterfallTool(taskId);
+    return FALSE;
+}
 
 // Dive
 
