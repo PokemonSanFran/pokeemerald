@@ -365,7 +365,7 @@ gFieldEffectScript_UseDiveTool::
 	field_eff_end
 
 gFieldEffectScript_UseTeleportTool::
-    //field_eff_callnative FldEff_UseTeleportTool
+    field_eff_callnative FldEff_UseTeleportTool
 	field_eff_end
 
 @ End qol_field_moves

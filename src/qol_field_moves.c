@@ -47,7 +47,7 @@
         deleted:    src/new_game.c
         */
 
-// uncomment execute truck sequence
+// TODO uncomment execute truck sequence
 
 static u8 CreateUseToolTask(void);
 static void Task_UseTool_Init(u8);
