@@ -69,7 +69,7 @@ EventScript_AskTeleportTool::
     msgbox gStringVar4, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, EventScript_CancelTeleportTool
 EventScript_UseTeleportTool::
-    callnative FldEff_UseTeleportTool // update before release
+    dofieldeffect FLDEFF_USE_TELEPORT_TOOL
 EventScript_CancelTeleportTool::
     releaseall
     end
