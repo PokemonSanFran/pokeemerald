@@ -247,7 +247,7 @@ EventScript_UseDive::
 	lockall
 @ Start qol_field_moves
 	//checkpartymove MOVE_DIVE
-    call EventScript_CheckDiveItemAndParty
+    call EventScript_CheckDiveToolAndParty
 @ End qol_field_moves
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantDive
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
@@ -273,7 +273,7 @@ EventScript_UseDiveUnderwater::
 	lockall
 @ Start qol_field_moves
 	//checkpartymove MOVE_DIVE
-    call EventScript_CheckDiveItemAndParty
+    call EventScript_CheckDiveToolAndParty
 @ End qol_field_moves
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantSurface
 	bufferpartymonnick STR_VAR_1, VAR_RESULT
