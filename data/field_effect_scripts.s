@@ -361,7 +361,7 @@ gFieldEffectScript_UseWaterfallTool::
 	field_eff_end
 
 gFieldEffectScript_UseDiveTool::
-    //field_eff_callnative FldEff_UseDiveTool
+    field_eff_callnative FldEff_UseDiveTool
 	field_eff_end
 
 gFieldEffectScript_UseTeleportTool::

@@ -34,7 +34,7 @@ EventScript_UseWaterfallTool::
     releaseall
     end
 
-EventScript_CheckDiveItemAndParty::
+EventScript_CheckDiveToolAndParty::
     checkitem ITEM_DIVE_TOOL, 1
     goto_if_eq VAR_RESULT, TRUE, EventScript_UseDiveTool
     checkpartylearnknowsfieldmove ITEM_HM08
@@ -45,7 +45,7 @@ EventScript_UseDiveTool::
     bufferitemname STR_VAR_2, ITEM_DIVE_TOOL
     msgbox Text_PlayerUsedFieldTool, MSGBOX_DEFAULT
     waitmessage
-    callnative FldEff_UseDiveTool // update before release
+    dofieldeffect FLDEFF_USE_DIVE_TOOL
     goto EventScript_EndDive
 
 EventScript_UseFlashTool::

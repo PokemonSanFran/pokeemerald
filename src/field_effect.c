@@ -110,10 +110,10 @@ static bool8 WaterfallFieldEffect_WaitForShowMon(struct Task *, struct ObjectEve
 //static bool8 WaterfallFieldEffect_RideUp(struct Task *, struct ObjectEvent *); // qol_field_moves
 //static bool8 WaterfallFieldEffect_ContinueRideOrEnd(struct Task *, struct ObjectEvent *); // qol_field_moves
 
-static void Task_UseDive(u8);
-static bool8 DiveFieldEffect_Init(struct Task *);
+//static void Task_UseDive(u8); // qol_field_moves
+//static bool8 DiveFieldEffect_Init(struct Task *); // qol_field_moves
 static bool8 DiveFieldEffect_ShowMon(struct Task *);
-static bool8 DiveFieldEffect_TryWarp(struct Task *);
+//static bool8 DiveFieldEffect_TryWarp(struct Task *); // qol_field_moves
 
 static void Task_LavaridgeGymB1FWarp(u8);
 static bool8 LavaridgeGymB1FWarpEffect_Init(struct Task *, struct ObjectEvent *, struct Sprite *);
@@ -1926,7 +1926,8 @@ void Task_UseDive(u8 taskId)
     while (sDiveFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
 }
 
-static bool8 DiveFieldEffect_Init(struct Task *task)
+//static bool8 DiveFieldEffect_Init(struct Task *task) // qol_field_moves
+bool8 DiveFieldEffect_Init(struct Task *task)
 {
     gPlayerAvatar.preventStep = TRUE;
     task->data[0]++;
@@ -1942,7 +1943,8 @@ static bool8 DiveFieldEffect_ShowMon(struct Task *task)
     return FALSE;
 }
 
-static bool8 DiveFieldEffect_TryWarp(struct Task *task)
+//static bool8 DiveFieldEffect_TryWarp(struct Task *task)
+bool8 DiveFieldEffect_TryWarp(struct Task *task)
 {
     struct MapPosition mapPosition;
     PlayerGetDestCoords(&mapPosition.x, &mapPosition.y);
@@ -1951,8 +1953,13 @@ static bool8 DiveFieldEffect_TryWarp(struct Task *task)
     if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
     {
         TryDoDiveWarp(&mapPosition, gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior);
+        // Start qol_field_moves
+        /*
         DestroyTask(FindTaskIdByFunc(Task_UseDive));
         FieldEffectActiveListRemove(FLDEFF_USE_DIVE);
+        */
+        RemoveRelevantDiveFieldEffect();
+        // End qol_field_moves
     }
     return FALSE;
 }

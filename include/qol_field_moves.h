@@ -26,8 +26,12 @@ u32 CanUseWaterfall(u8);
 bool32 CanUseWaterfallTool(void);
 u32 UseWaterfall(struct PlayerAvatar, u32);
 void CreateUseWaterfallTask(void);
+u32 CanUseWaterfallFromInteractedWater(void);
 
 bool8 FldEff_UseDiveTool(void);
+void RemoveRelevantDiveFieldEffect(void);
+u32 CanUseDiveDown(void);
+u32 CanUseDiveEmerge(void);
 
 bool8 FldEff_UseTeleportTool(void);
 

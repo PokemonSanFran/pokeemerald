@@ -58,6 +58,10 @@ void SurfFieldEffect_End(struct Task *);
 bool8 WaterfallFieldEffect_Init(struct Task *task, struct ObjectEvent *objectEvent);
 bool8 WaterfallFieldEffect_RideUp(struct Task *task, struct ObjectEvent *objectEvent);
 bool8 WaterfallFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent);
+
+void Task_UseDive(u8);
+bool8 DiveFieldEffect_Init(struct Task *);
+bool8 DiveFieldEffect_TryWarp(struct Task *);
 // End qol_field_moves
 
 #endif // GUARD_FIELD_EFFECTS_H

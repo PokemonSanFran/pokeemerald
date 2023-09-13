@@ -33,6 +33,7 @@
 #include "metatile_behavior.h"
 #include "fieldmap.h"
 #include "item_menu.h"
+#include "constants/map_types.h"
 
 // TODO reset gitignore
 /*
@@ -422,6 +423,11 @@ u32 UseRockSmash(u32 fieldMoveStatus)
 
 //Waterfall
 
+u32 CanUseWaterfallFromInteractedWater(void)
+{
+    return CanUseWaterfall(DIR_SOUTH);
+}
+
 bool8 IsPlayerFacingWaterfall(void)
 {
     struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
@@ -495,6 +501,7 @@ static bool8 WaterfallToolFieldEffect_ContinueRideOrEnd(struct Task *task, struc
     DestroyTask(FindTaskIdByFunc(Task_UseWaterfallTool));
     FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL_TOOL);
     return FALSE;
+    return WaterfallFieldEffect_ContinueRideOrEnd(task, objectEvent);
 }
 
 static bool8 (*const sWaterfallToolFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
@@ -518,10 +525,51 @@ u8 FldEff_UseWaterfallTool(void)
 
 // Dive
 
+u32 CanUseDiveDown(void)
+{
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM08);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_DIVE_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE07_GET);
+    bool32 diveWarpSuccessful = (TrySetDiveWarp() == 2);
+
+    if (
+            diveWarpSuccessful
+            && ((monHasMove && playerHasBadge) || bagHasItem)
+       )
+
+    {
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
+    }
+
+    return FIELD_MOVE_FAIL;
+}
+
+u32 CanUseDiveEmerge(void)
+{
+    bool32 monHasMove = PartyHasMonLearnsKnowsFieldMove(ITEM_HM08);
+    bool32 bagHasItem = CheckBagHasItem(ITEM_DIVE_TOOL,1);
+    bool32 playerHasBadge = FlagGet(FLAG_BADGE07_GET);
+    bool32 diveWarpSuccessful = (TrySetDiveWarp() == 1);
+    bool32 playerisUnderwater = (gMapHeader.mapType == MAP_TYPE_UNDERWATER);
+
+    if (
+            diveWarpSuccessful
+            && playerisUnderwater
+            && ((monHasMove && playerHasBadge) || bagHasItem)
+       )
+
+    {
+        return bagHasItem ? FIELD_MOVE_TOOL : FIELD_MOVE_POKEMON;
+    }
+
+    return FIELD_MOVE_FAIL;
+}
+
+
 static bool8 (*const sDiveToolFieldEffectFuncs[])(struct Task *) =
 {
-    DiveToolFieldEffect_Init,
-    DiveToolFieldEffect_TryWarp,
+    DiveFieldEffect_Init,
+    DiveFieldEffect_TryWarp,
 };
 
 bool8 FldEff_UseDiveTool(void)
@@ -537,22 +585,18 @@ static void Task_UseDiveTool(u8 taskId)
     while (sDiveToolFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
 }
 
-static bool8 DiveToolFieldEffect_Init(struct Task *task)
+void RemoveRelevantDiveFieldEffect(void)
 {
-    gPlayerAvatar.preventStep = TRUE;
-    task->data[0]++;
-    return FALSE;
-}
-
-static bool8 DiveToolFieldEffect_TryWarp(struct Task *task)
-{
-    struct MapPosition mapPosition;
-    PlayerGetDestCoords(&mapPosition.x, &mapPosition.y);
-
-    TryDoDiveWarp(&mapPosition, gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior);
-    DestroyTask(FindTaskIdByFunc(Task_UseDiveTool));
-    //FieldEffectActiveListRemove(FLDEFF_USE_DIVE);
-    return FALSE;
+    if (FieldEffectActiveListContains(FLDEFF_USE_DIVE))
+    {
+        FieldEffectActiveListRemove(FLDEFF_USE_DIVE);
+        DestroyTask(FindTaskIdByFunc(Task_UseDive));
+    }
+    else if(FieldEffectActiveListContains(FLDEFF_USE_DIVE_TOOL))
+    {
+        FieldEffectActiveListRemove(FLDEFF_USE_SURF_TOOL);
+        DestroyTask(FindTaskIdByFunc(Task_UseDiveTool));
+    }
 }
 
 // Teleport
