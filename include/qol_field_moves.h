@@ -13,7 +13,7 @@ void RemoveRelevantSurfFieldEffect(void);
 void Task_SurfToolFieldEffect(u8 taskId);
 
 u32 CanUseStrength(u8);
-u32 UseStrength(u32);
+void UseStrength(u32);
 
 void FldEff_UseFlashTool(void);
 u32 CanUseFlash(void);
@@ -27,6 +27,7 @@ bool32 CanUseWaterfallTool(void);
 u32 UseWaterfall(struct PlayerAvatar, u32);
 void CreateUseWaterfallTask(void);
 u32 CanUseWaterfallFromInteractedWater(void);
+void RemoveRelevantWaterfallFieldEffect(void);
 
 bool8 FldEff_UseDiveTool(void);
 void RemoveRelevantDiveFieldEffect(void);

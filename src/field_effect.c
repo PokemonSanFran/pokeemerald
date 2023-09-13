@@ -103,7 +103,7 @@ static bool8 EscalatorWarpIn_Up_Ride(struct Task *);
 static bool8 EscalatorWarpIn_WaitForMovement(struct Task *);
 static bool8 EscalatorWarpIn_End(struct Task *);
 
-static void Task_UseWaterfall(u8);
+//static void Task_UseWaterfall(u8); //qol_field_moves
 //static bool8 WaterfallFieldEffect_Init(struct Task *, struct ObjectEvent *); // qol_field_moves
 static bool8 WaterfallFieldEffect_ShowMon(struct Task *, struct ObjectEvent *);
 static bool8 WaterfallFieldEffect_WaitForShowMon(struct Task *, struct ObjectEvent *);
@@ -1843,7 +1843,8 @@ bool8 FldEff_UseWaterfall(void)
     return FALSE;
 }
 
-static void Task_UseWaterfall(u8 taskId)
+//static void Task_UseWaterfall(u8 taskId) // qol_field_moves
+void Task_UseWaterfall(u8 taskId)
 {
     while (sWaterfallFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]));
 }
@@ -1903,8 +1904,7 @@ bool8 WaterfallFieldEffect_ContinueRideOrEnd(struct Task *task, struct ObjectEve
 
     UnlockPlayerFieldControls();
     gPlayerAvatar.preventStep = FALSE;
-    DestroyTask(FindTaskIdByFunc(Task_UseWaterfall));
-    FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL);
+    RemoveRelevantWaterfallFieldEffect(); // qol_field_moves
     return FALSE;
 }
 
@@ -1953,13 +1953,7 @@ bool8 DiveFieldEffect_TryWarp(struct Task *task)
     if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
     {
         TryDoDiveWarp(&mapPosition, gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior);
-        // Start qol_field_moves
-        /*
-        DestroyTask(FindTaskIdByFunc(Task_UseDive));
-        FieldEffectActiveListRemove(FLDEFF_USE_DIVE);
-        */
-        RemoveRelevantDiveFieldEffect();
-        // End qol_field_moves
+        RemoveRelevantDiveFieldEffect(); // qol_field_moves
     }
     return FALSE;
 }

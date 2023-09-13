@@ -35,20 +35,6 @@
 #include "item_menu.h"
 #include "constants/map_types.h"
 
-// TODO reset gitignore
-/*
- TODO add  the following back to the git cache
-        deleted:    data/layouts/layouts.json
-        deleted:    data/maps/.gitignore
-        deleted:    data/maps/map_groups.json
-        deleted:    include/constants/layouts.h
-        deleted:    include/constants/map_groups.h
-        deleted:    src/data/wild_encounters.json
-        deleted:    src/new_game.c
-        */
-
-// TODO uncomment execute truck sequence
-
 static u8 CreateUseToolTask(void);
 static void Task_UseTool_Init(u8);
 static void LockPlayerAndLoadMon(void);
@@ -302,7 +288,7 @@ u32 CanUseStrength(u8 collision)
     return FIELD_MOVE_FAIL;
 }
 
-u32 UseStrength(u32 fieldMoveStatus)
+void UseStrength(u32 fieldMoveStatus)
 {
     LockPlayerAndLoadMon();
 
@@ -310,8 +296,6 @@ u32 UseStrength(u32 fieldMoveStatus)
         ScriptContext_SetupScript(EventScript_UseStrength);
     else
         ScriptContext_SetupScript(EventScript_UseStrengthTool);
-
-    return COLLISION_PUSHED_BOULDER;
 }
 
 // Flash
@@ -521,6 +505,20 @@ u8 FldEff_UseWaterfallTool(void)
     u8 taskId = CreateTask(Task_UseWaterfallTool, 0);
     Task_UseWaterfallTool(taskId);
     return FALSE;
+}
+
+void RemoveRelevantWaterfallFieldEffect(void)
+{
+    if (FieldEffectActiveListContains(FLDEFF_USE_WATERFALL))
+    {
+        FieldEffectActiveListRemove(FLDEFF_USE_WATERFALL);
+        DestroyTask(FindTaskIdByFunc(Task_UseWaterfall));
+    }
+    else if(FieldEffectActiveListContains(FLDEFF_USE_WATERFALL_TOOL))
+    {
+        FieldEffectActiveListRemove(FLDEFF_USE_SURF_TOOL);
+        DestroyTask(FindTaskIdByFunc(Task_UseWaterfallTool));
+    }
 }
 
 // Dive

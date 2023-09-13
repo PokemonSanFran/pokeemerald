@@ -707,13 +707,10 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     // Start qol_field_moves
     fieldMoveStatus = CanUseStrength(collision);
     if (fieldMoveStatus)
-    {
         UseStrength(fieldMoveStatus);
-        TryPushBoulder(x,y,direction);
-    //if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
-        return COLLISION_PUSHED_BOULDER;
-    }
     // End qol_field_moves
+        if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
+        return COLLISION_PUSHED_BOULDER;
 
     if (collision == COLLISION_NONE)
     {
