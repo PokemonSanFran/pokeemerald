@@ -67,12 +67,12 @@ Text_CantCut:
 @ Interact with smashable rock
 EventScript_RockSmash::
 	lockall
-	goto_if_unset FLAG_BADGE03_GET, EventScript_CantSmashRock
 @ Start qol_field_moves
 	//checkpartymove MOVE_ROCK_SMASH
     checkitem ITEM_ROCKSMASH_TOOL,1
     goto_if_eq VAR_RESULT, TRUE, EventScript_UseRockSmashTool
     checkpartylearnknowsfieldmove ITEM_HM06
+	goto_if_unset FLAG_BADGE03_GET, EventScript_CantSmashRock
 @ End qol_field_moves
 	goto_if_eq VAR_RESULT, PARTY_SIZE, EventScript_CantSmashRock
 	setfieldeffectargument 0, VAR_RESULT

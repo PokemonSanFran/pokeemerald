@@ -686,6 +686,10 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
         return COLLISION_STOP_SURFING;
 
     // Start qol_field_moves
+    fieldMoveStatus = CanUseSurf(x,y,collision);
+    if (fieldMoveStatus)
+        return UseSurf(fieldMoveStatus);
+
     fieldMoveStatus = CanUseCut(x,y);
     if (fieldMoveStatus)
         return UseCut(fieldMoveStatus);
@@ -694,9 +698,6 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     if (fieldMoveStatus)
         return UseRockSmash(fieldMoveStatus);
 
-    fieldMoveStatus = CanUseSurf(x,y,collision);
-    if (fieldMoveStatus)
-        return UseSurf(fieldMoveStatus);
     // End qol_field_moves
 
     if (ShouldJumpLedge(x, y, direction))

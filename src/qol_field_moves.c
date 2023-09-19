@@ -242,7 +242,7 @@ u32 UseSurf(u32 fieldMoveStatus)
     LockPlayerAndLoadMon();
 
     if (FlagGet(FLAG_SYS_USE_SURF))
-        FieldEffectStart(FLDEFF_USE_SURF_TOOL);
+        ScriptContext_SetupScript(EventScript_UseSurfFieldEffect);
     else if(fieldMoveStatus == FIELD_MOVE_POKEMON)
         ScriptContext_SetupScript(EventScript_UseSurfMove);
     else if(fieldMoveStatus == FIELD_MOVE_TOOL)
