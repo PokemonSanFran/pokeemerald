@@ -1,0 +1,416 @@
+//MasterDojo_Lobby
+
+const VAR_FACILITY_CHALLENGE_STATUS = VAR_TEMP_0
+const CHALLENGE_STATUS_UNKNOWN = 0
+const CHALLENGE_STATUS_END = 255
+
+const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
+
+mapscripts MasterDojo_Lobby_MapScripts{
+
+    MAP_SCRIPT_ON_FRAME_TABLE[
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: MasterDojo_Lobby_EventScript_GetChallengeStatus
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: MasterDojo_Lobby_EventScript_QuitWithoutSaving
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: MasterDojo_Lobby_EventScript_ResumeChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: MasterDojo_Lobby_EventScript_WonChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: MasterDojo_Lobby_EventScript_LostChallenge
+    ]
+
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE[
+    VAR_NEED_TO_FACE_NORTH, 0:MasterDojo_Lobby_EventScript_PlayerFaceNorth
+    ]
+}
+
+script MasterDojo_Lobby_EventScript_PlayerFaceNorth{
+    setvar(VAR_NEED_TO_FACE_NORTH, 1)
+        turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
+        end
+}
+
+script MasterDojo_Lobby_EventScript_GetChallengeStatus{
+    frontier_getstatus
+        end
+}
+
+script MasterDojo_Lobby_EventScript_QuitWithoutSaving{
+    lock
+        faceplayer
+        msgbox(MasterDojo_Lobby_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT)
+        closemessage
+        sparring_set(SPARRING_DATA_WIN_STREAK, 0)
+        sparring_set(SPARRING_DATA_WIN_STREAK_ACTIVE, FALSE)
+        frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, 0)
+        setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+        release
+        end
+}
+
+script MasterDojo_Lobby_EventScript_WonChallenge{
+    lock
+        faceplayer
+        msgbox(MasterDojo_Lobby_Text_YourResultForThisRestricted)
+        call(MasterDojo_Lobby_EventScript_AskSaveBattle)
+        call(MasterDojo_Lobby_EventScript_GiveSymbol)
+        goto(MasterDojo_Lobby_EventScript_LookForwardToChallenge)
+}
+
+script MasterDojo_Lobby_EventScript_GiveSymbol{
+    //if has no symbol but completed 9
+    bufferstring(STR_VAR_1,9)
+        msgbox(MasterDojo_Lobby_Text_WhatYouCompletedRestricted)
+        msgbox(MasterDojo_Lobby_Text_ThatsExcellentWork)
+        //give symbol
+
+        //if has silver symbol
+        bufferstring(STR_VAR_1,18)
+        msgbox(MasterDojo_Lobby_Text_WhatYouCompletedRestricted)
+        msgbox(MasterDojo_Lobby_Text_ICantBelieveIt)
+        msgbox(MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo)
+        msgbox(MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement)
+        //give symbol
+        msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
+        return
+}
+
+script MasterDojo_Lobby_EventScript_LookForwardToChallenge{
+    closemessage
+        setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+        release
+        end
+}
+
+script MasterDojo_Lobby_EventScript_LostChallenge {
+    sparring_get(SPARRING_DATA_WIN_STREAK)
+        if (var(VAR_RESULT) != 0) {
+            goto(MasterDojo_Lobby_EventScript_LostThanksForPlaying)
+        }
+
+    goto(MasterDojo_Lobby_EventScript_CancelWinStreak)
+}
+
+script MasterDojo_Lobby_EventScript_CancelWinStreak {
+    sparring_set(SPARRING_DATA_WIN_STREAK_ACTIVE, FALSE)
+        goto(MasterDojo_Lobby_EventScript_LostThanksForPlaying)
+}
+
+script MasterDojo_Lobby_EventScript_LostThanksForPlaying {
+    lock
+        faceplayer
+        call(MasterDojo_Lobby_EventScript_AskSaveBattle)
+        msgbox(MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT)
+        closemessage
+        setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+        release
+        end
+}
+
+script MasterDojo_Lobby_EventScript_AskSaveBattle{
+    message(MasterDojo_Lobby_Text_RecordWillBeSaved)
+        waitmessage
+        frontier_checkairshow
+        special(LoadPlayerParty)
+        special(HealPlayerParty)
+        sparring_save(0)
+        playse(SE_SAVE)
+        waitse
+
+        frontier_get(FRONTIER_DATA_RECORD_DISABLED)
+        if (var(VAR_RESULT) == TRUE){
+            return
+        }
+
+    message(MasterDojo_Lobby_Text_RecordLastMatch)
+        waitmessage
+        multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
+        if (var(VAR_RESULT) == 0){
+            call(MasterDojo_Lobby_EventScript_SaveBattle)
+        }
+    return
+}
+
+script MasterDojo_Lobby_EventScript_SaveBattle{
+    frontier_savebattle
+        if (var(VAR_RESULT)){
+            playse(SE_SAVE)
+                msgbox(BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT)
+        }else{
+            msgbox(MasterDojo_Lobby_Text_ThereWasAGlitch, MSGBOX_DEFAULT)
+        }
+
+    return
+}
+
+script MasterDojo_Lobby_EventScript_ResumeChallenge{
+    lock
+        faceplayer
+
+        message(MasterDojo_Lobby_Text_WeveBeenWaitingForYou)
+        waitmessage
+        message(MasterDojo_Lobby_Text_ProgressWillBeSaved)
+        waitmessage
+
+        sparring_save(CHALLENGE_STATUS_SAVING)
+        playse(SE_SAVE)
+        waitse
+        frontier_set(FRONTIER_DATA_PAUSED, FALSE)
+
+        goto(MasterDojo_Lobby_EventScript_EnterElevator)
+        end
+}
+
+script MasterDojo_Lobby_EventScript_Attendant{
+    lock
+        faceplayer
+        setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_SPARRING)
+        special(SavePlayerParty)
+
+        goto(MasterDojo_Lobby_EventScript_AskEnterChallenge)
+}
+
+script MasterDojo_Lobby_EventScript_AskEnterChallenge{
+    message(MasterDojo_Lobby_Text_HiyahDo)
+        waitmessage
+        multichoice(17, 6, MULTI_CHALLENGEINFO, FALSE)
+        switch(var(VAR_RESULT)){
+            case 0: goto(MasterDojo_Lobby_EventScript_TryEnterChallenge)
+            case 1: goto(MasterDojo_Lobby_EventScript_ExplainChallenge)
+            case 2: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+            case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+        }
+}
+
+script MasterDojo_Lobby_EventScript_TryEnterChallenge{
+    message(MasterDojo_Lobby_Text_OffersTwoLevels)
+        waitmessage
+        multichoice(17, 6, MULTI_LEVEL_MODE, FALSE)
+        switch(var(VAR_RESULT)){
+            case FRONTIER_LVL_TENT: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+            case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+        }
+    frontier_checkineligible
+        goto_if_eq(VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons)
+        frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
+        msgbox(MasterDojo_Lobby_Text_SelectTheTypeYouWant, MSGBOX_DEFAULT)
+
+        fadescreen(FADE_TO_BLACK)
+        frontier_get(FRONTIER_DATA_LVL_MODE)
+        copyvar(VAR_0x8004, VAR_RESULT)
+        setvar(VAR_0x8005, FRONTIER_PARTY_SIZE)
+        special(ChoosePartyForBattleFrontier)
+        waitstate
+        goto_if_eq(VAR_RESULT, 0, MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
+        msgbox(MasterDojo_Lobby_Text_BeforeDivingInto, MSGBOX_YESNO)
+        switch(var(VAR_RESULT)){
+            case NO: goto(MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
+            case YES: goto(MasterDojo_Lobby_EventScript_SaveBeforeChallenge)
+            case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
+        }
+}
+
+script MasterDojo_Lobby_EventScript_SaveBeforeChallenge{
+    frontier_set(FRONTIER_DATA_SELECTED_MON_ORDER)
+        setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
+        sparring_init
+        sparring_set(SPARRING_DATA_WIN_STREAK_ACTIVE, TRUE)
+        frontier_set(FRONTIER_DATA_PAUSED, FALSE)
+        special(LoadPlayerParty)
+        closemessage
+        delay(2)
+
+        call(Common_EventScript_SaveGame)
+        setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+
+        if (var(VAR_RESULT) == 0){
+            frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)  // No status provided, so it relies on VAR_0x8006 being 0 already
+                goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+        }
+
+    goto(MasterDojo_Lobby_EventScript_EnterElevator)
+}
+
+script MasterDojo_Lobby_EventScript_ExplainChallenge{
+    msgbox(MasterDojo_Lobby_Text_RestrictedSparringIsATraining, MSGBOX_YESNO)
+        if (var(VAR_RESULT) == YES){
+            goto(MasterDojo_Lobby_EventScript_SaveBeforeChallenge)
+        }
+    msgbox(MasterDojo_Lobby_Text_IWontForceYou,MSGBOX_DEFAULT)
+        releaseall
+        end
+}
+
+script MasterDojo_Lobby_EventScript_ShowResults{
+    lockall
+        frontier_results(FRONTIER_FACILITY_SPARRING,FRONTIER_MODE_SINGLES)
+        waitbuttonpress
+        special(RemoveRecordsWindow)
+        releaseall
+        end
+}
+
+script MasterDojo_Lobby_EventScript_NotEnoughValidMons{
+    frontier_get(FRONTIER_DATA_LVL_MODE)
+        copyvar(VAR_0x8004, VAR_RESULT)
+        if(var(VAR_RESULT) == FRONTIER_LVL_50){
+            msgbox(MasterDojo_Lobby_Text_NotEnoughValidMonsLv50Singles, MSGBOX_DEFAULT)
+        }else{
+            msgbox(MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles, MSGBOX_DEFAULT)
+        }
+    release
+        end
+}
+
+script MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge{
+    special(LoadPlayerParty)
+        goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+}
+
+script MasterDojo_Lobby_EventScript_CancelChallenge{
+    msgbox(MasterDojo_Lobby_Text_OhYouChangedYour, MSGBOX_DEFAULT)
+        release
+        end
+}
+
+script MasterDojo_Lobby_EventScript_EnterElevator{
+    special(SavePlayerParty)
+        setvar(VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER)
+        setvar(VAR_0x8005, FRONTIER_PARTY_SIZE)
+        special(CallFrontierUtilFunc)
+        setvar(VAR_RESULT, 0)
+	warp(MAP_BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM, 4, 8)
+}
+
+text MasterDojo_Lobby_Text_HiyahDo{
+    format("Hi-yah! {PLAYER}! Do you want to try Restricted Sparring?")
+}
+
+text MasterDojo_Lobby_Text_SelectTheTypeYouWant{
+    format("Select the type you want to use for sparring.")
+}
+
+text MasterDojo_Lobby_Text_IWontForceYou{
+    format("I won't force you to do anything you don't want to do. Some other time, then.")
+}
+
+text MasterDojo_Lobby_Text_RestrictedSparringIsATraining{
+    format("Restricted Sparring is a training course that restricts the type of Pokémon you can use. Select a type first, and then battle using up to three Pokémon of that type. No duplicate Pokémon or items are allowed. If you can win five times in a row, you'll complete the training. However, if you lose even once, the sparring will end there! You can restore your Pokémon between battles, but only twice in total, so use the opportunities very wisely. That's all! Do you want to try Restricted Sparring?")
+}
+
+text MasterDojo_Lobby_Text_OhYouChangedYour{
+    format("Oh, you changed your mind? Some other time, then.")
+}
+
+text MasterDojo_Lobby_Text_LetTheBattlesBegin{
+    format("Let the battles begin! Battle No. 1! Ready...")
+}
+
+text MasterDojo_Lobby_Text_NextBattleNo{
+    format("Next. Battle No. {STR_VAR_1}! Ready...")//delay 15 frames
+}
+
+text MasterDojo_Lobby_Text_Go{
+    format("Go!")
+}
+
+text MasterDojo_Lobby_Text_DoYouWantToRestore{
+    format("Do you want to restore your Pokémon? (You can restore them {STR_VAR_1} more {STR_VAR_2}.)")
+}
+
+text MasterDojo_Lobby_Text_YouLostbutTrainYourself{
+    format("You lost...but train yourself and your Pokémon, and try again! I'm looking forward to your next challenge.")
+}
+
+text MasterDojo_Lobby_Text_YourResultForThisRestricted{
+    format("Your result for this Restricted Sparring set is... You had {STR_VAR_1} {STR_VAR_2} with the {STR_VAR_3}-type Pokémon restriction!")
+}
+
+text MasterDojo_Lobby_Text_TheWayYouHandleType{
+    format("The way you handle {STR_VAR_3}-type Pokémon is flawless!")
+}
+
+text MasterDojo_Lobby_Text_WhatYouCompletedRestricted{
+    format("What?! You completed Restricted Sparring with {STR_VAR_1} types?!")
+}
+
+text MasterDojo_Lobby_Text_ThatsExcellentWork{
+    format("That's excellent work!")
+}
+
+text MasterDojo_Lobby_Text_ICantBelieveIt{
+    format("I can't believe it... Your achievement is just phenomenal!")
+}
+
+text MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo{
+    format("This accomplishment is sure to go down in dojo history! ")
+}
+
+text MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement{
+    format("To commemorate this monumental achievement, I'll grant you the {STR_VAR_2} Guts Symbol!")
+}
+
+text MasterDojo_Lobby_Text_IHopeYoullKeep{
+    format("I hope you'll keep exceeding your own limits!")
+}
+
+text MasterDojo_Lobby_Text_DoYouWantToContinueNoHeal{
+    format("Do you want to continue sparring?")
+}
+
+text MasterDojo_Lobby_Text_DoYouWantToContinue{
+    format("Do you want to continue sparring? (You can restore them {STR_VAR_1} more {STR_VAR_2}.)")
+}
+
+text MasterDojo_Lobby_Text_YouEarnedBp{
+    format("You earned {STR_VAR_1} BP!")
+}
+
+text MasterDojo_Lobby_Text_DidntSaveBeforeQuitting{
+    format("Oops! {PLAYER}, it seems you didn't save before quitting your challenge last time. Because of that, your challenge so far has been disqualified. Sorry!")
+}
+
+
+text MasterDojo_Lobby_Text_ThankYouForPlaying{
+    format("Thanks for playing, {PLAYER}!")
+}
+
+text MasterDojo_Lobby_Text_RecordWillBeSaved{
+    format("Your record will be saved soon.")
+}
+
+
+text MasterDojo_Lobby_Text_WeveBeenWaitingForYou{
+    format("We've been waiting for you, {PLAYER}!")
+}
+
+
+text MasterDojo_Lobby_Text_ProgressWillBeSaved{
+    format("Before entering a BATTLE ROOM, your progress will be saved. Hang tight!")
+
+}
+
+text MasterDojo_Lobby_Text_ThereWasAGlitch{
+    format("Oops! There was a glitch, and your record couldn't be saved. Better luck next time!")
+
+}
+
+text MasterDojo_Lobby_Text_OffersTwoLevels{
+    format("Restricted Sparring offers two levels of challenge, Level 50 and Open Level. So, which one is your pick?")
+}
+
+
+text MasterDojo_Lobby_Text_BeforeDivingInto{
+    format("Before diving into Restricted Sparring, your progress must be saved. Is that cool?")
+}
+
+
+text MasterDojo_Lobby_Text_NotEnoughValidMonsLv50Singles{
+    format("Hold up, {PLAYER}! You need three different POKéMON of Level 50 or less to enter. They must all share the {STR_VAR_1}-type and hold different items. EGGS{STR_VAR_1} aren't allowed. Come back when you're ready!")
+
+}
+
+text MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles{
+    format("Hold up, {PLAYER}! You need three different POKéMON to enter. They must all share the {STR_VAR_1}-type and hold different items. EGGS{STR_VAR_1} aren't allowed. Come back when you're ready!")
+}
+
+text MasterDojo_Lobby_Text_RecordLastMatch{
+    format("Want me to record your last Restricted Sparring match on your FRONTIER PASS?")
+}

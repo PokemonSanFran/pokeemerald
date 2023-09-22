@@ -11,6 +11,7 @@
 #include "constants/battle_setup.h"
 #include "constants/battle_tent.h"
 #include "constants/battle_tower.h"
+#include "constants/restricted_sparring.h"
 #include "constants/berry.h"
 #include "constants/cable_club.h"
 #include "constants/coins.h"
@@ -570,6 +571,7 @@ gStdScripts_End::
 	.include "data/maps/Route119_WeatherInstitute_2F/scripts.inc"
 	.include "data/maps/Route119_House/scripts.inc"
 	.include "data/maps/Route124_DivingTreasureHuntersHouse/scripts.inc"
+	.include "data/maps/MasterDojo_Lobby/scripts.inc"
 
 	.include "data/scripts/std_msgbox.inc"
 	.include "data/scripts/trainer_battle.inc"

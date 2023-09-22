@@ -36,6 +36,7 @@
 #include "constants/moves.h"
 #include "constants/items.h"
 #include "constants/event_objects.h"
+#include "constants/restricted_sparring.h"
 #include "party_menu.h"
 
 struct FrontierBrainMon
