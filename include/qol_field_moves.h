@@ -54,3 +54,6 @@ enum FlyToolSource
     FLY_SOURCE_FIELD,
     FLY_SOURCE_BAG
 };
+
+// Uncomment the following line to enable "No Messaging
+// #QOL_NO_MESSAGING

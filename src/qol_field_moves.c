@@ -120,6 +120,9 @@ u32 CanUseCut(s16 x, s16 y)
 u32 UseCut(u32 fieldMoveStatus)
 {
     LockPlayerAndLoadMon();
+#ifdef QOL_NO_MESSAGING
+    FlagSet(FLAG_SYS_USE_CUT);
+#endif //QOL_NO_MESSAGING
 
     if (FlagGet(FLAG_SYS_USE_CUT))
         ScriptContext_SetupScript(EventScript_CutTreeDown);
@@ -240,6 +243,9 @@ void Task_SurfToolFieldEffect(u8 taskId)
 u32 UseSurf(u32 fieldMoveStatus)
 {
     LockPlayerAndLoadMon();
+#ifdef QOL_NO_MESSAGING
+    FlagSet(FLAG_SYS_USE_SURF);
+#endif //QOL_NO_MESSAGING
 
     if (FlagGet(FLAG_SYS_USE_SURF))
         ScriptContext_SetupScript(EventScript_UseSurfFieldEffect);
@@ -393,6 +399,9 @@ u32 CanUseRockSmash(s16 x, s16 y)
 u32 UseRockSmash(u32 fieldMoveStatus)
 {
     LockPlayerAndLoadMon();
+#ifdef QOL_NO_MESSAGING
+    FlagSet(FLAG_SYS_USE_ROCK_SMASH);
+#endif //QOL_NO_MESSAGING
 
     if (FlagGet(FLAG_SYS_USE_ROCK_SMASH))
         ScriptContext_SetupScript(EventScript_SmashRock);
@@ -455,6 +464,9 @@ u32 CanUseWaterfallTool(void)
 u32 UseWaterfall(struct PlayerAvatar playerAvatar, u32 fieldMoveStatus)
 {
     LockPlayerAndLoadMon();
+#ifdef QOL_NO_MESSAGING
+    FlagSet(FLAG_SYS_USE_WATERFALL);
+#endif //QOL_NO_MESSAGING
     playerAvatar.runningState = MOVING;
 
     if (FlagGet(FLAG_SYS_USE_WATERFALL))
