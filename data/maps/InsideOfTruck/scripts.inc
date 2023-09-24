@@ -48,6 +48,11 @@ InsideOfTruck_EventScript_SetIntroFlagsFemale::
 	end
 
 InsideOfTruck_EventScript_MovingBox::
+    givemon SPECIES_STARMIE, 100, ITEM_NONE
+    givemon SPECIES_GYARADOS, 100, ITEM_NONE
+    givemon SPECIES_SWAMPERT, 100, ITEM_NONE
+    givemon SPECIES_TYRANITAR, 100, ITEM_NONE
+    warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY,0
 	msgbox InsideOfTruck_Text_BoxPrintedWithMonLogo, MSGBOX_SIGN
 	end
 
