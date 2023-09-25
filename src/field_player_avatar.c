@@ -76,7 +76,7 @@ static u8 CheckForPlayerAvatarStaticCollision(u8);
 static u8 CheckForObjectEventStaticCollision(struct ObjectEvent *, s16, s16, u8, u8);
 static bool8 CanStopSurfing(s16, s16, u8);
 static bool8 ShouldJumpLedge(s16, s16, u8);
-static bool8 TryPushBoulder(s16, s16, u8);
+//static bool8 TryPushBoulder(s16, s16, u8); //qol_field_moves
 static void CheckAcroBikeCollision(s16, s16, u8, u8 *);
 
 static void DoPlayerAvatarTransition(void);
@@ -697,7 +697,6 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     fieldMoveStatus = CanUseRockSmash(x,y);
     if (fieldMoveStatus)
         return UseRockSmash(fieldMoveStatus);
-
     // End qol_field_moves
 
     if (ShouldJumpLedge(x, y, direction))
@@ -708,9 +707,10 @@ u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u
     // Start qol_field_moves
     fieldMoveStatus = CanUseStrength(collision);
     if (fieldMoveStatus)
-        UseStrength(fieldMoveStatus);
+        return UseStrength(fieldMoveStatus,x,y,direction);
     // End qol_field_moves
-        if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
+
+    if (collision == COLLISION_OBJECT_EVENT && TryPushBoulder(x, y, direction))
         return COLLISION_PUSHED_BOULDER;
 
     if (collision == COLLISION_NONE)
@@ -758,7 +758,7 @@ static bool8 ShouldJumpLedge(s16 x, s16 y, u8 direction)
         return FALSE;
 }
 
-static bool8 TryPushBoulder(s16 x, s16 y, u8 direction)
+bool8 TryPushBoulder(s16 x, s16 y, u8 direction)
 {
     if (FlagGet(FLAG_SYS_USE_STRENGTH))
     {

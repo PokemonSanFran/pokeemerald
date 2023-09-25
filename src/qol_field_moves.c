@@ -3,6 +3,7 @@
 #include "field_control_avatar.h"
 #include "event_scripts.h"
 #include "field_screen_effect.h"
+#include "field_player_avatar.h"
 #include "fldeff_misc.h"
 #include "item.h"
 #include "field_control_avatar.h"
@@ -294,14 +295,38 @@ u32 CanUseStrength(u8 collision)
     return FIELD_MOVE_FAIL;
 }
 
-void UseStrength(u32 fieldMoveStatus)
+u32 UseStrength(u32 fieldMoveStatus, u8 x, u8 y, u8 direction)
 {
+#ifdef QOL_NO_MESSAGING
+    FlagSet(FLAG_SYS_USE_STRENGTH);
+#endif
     LockPlayerAndLoadMon();
+
+    if (FlagGet(FLAG_SYS_USE_STRENGTH))
+    {
+        TryPushBoulder(x, y, direction);
+        return COLLISION_PUSHED_BOULDER;
+    }
+
+    FlagSet(FLAG_SYS_USE_STRENGTH);
 
     if(fieldMoveStatus == FIELD_MOVE_POKEMON)
         ScriptContext_SetupScript(EventScript_UseStrength);
     else
         ScriptContext_SetupScript(EventScript_UseStrengthTool);
+
+    return COLLISION_PUSHED_BOULDER;
+}
+
+void PushBoulderFromScript(void)
+{
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x = playerObjEvent->currentCoords.x;
+    s16 y = playerObjEvent->currentCoords.y;
+    s16 direction = playerObjEvent->movementDirection;
+
+    MoveCoords(direction, &x, &y);
+    TryPushBoulder(x, y,direction);
 }
 
 // Flash

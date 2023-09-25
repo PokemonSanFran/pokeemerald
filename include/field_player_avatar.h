@@ -30,6 +30,7 @@ void PlayerSetAnimId(u8 movementActionId, u8 copyableMovement);
 bool8 IsPlayerCollidingWithFarawayIslandMew(u8 direction);
 void PlayerOnBikeCollideWithFarawayIslandMew(u8 direction);
 u8 CheckForObjectEventCollision(struct ObjectEvent *objectEvent, s16 x, s16 y, u8 direction, u8 metatileBehavior);
+bool8 TryPushBoulder(s16, s16, u8); //qol_field_moves
 u8 PlayerGetElevation(void);
 void SetPlayerAvatarTransitionFlags(u16 transitionFlags);
 void CancelPlayerForcedMovement(void);

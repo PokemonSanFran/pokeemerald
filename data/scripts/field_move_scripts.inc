@@ -157,6 +157,7 @@ EventScript_UseStrength::
 	lockall
 	dofieldeffect FLDEFF_USE_STRENGTH
 	waitstate
+    call_if_set FLAG_SYS_USE_STRENGTH, EventScript_PushBoulderScript @ qol_field_moves
 	goto EventScript_ActivateStrength
 	end
 
