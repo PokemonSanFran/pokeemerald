@@ -1,0 +1,330 @@
+MasterDojo_BattleRoom_MapScripts::
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, MasterDojo_BattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
+	.byte 0
+
+MasterDojo_BattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
+	map_script_2 VAR_TEMP_0, 0, MasterDojo_BattleRoom_EventScript_EnterRoom
+	.2byte 0
+
+
+MasterDojo_BattleRoom_EventScript_EnterRoom::
+	setvar VAR_TEMP_0, 1
+	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantEnter
+	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerEnter
+	waitmovement 1
+	frontier_get FRONTIER_DATA_BATTLE_NUM
+	compare VAR_RESULT, 0
+	goto_if_eq MasterDojo_BattleRoom_EventScript_EnterRoom_2
+MasterDojo_BattleRoom_EventScript_EnterRoom_1:
+	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantApproachPlayer
+	applymovement OBJ_EVENT_ID_PLAYER, Common_Movement_FaceUp
+	waitmovement 1
+	setvar VAR_TEMP_2, 1
+	frontier_set FRONTIER_DATA_RECORD_DISABLED, TRUE
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+MasterDojo_BattleRoom_EventScript_EnterRoom_2:
+	goto MasterDojo_BattleRoom_EventScript_OpponentEnter
+	goto MasterDojo_BattleRoom_EventScript_EnterRoom_1
+
+
+MasterDojo_BattleRoom_EventScript_OpponentEnter::
+	sparring_setopponent
+	addobject 2
+	waitmovement OBJ_EVENT_ID_CAMERA
+	special RemoveCameraObject
+	sparring_getopponentintro 0
+	msgbox gStringVar4, MSGBOX_DEFAULT
+	waitmessage
+	call MasterDojo_BattleRoom_EventScript_DoTowerBattle
+	switch VAR_RESULT
+	case B_OUTCOME_WON, MasterDojo_BattleRoom_EventScript_OpponentEnter_3
+MasterDojo_BattleRoom_EventScript_OpponentEnter_1:
+	goto MasterDojo_BattleRoom_EventScript_WarpToLobbyLost
+	return
+
+MasterDojo_BattleRoom_EventScript_OpponentEnter_3:
+	goto MasterDojo_BattleRoom_EventScript_DefeatedOpponent
+	goto MasterDojo_BattleRoom_EventScript_OpponentEnter_1
+
+
+MasterDojo_BattleRoom_EventScript_WarpToLobbyLost::
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
+	sparring_set SPARRING_DATA_LVL_MODE
+	goto MasterDojo_BattleRoom_EventScript_WarpToLobby
+	return
+
+
+MasterDojo_BattleRoom_EventScript_WarpToLobby::
+	warp MAP_MASTER_DOJO_LOBBY, 7, 9
+	waitstate
+	end
+
+
+MasterDojo_BattleRoom_EventScript_DefeatedOpponent::
+	call BattleFrontier_EventScript_IncrementWinStreak
+	sparring_setbattlewon
+	special SpawnCameraObject
+	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_PanCameraLeft
+	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerReturnPosition
+	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantApproachPlayer
+	waitmovement OBJ_EVENT_ID_CAMERA
+	removeobject 2
+	waitmovement 1
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent::
+	frontier_get FRONTIER_DATA_BATTLE_NUM
+	call MasterDojo_BattleRoom_EventScript_ReadyForOpponent
+	call BattleFrontier_EventScript_GetCantRecordBattle
+	compare VAR_RESULT, 0
+	goto_if_ne MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_2
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_1:
+	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5
+	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_6
+	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_7
+	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_8
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_9
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_2:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5:
+	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_6:
+	goto MasterDojo_BattleRoom_EventScript_AskRecordBattle
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_7:
+	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_8:
+	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_9:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord::
+	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_2
+	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_3
+	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_4
+	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_5
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_2:
+	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_3:
+	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_4:
+	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_5:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord
+	return
+
+
+MasterDojo_BattleRoom_EventScript_AskRecordBattle::
+	message MasterDojo_Lobby_Text_RecordLastMatch
+	waitmessage
+	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskRecordBattle_2
+	case 1, MasterDojo_BattleRoom_EventScript_AskRecordBattle_3
+	return
+
+MasterDojo_BattleRoom_EventScript_AskRecordBattle_2:
+	goto MasterDojo_BattleRoom_EventScript_RecordBattle
+	return
+
+MasterDojo_BattleRoom_EventScript_AskRecordBattle_3:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_RecordBattle::
+	call BattleFrontier_EventScript_SaveBattle
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_AskPauseChallenge::
+	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame, MSGBOX_YESNO
+	switch VAR_RESULT
+	case NO, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_2
+	case YES, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_4
+	return
+
+MasterDojo_BattleRoom_EventScript_AskPauseChallenge_2:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3:
+	goto MasterDojo_BattleRoom_EventScript_PauseChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskPauseChallenge_4:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_AskRetireChallenge::
+	message BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge
+	waitmessage
+	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_2
+	case 1, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_4
+	return
+
+MasterDojo_BattleRoom_EventScript_AskRetireChallenge_2:
+	goto MasterDojo_BattleRoom_EventScript_RetireChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+MasterDojo_BattleRoom_EventScript_AskRetireChallenge_4:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_ContinueChallenge::
+	closemessage
+	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerStartBattle
+	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_PanCameraRight
+	applymovement 1, MasterDojo_BattleRoom_Movement_ReturnToPosition
+	waitmovement 1
+	goto MasterDojo_BattleRoom_EventScript_OpponentEnter
+	return
+
+
+MasterDojo_BattleRoom_EventScript_WarpToLobbyWon::
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
+	sparring_set TOWER_DATA_LVL_MODE
+	goto MasterDojo_BattleRoom_EventScript_WarpToLobby
+	return
+
+
+MasterDojo_BattleRoom_EventScript_PauseChallenge::
+	message BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait
+	waitmessage
+	sparring_save CHALLENGE_STATUS_PAUSED
+	playse SE_SAVE
+	waitse
+	fadescreen FADE_TO_BLACK
+	frontier_reset
+	end
+
+
+MasterDojo_BattleRoom_EventScript_ReadyForOpponent::
+	message BattleFrontier_BattleTowerBattleRoom_Text_ReadyFor6thOpponent
+	waitmessage
+	return
+
+
+MasterDojo_BattleRoom_EventScript_DoTowerBattle::
+	closemessage
+	setvar VAR_TEMP_2, 0
+	frontier_set FRONTIER_DATA_RECORD_DISABLED, FALSE
+	setvar VAR_0x8004, SPECIAL_BATTLE_SPARRING
+	setvar VAR_0x8005, 0
+	special DoSpecialTrainerBattle
+	waitstate
+	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
+	frontier_restorehelditems
+	frontier_resetsketch
+	goto MasterDojo_BattleRoom_EventScript_EndTowerBattle
+	return
+
+
+MasterDojo_BattleRoom_EventScript_EndTowerBattle::
+	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
+	return
+
+
+MasterDojo_BattleRoom_EventScript_RetireChallenge::
+	setflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
+	goto MasterDojo_BattleRoom_EventScript_WarpToLobbyWon
+	return
+
+
+MasterDojo_BattleRoom_Movement_AttendantEnter:
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	walk_up
+	walk_up
+	face_down
+	step_end
+
+MasterDojo_BattleRoom_Movement_PlayerEnter:
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	step_end
+
+MasterDojo_BattleRoom_Movement_AttendantApproachPlayer:
+	walk_left
+	walk_left
+	walk_left
+	walk_down
+	step_end
+
+MasterDojo_BattleRoom_Movement_PlayerStartBattle:
+	walk_right
+	step_end
+
+MasterDojo_BattleRoom_Movement_PlayerReturnPosition:
+	walk_left
+	face_up
+	step_end
+
+MasterDojo_BattleRoom_Movement_ReturnToPosition:
+	walk_up
+	walk_right
+	walk_right
+	walk_right
+	face_down
+	step_end
+
+MasterDojo_BattleRoom_Movement_PanCameraLeft:
+	walk_left
+	walk_left
+	walk_left
+	walk_left
+	step_end
+
+MasterDojo_BattleRoom_Movement_PanCameraRight:
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	step_end

@@ -48,12 +48,30 @@ InsideOfTruck_EventScript_SetIntroFlagsFemale::
 	end
 
 InsideOfTruck_EventScript_MovingBox::
+    goto_if_set FLAG_SYS_POKEMON_GET, WarpPlayerDojo
+    givemon SPECIES_TYRANITAR,50,ITEM_CHOICE_BAND
+    additem ITEM_TM39
+    additem ITEM_TM26
+    additem ITEM_TM01
+    givemon SPECIES_SWAMPERT,50,ITEM_CHESTO_BERRY
+    additem ITEM_TM44
+    additem ITEM_TM17
+    additem ITEM_TM13
+    additem ITEM_TM26
+    givemon SPECIES_FLYGON,50,ITEM_LEFTOVERS
+    additem ITEM_TM26
+    additem ITEM_TM39
+    additem ITEM_TM02
+    additem ITEM_TM06
     givemon SPECIES_STARMIE, 100, ITEM_NONE
     givemon SPECIES_GYARADOS, 100, ITEM_NONE
     givemon SPECIES_SWAMPERT, 100, ITEM_NONE
-    givemon SPECIES_TYRANITAR, 100, ITEM_NONE
-    warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY,0
-	msgbox InsideOfTruck_Text_BoxPrintedWithMonLogo, MSGBOX_SIGN
+    setflag FLAG_SYS_POKEMON_GET
+	//msgbox InsideOfTruck_Text_BoxPrintedWithMonLogo, MSGBOX_SIGN
+	end
+
+WarpPlayerDojo::
+    warp MAP_MASTER_DOJO_LOBBY,7,9
 	end
 
 InsideOfTruck_Text_BoxPrintedWithMonLogo:

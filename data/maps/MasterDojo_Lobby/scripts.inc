@@ -251,6 +251,7 @@ MasterDojo_Lobby_EventScript_SaveBeforeChallenge::
 	closemessage
 	delay 2
 	call Common_EventScript_SaveGame
+	special HealPlayerParty
 	setvar VAR_TEMP_0, 255
 	compare VAR_RESULT, 0
 	goto_if_eq MasterDojo_Lobby_EventScript_SaveBeforeChallenge_2
@@ -320,7 +321,7 @@ MasterDojo_Lobby_EventScript_EnterElevator::
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
 	special CallFrontierUtilFunc
 	setvar VAR_RESULT, 0
-	warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM, 4, 8
+	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 	return
 
 

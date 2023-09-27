@@ -7,7 +7,6 @@ const CHALLENGE_STATUS_END = 255
 const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
 
 mapscripts MasterDojo_Lobby_MapScripts{
-
     MAP_SCRIPT_ON_FRAME_TABLE[
         VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: MasterDojo_Lobby_EventScript_GetChallengeStatus
             VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: MasterDojo_Lobby_EventScript_QuitWithoutSaving
@@ -218,6 +217,7 @@ script MasterDojo_Lobby_EventScript_SaveBeforeChallenge{
         delay(2)
 
         call(Common_EventScript_SaveGame)
+        special(HealPlayerParty)
         setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
 
         if (var(VAR_RESULT) == 0){
@@ -276,7 +276,7 @@ script MasterDojo_Lobby_EventScript_EnterElevator{
         setvar(VAR_0x8005, FRONTIER_PARTY_SIZE)
         special(CallFrontierUtilFunc)
         setvar(VAR_RESULT, 0)
-	warp(MAP_BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM, 4, 8)
+        warp(MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6)
 }
 
 text MasterDojo_Lobby_Text_HiyahDo{
@@ -414,3 +414,4 @@ text MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles{
 text MasterDojo_Lobby_Text_RecordLastMatch{
     format("Want me to record your last Restricted Sparring match on your FRONTIER PASS?")
 }
+
