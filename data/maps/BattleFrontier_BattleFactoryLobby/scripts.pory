@@ -1,4 +1,13 @@
 //written by Jaizu
+//factory lobby
+//notes: it has some callnatives for merrp followers and some textcolor bcs i used fr text colors
+//but the compiler should just complain about those and u can freely remove them
+//I dont have the text colors in every place but I already had some implemented before starting converting it to .pory
+//so it is what it is lol
+//it also removes 2 labels needed by some battle tent
+//not sure if u need those, should be easy to copy paste back from emerald
+//![image](https://github.com/PokemonSanFran/pokeemerald/assets/77138753/308d57e1-91ba-4e9e-bccd-a11fe3d43a96)
+
 
 const LOCALID_ATTENDANT_SINGLES = 1
 const LOCALID_ATTENDANT_DOUBLES = 6
