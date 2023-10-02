@@ -34,19 +34,36 @@ MasterDojo_BattleRoom_EventScript_OpponentEnter::
 	addobject 2
 	waitmovement OBJ_EVENT_ID_CAMERA
 	special RemoveCameraObject
+	applymovement 1, Common_Movement_WalkInPlaceDown
+	frontier_get FRONTIER_DATA_BATTLE_NUM
+	compare VAR_RESULT, 0
+	goto_if_eq MasterDojo_BattleRoom_EventScript_OpponentEnter_2
+	copyvar VAR_TEMP_E, VAR_RESULT
+	addvar VAR_TEMP_E, 1
+	buffernumberstring STR_VAR_1, VAR_TEMP_E
+	msgbox MasterDojo_BattleRoom_Text_Next, MSGBOX_DEFAULT
+MasterDojo_BattleRoom_EventScript_OpponentEnter_1:
+	delay 15
+	msgbox MasterDojo_BattleRoom_Text_Go, MSGBOX_DEFAULT
+	closemessage
+	waitmovement 1
 	sparring_getopponentintro 0
 	msgbox gStringVar4, MSGBOX_DEFAULT
 	waitmessage
 	call MasterDojo_BattleRoom_EventScript_DoTowerBattle
 	switch VAR_RESULT
-	case B_OUTCOME_WON, MasterDojo_BattleRoom_EventScript_OpponentEnter_3
-MasterDojo_BattleRoom_EventScript_OpponentEnter_1:
+	case B_OUTCOME_WON, MasterDojo_BattleRoom_EventScript_OpponentEnter_7
+MasterDojo_BattleRoom_EventScript_OpponentEnter_5:
 	goto MasterDojo_BattleRoom_EventScript_WarpToLobbyLost
 	return
 
-MasterDojo_BattleRoom_EventScript_OpponentEnter_3:
-	goto MasterDojo_BattleRoom_EventScript_DefeatedOpponent
+MasterDojo_BattleRoom_EventScript_OpponentEnter_2:
+	msgbox MasterDojo_BattleRoom_Text_LetTheBattle, MSGBOX_DEFAULT
 	goto MasterDojo_BattleRoom_EventScript_OpponentEnter_1
+
+MasterDojo_BattleRoom_EventScript_OpponentEnter_7:
+	goto MasterDojo_BattleRoom_EventScript_DefeatedOpponent
+	goto MasterDojo_BattleRoom_EventScript_OpponentEnter_5
 
 
 MasterDojo_BattleRoom_EventScript_WarpToLobbyLost::
@@ -66,136 +83,248 @@ MasterDojo_BattleRoom_EventScript_DefeatedOpponent::
 	call BattleFrontier_EventScript_IncrementWinStreak
 	sparring_setbattlewon
 	special SpawnCameraObject
-	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_PanCameraLeft
+	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_CameraPanLeft
 	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerReturnPosition
 	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantApproachPlayer
 	waitmovement OBJ_EVENT_ID_CAMERA
 	removeobject 2
 	waitmovement 1
+	msgbox MasterDojo_BattleRoom_Text_WellDone, MSGBOX_DEFAULT
 	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
 	return
 
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponent::
-	frontier_get FRONTIER_DATA_BATTLE_NUM
-	call MasterDojo_BattleRoom_EventScript_ReadyForOpponent
-	call BattleFrontier_EventScript_GetCantRecordBattle
-	compare VAR_RESULT, 0
-	goto_if_ne MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_2
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_1:
-	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+	message MasterDojo_BattleRoom_Text_DoYouWantToContinue
+	waitmessage
+	sparring_getcontinuemenutype
 	switch VAR_RESULT
-	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5
-	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_6
-	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_7
-	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_8
-	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_9
+	case RECORDYES_HEALYES, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_2
+	case RECORDYES_HEALNO, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_3
+	case RECORDNO_HEALYES, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_4
+	case RECORDNO_HEALNO, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5
 	return
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_2:
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_1
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_3:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_4:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes
+	return
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo
+	return
+
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo::
+	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_3
+	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_4
+	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_5
+	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_6
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_7
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_1:
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_3:
 	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
-	return
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_6:
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_4:
 	goto MasterDojo_BattleRoom_EventScript_AskRecordBattle
-	return
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_7:
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_5:
 	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
-	return
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_8:
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_6:
 	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_7:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo::
+	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_3
+	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_4
+	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_5
+	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_6
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_1:
 	return
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_9:
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_3:
+	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_4:
+	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_5:
+	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_6:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes::
+	multichoice 19, 2, MULTI_GO_ON_HEAL_RECORD_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_3
+	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_4
+	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_5
+	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_6
+	case 4, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_7
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_8
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1:
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_3:
+	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_4:
+	goto MasterDojo_BattleRoom_EventScript_AskHeal
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_5:
+	goto MasterDojo_BattleRoom_EventScript_AskRecordBattle
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_6:
+	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_7:
+	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_8:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes::
+	multichoice 20, 5, MULTI_GO_ON_HEAL_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_3
+	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_4
+	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_5
+	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_6
+	case 4, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_7
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_1:
+	return
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_3:
+	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_4:
+	goto MasterDojo_BattleRoom_EventScript_AskHeal
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_5:
+	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_6:
+	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_7:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+
+MasterDojo_BattleRoom_EventScript_AskHeal::
+	buffernumberstring STR_VAR_1, VAR_RESTRICTEDSPARRING_HEAL_COUNT
+	msgbox MasterDojo_BattleRoom_Text_DoYouWantToRestore, MSGBOX_YESNO
+	waitmessage
+	compare VAR_RESULT, YES
+	goto_if_eq MasterDojo_BattleRoom_EventScript_AskHeal_2
+MasterDojo_BattleRoom_EventScript_AskHeal_1:
 	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
 	return
 
+MasterDojo_BattleRoom_EventScript_AskHeal_2:
+	frontier_restorehelditems
+	sparring_restore
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal
+	goto MasterDojo_BattleRoom_EventScript_AskHeal_1
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord::
-	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal::
+	message MasterDojo_BattleRoom_Text_DoYouWantToContinue
+	waitmessage
+	sparring_getcontinuemenutype
 	switch VAR_RESULT
-	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_2
-	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_3
-	case 2, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_4
-	case 3, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_5
+	case RECORDYES_HEALYES, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal_2
+	case RECORDYES_HEALNO, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal_2
+	case RECORDNO_HEALYES, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal_3
+	case RECORDNO_HEALNO, MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal_3
 	return
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_2:
-	goto MasterDojo_BattleRoom_EventScript_ContinueChallenge
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal_2:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo
 	return
 
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_3:
-	goto MasterDojo_BattleRoom_EventScript_AskPauseChallenge
-	return
-
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_4:
-	goto MasterDojo_BattleRoom_EventScript_AskRetireChallenge
-	return
-
-MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord_5:
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentNoRecord
+MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal_3:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo
 	return
 
 
 MasterDojo_BattleRoom_EventScript_AskRecordBattle::
-	message MasterDojo_Lobby_Text_RecordLastMatch
+	msgbox MasterDojo_Lobby_Text_RecordLastMatch, MSGBOX_YESNO
 	waitmessage
-	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
-	switch VAR_RESULT
-	case 0, MasterDojo_BattleRoom_EventScript_AskRecordBattle_2
-	case 1, MasterDojo_BattleRoom_EventScript_AskRecordBattle_3
+	compare VAR_RESULT, YES
+	goto_if_eq MasterDojo_BattleRoom_EventScript_AskRecordBattle_2
+MasterDojo_BattleRoom_EventScript_AskRecordBattle_1:
+	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
 	return
 
 MasterDojo_BattleRoom_EventScript_AskRecordBattle_2:
-	goto MasterDojo_BattleRoom_EventScript_RecordBattle
-	return
-
-MasterDojo_BattleRoom_EventScript_AskRecordBattle_3:
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
-	return
-
-
-MasterDojo_BattleRoom_EventScript_RecordBattle::
 	call BattleFrontier_EventScript_SaveBattle
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
-	return
+	goto MasterDojo_BattleRoom_EventScript_AskRecordBattle_1
 
 
 MasterDojo_BattleRoom_EventScript_AskPauseChallenge::
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame, MSGBOX_YESNO
 	switch VAR_RESULT
-	case NO, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_2
-	case YES, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3
-	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_4
+	case YES, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_2
+	case NO, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3
 	return
 
 MasterDojo_BattleRoom_EventScript_AskPauseChallenge_2:
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
-	return
-
-MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3:
 	goto MasterDojo_BattleRoom_EventScript_PauseChallenge
 	return
 
-MasterDojo_BattleRoom_EventScript_AskPauseChallenge_4:
+MasterDojo_BattleRoom_EventScript_AskPauseChallenge_3:
 	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
 	return
 
 
 MasterDojo_BattleRoom_EventScript_AskRetireChallenge::
-	message BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge
+	msgbox BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge, MSGBOX_YESNO
 	waitmessage
-	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
 	switch VAR_RESULT
-	case 0, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_2
-	case 1, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3
-	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_4
+	case YES, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_2
+	case NO, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3
+	case MULTI_B_PRESSED, MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3
 	return
 
 MasterDojo_BattleRoom_EventScript_AskRetireChallenge_2:
@@ -206,16 +335,12 @@ MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3:
 	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
 	return
 
-MasterDojo_BattleRoom_EventScript_AskRetireChallenge_4:
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
-	return
-
 
 MasterDojo_BattleRoom_EventScript_ContinueChallenge::
 	closemessage
 	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerStartBattle
-	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_PanCameraRight
-	applymovement 1, MasterDojo_BattleRoom_Movement_ReturnToPosition
+	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_CameraPanRight
+	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantReturnToPosition
 	waitmovement 1
 	goto MasterDojo_BattleRoom_EventScript_OpponentEnter
 	return
@@ -239,12 +364,6 @@ MasterDojo_BattleRoom_EventScript_PauseChallenge::
 	end
 
 
-MasterDojo_BattleRoom_EventScript_ReadyForOpponent::
-	message BattleFrontier_BattleTowerBattleRoom_Text_ReadyFor6thOpponent
-	waitmessage
-	return
-
-
 MasterDojo_BattleRoom_EventScript_DoTowerBattle::
 	closemessage
 	setvar VAR_TEMP_2, 0
@@ -254,13 +373,8 @@ MasterDojo_BattleRoom_EventScript_DoTowerBattle::
 	special DoSpecialTrainerBattle
 	waitstate
 	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
-	frontier_restorehelditems
-	frontier_resetsketch
-	goto MasterDojo_BattleRoom_EventScript_EndTowerBattle
-	return
-
-
-MasterDojo_BattleRoom_EventScript_EndTowerBattle::
+	sparring_restorehelditems
+	sparring_resetsketch
 	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
 	return
 
@@ -283,14 +397,6 @@ MasterDojo_BattleRoom_Movement_AttendantEnter:
 	face_down
 	step_end
 
-MasterDojo_BattleRoom_Movement_PlayerEnter:
-	walk_right
-	walk_right
-	walk_right
-	walk_right
-	walk_right
-	step_end
-
 MasterDojo_BattleRoom_Movement_AttendantApproachPlayer:
 	walk_left
 	walk_left
@@ -298,16 +404,7 @@ MasterDojo_BattleRoom_Movement_AttendantApproachPlayer:
 	walk_down
 	step_end
 
-MasterDojo_BattleRoom_Movement_PlayerStartBattle:
-	walk_right
-	step_end
-
-MasterDojo_BattleRoom_Movement_PlayerReturnPosition:
-	walk_left
-	face_up
-	step_end
-
-MasterDojo_BattleRoom_Movement_ReturnToPosition:
+MasterDojo_BattleRoom_Movement_AttendantReturnToPosition:
 	walk_up
 	walk_right
 	walk_right
@@ -315,16 +412,58 @@ MasterDojo_BattleRoom_Movement_ReturnToPosition:
 	face_down
 	step_end
 
-MasterDojo_BattleRoom_Movement_PanCameraLeft:
+MasterDojo_BattleRoom_Movement_PlayerEnter:
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	walk_right
+	step_end
+
+MasterDojo_BattleRoom_Movement_PlayerStartBattle:
+	walk_right
+	walk_right
+	step_end
+
+MasterDojo_BattleRoom_Movement_PlayerReturnPosition:
+	walk_left
+	walk_left
+	face_up
+	step_end
+
+MasterDojo_BattleRoom_Movement_CameraPanLeft:
 	walk_left
 	walk_left
 	walk_left
 	walk_left
 	step_end
 
-MasterDojo_BattleRoom_Movement_PanCameraRight:
+MasterDojo_BattleRoom_Movement_CameraPanRight:
 	walk_right
 	walk_right
 	walk_right
 	walk_right
 	step_end
+
+MasterDojo_BattleRoom_Text_WellDone::
+	.string "Well done!$"
+
+MasterDojo_BattleRoom_Text_LetTheBattle::
+	.string "Let the battles begin! Battle No. 1!\n"
+	.string "Ready...$"
+
+MasterDojo_BattleRoom_Text_Next::
+	.string "Next. Battle No. {STR_VAR_1}!\n"
+	.string "Ready...$"
+
+MasterDojo_BattleRoom_Text_Go::
+	.string "Go!$"
+
+MasterDojo_BattleRoom_Text_DoYouWantToContinue::
+	.string "Do you want to continue sparring?$"
+
+MasterDojo_BattleRoom_Text_DoYouWantToRestore::
+	.string "Do you want to restore your Pokémon?\n"
+	.string "(You can restore them {STR_VAR_1}\l"
+	.string "more time.)$"

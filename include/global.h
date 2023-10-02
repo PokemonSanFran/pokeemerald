@@ -364,6 +364,12 @@ struct BattleDomeTrainer
     u16 forfeited:3;
 };
 
+struct RestrictedSparring
+{
+    //u16 monId[FRONTIER_PARTY_SIZE-1];
+    u16 winStreak;
+}__attribute__((packed));
+
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 #define BATTLE_TOWER_RECORD_COUNT 5
 
@@ -450,6 +456,7 @@ struct BattleFrontier
     /*0xEFA*/ u8 unused_EFA;
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
+    struct RestrictedSparring restrictedSparring[NUMBER_OF_MON_TYPES][FRONTIER_LVL_MODE_COUNT];
 };
 
 struct ApprenticeQuestion

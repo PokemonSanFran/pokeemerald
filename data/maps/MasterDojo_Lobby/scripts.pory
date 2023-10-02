@@ -9,21 +9,21 @@ const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
 mapscripts MasterDojo_Lobby_MapScripts{
     MAP_SCRIPT_ON_FRAME_TABLE[
         VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: MasterDojo_Lobby_EventScript_GetChallengeStatus
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: MasterDojo_Lobby_EventScript_QuitWithoutSaving
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: MasterDojo_Lobby_EventScript_ResumeChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: MasterDojo_Lobby_EventScript_WonChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: MasterDojo_Lobby_EventScript_LostChallenge
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: MasterDojo_Lobby_EventScript_QuitWithoutSaving
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: MasterDojo_Lobby_EventScript_ResumeChallenge
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: MasterDojo_Lobby_EventScript_WonChallenge
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: MasterDojo_Lobby_EventScript_LostChallenge
     ]
 
     MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE[
-    VAR_NEED_TO_FACE_NORTH, 0:MasterDojo_Lobby_EventScript_PlayerFaceNorth
+        VAR_NEED_TO_FACE_NORTH, 0:MasterDojo_Lobby_EventScript_PlayerFaceNorth
     ]
 }
 
 script MasterDojo_Lobby_EventScript_PlayerFaceNorth{
     setvar(VAR_NEED_TO_FACE_NORTH, 1)
-        turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
-        end
+    turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
+    end
 }
 
 script MasterDojo_Lobby_EventScript_GetChallengeStatus{
@@ -108,7 +108,6 @@ script MasterDojo_Lobby_EventScript_AskSaveBattle{
         waitmessage
         frontier_checkairshow
         special(LoadPlayerParty)
-        special(HealPlayerParty)
         sparring_save(0)
         playse(SE_SAVE)
         waitse
@@ -162,7 +161,6 @@ script MasterDojo_Lobby_EventScript_Attendant{
         faceplayer
         setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_SPARRING)
         special(SavePlayerParty)
-
         goto(MasterDojo_Lobby_EventScript_AskEnterChallenge)
 }
 
@@ -173,8 +171,8 @@ script MasterDojo_Lobby_EventScript_AskEnterChallenge{
         switch(var(VAR_RESULT)){
             case 0: goto(MasterDojo_Lobby_EventScript_TryEnterChallenge)
             case 1: goto(MasterDojo_Lobby_EventScript_ExplainChallenge)
-            case 2: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
-            case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+            case MULTI_B_PRESSED:
+            case 2: goto(MasterDojo_Lobby_EventScript_DenyChallenge)
         }
 }
 
@@ -183,7 +181,7 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
         waitmessage
         multichoice(17, 6, MULTI_LEVEL_MODE, FALSE)
         switch(var(VAR_RESULT)){
-            case FRONTIER_LVL_TENT: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+            case FRONTIER_LVL_TENT:
             case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
         }
     frontier_checkineligible
@@ -200,8 +198,8 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
         goto_if_eq(VAR_RESULT, 0, MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
         msgbox(MasterDojo_Lobby_Text_BeforeDivingInto, MSGBOX_YESNO)
         switch(var(VAR_RESULT)){
-            case NO: goto(MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
             case YES: goto(MasterDojo_Lobby_EventScript_SaveBeforeChallenge)
+            case NO:
             case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
         }
 }
@@ -222,7 +220,7 @@ script MasterDojo_Lobby_EventScript_SaveBeforeChallenge{
 
         if (var(VAR_RESULT) == 0){
             frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)  // No status provided, so it relies on VAR_0x8006 being 0 already
-                goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+                goto(MasterDojo_Lobby_EventScript_DenyChallenge)
         }
 
     goto(MasterDojo_Lobby_EventScript_EnterElevator)
@@ -261,21 +259,29 @@ script MasterDojo_Lobby_EventScript_NotEnoughValidMons{
 
 script MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge{
     special(LoadPlayerParty)
-        goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+    goto(MasterDojo_Lobby_EventScript_CancelChallenge)
 }
 
 script MasterDojo_Lobby_EventScript_CancelChallenge{
     msgbox(MasterDojo_Lobby_Text_OhYouChangedYour, MSGBOX_DEFAULT)
-        release
-        end
+    release
+    end
+}
+
+script MasterDojo_Lobby_EventScript_DenyChallenge{
+    msgbox(MasterDojo_Lobby_Text_IWontForceYou, MSGBOX_DEFAULT)
+    release
+    end
 }
 
 script MasterDojo_Lobby_EventScript_EnterElevator{
-    special(SavePlayerParty)
+        //special(SavePlayerParty)
         setvar(VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER)
         setvar(VAR_0x8005, FRONTIER_PARTY_SIZE)
         special(CallFrontierUtilFunc)
+        frontier_saveparty
         setvar(VAR_RESULT, 0)
+        setvar(VAR_RESTRICTEDSPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE)
         warp(MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6)
 }
 
@@ -414,4 +420,3 @@ text MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles{
 text MasterDojo_Lobby_Text_RecordLastMatch{
     format("Want me to record your last Restricted Sparring match on your FRONTIER PASS?")
 }
-

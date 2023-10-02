@@ -105,7 +105,6 @@ MasterDojo_Lobby_EventScript_AskSaveBattle::
 	waitmessage
 	frontier_checkairshow
 	special LoadPlayerParty
-	special HealPlayerParty
 	sparring_save 0
 	playse SE_SAVE
 	waitse
@@ -173,8 +172,8 @@ MasterDojo_Lobby_EventScript_AskEnterChallenge::
 	switch VAR_RESULT
 	case 0, MasterDojo_Lobby_EventScript_AskEnterChallenge_2
 	case 1, MasterDojo_Lobby_EventScript_AskEnterChallenge_3
+	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_AskEnterChallenge_4
 	case 2, MasterDojo_Lobby_EventScript_AskEnterChallenge_4
-	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_AskEnterChallenge_5
 	return
 
 MasterDojo_Lobby_EventScript_AskEnterChallenge_2:
@@ -186,11 +185,7 @@ MasterDojo_Lobby_EventScript_AskEnterChallenge_3:
 	return
 
 MasterDojo_Lobby_EventScript_AskEnterChallenge_4:
-	goto MasterDojo_Lobby_EventScript_CancelChallenge
-	return
-
-MasterDojo_Lobby_EventScript_AskEnterChallenge_5:
-	goto MasterDojo_Lobby_EventScript_CancelChallenge
+	goto MasterDojo_Lobby_EventScript_DenyChallenge
 	return
 
 
@@ -200,7 +195,7 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge::
 	multichoice 17, 6, MULTI_LEVEL_MODE, FALSE
 	switch VAR_RESULT
 	case FRONTIER_LVL_TENT, MasterDojo_Lobby_EventScript_TryEnterChallenge_3
-	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_TryEnterChallenge_4
+	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_TryEnterChallenge_3
 MasterDojo_Lobby_EventScript_TryEnterChallenge_1:
 	frontier_checkineligible
 	goto_if_eq VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons
@@ -215,28 +210,20 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge_1:
 	goto_if_eq VAR_RESULT, 0, MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge
 	msgbox MasterDojo_Lobby_Text_BeforeDivingInto, MSGBOX_YESNO
 	switch VAR_RESULT
+	case YES, MasterDojo_Lobby_EventScript_TryEnterChallenge_5
 	case NO, MasterDojo_Lobby_EventScript_TryEnterChallenge_6
-	case YES, MasterDojo_Lobby_EventScript_TryEnterChallenge_7
-	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_TryEnterChallenge_8
+	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_TryEnterChallenge_6
 	return
 
 MasterDojo_Lobby_EventScript_TryEnterChallenge_3:
 	goto MasterDojo_Lobby_EventScript_CancelChallenge
 	goto MasterDojo_Lobby_EventScript_TryEnterChallenge_1
 
-MasterDojo_Lobby_EventScript_TryEnterChallenge_4:
-	goto MasterDojo_Lobby_EventScript_CancelChallenge
-	goto MasterDojo_Lobby_EventScript_TryEnterChallenge_1
-
-MasterDojo_Lobby_EventScript_TryEnterChallenge_6:
-	goto MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge
-	return
-
-MasterDojo_Lobby_EventScript_TryEnterChallenge_7:
+MasterDojo_Lobby_EventScript_TryEnterChallenge_5:
 	goto MasterDojo_Lobby_EventScript_SaveBeforeChallenge
 	return
 
-MasterDojo_Lobby_EventScript_TryEnterChallenge_8:
+MasterDojo_Lobby_EventScript_TryEnterChallenge_6:
 	goto MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge
 	return
 
@@ -261,7 +248,7 @@ MasterDojo_Lobby_EventScript_SaveBeforeChallenge_1:
 
 MasterDojo_Lobby_EventScript_SaveBeforeChallenge_2:
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS
-	goto MasterDojo_Lobby_EventScript_CancelChallenge
+	goto MasterDojo_Lobby_EventScript_DenyChallenge
 	goto MasterDojo_Lobby_EventScript_SaveBeforeChallenge_1
 
 
@@ -315,12 +302,19 @@ MasterDojo_Lobby_EventScript_CancelChallenge::
 	end
 
 
+MasterDojo_Lobby_EventScript_DenyChallenge::
+	msgbox MasterDojo_Lobby_Text_IWontForceYou, MSGBOX_DEFAULT
+	release
+	end
+
+
 MasterDojo_Lobby_EventScript_EnterElevator::
-	special SavePlayerParty
 	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
 	special CallFrontierUtilFunc
+	frontier_saveparty
 	setvar VAR_RESULT, 0
+	setvar VAR_RESTRICTEDSPARRING_HEAL_COUNT, SPARRING_MAX_NUM_RESTORE
 	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 	return
 
