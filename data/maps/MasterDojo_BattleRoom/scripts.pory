@@ -72,7 +72,7 @@ script MasterDojo_BattleRoom_EventScript_WarpToLobby{
 }
 
 script MasterDojo_BattleRoom_EventScript_DefeatedOpponent{
-    call(BattleFrontier_EventScript_IncrementWinStreak)
+        call(BattleFrontier_EventScript_IncrementWinStreak)
         sparring_setbattlewon
         special(SpawnCameraObject)
         applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanLeft)

@@ -40,122 +40,6 @@ MasterDojo_Lobby_EventScript_QuitWithoutSaving::
 	end
 
 
-MasterDojo_Lobby_EventScript_WonChallenge::
-	lock
-	faceplayer
-	msgbox MasterDojo_Lobby_Text_YourResultForThisRestricted
-	call MasterDojo_Lobby_EventScript_AskSaveBattle
-	call MasterDojo_Lobby_EventScript_GiveSymbol
-	goto MasterDojo_Lobby_EventScript_LookForwardToChallenge
-	return
-
-
-MasterDojo_Lobby_EventScript_GiveSymbol::
-	bufferstring STR_VAR_1, 9
-	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
-	msgbox MasterDojo_Lobby_Text_ThatsExcellentWork
-	bufferstring STR_VAR_1, 18
-	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
-	msgbox MasterDojo_Lobby_Text_ICantBelieveIt
-	msgbox MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo
-	msgbox MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement
-	msgbox MasterDojo_Lobby_Text_IHopeYoullKeep
-	return
-
-
-MasterDojo_Lobby_EventScript_LookForwardToChallenge::
-	closemessage
-	setvar VAR_TEMP_0, 255
-	release
-	end
-
-
-MasterDojo_Lobby_EventScript_LostChallenge::
-	sparring_get SPARRING_DATA_WIN_STREAK
-	compare VAR_RESULT, 0
-	goto_if_ne MasterDojo_Lobby_EventScript_LostChallenge_2
-MasterDojo_Lobby_EventScript_LostChallenge_1:
-	goto MasterDojo_Lobby_EventScript_CancelWinStreak
-	return
-
-MasterDojo_Lobby_EventScript_LostChallenge_2:
-	goto MasterDojo_Lobby_EventScript_LostThanksForPlaying
-	goto MasterDojo_Lobby_EventScript_LostChallenge_1
-
-
-MasterDojo_Lobby_EventScript_CancelWinStreak::
-	sparring_set SPARRING_DATA_WIN_STREAK_ACTIVE, FALSE
-	goto MasterDojo_Lobby_EventScript_LostThanksForPlaying
-	return
-
-
-MasterDojo_Lobby_EventScript_LostThanksForPlaying::
-	lock
-	faceplayer
-	call MasterDojo_Lobby_EventScript_AskSaveBattle
-	msgbox MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT
-	closemessage
-	setvar VAR_TEMP_0, 255
-	release
-	end
-
-
-MasterDojo_Lobby_EventScript_AskSaveBattle::
-	message MasterDojo_Lobby_Text_RecordWillBeSaved
-	waitmessage
-	frontier_checkairshow
-	special LoadPlayerParty
-	sparring_save 0
-	playse SE_SAVE
-	waitse
-	frontier_get FRONTIER_DATA_RECORD_DISABLED
-	compare VAR_RESULT, TRUE
-	goto_if_eq MasterDojo_Lobby_EventScript_AskSaveBattle_2
-	message MasterDojo_Lobby_Text_RecordLastMatch
-	waitmessage
-	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
-	compare VAR_RESULT, 0
-	goto_if_eq MasterDojo_Lobby_EventScript_AskSaveBattle_5
-MasterDojo_Lobby_EventScript_AskSaveBattle_4:
-	return
-
-MasterDojo_Lobby_EventScript_AskSaveBattle_2:
-	return
-
-MasterDojo_Lobby_EventScript_AskSaveBattle_5:
-	call MasterDojo_Lobby_EventScript_SaveBattle
-	goto MasterDojo_Lobby_EventScript_AskSaveBattle_4
-
-
-MasterDojo_Lobby_EventScript_SaveBattle::
-	frontier_savebattle
-	compare VAR_RESULT, 0
-	goto_if_ne MasterDojo_Lobby_EventScript_SaveBattle_2
-	msgbox MasterDojo_Lobby_Text_ThereWasAGlitch, MSGBOX_DEFAULT
-MasterDojo_Lobby_EventScript_SaveBattle_1:
-	return
-
-MasterDojo_Lobby_EventScript_SaveBattle_2:
-	playse SE_SAVE
-	msgbox BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT
-	goto MasterDojo_Lobby_EventScript_SaveBattle_1
-
-
-MasterDojo_Lobby_EventScript_ResumeChallenge::
-	lock
-	faceplayer
-	message MasterDojo_Lobby_Text_WeveBeenWaitingForYou
-	waitmessage
-	message MasterDojo_Lobby_Text_ProgressWillBeSaved
-	waitmessage
-	sparring_save CHALLENGE_STATUS_SAVING
-	playse SE_SAVE
-	waitse
-	frontier_set FRONTIER_DATA_PAUSED, FALSE
-	goto MasterDojo_Lobby_EventScript_EnterElevator
-	end
-
-
 MasterDojo_Lobby_EventScript_Attendant::
 	lock
 	faceplayer
@@ -319,6 +203,160 @@ MasterDojo_Lobby_EventScript_EnterElevator::
 	return
 
 
+MasterDojo_Lobby_EventScript_WonChallenge::
+	sparring_get SPARRING_DATA_WIN_STREAK
+	buffernumberstring STR_VAR_1, VAR_RESULT
+	call MasterDojo_Lobby_EventScript_GetFirstTypeWin
+	goto MasterDojo_Lobby_EventScript_Results
+	return
+
+
+MasterDojo_Lobby_EventScript_GetFirstTypeWin::
+	sparring_checkfirsttypewin
+	compare VAR_RESULT, TRUE
+	goto_if_eq MasterDojo_Lobby_EventScript_GetFirstTypeWin_2
+MasterDojo_Lobby_EventScript_GetFirstTypeWin_1:
+	return
+
+MasterDojo_Lobby_EventScript_GetFirstTypeWin_2:
+	setflag FLAG_TEMP_1
+	goto MasterDojo_Lobby_EventScript_GetFirstTypeWin_1
+
+
+MasterDojo_Lobby_EventScript_LostChallenge::
+	sparring_get SPARRING_DATA_WIN_STREAK
+	buffernumberstring STR_VAR_1, VAR_RESULT
+	compare VAR_RESULT, 0
+	goto_if_eq MasterDojo_Lobby_EventScript_LostChallenge_1
+	goto MasterDojo_Lobby_EventScript_Results
+	return
+
+MasterDojo_Lobby_EventScript_LostChallenge_1:
+	goto MasterDojo_Lobby_EventScript_Results_NoWins
+	return
+
+
+MasterDojo_Lobby_EventScript_Results_NoWins::
+	lock
+	faceplayer
+	call MasterDojo_Lobby_EventScript_AskSaveBattle
+	msgbox MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT
+	goto MasterDojo_Lobby_EventScript_EndChallenge
+	return
+
+
+MasterDojo_Lobby_EventScript_Results::
+	lock
+	faceplayer
+	bufferstring STR_VAR_3, MasterDojo_Lobby_EventScript_Results_Text_0
+	msgbox MasterDojo_Lobby_Text_YourResultForThisRestricted
+	call MasterDojo_Lobby_EventScript_AwardPoints
+	goto_if_set FLAG_TEMP_1, MasterDojo_Lobby_EventScript_Results_2
+MasterDojo_Lobby_EventScript_Results_1:
+	call MasterDojo_Lobby_EventScript_AskSaveBattle
+	goto MasterDojo_Lobby_EventScript_EndChallenge
+	return
+
+MasterDojo_Lobby_EventScript_Results_2:
+	msgbox MasterDojo_Lobby_Text_TheWayYouHandleType
+	goto MasterDojo_Lobby_EventScript_Results_1
+
+
+MasterDojo_Lobby_EventScript_PositiveExitMessage::
+	return
+
+
+MasterDojo_Lobby_EventScript_AwardPoints::
+	sparring_givepoints
+	msgbox MasterDojo_Lobby_Text_YouEarned
+	return
+
+
+MasterDojo_Lobby_EventScript_CheckSymbol::
+	call MasterDojo_Lobby_EventScript_GiveSymbol
+	return
+
+
+MasterDojo_Lobby_EventScript_GiveSymbol::
+	bufferstring STR_VAR_1, 9
+	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
+	msgbox MasterDojo_Lobby_Text_ThatsExcellentWork
+	bufferstring STR_VAR_1, 18
+	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
+	msgbox MasterDojo_Lobby_Text_ICantBelieveIt
+	msgbox MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo
+	msgbox MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement
+	msgbox MasterDojo_Lobby_Text_IHopeYoullKeep
+	return
+
+
+MasterDojo_Lobby_EventScript_AskSaveBattle::
+	message MasterDojo_Lobby_Text_RecordWillBeSaved
+	waitmessage
+	frontier_checkairshow
+	special LoadPlayerParty
+	sparring_save 0
+	playse SE_SAVE
+	waitse
+	frontier_get FRONTIER_DATA_RECORD_DISABLED
+	compare VAR_RESULT, TRUE
+	goto_if_eq MasterDojo_Lobby_EventScript_AskSaveBattle_2
+	message MasterDojo_Lobby_Text_RecordLastMatch
+	waitmessage
+	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+	compare VAR_RESULT, 0
+	goto_if_eq MasterDojo_Lobby_EventScript_AskSaveBattle_5
+MasterDojo_Lobby_EventScript_AskSaveBattle_4:
+	return
+
+MasterDojo_Lobby_EventScript_AskSaveBattle_2:
+	return
+
+MasterDojo_Lobby_EventScript_AskSaveBattle_5:
+	call MasterDojo_Lobby_EventScript_SaveBattle
+	goto MasterDojo_Lobby_EventScript_AskSaveBattle_4
+
+
+MasterDojo_Lobby_EventScript_SaveBattle::
+	frontier_savebattle
+	compare VAR_RESULT, 0
+	goto_if_ne MasterDojo_Lobby_EventScript_SaveBattle_2
+	msgbox MasterDojo_Lobby_Text_ThereWasAGlitch, MSGBOX_DEFAULT
+MasterDojo_Lobby_EventScript_SaveBattle_1:
+	return
+
+MasterDojo_Lobby_EventScript_SaveBattle_2:
+	playse SE_SAVE
+	msgbox BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT
+	goto MasterDojo_Lobby_EventScript_SaveBattle_1
+
+
+MasterDojo_Lobby_EventScript_EndChallenge::
+	closemessage
+	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, FALSE
+	setvar VAR_TEMP_0, 255
+	release
+	end
+
+
+MasterDojo_Lobby_EventScript_ResumeChallenge::
+	lock
+	faceplayer
+	message MasterDojo_Lobby_Text_WeveBeenWaitingForYou
+	waitmessage
+	message MasterDojo_Lobby_Text_ProgressWillBeSaved
+	waitmessage
+	sparring_save CHALLENGE_STATUS_SAVING
+	playse SE_SAVE
+	waitse
+	frontier_set FRONTIER_DATA_PAUSED, FALSE
+	goto MasterDojo_Lobby_EventScript_EnterElevator
+	end
+
+
+MasterDojo_Lobby_EventScript_Results_Text_0:
+	.string "Normal$"
+
 MasterDojo_Lobby_Text_HiyahDo::
 	.string "Hi-yah! {PLAYER}! Do you want to try\n"
 	.string "Restricted Sparring?$"
@@ -376,8 +414,8 @@ MasterDojo_Lobby_Text_YouLostbutTrainYourself::
 MasterDojo_Lobby_Text_YourResultForThisRestricted::
 	.string "Your result for this Restricted\n"
 	.string "Sparring set is... You had\l"
-	.string "{STR_VAR_1} {STR_VAR_2} with\l"
-	.string "the {STR_VAR_3}-type Pokémon\l"
+	.string "{STR_VAR_1} wins with the\l"
+	.string "{STR_VAR_3}-type Pokémon\l"
 	.string "restriction!$"
 
 MasterDojo_Lobby_Text_TheWayYouHandleType::
@@ -475,3 +513,6 @@ MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles::
 MasterDojo_Lobby_Text_RecordLastMatch::
 	.string "Want me to record your last Restricted\n"
 	.string "Sparring match on your FRONTIER PASS?$"
+
+MasterDojo_Lobby_Text_YouEarned::
+	.string "You earned {STR_VAR_1} BP!$"

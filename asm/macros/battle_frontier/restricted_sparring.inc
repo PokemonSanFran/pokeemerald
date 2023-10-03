@@ -70,3 +70,16 @@
 	setvar VAR_0x8004,SPARRING_FUNC_RESET_SKETCH_MOVES
 	special CallRestrictedSparringFunc
 	.endm
+
+	@ Awards battle points depending on the number of wins and if that type has already been completed
+	.macro sparring_givepoints
+	setvar VAR_0x8004, SPARRING_FUNC_GIVE_BATTLE_POINTS
+	special CallRestrictedSparringFunc
+	.endm
+
+    @ Checks if this is the first time the player has won a type and this is their first time doing so
+    .macro sparring_checkfirsttypewin
+    setvar VAR_0x8004, SPARRING_FUNC_GET_FIRST_TYPE_WIN
+    special CallRestrictedSparringFunc
+    .endm
+
