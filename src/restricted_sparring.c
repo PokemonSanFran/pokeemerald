@@ -202,3 +202,14 @@ static void GiveBattlePoints(void)
     gSaveBlock2Ptr->frontier.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 
 }
+
+bool32 CheckIfPartyMonMatchesType(struct Pokemon *mon)
+{
+    u32 species = GetMonData(mon, MON_DATA_SPECIES);
+    u32 chosenType = VarGet(VAR_SPARRING_TYPE);
+
+    if((gSpeciesInfo[species].types[0] != chosenType) && (gSpeciesInfo[species].types[1] != chosenType))
+        return FALSE;
+
+    return TRUE;
+}
