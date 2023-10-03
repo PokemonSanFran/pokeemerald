@@ -76,8 +76,9 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
     frontier_checkineligible
         goto_if_eq(VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons)
         frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
-        msgbox(MasterDojo_Lobby_Text_SelectTheTypeYouWant, MSGBOX_DEFAULT)
-
+        message(MasterDojo_Lobby_Text_SelectTheTypeYouWant)
+        waitmessage
+        call(MasterDojo_Lobby_EventScript_CreateTypeList)
         fadescreen(FADE_TO_BLACK)
         frontier_get(FRONTIER_DATA_LVL_MODE)
         copyvar(VAR_0x8004, VAR_RESULT)
@@ -91,6 +92,41 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
             case NO:
             case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge)
         }
+}
+
+script MasterDojo_Lobby_EventScript_CreateTypeList{
+    setvar(VAR_0x8009,0)
+    setvar(VAR_0x8004,SCROLL_MULTI_POKEMON_TYPE)
+    special(ShowScrollableMultichoice)
+    waitstate
+
+    if (var(VAR_RESULT) > TYPE_STEEL){
+        subvar(VAR_RESULT,1)
+    }
+
+    switch(var(VAR_RESULT)){
+        case TYPE_NORMAL: setvar(VAR_0x8006,TYPE_NORMAL)
+        case TYPE_FIGHTING: setvar(VAR_0x8006,TYPE_FIGHTING)
+        case TYPE_FLYING: setvar(VAR_0x8006,TYPE_FLYING)
+        case TYPE_POISON: setvar(VAR_0x8006,TYPE_POISON)
+        case TYPE_GROUND: setvar(VAR_0x8006,TYPE_GROUND)
+        case TYPE_ROCK: setvar(VAR_0x8006,TYPE_ROCK)
+        case TYPE_BUG: setvar(VAR_0x8006,TYPE_BUG)
+        case TYPE_GHOST: setvar(VAR_0x8006,TYPE_GHOST)
+        case TYPE_STEEL: setvar(VAR_0x8006,TYPE_STEEL)
+        case TYPE_MYSTERY: setvar(VAR_0x8006,TYPE_MYSTERY)
+        case TYPE_FIRE: setvar(VAR_0x8006,TYPE_FIRE)
+        case TYPE_WATER: setvar(VAR_0x8006,TYPE_WATER)
+        case TYPE_GRASS: setvar(VAR_0x8006,TYPE_GRASS)
+        case TYPE_ELECTRIC: setvar(VAR_0x8006,TYPE_ELECTRIC)
+        case TYPE_PSYCHIC: setvar(VAR_0x8006,TYPE_PSYCHIC)
+        case TYPE_ICE: setvar(VAR_0x8006,TYPE_ICE)
+        case TYPE_DRAGON: setvar(VAR_0x8006,TYPE_DRAGON)
+        case TYPE_DARK: setvar(VAR_0x8006,TYPE_DARK)
+        default:
+        case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
+    }
+    return
 }
 
 script MasterDojo_Lobby_EventScript_SaveBeforeChallenge{

@@ -1011,7 +1011,7 @@ static void PCTurnOnEffect(struct Task *task)
     if (task->tTimer == 6)
     {
         task->tTimer = 0;
-        
+
         // Get where the PC should be, depending on where the player is looking.
         playerDirection = GetPlayerFacingDirection();
         switch (playerDirection)
@@ -1033,7 +1033,7 @@ static void PCTurnOnEffect(struct Task *task)
         // Update map
         PCTurnOnEffect_SetMetatile(task->tIsScreenOn, dx, dy);
         DrawWholeMapView();
-        
+
         // Screen flickers 5 times. Odd number and starting with the
         // screen off means the animation ends with the screen on.
         task->tIsScreenOn ^= 1;
@@ -2380,6 +2380,17 @@ void ShowScrollableMultichoice(void)
         task->tKeepOpenAfterSelect = FALSE;
         task->tTaskId = taskId;
         break;
+    case SCROLL_MULTI_POKEMON_TYPE:
+        task->tMaxItemsOnScreen = MAX_SCROLL_MULTI_ON_SCREEN;
+        //task->tNumItems = 7;
+        task->tNumItems = NUMBER_OF_MON_TYPES;
+        task->tLeft = 24;
+        task->tTop = 1;
+        task->tWidth = 12;
+        task->tHeight = 12;
+        task->tKeepOpenAfterSelect = FALSE;
+        task->tTaskId = taskId;
+        break;
     default:
         gSpecialVar_Result = MULTI_B_PRESSED;
         DestroyTask(taskId);
@@ -2540,7 +2551,29 @@ static const u8 *const sScrollableMultichoiceOptions[][MAX_SCROLL_MULTI_LENGTH] 
         gText_Underpowered,
         gText_WhenInDanger,
         gText_Exit
-    }
+    },
+    [SCROLL_MULTI_POKEMON_TYPE] =
+    {
+        gTypeNames[TYPE_NORMAL],
+        gTypeNames[TYPE_FIGHTING],
+        gTypeNames[TYPE_FLYING],
+        gTypeNames[TYPE_POISON],
+        gTypeNames[TYPE_GROUND],
+        gTypeNames[TYPE_ROCK],
+        gTypeNames[TYPE_BUG],
+        gTypeNames[TYPE_GHOST],
+        gTypeNames[TYPE_STEEL],
+        //gTypeNames[TYPE_MYSTERY],
+        gTypeNames[TYPE_FIRE],
+        gTypeNames[TYPE_WATER],
+        gTypeNames[TYPE_GRASS],
+        gTypeNames[TYPE_ELECTRIC],
+        gTypeNames[TYPE_PSYCHIC],
+        gTypeNames[TYPE_ICE],
+        gTypeNames[TYPE_DRAGON],
+        gTypeNames[TYPE_DARK],
+        gText_Exit,
+    },
 };
 
 static void Task_ShowScrollableMultichoice(u8 taskId)

@@ -84,7 +84,9 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge_1:
 	frontier_checkineligible
 	goto_if_eq VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons
 	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
-	msgbox MasterDojo_Lobby_Text_SelectTheTypeYouWant, MSGBOX_DEFAULT
+	message MasterDojo_Lobby_Text_SelectTheTypeYouWant
+	waitmessage
+	call MasterDojo_Lobby_EventScript_CreateTypeList
 	fadescreen FADE_TO_BLACK
 	frontier_get FRONTIER_DATA_LVL_MODE
 	copyvar VAR_0x8004, VAR_RESULT
@@ -109,6 +111,17 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge_5:
 
 MasterDojo_Lobby_EventScript_TryEnterChallenge_6:
 	goto MasterDojo_Lobby_EventScript_LoadPartyCancelChallenge
+	return
+
+
+MasterDojo_Lobby_EventScript_CreateTypeList::
+	setvar VAR_0x8009, 0
+	setvar VAR_0x8004, SCROLL_MULTI_POKEMON_TYPE
+	special ShowScrollableMultichoice
+	waitstate
+	switch VAR_RESULT
+	return
+
 	return
 
 
