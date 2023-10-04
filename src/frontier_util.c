@@ -1992,6 +1992,14 @@ static void AppendIfValid(u16 species, u16 heldItem, u16 hp, u8 lvlMode, u8 monL
     if (i != *count)
         return;
 
+    if (VarGet(VAR_SPARRING_TYPE) != TYPE_NONE)
+    {
+        u32 chosenType = VarGet(VAR_SPARRING_TYPE);
+
+        if((gSpeciesInfo[species].types[0] != chosenType) && (gSpeciesInfo[species].types[1] != chosenType))
+            return;
+    }
+
     if (heldItem != 0)
     {
         for (i = 0; i < *count && itemsArray[i] != heldItem; i++)
