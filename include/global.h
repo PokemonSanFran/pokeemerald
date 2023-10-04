@@ -367,7 +367,7 @@ struct BattleDomeTrainer
 struct RestrictedSparring
 {
     //u16 monId[FRONTIER_PARTY_SIZE-1];
-    u16 winStreak;
+    u8 winStreak;
 }__attribute__((packed));
 
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16

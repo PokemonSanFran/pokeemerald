@@ -31,13 +31,11 @@ MasterDojo_Lobby_EventScript_QuitWithoutSaving::
 	lock
 	faceplayer
 	msgbox MasterDojo_Lobby_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT
-	closemessage
 	sparring_set SPARRING_DATA_WIN_STREAK, 0
-	sparring_set SPARRING_DATA_WIN_STREAK_ACTIVE, FALSE
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, 0
 	setvar VAR_TEMP_0, 255
-	release
-	end
+	goto MasterDojo_Lobby_EventScript_SetChallengeStatusEnd
+	return
 
 
 MasterDojo_Lobby_EventScript_Attendant::
@@ -81,12 +79,12 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge::
 	case FRONTIER_LVL_TENT, MasterDojo_Lobby_EventScript_TryEnterChallenge_3
 	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_TryEnterChallenge_3
 MasterDojo_Lobby_EventScript_TryEnterChallenge_1:
-	frontier_checkineligible
-	goto_if_eq VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons
-	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
 	message MasterDojo_Lobby_Text_SelectTheTypeYouWant
 	waitmessage
 	call MasterDojo_Lobby_EventScript_CreateTypeList
+	frontier_checkineligible
+	goto_if_eq VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons
+	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
 	fadescreen FADE_TO_BLACK
 	frontier_get FRONTIER_DATA_LVL_MODE
 	copyvar VAR_0x8004, VAR_RESULT
@@ -120,9 +118,97 @@ MasterDojo_Lobby_EventScript_CreateTypeList::
 	special ShowScrollableMultichoice
 	waitstate
 	switch VAR_RESULT
+	case 0, MasterDojo_Lobby_EventScript_CreateTypeList_3
+	case 1, MasterDojo_Lobby_EventScript_CreateTypeList_4
+	case 2, MasterDojo_Lobby_EventScript_CreateTypeList_5
+	case 3, MasterDojo_Lobby_EventScript_CreateTypeList_6
+	case 4, MasterDojo_Lobby_EventScript_CreateTypeList_7
+	case 5, MasterDojo_Lobby_EventScript_CreateTypeList_8
+	case 6, MasterDojo_Lobby_EventScript_CreateTypeList_9
+	case 7, MasterDojo_Lobby_EventScript_CreateTypeList_10
+	case 8, MasterDojo_Lobby_EventScript_CreateTypeList_11
+	case 9, MasterDojo_Lobby_EventScript_CreateTypeList_12
+	case 10, MasterDojo_Lobby_EventScript_CreateTypeList_13
+	case 11, MasterDojo_Lobby_EventScript_CreateTypeList_14
+	case 12, MasterDojo_Lobby_EventScript_CreateTypeList_15
+	case 13, MasterDojo_Lobby_EventScript_CreateTypeList_16
+	case 14, MasterDojo_Lobby_EventScript_CreateTypeList_17
+	case 15, MasterDojo_Lobby_EventScript_CreateTypeList_18
+	case 16, MasterDojo_Lobby_EventScript_CreateTypeList_19
+	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_CreateTypeList_20
+MasterDojo_Lobby_EventScript_CreateTypeList_20:
+	goto MasterDojo_Lobby_EventScript_CancelChallenge
+MasterDojo_Lobby_EventScript_CreateTypeList_1:
+	sparring_buffersparringtype
 	return
 
-	return
+MasterDojo_Lobby_EventScript_CreateTypeList_3:
+	setvar VAR_SPARRING_TYPE, TYPE_NORMAL
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_4:
+	setvar VAR_SPARRING_TYPE, TYPE_FIGHTING
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_5:
+	setvar VAR_SPARRING_TYPE, TYPE_FLYING
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_6:
+	setvar VAR_SPARRING_TYPE, TYPE_POISON
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_7:
+	setvar VAR_SPARRING_TYPE, TYPE_GROUND
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_8:
+	setvar VAR_SPARRING_TYPE, TYPE_ROCK
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_9:
+	setvar VAR_SPARRING_TYPE, TYPE_BUG
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_10:
+	setvar VAR_SPARRING_TYPE, TYPE_GHOST
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_11:
+	setvar VAR_SPARRING_TYPE, TYPE_STEEL
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_12:
+	setvar VAR_SPARRING_TYPE, TYPE_FIRE
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_13:
+	setvar VAR_SPARRING_TYPE, TYPE_WATER
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_14:
+	setvar VAR_SPARRING_TYPE, TYPE_GRASS
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_15:
+	setvar VAR_SPARRING_TYPE, TYPE_ELECTRIC
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_16:
+	setvar VAR_SPARRING_TYPE, TYPE_PSYCHIC
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_17:
+	setvar VAR_SPARRING_TYPE, TYPE_ICE
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_18:
+	setvar VAR_SPARRING_TYPE, TYPE_DRAGON
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
+
+MasterDojo_Lobby_EventScript_CreateTypeList_19:
+	setvar VAR_SPARRING_TYPE, TYPE_DARK
+	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
 
 
 MasterDojo_Lobby_EventScript_SaveBeforeChallenge::
@@ -219,21 +305,8 @@ MasterDojo_Lobby_EventScript_EnterElevator::
 MasterDojo_Lobby_EventScript_WonChallenge::
 	sparring_get SPARRING_DATA_WIN_STREAK
 	buffernumberstring STR_VAR_1, VAR_RESULT
-	call MasterDojo_Lobby_EventScript_GetFirstTypeWin
 	goto MasterDojo_Lobby_EventScript_Results
 	return
-
-
-MasterDojo_Lobby_EventScript_GetFirstTypeWin::
-	sparring_checkfirsttypewin
-	compare VAR_RESULT, TRUE
-	goto_if_eq MasterDojo_Lobby_EventScript_GetFirstTypeWin_2
-MasterDojo_Lobby_EventScript_GetFirstTypeWin_1:
-	return
-
-MasterDojo_Lobby_EventScript_GetFirstTypeWin_2:
-	setflag FLAG_TEMP_1
-	goto MasterDojo_Lobby_EventScript_GetFirstTypeWin_1
 
 
 MasterDojo_Lobby_EventScript_LostChallenge::
@@ -254,24 +327,25 @@ MasterDojo_Lobby_EventScript_Results_NoWins::
 	faceplayer
 	call MasterDojo_Lobby_EventScript_AskSaveBattle
 	msgbox MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT
-	goto MasterDojo_Lobby_EventScript_EndChallenge
+	goto MasterDojo_Lobby_EventScript_SetChallengeStatusEnd
 	return
 
 
 MasterDojo_Lobby_EventScript_Results::
 	lock
 	faceplayer
-	bufferstring STR_VAR_3, MasterDojo_Lobby_EventScript_Results_Text_0
+	sparring_buffersparringtype
 	msgbox MasterDojo_Lobby_Text_YourResultForThisRestricted
 	call MasterDojo_Lobby_EventScript_AwardPoints
-	goto_if_set FLAG_TEMP_1, MasterDojo_Lobby_EventScript_Results_2
+	goto_if_set FLAG_SPARRING_FIRST_TYPE_WIN, MasterDojo_Lobby_EventScript_Results_2
 MasterDojo_Lobby_EventScript_Results_1:
 	call MasterDojo_Lobby_EventScript_AskSaveBattle
-	goto MasterDojo_Lobby_EventScript_EndChallenge
+	goto MasterDojo_Lobby_EventScript_SetChallengeStatusEnd
 	return
 
 MasterDojo_Lobby_EventScript_Results_2:
 	msgbox MasterDojo_Lobby_Text_TheWayYouHandleType
+	call MasterDojo_Lobby_EventScript_CheckSymbol
 	goto MasterDojo_Lobby_EventScript_Results_1
 
 
@@ -286,21 +360,50 @@ MasterDojo_Lobby_EventScript_AwardPoints::
 
 
 MasterDojo_Lobby_EventScript_CheckSymbol::
-	call MasterDojo_Lobby_EventScript_GiveSymbol
+	sparring_checksymbol
+	compare VAR_RESULT, SPARRING_GET_NONE
+	goto_if_gt MasterDojo_Lobby_EventScript_CheckSymbol_2
+MasterDojo_Lobby_EventScript_CheckSymbol_1:
 	return
+
+MasterDojo_Lobby_EventScript_CheckSymbol_2:
+	call MasterDojo_Lobby_EventScript_GiveSymbol
+	goto MasterDojo_Lobby_EventScript_CheckSymbol_1
 
 
 MasterDojo_Lobby_EventScript_GiveSymbol::
-	bufferstring STR_VAR_1, 9
 	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
-	msgbox MasterDojo_Lobby_Text_ThatsExcellentWork
-	bufferstring STR_VAR_1, 18
-	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
+	compare VAR_RESULT, SPARRING_GET_SILVER
+	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_2
 	msgbox MasterDojo_Lobby_Text_ICantBelieveIt
 	msgbox MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo
+MasterDojo_Lobby_EventScript_GiveSymbol_1:
 	msgbox MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement
+	playfanfare MUS_OBTAIN_SYMBOL
+	compare VAR_RESULT, SPARRING_GET_SILVER
+	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_6
+	message BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine
+MasterDojo_Lobby_EventScript_GiveSymbol_5:
+	waitmessage
+	waitfanfare
+	compare VAR_RESULT, SPARRING_GET_SILVER
+	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_10
+	setflag FLAG_SYS_ARENA_GOLD
 	msgbox MasterDojo_Lobby_Text_IHopeYoullKeep
+MasterDojo_Lobby_EventScript_GiveSymbol_9:
 	return
+
+MasterDojo_Lobby_EventScript_GiveSymbol_2:
+	msgbox MasterDojo_Lobby_Text_ThatsExcellentWork
+	goto MasterDojo_Lobby_EventScript_GiveSymbol_1
+
+MasterDojo_Lobby_EventScript_GiveSymbol_6:
+	message BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol
+	goto MasterDojo_Lobby_EventScript_GiveSymbol_5
+
+MasterDojo_Lobby_EventScript_GiveSymbol_10:
+	setflag FLAG_SYS_ARENA_SILVER
+	goto MasterDojo_Lobby_EventScript_GiveSymbol_9
 
 
 MasterDojo_Lobby_EventScript_AskSaveBattle::
@@ -344,10 +447,16 @@ MasterDojo_Lobby_EventScript_SaveBattle_2:
 	goto MasterDojo_Lobby_EventScript_SaveBattle_1
 
 
+MasterDojo_Lobby_EventScript_SetChallengeStatusEnd::
+	setvar VAR_TEMP_0, 255
+	goto MasterDojo_Lobby_EventScript_EndChallenge
+	return
+
+
 MasterDojo_Lobby_EventScript_EndChallenge::
 	closemessage
+	setvar VAR_SPARRING_TYPE, TYPE_NONE
 	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, FALSE
-	setvar VAR_TEMP_0, 255
 	release
 	end
 
@@ -366,9 +475,6 @@ MasterDojo_Lobby_EventScript_ResumeChallenge::
 	goto MasterDojo_Lobby_EventScript_EnterElevator
 	end
 
-
-MasterDojo_Lobby_EventScript_Results_Text_0:
-	.string "Normal$"
 
 MasterDojo_Lobby_Text_HiyahDo::
 	.string "Hi-yah! {PLAYER}! Do you want to try\n"
@@ -453,8 +559,7 @@ MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo::
 
 MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement::
 	.string "To commemorate this monumental\n"
-	.string "achievement, I'll grant you the\l"
-	.string "{STR_VAR_2} Guts Symbol!$"
+	.string "achievement, I'll grant you this!$"
 
 MasterDojo_Lobby_Text_IHopeYoullKeep::
 	.string "I hope you'll keep exceeding your own\n"
@@ -510,18 +615,18 @@ MasterDojo_Lobby_Text_NotEnoughValidMonsLv50Singles::
 	.string "Hold up, {PLAYER}! You need three\n"
 	.string "different POKéMON of Level 50 or less\l"
 	.string "to enter. They must all share the\l"
-	.string "{STR_VAR_1}-type and hold\l"
+	.string "{STR_VAR_3}-type and hold\l"
 	.string "different items. EGGS{STR_VAR_1}\l"
-	.string "aren't allowed. Come back when you're\l"
+	.string "not allowed. Come back when you're\l"
 	.string "ready!$"
 
 MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles::
 	.string "Hold up, {PLAYER}! You need three\n"
 	.string "different POKéMON to enter. They must\l"
-	.string "all share the {STR_VAR_1}-type and\l"
+	.string "all share the {STR_VAR_3}-type and\l"
 	.string "hold different items.\l"
-	.string "EGGS{STR_VAR_1} aren't allowed.\l"
-	.string "Come back when you're ready!$"
+	.string "EGGS{STR_VAR_1} not allowed. Come\l"
+	.string "back when you're ready!$"
 
 MasterDojo_Lobby_Text_RecordLastMatch::
 	.string "Want me to record your last Restricted\n"

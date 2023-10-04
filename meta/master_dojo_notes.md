@@ -13,8 +13,8 @@
 [x] When player uses heal, all items are restored
 [x] Get 3 BP for each win, every multiple of 5 gets 20, first time getting 5 [] wins in that type gets 30 BP
 [x] Consumable held items do not come back except for a heal
-[] Restrict teams based on type chosen
-[] Add new area to the saveblock for teams and record
+[x] Restrict teams based on type chosen
+[x] Add new area to the saveblock for teams and record
 [] Handle giving out symbols
 [] Seperate out tower functions from sparring functions
 [] Difficulty should start on final level from the jump

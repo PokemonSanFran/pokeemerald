@@ -29,7 +29,7 @@ script MasterDojo_BattleRoom_EventScript_EnterRoom{
 }
 
 script MasterDojo_BattleRoom_EventScript_OpponentEnter{
-    sparring_setopponent
+        tower_setopponent
         addobject(OPPONENT)
         waitmovement(CAMERA)
         special(RemoveCameraObject)
@@ -49,7 +49,7 @@ script MasterDojo_BattleRoom_EventScript_OpponentEnter{
         msgbox(MasterDojo_BattleRoom_Text_Go,MSGBOX_DEFAULT)
         closemessage
         waitmovement(ATTENDANT)
-        sparring_getopponentintro(0)
+        sparring_getopponentintro
         msgbox(gStringVar4,MSGBOX_DEFAULT)
         waitmessage
         call(MasterDojo_BattleRoom_EventScript_DoTowerBattle)

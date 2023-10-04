@@ -30,7 +30,7 @@ MasterDojo_BattleRoom_EventScript_EnterRoom_2:
 
 
 MasterDojo_BattleRoom_EventScript_OpponentEnter::
-	sparring_setopponent
+	tower_setopponent
 	addobject 2
 	waitmovement OBJ_EVENT_ID_CAMERA
 	special RemoveCameraObject
@@ -47,7 +47,7 @@ MasterDojo_BattleRoom_EventScript_OpponentEnter_1:
 	msgbox MasterDojo_BattleRoom_Text_Go, MSGBOX_DEFAULT
 	closemessage
 	waitmovement 1
-	sparring_getopponentintro 0
+	sparring_getopponentintro
 	msgbox gStringVar4, MSGBOX_DEFAULT
 	waitmessage
 	call MasterDojo_BattleRoom_EventScript_DoTowerBattle

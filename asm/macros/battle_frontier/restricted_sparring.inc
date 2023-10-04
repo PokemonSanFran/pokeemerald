@@ -1,14 +1,14 @@
 	@ Initialize the Battle Tower challenge
 	.macro sparring_init
 	setvar VAR_0x8004, SPARRING_FUNC_INIT
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
 	@ Get the value of some TOWER_DATA_*. See GetTowerData for the data types that can be retrieved
 	.macro sparring_get data:req
 	setvar VAR_0x8004, SPARRING_FUNC_GET_DATA
 	setvar VAR_0x8005, \data
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
 	@ Set some TOWER_DATA_* to val. See SetTowerData for the data types that can be set
@@ -18,33 +18,32 @@
 	.if \val != 0xFFFF
 	setvar VAR_0x8006, \val
 	.endif
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
 	@ Choose and set the gfx for the next opponent. Also used by Battle Tents
 	.macro sparring_setopponent
 	setvar VAR_0x8004, SPARRING_FUNC_SET_OPPONENT
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
 	@ Increments the battle number and returns the new one. Also clears E-Reader trainer if defeated, and saves the current win streak
 	.macro sparring_setbattlewon
 	setvar VAR_0x8004, SPARRING_FUNC_SET_BATTLE_WON
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
 	@ Save the game and set the challenge status
 	.macro sparring_save challengeStatus:req
 	setvar VAR_0x8004, SPARRING_FUNC_SAVE
 	setvar VAR_0x8005, \challengeStatus
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
 	@ Buffer the opponent's easy chat intro speech to STR_VAR_4
-	.macro sparring_getopponentintro opponent:req
+	.macro sparring_getopponentintro
 	setvar VAR_0x8004, SPARRING_FUNC_GET_OPPONENT_INTRO
-	setvar VAR_0x8005, \opponent
-	special CallBattleTowerFunc
+	special CallRestrictedSparringFunc
 	.endm
 
     @ Determine what continue menu type to show player
@@ -77,9 +76,14 @@
 	special CallRestrictedSparringFunc
 	.endm
 
-    @ Checks if this is the first time the player has won a type and this is their first time doing so
-    .macro sparring_checkfirsttypewin
-    setvar VAR_0x8004, SPARRING_FUNC_GET_FIRST_TYPE_WIN
+    @ Gets the name of the type chosen for Restricted Sparring and buffers it to gStringVar3
+    .macro sparring_buffersparringtype
+    setvar VAR_0x8004, SPARRING_FUNC_GET_TYPE_NAME
     special CallRestrictedSparringFunc
     .endm
 
+    @ Check the number of types the player has previously won and sets VAR_RESULT to TRUE if the player has not have the appropriate symbol but has qualified for it
+    .macro sparring_checksymbol
+    setvar VAR_0x8004, SPARRING_FUNC_CHECK_SYMBOL
+    special CallRestrictedSparringFunc
+    .endm

@@ -5,7 +5,6 @@ const CHALLENGE_STATUS_UNKNOWN = 0
 const CHALLENGE_STATUS_END = 255
 
 const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
-const FLAG_FIRST_TIME_TYPE_BEATEN = FLAG_TEMP_1
 
 mapscripts MasterDojo_Lobby_MapScripts{
     MAP_SCRIPT_ON_FRAME_TABLE[
@@ -36,13 +35,10 @@ script MasterDojo_Lobby_EventScript_QuitWithoutSaving{
     lock
         faceplayer
         msgbox(MasterDojo_Lobby_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT)
-        closemessage
         sparring_set(SPARRING_DATA_WIN_STREAK, 0)
-        sparring_set(SPARRING_DATA_WIN_STREAK_ACTIVE, FALSE)
-        frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, 0)
+        frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN)
         setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
-        release
-        end
+    goto(MasterDojo_Lobby_EventScript_SetChallengeStatusEnd)
 }
 
 script MasterDojo_Lobby_EventScript_Attendant{
@@ -73,12 +69,12 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
             case FRONTIER_LVL_TENT:
             case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
         }
-    frontier_checkineligible
-        goto_if_eq(VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons)
-        frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
         message(MasterDojo_Lobby_Text_SelectTheTypeYouWant)
         waitmessage
         call(MasterDojo_Lobby_EventScript_CreateTypeList)
+        frontier_checkineligible
+        goto_if_eq(VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons)
+        frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
         fadescreen(FADE_TO_BLACK)
         frontier_get(FRONTIER_DATA_LVL_MODE)
         copyvar(VAR_0x8004, VAR_RESULT)
@@ -95,37 +91,33 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
 }
 
 script MasterDojo_Lobby_EventScript_CreateTypeList{
-    setvar(VAR_0x8009,0)
-    setvar(VAR_0x8004,SCROLL_MULTI_POKEMON_TYPE)
-    special(ShowScrollableMultichoice)
-    waitstate
-
-    if (var(VAR_RESULT) > TYPE_STEEL){
-        subvar(VAR_RESULT,1)
-    }
+        setvar(VAR_0x8009,0)
+        setvar(VAR_0x8004,SCROLL_MULTI_POKEMON_TYPE)
+        special(ShowScrollableMultichoice)
+        waitstate
 
     switch(var(VAR_RESULT)){
-        case TYPE_NORMAL: setvar(VAR_0x8006,TYPE_NORMAL)
-        case TYPE_FIGHTING: setvar(VAR_0x8006,TYPE_FIGHTING)
-        case TYPE_FLYING: setvar(VAR_0x8006,TYPE_FLYING)
-        case TYPE_POISON: setvar(VAR_0x8006,TYPE_POISON)
-        case TYPE_GROUND: setvar(VAR_0x8006,TYPE_GROUND)
-        case TYPE_ROCK: setvar(VAR_0x8006,TYPE_ROCK)
-        case TYPE_BUG: setvar(VAR_0x8006,TYPE_BUG)
-        case TYPE_GHOST: setvar(VAR_0x8006,TYPE_GHOST)
-        case TYPE_STEEL: setvar(VAR_0x8006,TYPE_STEEL)
-        case TYPE_MYSTERY: setvar(VAR_0x8006,TYPE_MYSTERY)
-        case TYPE_FIRE: setvar(VAR_0x8006,TYPE_FIRE)
-        case TYPE_WATER: setvar(VAR_0x8006,TYPE_WATER)
-        case TYPE_GRASS: setvar(VAR_0x8006,TYPE_GRASS)
-        case TYPE_ELECTRIC: setvar(VAR_0x8006,TYPE_ELECTRIC)
-        case TYPE_PSYCHIC: setvar(VAR_0x8006,TYPE_PSYCHIC)
-        case TYPE_ICE: setvar(VAR_0x8006,TYPE_ICE)
-        case TYPE_DRAGON: setvar(VAR_0x8006,TYPE_DRAGON)
-        case TYPE_DARK: setvar(VAR_0x8006,TYPE_DARK)
+        case 0: setvar(VAR_SPARRING_TYPE,TYPE_NORMAL)
+        case 1: setvar(VAR_SPARRING_TYPE,TYPE_FIGHTING)
+        case 2: setvar(VAR_SPARRING_TYPE,TYPE_FLYING)
+        case 3: setvar(VAR_SPARRING_TYPE,TYPE_POISON)
+        case 4: setvar(VAR_SPARRING_TYPE,TYPE_GROUND)
+        case 5: setvar(VAR_SPARRING_TYPE,TYPE_ROCK)
+        case 6: setvar(VAR_SPARRING_TYPE,TYPE_BUG)
+        case 7: setvar(VAR_SPARRING_TYPE,TYPE_GHOST)
+        case 8: setvar(VAR_SPARRING_TYPE,TYPE_STEEL)
+        case 9: setvar(VAR_SPARRING_TYPE,TYPE_FIRE)
+        case 10: setvar(VAR_SPARRING_TYPE,TYPE_WATER)
+        case 11: setvar(VAR_SPARRING_TYPE,TYPE_GRASS)
+        case 12: setvar(VAR_SPARRING_TYPE,TYPE_ELECTRIC)
+        case 13: setvar(VAR_SPARRING_TYPE,TYPE_PSYCHIC)
+        case 14: setvar(VAR_SPARRING_TYPE,TYPE_ICE)
+        case 15: setvar(VAR_SPARRING_TYPE,TYPE_DRAGON)
+        case 16: setvar(VAR_SPARRING_TYPE,TYPE_DARK)
         default:
         case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
     }
+    sparring_buffersparringtype
     return
 }
 
@@ -213,16 +205,7 @@ script MasterDojo_Lobby_EventScript_EnterElevator{
 script MasterDojo_Lobby_EventScript_WonChallenge{
     sparring_get(SPARRING_DATA_WIN_STREAK)
     buffernumberstring(STR_VAR_1,VAR_RESULT)
-    call(MasterDojo_Lobby_EventScript_GetFirstTypeWin)
     goto(MasterDojo_Lobby_EventScript_Results)
-}
-
-script MasterDojo_Lobby_EventScript_GetFirstTypeWin{
-    sparring_checkfirsttypewin
-    if (var(VAR_RESULT) == TRUE){
-        setflag(FLAG_FIRST_TIME_TYPE_BEATEN)
-    }
-    return
 }
 
 script MasterDojo_Lobby_EventScript_LostChallenge{
@@ -240,23 +223,23 @@ script MasterDojo_Lobby_EventScript_Results_NoWins{
     faceplayer
     call(MasterDojo_Lobby_EventScript_AskSaveBattle)
     msgbox(MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT)
-    goto(MasterDojo_Lobby_EventScript_EndChallenge)
+    goto(MasterDojo_Lobby_EventScript_SetChallengeStatusEnd)
 }
 
 script MasterDojo_Lobby_EventScript_Results{
     lock
     faceplayer
-    bufferstring(STR_VAR_3,"Normal")
+    sparring_buffersparringtype
     msgbox(MasterDojo_Lobby_Text_YourResultForThisRestricted)
     call(MasterDojo_Lobby_EventScript_AwardPoints)
 
-    if (flag(FLAG_FIRST_TIME_TYPE_BEATEN) == TRUE){
+    if (flag(FLAG_SPARRING_FIRST_TYPE_WIN)){
         msgbox(MasterDojo_Lobby_Text_TheWayYouHandleType)
-        //call(MasterDojo_Lobby_EventScript_CheckSymbol)
+        call(MasterDojo_Lobby_EventScript_CheckSymbol)
     }
 
     call(MasterDojo_Lobby_EventScript_AskSaveBattle)
-    goto(MasterDojo_Lobby_EventScript_EndChallenge)
+    goto(MasterDojo_Lobby_EventScript_SetChallengeStatusEnd)
 }
 
 script MasterDojo_Lobby_EventScript_PositiveExitMessage{
@@ -270,27 +253,42 @@ script MasterDojo_Lobby_EventScript_AwardPoints{
 }
 
 script MasterDojo_Lobby_EventScript_CheckSymbol{
-    //sparring_checksymbol
-    call(MasterDojo_Lobby_EventScript_GiveSymbol)
+    sparring_checksymbol
+    if (var(VAR_RESULT) > SPARRING_GET_NONE){
+        call(MasterDojo_Lobby_EventScript_GiveSymbol)
+    }
     return
 }
 
 script MasterDojo_Lobby_EventScript_GiveSymbol{
-    //if has no symbol but completed 9
-    bufferstring(STR_VAR_1,9)
-        msgbox(MasterDojo_Lobby_Text_WhatYouCompletedRestricted)
-        msgbox(MasterDojo_Lobby_Text_ThatsExcellentWork)
-        //give symbol
+    msgbox(MasterDojo_Lobby_Text_WhatYouCompletedRestricted)
 
-        //if has silver symbol
-        bufferstring(STR_VAR_1,18)
-        msgbox(MasterDojo_Lobby_Text_WhatYouCompletedRestricted)
+    if (var(VAR_RESULT) == SPARRING_GET_SILVER){
+        msgbox(MasterDojo_Lobby_Text_ThatsExcellentWork)
+    }else{
         msgbox(MasterDojo_Lobby_Text_ICantBelieveIt)
         msgbox(MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo)
-        msgbox(MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement)
-        //give symbol
-        msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
-        return
+    }
+
+    msgbox(MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement)
+    playfanfare(MUS_OBTAIN_SYMBOL)
+
+        if (var(VAR_RESULT) == SPARRING_GET_SILVER){
+            message(BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol)
+        }else{
+            message(BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine)
+        }
+
+        waitmessage
+        waitfanfare
+
+        if (var(VAR_RESULT) == SPARRING_GET_SILVER){
+            setflag(FLAG_SYS_ARENA_SILVER)
+        }else{
+            setflag(FLAG_SYS_ARENA_GOLD)
+                msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
+        }
+    return
 }
 
 script MasterDojo_Lobby_EventScript_AskSaveBattle{
@@ -328,10 +326,15 @@ script MasterDojo_Lobby_EventScript_SaveBattle{
     return
 }
 
+script MasterDojo_Lobby_EventScript_SetChallengeStatusEnd{
+    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+    goto(MasterDojo_Lobby_EventScript_EndChallenge)
+}
+
 script MasterDojo_Lobby_EventScript_EndChallenge{
     closemessage
+    setvar(VAR_SPARRING_TYPE,TYPE_NONE)
     tower_set(TOWER_DATA_WIN_STREAK_ACTIVE, FALSE)
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     release
     end
 }
@@ -379,7 +382,7 @@ text MasterDojo_Lobby_Text_LetTheBattlesBegin{
 }
 
 text MasterDojo_Lobby_Text_NextBattleNo{
-    format("Next. Battle No. {STR_VAR_1}! Ready...")//delay 15 frames
+    format("Next. Battle No. {STR_VAR_1}! Ready...")
 }
 
 text MasterDojo_Lobby_Text_Go{
@@ -415,11 +418,11 @@ text MasterDojo_Lobby_Text_ICantBelieveIt{
 }
 
 text MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo{
-    format("This accomplishment is sure to go down in dojo history! ")
+    format("This accomplishment is sure to go down in dojo history!")
 }
 
 text MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement{
-    format("To commemorate this monumental achievement, I'll grant you the {STR_VAR_2} Guts Symbol!")
+    format("To commemorate this monumental achievement, I'll grant you this!")
 }
 
 text MasterDojo_Lobby_Text_IHopeYoullKeep{
@@ -442,7 +445,6 @@ text MasterDojo_Lobby_Text_DidntSaveBeforeQuitting{
     format("Oops! {PLAYER}, it seems you didn't save before quitting your challenge last time. Because of that, your challenge so far has been disqualified. Sorry!")
 }
 
-
 text MasterDojo_Lobby_Text_ThankYouForPlaying{
     format("Thanks for playing, {PLAYER}!")
 }
@@ -455,7 +457,6 @@ text MasterDojo_Lobby_Text_RecordWillBeSaved{
 text MasterDojo_Lobby_Text_WeveBeenWaitingForYou{
     format("We've been waiting for you, {PLAYER}!")
 }
-
 
 text MasterDojo_Lobby_Text_ProgressWillBeSaved{
     format("Before entering a BATTLE ROOM, your progress will be saved. Hang tight!")
@@ -471,19 +472,18 @@ text MasterDojo_Lobby_Text_OffersTwoLevels{
     format("Restricted Sparring offers two levels of challenge, Level 50 and Open Level. So, which one is your pick?")
 }
 
-
 text MasterDojo_Lobby_Text_BeforeDivingInto{
     format("Before diving into Restricted Sparring, your progress must be saved. Is that cool?")
 }
 
 
 text MasterDojo_Lobby_Text_NotEnoughValidMonsLv50Singles{
-    format("Hold up, {PLAYER}! You need three different POKéMON of Level 50 or less to enter. They must all share the {STR_VAR_1}-type and hold different items. EGGS{STR_VAR_1} aren't allowed. Come back when you're ready!")
+    format("Hold up, {PLAYER}! You need three different POKéMON of Level 50 or less to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!")
 
 }
 
 text MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles{
-    format("Hold up, {PLAYER}! You need three different POKéMON to enter. They must all share the {STR_VAR_1}-type and hold different items. EGGS{STR_VAR_1} aren't allowed. Come back when you're ready!")
+    format("Hold up, {PLAYER}! You need three different POKéMON to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!")
 }
 
 text MasterDojo_Lobby_Text_RecordLastMatch{
