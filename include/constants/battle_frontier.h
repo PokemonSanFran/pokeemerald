@@ -13,12 +13,12 @@
 #define FRONTIER_FACILITY_FACTORY  4  // also Slateport Tent
 #define FRONTIER_FACILITY_PIKE     5
 #define FRONTIER_FACILITY_PYRAMID  6
-#define FRONTIER_FACILITY_SPARRING 0
 #define NUM_FRONTIER_FACILITIES    7
 // VAR_FRONTIER_FACILITY is re-used for the below facilities as well
 #define FACILITY_LINK_CONTEST      7
 #define FACILITY_UNION_ROOM        8
 #define FACILITY_MULTI_OR_EREADER  9  // Direct Corner multi battles, multi battle with Steven, and e-Reader battles
+#define FRONTIER_FACILITY_SPARRING 10
 
 // Battle Frontier battle modes.
 #define FRONTIER_MODE_SINGLES      0

@@ -291,6 +291,7 @@ MasterDojo_Lobby_EventScript_DenyChallenge::
 
 
 MasterDojo_Lobby_EventScript_EnterElevator::
+	sparring_save CHALLENGE_STATUS_SAVING
 	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
 	special CallFrontierUtilFunc
@@ -298,6 +299,7 @@ MasterDojo_Lobby_EventScript_EnterElevator::
 	setvar VAR_RESULT, 0
 	setvar VAR_RESTRICTEDSPARRING_HEAL_COUNT, SPARRING_MAX_NUM_RESTORE
 	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
+	sparring_save CHALLENGE_STATUS_SAVING
 	return
 
 
@@ -466,7 +468,6 @@ MasterDojo_Lobby_EventScript_ResumeChallenge::
 	waitmessage
 	message MasterDojo_Lobby_Text_ProgressWillBeSaved
 	waitmessage
-	sparring_save CHALLENGE_STATUS_SAVING
 	playse SE_SAVE
 	waitse
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
@@ -570,9 +571,6 @@ MasterDojo_Lobby_Text_DoYouWantToContinue::
 	.string "Do you want to continue sparring? (You\n"
 	.string "can restore them {STR_VAR_1} more\l"
 	.string "{STR_VAR_2}.)$"
-
-MasterDojo_Lobby_Text_YouEarnedBp::
-	.string "You earned {STR_VAR_1} BP!$"
 
 MasterDojo_Lobby_Text_DidntSaveBeforeQuitting::
 	.string "Oops! {PLAYER}, it seems you didn't\n"

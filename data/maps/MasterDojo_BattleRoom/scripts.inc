@@ -73,7 +73,6 @@ MasterDojo_BattleRoom_EventScript_WarpToLobby::
 
 
 MasterDojo_BattleRoom_EventScript_DefeatedOpponent::
-	call BattleFrontier_EventScript_IncrementWinStreak
 	sparring_setbattlewon
 	special SpawnCameraObject
 	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_CameraPanLeft

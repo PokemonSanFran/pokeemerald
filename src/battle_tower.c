@@ -36,6 +36,7 @@
 #include "constants/trainers.h"
 #include "constants/event_objects.h"
 #include "constants/moves.h"
+#include "restricted_sparring.h"
 
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_MaxieTrainer[];
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_TabithaTrainer[];
@@ -1104,6 +1105,7 @@ static void SetNextFacilityOpponent(void)
 u16 GetRandomScaledFrontierTrainerId(u8 challengeNum, u8 battleNum)
 {
     u16 trainerId;
+    challengeNum = MaxChallengeNumInRestrictingSparring(challengeNum);
 
     if (challengeNum <= 7)
     {
@@ -1636,7 +1638,7 @@ static void FillTrainerParty(u16 trainerId, u8 firstMonId, u8 monCount)
     s32 i, j;
     u16 chosenMonIndices[MAX_FRONTIER_PARTY_SIZE];
     u8 friendship = MAX_FRIENDSHIP;
-    u8 level = SetFacilityPtrsGetLevel();
+    u8 level = 1; // SetFacilityPtrsGetLevel(); TESTING
     u8 fixedIV = 0;
     u8 bfMonCount;
     const u16 *monSet = NULL;

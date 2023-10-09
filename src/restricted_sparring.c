@@ -250,7 +250,7 @@ static bool32 IsFirstTypeWin(void)
 
 static u32 CalculateBattlePoints(u32 numWins)
 {
-    u32 points, i;
+    u32 points = 0, i;
 
     if (numWins == 0)
         return 0;
@@ -273,6 +273,7 @@ static u32 CalculateBattlePoints(u32 numWins)
 static void GiveBattlePoints(void)
 {
     u32 points = CalculateBattlePoints(gSaveBlock2Ptr->frontier.curChallengeBattleNum);
+    DebugPrintf("you getting %d points",points);
 
     IncrementDailyBattlePoints(points);
     ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN, 2);
@@ -300,14 +301,18 @@ static void BufferSparringTypeNameToString(void)
 
 static u32 CountNumberWinStreaks(void)
 {
-    u32 i, numWins;
+    u32 i, numWins = 0;
     u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
     for (i = 0; i < NUMBER_OF_MON_TYPES; i++)
     {
-        if (SPARRING_SAVEDATA[i][lvlMode].winStreak >= SPARRING_MIN_STREAK)
+        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) > (SPARRING_MIN_STREAK - 1))
             numWins++;
+
+        DebugPrintf("for type %d, you have %d wins.",i,SPARRING_SAVEDATA[i][lvlMode].winStreak);
+
     }
+    DebugPrintf("you have %d wins",numWins);
     return numWins;
 }
 
@@ -317,20 +322,32 @@ static void CheckSparringSymbol(void)
     u8 numDigits = CountDigits(numWins);
     u32 hasSilver = FlagGet(FLAG_SYS_ARENA_SILVER);
     u32 hasGold = FlagGet(FLAG_SYS_ARENA_GOLD);
+    bool32 shouldGetGold = (numWins == (NUMBER_OF_MON_TYPES - 1));
+    bool32 shouldGetSilver = (numWins == (NUMBER_OF_MON_TYPES /2));
 
-    if (
-        (numWins == (NUMBER_OF_MON_TYPES - 1) && !hasGold)
-       )
+    if (shouldGetGold && !hasGold)
     {
         ConvertIntToDecimalStringN(gStringVar1, numWins, STR_CONV_MODE_LEFT_ALIGN, numDigits);
         gSpecialVar_Result = SPARRING_GET_GOLD;
+        return;
     }
-
-    if (
-        (numWins == (NUMBER_OF_MON_TYPES / 2) && !hasSilver)
-       )
+    else if (shouldGetSilver && !hasSilver)
     {
         ConvertIntToDecimalStringN(gStringVar1, numWins, STR_CONV_MODE_LEFT_ALIGN, numDigits);
         gSpecialVar_Result = SPARRING_GET_SILVER;
+        return;
     }
+
+    gSpecialVar_Result = SPARRING_GET_NONE;
+}
+
+u32 MaxChallengeNumInRestrictingSparring(u8 challengeNum)
+{
+    /*
+    if (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING)
+        return UCHAR_MAX;
+    else
+        return challengeNum;
+        */
+    return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING) ? UCHAR_MAX : challengeNum;
 }

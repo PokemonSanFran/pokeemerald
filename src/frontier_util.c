@@ -1824,6 +1824,8 @@ u32 GetCurrentFacilityWinStreak(void)
         return gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode];
     case FRONTIER_FACILITY_PYRAMID:
         return gSaveBlock2Ptr->frontier.pyramidWinStreaks[lvlMode];
+    case FRONTIER_FACILITY_SPARRING:
+        return gSaveBlock2Ptr->frontier.restrictedSparring[VarGet(VAR_SPARRING_TYPE)][lvlMode].winStreak;
     default:
         return 0;
     }
