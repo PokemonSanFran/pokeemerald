@@ -78,30 +78,6 @@ static void (* const sRestrictedSparringFuncs[])(void) =
     [SPARRING_FUNC_CHECK_SYMBOL] = CheckSparringSymbol,
 };
 
-static const u32 sWinStreakFlags[][2] =
-{
-    {STREAK_TOWER_SINGLES_50,     STREAK_TOWER_SINGLES_OPEN},
-    {STREAK_TOWER_DOUBLES_50,     STREAK_TOWER_DOUBLES_OPEN},
-    {STREAK_TOWER_MULTIS_50,      STREAK_TOWER_MULTIS_OPEN},
-    {STREAK_TOWER_LINK_MULTIS_50, STREAK_TOWER_LINK_MULTIS_OPEN},
-};
-
-static const u32 sWinStreakMasks[][2] =
-{
-    {~(STREAK_TOWER_SINGLES_50),     ~(STREAK_TOWER_SINGLES_OPEN)},
-    {~(STREAK_TOWER_DOUBLES_50),     ~(STREAK_TOWER_DOUBLES_OPEN)},
-    {~(STREAK_TOWER_MULTIS_50),      ~(STREAK_TOWER_MULTIS_OPEN)},
-    {~(STREAK_TOWER_LINK_MULTIS_50), ~(STREAK_TOWER_LINK_MULTIS_OPEN)},
-};
-
-static const u8 sBattleTowerPartySizes2[] =
-{
-    [FRONTIER_MODE_SINGLES]     = FRONTIER_PARTY_SIZE,
-    [FRONTIER_MODE_DOUBLES]     = FRONTIER_DOUBLES_PARTY_SIZE,
-    [FRONTIER_MODE_MULTIS]      = FRONTIER_MULTI_PARTY_SIZE,
-    [FRONTIER_MODE_LINK_MULTIS] = FRONTIER_MULTI_PARTY_SIZE,
-};
-
 void CallRestrictedSparringFunc(void)
 {
     sRestrictedSparringFuncs[gSpecialVar_0x8004]();
@@ -118,10 +94,6 @@ static void InitSparringChallenge(void)
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
     gSaveBlock2Ptr->frontier.disableRecordBattle = FALSE;
-    /*
-    if (!(gSaveBlock2Ptr->frontier.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
-        gSaveBlock2Ptr->frontier.towerWinStreaks[battleMode][lvlMode] = 0;
-        */
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     gTrainerBattleOpponent_A = 0;
@@ -137,9 +109,6 @@ static void GetSparringData(void)
     {
     case SPARRING_DATA_WIN_STREAK:
         gSpecialVar_Result = (gSaveBlock2Ptr->frontier.curChallengeBattleNum);
-        break;
-    case SPARRING_DATA_WIN_STREAK_ACTIVE:
-        gSpecialVar_Result = ((gSaveBlock2Ptr->frontier.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]) != 0);
         break;
     case SPARRING_DATA_LVL_MODE:
         gSpecialVar_Result = lvlMode;
@@ -158,13 +127,7 @@ static void SetSparringData(void)
     switch (gSpecialVar_0x8005)
     {
     case SPARRING_DATA_WIN_STREAK:
-        gSaveBlock2Ptr->frontier.towerWinStreaks[battleMode][lvlMode] = gSpecialVar_0x8006;
-        break;
-    case SPARRING_DATA_WIN_STREAK_ACTIVE:
-        if (gSpecialVar_0x8006)
-            gSaveBlock2Ptr->frontier.winStreakActiveFlags |= sWinStreakFlags[battleMode][lvlMode];
-        else
-            gSaveBlock2Ptr->frontier.winStreakActiveFlags &= sWinStreakMasks[battleMode][lvlMode];
+        gSaveBlock2Ptr->frontier.curChallengeBattleNum = gSpecialVar_0x8006;
         break;
     }
 }
@@ -364,7 +327,7 @@ static void CheckSparringSymbol(void)
     }
 
     if (
-        (numWins == 9 && !hasSilver)
+        (numWins == (NUMBER_OF_MON_TYPES / 2) && !hasSilver)
        )
     {
         ConvertIntToDecimalStringN(gStringVar1, numWins, STR_CONV_MODE_LEFT_ALIGN, numDigits);

@@ -215,7 +215,6 @@ MasterDojo_Lobby_EventScript_SaveBeforeChallenge::
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
 	setvar VAR_TEMP_0, 0
 	sparring_init
-	sparring_set SPARRING_DATA_WIN_STREAK_ACTIVE, TRUE
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
 	special LoadPlayerParty
 	closemessage
@@ -456,7 +455,6 @@ MasterDojo_Lobby_EventScript_SetChallengeStatusEnd::
 MasterDojo_Lobby_EventScript_EndChallenge::
 	closemessage
 	setvar VAR_SPARRING_TYPE, TYPE_NONE
-	tower_set TOWER_DATA_WIN_STREAK_ACTIVE, FALSE
 	release
 	end
 

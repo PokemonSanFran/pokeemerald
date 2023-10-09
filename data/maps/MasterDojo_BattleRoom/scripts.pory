@@ -11,26 +11,23 @@ mapscripts MasterDojo_BattleRoom_MapScripts{
     ]
 }
 
+script MasterDojo_BattleRoom_EventScript_RefreshOpponent{
+        removeobject(OPPONENT)
+        tower_setopponent
+        addobject(OPPONENT)
+return
+}
+
 script MasterDojo_BattleRoom_EventScript_EnterRoom{
     setvar(VAR_TEMP_0,1)
+        call(MasterDojo_BattleRoom_EventScript_RefreshOpponent)
         applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantEnter)
         applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerEnter)
         waitmovement(ATTENDANT)
-        frontier_get(FRONTIER_DATA_BATTLE_NUM)
-        if (var(VAR_RESULT) == 0){
-            goto(MasterDojo_BattleRoom_EventScript_OpponentEnter)
-        }
-    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantApproachPlayer)
-        applymovement(PLAYER,Common_Movement_FaceUp)
-        waitmovement(ATTENDANT)
-        setvar(VAR_TEMP_2,1)
-        frontier_set(FRONTIER_DATA_RECORD_DISABLED,TRUE)
-        goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
+        goto(MasterDojo_BattleRoom_EventScript_OpponentEnter)
 }
 
 script MasterDojo_BattleRoom_EventScript_OpponentEnter{
-        tower_setopponent
-        addobject(OPPONENT)
         waitmovement(CAMERA)
         special(RemoveCameraObject)
         applymovement(ATTENDANT,Common_Movement_WalkInPlaceDown)
@@ -72,7 +69,6 @@ script MasterDojo_BattleRoom_EventScript_WarpToLobby{
 }
 
 script MasterDojo_BattleRoom_EventScript_DefeatedOpponent{
-        call(BattleFrontier_EventScript_IncrementWinStreak)
         sparring_setbattlewon
         special(SpawnCameraObject)
         applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanLeft)
@@ -199,6 +195,7 @@ script MasterDojo_BattleRoom_EventScript_AskRetireChallenge{
 
 script MasterDojo_BattleRoom_EventScript_ContinueChallenge{
     closemessage
+        call(MasterDojo_BattleRoom_EventScript_RefreshOpponent)
         applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerStartBattle)
         applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanRight)
         applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantReturnToPosition)
@@ -280,12 +277,12 @@ movement MasterDojo_BattleRoom_Movement_PlayerReturnPosition{
 }
 
 movement MasterDojo_BattleRoom_Movement_CameraPanLeft{
-    walk_left * 4
+    walk_left * 5
         step_end
 }
 
 movement MasterDojo_BattleRoom_Movement_CameraPanRight{
-    walk_right * 4
+    walk_right * 5
         step_end
 }
 

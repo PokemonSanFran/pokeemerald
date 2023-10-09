@@ -7,31 +7,24 @@ MasterDojo_BattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
 	.2byte 0
 
 
+MasterDojo_BattleRoom_EventScript_RefreshOpponent::
+	removeobject 2
+	tower_setopponent
+	addobject 2
+	return
+
+
 MasterDojo_BattleRoom_EventScript_EnterRoom::
 	setvar VAR_TEMP_0, 1
+	call MasterDojo_BattleRoom_EventScript_RefreshOpponent
 	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantEnter
 	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerEnter
 	waitmovement 1
-	frontier_get FRONTIER_DATA_BATTLE_NUM
-	compare VAR_RESULT, 0
-	goto_if_eq MasterDojo_BattleRoom_EventScript_EnterRoom_2
-MasterDojo_BattleRoom_EventScript_EnterRoom_1:
-	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantApproachPlayer
-	applymovement OBJ_EVENT_ID_PLAYER, Common_Movement_FaceUp
-	waitmovement 1
-	setvar VAR_TEMP_2, 1
-	frontier_set FRONTIER_DATA_RECORD_DISABLED, TRUE
-	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
-	return
-
-MasterDojo_BattleRoom_EventScript_EnterRoom_2:
 	goto MasterDojo_BattleRoom_EventScript_OpponentEnter
-	goto MasterDojo_BattleRoom_EventScript_EnterRoom_1
+	return
 
 
 MasterDojo_BattleRoom_EventScript_OpponentEnter::
-	tower_setopponent
-	addobject 2
 	waitmovement OBJ_EVENT_ID_CAMERA
 	special RemoveCameraObject
 	applymovement 1, Common_Movement_WalkInPlaceDown
@@ -338,6 +331,7 @@ MasterDojo_BattleRoom_EventScript_AskRetireChallenge_3:
 
 MasterDojo_BattleRoom_EventScript_ContinueChallenge::
 	closemessage
+	call MasterDojo_BattleRoom_EventScript_RefreshOpponent
 	applymovement OBJ_EVENT_ID_PLAYER, MasterDojo_BattleRoom_Movement_PlayerStartBattle
 	applymovement OBJ_EVENT_ID_CAMERA, MasterDojo_BattleRoom_Movement_CameraPanRight
 	applymovement 1, MasterDojo_BattleRoom_Movement_AttendantReturnToPosition
@@ -437,9 +431,11 @@ MasterDojo_BattleRoom_Movement_CameraPanLeft:
 	walk_left
 	walk_left
 	walk_left
+	walk_left
 	step_end
 
 MasterDojo_BattleRoom_Movement_CameraPanRight:
+	walk_right
 	walk_right
 	walk_right
 	walk_right

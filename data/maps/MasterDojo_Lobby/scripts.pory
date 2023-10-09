@@ -125,7 +125,6 @@ script MasterDojo_Lobby_EventScript_SaveBeforeChallenge{
     frontier_set(FRONTIER_DATA_SELECTED_MON_ORDER)
         setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
         sparring_init
-        sparring_set(SPARRING_DATA_WIN_STREAK_ACTIVE, TRUE)
         frontier_set(FRONTIER_DATA_PAUSED, FALSE)
         special(LoadPlayerParty)
         closemessage
@@ -192,7 +191,6 @@ script MasterDojo_Lobby_EventScript_DenyChallenge{
 }
 
 script MasterDojo_Lobby_EventScript_EnterElevator{
-        //special(SavePlayerParty)
         setvar(VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER)
         setvar(VAR_0x8005, FRONTIER_PARTY_SIZE)
         special(CallFrontierUtilFunc)
@@ -286,7 +284,7 @@ script MasterDojo_Lobby_EventScript_GiveSymbol{
             setflag(FLAG_SYS_ARENA_SILVER)
         }else{
             setflag(FLAG_SYS_ARENA_GOLD)
-                msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
+            msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
         }
     return
 }
@@ -334,7 +332,6 @@ script MasterDojo_Lobby_EventScript_SetChallengeStatusEnd{
 script MasterDojo_Lobby_EventScript_EndChallenge{
     closemessage
     setvar(VAR_SPARRING_TYPE,TYPE_NONE)
-    tower_set(TOWER_DATA_WIN_STREAK_ACTIVE, FALSE)
     release
     end
 }
