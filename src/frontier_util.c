@@ -38,6 +38,7 @@
 #include "constants/event_objects.h"
 #include "constants/restricted_sparring.h"
 #include "party_menu.h"
+#include "restricted_sparring.h"
 
 struct FrontierBrainMon
 {
@@ -947,6 +948,9 @@ static void ShowFacilityResultsWindow(void)
     case FACILITY_LINK_CONTEST:
         ShowLinkContestResultsWindow();
         break;
+    case FRONTIER_FACILITY_SPARRING:
+        ShowSparringResultsWindow();
+        break;
     }
 }
 
@@ -958,14 +962,14 @@ static bool8 IsWinStreakActive(u32 challenge)
         return FALSE;
 }
 
-static void PrintAligned(const u8 *str, s32 y)
+void PrintAligned(const u8 *str, s32 y)
 {
     s32 x = GetStringCenterAlignXOffset(FONT_NORMAL, str, DISPLAY_WIDTH - 16);
     y = (y * 8) + 1;
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, str, x, y, TEXT_SKIP_DRAW, NULL);
 }
 
-static void PrintHyphens(s32 y)
+void PrintHyphens(s32 y)
 {
     s32 i;
     u8 text[37];

@@ -81,10 +81,10 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge::
 MasterDojo_Lobby_EventScript_TryEnterChallenge_1:
 	message MasterDojo_Lobby_Text_SelectTheTypeYouWant
 	waitmessage
+	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
 	call MasterDojo_Lobby_EventScript_CreateTypeList
 	frontier_checkineligible
 	goto_if_eq VAR_0x8004, TRUE, MasterDojo_Lobby_EventScript_NotEnoughValidMons
-	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
 	fadescreen FADE_TO_BLACK
 	frontier_get FRONTIER_DATA_LVL_MODE
 	copyvar VAR_0x8004, VAR_RESULT
@@ -248,15 +248,6 @@ MasterDojo_Lobby_EventScript_ExplainChallenge_1:
 MasterDojo_Lobby_EventScript_ExplainChallenge_2:
 	goto MasterDojo_Lobby_EventScript_SaveBeforeChallenge
 	goto MasterDojo_Lobby_EventScript_ExplainChallenge_1
-
-
-MasterDojo_Lobby_EventScript_ShowResults::
-	lockall
-	frontier_results FRONTIER_FACILITY_SPARRING, FRONTIER_MODE_SINGLES
-	waitbuttonpress
-	special RemoveRecordsWindow
-	releaseall
-	end
 
 
 MasterDojo_Lobby_EventScript_NotEnoughValidMons::
@@ -474,6 +465,15 @@ MasterDojo_Lobby_EventScript_ResumeChallenge::
 	waitse
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
 	goto MasterDojo_Lobby_EventScript_EnterElevator
+	end
+
+
+MasterDojo_Lobby_EventScript_ShowResults::
+	lockall
+	frontier_results FRONTIER_FACILITY_SPARRING, 0
+	waitbuttonpress
+	special RemoveRecordsWindow
+	releaseall
 	end
 
 
