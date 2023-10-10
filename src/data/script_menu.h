@@ -793,6 +793,14 @@ static const struct MenuAction MultichoiceList_Exit[] =
     {gText_Exit},
 };
 
+static const struct MenuAction MultichoiceList_RestrictedSparringRules[] =
+{
+    {gText_Overview},
+    {gText_Restrictions},
+    {gText_Rewards},
+    {gText_Exit},
+};
+
 struct MultichoiceListStruct
 {
     const struct MenuAction *list;
@@ -917,6 +925,7 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_TAG_MATCH_TYPE]             = MULTICHOICE(MultichoiceList_TagMatchType),
     [MULTI_GO_ON_HEAL_RECORD_REST_RETIRE] = MULTICHOICE(MultichoiceList_GoOnHealRecordRestRetire),
     [MULTI_GO_ON_HEAL_REST_RETIRE] = MULTICHOICE(MultichoiceList_GoOnHealRestRetire),
+    [MULTI_RESTRICTED_SPARRING_RULES] = MULTICHOICE(MultichoiceList_RestrictedSparringRules),
 };
 
 const u8 *const gStdStrings[] =

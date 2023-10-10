@@ -343,10 +343,6 @@ MasterDojo_Lobby_EventScript_Results_2:
 	goto MasterDojo_Lobby_EventScript_Results_1
 
 
-MasterDojo_Lobby_EventScript_PositiveExitMessage::
-	return
-
-
 MasterDojo_Lobby_EventScript_AwardPoints::
 	sparring_givepoints
 	msgbox MasterDojo_Lobby_Text_YouEarned
@@ -476,6 +472,71 @@ MasterDojo_Lobby_EventScript_ShowResults::
 	releaseall
 	end
 
+
+MasterDojo_EventScript_RulesBoard::
+	lockall
+	msgbox MasterDojo_Lobby_Text_RulesAreListed, MSGBOX_DEFAULT
+	goto MasterDojo_Lobby_EventScript_ReadRulesBoard
+	end
+
+
+MasterDojo_Lobby_EventScript_ReadRulesBoard::
+	message BattleFrontier_BattleTowerLobby_Text_ReadWhichHeading
+	waitmessage
+	multichoice 17, 2, MULTI_RESTRICTED_SPARRING_RULES, FALSE
+	switch VAR_RESULT
+	case 0, MasterDojo_Lobby_EventScript_ReadRulesBoard_3
+	case 1, MasterDojo_Lobby_EventScript_ReadRulesBoard_4
+	case 2, MasterDojo_Lobby_EventScript_ReadRulesBoard_5
+	case 3, MasterDojo_Lobby_EventScript_ReadRulesBoard_6
+	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_ReadRulesBoard_6
+MasterDojo_Lobby_EventScript_ReadRulesBoard_1:
+	goto MasterDojo_EventScript_RulesBoard
+	end
+
+MasterDojo_Lobby_EventScript_ReadRulesBoard_3:
+	msgbox MasterDojo_Lobby_Text_OverviewBoard, MSGBOX_DEFAULT
+	goto MasterDojo_Lobby_EventScript_ReadRulesBoard_1
+
+MasterDojo_Lobby_EventScript_ReadRulesBoard_4:
+	msgbox MasterDojo_Lobby_Text_RestrictionsBoard, MSGBOX_DEFAULT
+	goto MasterDojo_Lobby_EventScript_ReadRulesBoard_1
+
+MasterDojo_Lobby_EventScript_ReadRulesBoard_5:
+	msgbox MasterDojo_Lobby_Text_RewardsBoard, MSGBOX_DEFAULT
+	goto MasterDojo_Lobby_EventScript_ReadRulesBoard_1
+
+MasterDojo_Lobby_EventScript_ReadRulesBoard_6:
+	releaseall
+	end
+
+
+MasterDojo_Lobby_Text_RulesAreListed::
+	.string "The RESTRICTED SPARRING rules are\n"
+	.string "listed.$"
+
+MasterDojo_Lobby_Text_OverviewBoard::
+	.string "Restricted Sparring is challenges you\n"
+	.string "to battle using up to three Pokémon of\l"
+	.string "a single type. Select a level mode and a\l"
+	.string "type, then battle your way through\l"
+	.string "five consecutive battles.$"
+
+MasterDojo_Lobby_Text_RestrictionsBoard::
+	.string "No duplicate Pokémon or items are\n"
+	.string "allowed. You can only restore your\l"
+	.string "Pokémon twice in total, so use your\l"
+	.string "opportunities wisely.$"
+
+MasterDojo_Lobby_Text_RewardsBoard::
+	.string "If you can win five times in a row, you\n"
+	.string "will complete the training, but you can\l"
+	.string "continue to increase your streak.\l"
+	.string "You'll recieve a reward for completing\l"
+	.string "training for all types in a level mode.$"
+
+MasterDojo_Lobby_Text_::
+	.string "$"
 
 MasterDojo_Lobby_Text_HiyahDo::
 	.string "Hi-yah! {PLAYER}! Do you want to try\n"

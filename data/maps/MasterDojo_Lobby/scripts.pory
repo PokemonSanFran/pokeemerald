@@ -235,10 +235,6 @@ script MasterDojo_Lobby_EventScript_Results{
     goto(MasterDojo_Lobby_EventScript_SetChallengeStatusEnd)
 }
 
-script MasterDojo_Lobby_EventScript_PositiveExitMessage{
-
-}
-
 script MasterDojo_Lobby_EventScript_AwardPoints{
     sparring_givepoints
     msgbox(MasterDojo_Lobby_Text_YouEarned)
@@ -355,6 +351,53 @@ script MasterDojo_Lobby_EventScript_ShowResults{
     special(RemoveRecordsWindow)
     releaseall
     end
+}
+
+script MasterDojo_EventScript_RulesBoard{
+    lockall
+    msgbox(MasterDojo_Lobby_Text_RulesAreListed,MSGBOX_DEFAULT)
+    goto(MasterDojo_Lobby_EventScript_ReadRulesBoard)
+    end
+}
+
+script MasterDojo_Lobby_EventScript_ReadRulesBoard{
+    message(BattleFrontier_BattleTowerLobby_Text_ReadWhichHeading)
+    waitmessage
+    multichoice(17,2,MULTI_RESTRICTED_SPARRING_RULES,FALSE)
+    switch(var(VAR_RESULT)){
+        case 0:
+            msgbox(MasterDojo_Lobby_Text_OverviewBoard,MSGBOX_DEFAULT)
+        case 1:
+            msgbox(MasterDojo_Lobby_Text_RestrictionsBoard,MSGBOX_DEFAULT)
+        case 2:
+            msgbox(MasterDojo_Lobby_Text_RewardsBoard,MSGBOX_DEFAULT)
+        case 3:
+        case MULTI_B_PRESSED:
+            releaseall
+            end
+    }
+    goto(MasterDojo_EventScript_RulesBoard)
+    end
+}
+
+text MasterDojo_Lobby_Text_RulesAreListed{
+    format("The RESTRICTED SPARRING rules are listed.")
+}
+
+text MasterDojo_Lobby_Text_OverviewBoard{
+    format("Restricted Sparring is challenges you to battle using up to three Pokémon of a single type. Select a level mode and a type, then battle your way through five consecutive battles.")
+}
+
+text MasterDojo_Lobby_Text_RestrictionsBoard{
+    format("No duplicate Pokémon or items are allowed. You can only restore your Pokémon twice in total, so use your opportunities wisely.")
+}
+
+text MasterDojo_Lobby_Text_RewardsBoard{
+    format("If you can win five times in a row, you will complete the training, but you can continue to increase your streak. You'll recieve a reward for completing training for all types in a level mode.")
+}
+
+text MasterDojo_Lobby_Text_{
+    format("")
 }
 
 text MasterDojo_Lobby_Text_HiyahDo{

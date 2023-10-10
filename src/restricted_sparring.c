@@ -41,6 +41,7 @@
 #include "constants/restricted_sparring.h"
 #include "tv.h"
 #include "restricted_sparring.h"
+#include "battle_records.h"
 
 #define SPARRING_SAVEDATA gSaveBlock2Ptr->frontier.restrictedSparring
 static EWRAM_DATA u8 sRestrictedSparring_TypeWinsWindowId = 0;
@@ -61,9 +62,10 @@ static void ResetSketchedMoves(void);
 static void GiveBattlePoints(void);
 static bool32 IsFirstTypeWin(void);
 static void BufferSparringTypeNameToString(void);
-static u32 CountNumberWinStreaks(void);
+static u32 CountNumberTypeWinFromSaveblock(void);
 static void CheckSparringSymbol(void);
 static void ShowRestrictedSparringTypeMons(u16 item);
+static void SparringPrintStreak(const u8 *str, u16 num, u8 x, u8 y);
 
 #define TAG_ITEM_ICON 5500
 
@@ -304,26 +306,27 @@ static void BufferSparringTypeNameToString(void)
     StringCopy(gStringVar3, gTypeNames[VarGet(VAR_SPARRING_TYPE)]);
 }
 
-static u32 CountNumberWinStreaks(void)
+static u32 CountNumberTypeWin(u32 lvlMode)
 {
     u32 i, numWins = 0;
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
     for (i = 0; i < NUMBER_OF_MON_TYPES; i++)
     {
         if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) > (SPARRING_MIN_STREAK - 1))
             numWins++;
-
-        DebugPrintf("for type %d, you have %d wins.",i,SPARRING_SAVEDATA[i][lvlMode].winStreak);
-
     }
-    DebugPrintf("you have %d wins",numWins);
     return numWins;
+}
+
+static u32 CountNumberTypeWinFromSaveblock(void)
+{
+    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    return CountNumberTypeWin(lvlMode);
 }
 
 static void CheckSparringSymbol(void)
 {
-    u32 numWins = CountNumberWinStreaks();
+    u32 numWins = CountNumberTypeWinFromSaveblock();
     u8 numDigits = CountDigits(numWins);
     u32 hasSilver = FlagGet(FLAG_SYS_ARENA_SILVER);
     u32 hasGold = FlagGet(FLAG_SYS_ARENA_GOLD);
@@ -391,14 +394,14 @@ void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
     ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_LEFT_ALIGN, CountDigits(num));
     StringExpandPlaceholders(gStringVar2,gText_WinStreak);
     AddTextPrinterParameterized2(1, FONT_NORMAL, gStringVar2, 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
-    ShowRestrictedSparringTypeMons(selection);
+    //ShowRestrictedSparringTypeMons(selection);
 }
 
 static void ShowRestrictedSparringTypeMons(u16 item)
 {
     FreeSpriteTilesByTag(TAG_ITEM_ICON);
     FreeSpritePaletteByTag(TAG_ITEM_ICON);
-    sScrollableMultichoice_ItemSpriteId = AddItemIconSprite(TAG_ITEM_ICON, TAG_ITEM_ICON, item);
+    //sScrollableMultichoice_ItemSpriteId = AddItemIconSprite(TAG_ITEM_ICON, TAG_ITEM_ICON, item);
 
     if (sScrollableMultichoice_ItemSpriteId != MAX_SPRITES)
     {
@@ -406,4 +409,86 @@ static void ShowRestrictedSparringTypeMons(u16 item)
         gSprites[sScrollableMultichoice_ItemSpriteId].x = 36;
         gSprites[sScrollableMultichoice_ItemSpriteId].y = 92;
     }
+}
+
+static const struct WindowTemplate sFrontierResultsWindowTemplate =
+{
+    .bg = 0,
+    .tilemapLeft = 1,
+    .tilemapTop = 1,
+    .width = 28,
+    .height = 18,
+    .paletteNum = 15,
+    .baseBlock = 1
+};
+
+static void SparringPrintTypesMastered(u8 lvlMode, u8 x, u8 y)
+{
+    u16 numWins = CountNumberTypeWin(lvlMode);
+    SparringPrintStreak(gText_TypesMastered, numWins, x, y);
+}
+
+static u32 GetBestTypeWinAmount(u8 lvlMode)
+{
+    u32 i, biggestWins = SPARRING_SAVEDATA[0][lvlMode].winStreak;
+
+    for (i = TYPE_FIGHTING; i < NUMBER_OF_MON_TYPES; i++)
+        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) > biggestWins)
+            biggestWins = (SPARRING_SAVEDATA[i][lvlMode].winStreak);
+
+    return biggestWins;
+}
+
+static const u8 *GetBestTypeWinType(u8 lvlMode)
+{
+    u32 type = 0;
+    u32 i, biggestWins = SPARRING_SAVEDATA[0][lvlMode].winStreak;
+
+    for (i = TYPE_FIGHTING; i < NUMBER_OF_MON_TYPES; i++)
+    {
+        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) > biggestWins)
+        {
+            biggestWins = (SPARRING_SAVEDATA[i][lvlMode].winStreak);
+            type = i;
+        }
+    }
+    return gTypeNames[type];
+}
+
+static void SparringPrintBestStreak(u8 lvlMode, u8 x, u8 y)
+{
+    StringCopy(gStringVar2,GetBestTypeWinType(lvlMode));
+    SparringPrintStreak(gText_BestStreak,GetBestTypeWinAmount(lvlMode),x,y);
+}
+
+static void SparringPrintStreak(const u8 *str, u16 num, u8 x, u8 y)
+{
+    if (num > MAX_SPARRING_STREAK)
+        num = MAX_SPARRING_STREAK;
+
+    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, 3);
+    StringExpandPlaceholders(gStringVar4, str);
+    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, NULL);
+}
+
+void ShowSparringResultsWindow(void)
+{
+    gRecordsWindowId = AddWindow(&sFrontierResultsWindowTemplate);
+    DrawStdWindowFrame(gRecordsWindowId, FALSE);
+    FillWindowPixelBuffer(gRecordsWindowId, PIXEL_FILL(1));
+
+    StringExpandPlaceholders(gStringVar4, gText_RestrictedSparringResults);
+    PrintAligned(gStringVar4, 2);
+    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_Lv502, 8, 49, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_OpenLv, 8, 97, TEXT_SKIP_DRAW, NULL);
+
+    PrintHyphens(10);
+
+    SparringPrintBestStreak(FRONTIER_LVL_50,80,49);
+    SparringPrintTypesMastered(FRONTIER_LVL_50,80,65);
+    SparringPrintBestStreak(FRONTIER_LVL_OPEN, 80,  97);
+    SparringPrintTypesMastered(FRONTIER_LVL_OPEN, 80,  113);
+
+    PutWindowTilemap(gRecordsWindowId);
+    CopyWindowToVram(gRecordsWindowId, COPYWIN_FULL);
 }
