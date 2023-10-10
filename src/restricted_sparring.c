@@ -43,6 +43,8 @@
 #include "restricted_sparring.h"
 
 #define SPARRING_SAVEDATA gSaveBlock2Ptr->frontier.restrictedSparring
+static EWRAM_DATA u8 sRestrictedSparring_TypeWinsWindowId = 0;
+static EWRAM_DATA u8 sScrollableMultichoice_ItemSpriteId = 0;
 
 static void (* const sRestrictedSparringFuncs[])(void);
 static void InitSparringChallenge(void);
@@ -61,6 +63,9 @@ static bool32 IsFirstTypeWin(void);
 static void BufferSparringTypeNameToString(void);
 static u32 CountNumberWinStreaks(void);
 static void CheckSparringSymbol(void);
+static void ShowRestrictedSparringTypeMons(u16 item);
+
+#define TAG_ITEM_ICON 5500
 
 static void (* const sRestrictedSparringFuncs[])(void) =
 {
@@ -350,4 +355,55 @@ u32 MaxChallengeNumInRestrictingSparring(u8 challengeNum)
         return challengeNum;
         */
     return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING) ? UCHAR_MAX : challengeNum;
+}
+
+void ShowRestrictedSparringTypeWinsWindow(void)
+{
+    static const struct WindowTemplate sRestrictedSparring_TypeWinsWindowTemplate =
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 1,
+        .width = 10,
+        .height = 2,
+        .paletteNum = 15,
+        .baseBlock = 20,
+    };
+
+    sRestrictedSparring_TypeWinsWindowId = AddWindow(&sRestrictedSparring_TypeWinsWindowTemplate);
+    SetStandardWindowBorderStyle(sRestrictedSparring_TypeWinsWindowId, FALSE);
+    CopyWindowToVram(sRestrictedSparring_TypeWinsWindowId, COPYWIN_GFX);
+}
+
+void CloseRestrictedSparringTypeWinsWindow(void)
+{
+    ClearStdWindowAndFrameToTransparent(sRestrictedSparring_TypeWinsWindowId, TRUE);
+    RemoveWindow(sRestrictedSparring_TypeWinsWindowId);
+}
+void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
+{
+    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u32 num = SPARRING_SAVEDATA[selection][lvlMode].winStreak;
+    u32 width = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_WIDTH);
+    u32 height = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_HEIGHT);
+
+    FillWindowPixelRect(sRestrictedSparring_TypeWinsWindowId, PIXEL_FILL(1), 0, 0, width, height);
+    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_LEFT_ALIGN, CountDigits(num));
+    StringExpandPlaceholders(gStringVar2,gText_WinStreak);
+    AddTextPrinterParameterized2(1, FONT_NORMAL, gStringVar2, 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+    ShowRestrictedSparringTypeMons(selection);
+}
+
+static void ShowRestrictedSparringTypeMons(u16 item)
+{
+    FreeSpriteTilesByTag(TAG_ITEM_ICON);
+    FreeSpritePaletteByTag(TAG_ITEM_ICON);
+    sScrollableMultichoice_ItemSpriteId = AddItemIconSprite(TAG_ITEM_ICON, TAG_ITEM_ICON, item);
+
+    if (sScrollableMultichoice_ItemSpriteId != MAX_SPRITES)
+    {
+        gSprites[sScrollableMultichoice_ItemSpriteId].oam.priority = 0;
+        gSprites[sScrollableMultichoice_ItemSpriteId].x = 36;
+        gSprites[sScrollableMultichoice_ItemSpriteId].y = 92;
+    }
 }

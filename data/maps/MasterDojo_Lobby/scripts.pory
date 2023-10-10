@@ -69,7 +69,7 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
             case FRONTIER_LVL_TENT:
             case MULTI_B_PRESSED: goto(MasterDojo_Lobby_EventScript_CancelChallenge)
         }
-        message(MasterDojo_Lobby_Text_SelectTheTypeYouWant)
+    message(MasterDojo_Lobby_Text_SelectTheTypeYouWant)
         waitmessage
         call(MasterDojo_Lobby_EventScript_CreateTypeList)
         frontier_checkineligible
@@ -93,8 +93,10 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
 script MasterDojo_Lobby_EventScript_CreateTypeList{
         setvar(VAR_0x8009,0)
         setvar(VAR_0x8004,SCROLL_MULTI_POKEMON_TYPE)
+        special(ShowRestrictedSparringTypeWinsWindow)
         special(ShowScrollableMultichoice)
         waitstate
+        special(CloseRestrictedSparringTypeWinsWindow)
 
     switch(var(VAR_RESULT)){
         case 0: setvar(VAR_SPARRING_TYPE,TYPE_NORMAL)

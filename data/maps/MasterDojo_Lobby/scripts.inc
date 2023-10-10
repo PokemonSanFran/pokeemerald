@@ -115,8 +115,10 @@ MasterDojo_Lobby_EventScript_TryEnterChallenge_6:
 MasterDojo_Lobby_EventScript_CreateTypeList::
 	setvar VAR_0x8009, 0
 	setvar VAR_0x8004, SCROLL_MULTI_POKEMON_TYPE
+	special ShowRestrictedSparringTypeWinsWindow
 	special ShowScrollableMultichoice
 	waitstate
+	special CloseRestrictedSparringTypeWinsWindow
 	switch VAR_RESULT
 	case 0, MasterDojo_Lobby_EventScript_CreateTypeList_3
 	case 1, MasterDojo_Lobby_EventScript_CreateTypeList_4
