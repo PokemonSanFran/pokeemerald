@@ -105,8 +105,8 @@ static void InitSparringChallenge(void)
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
     gSaveBlock2Ptr->frontier.disableRecordBattle = FALSE;
+    VarSet(VAR_RESTRICTEDSPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE);
 
-    SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     gTrainerBattleOpponent_A = 0;
 }
 
@@ -143,8 +143,8 @@ static void SetSparringBattleWon(void)
 {
     u8 numWins = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
 
-    //gSaveBlock2Ptr->frontier.curChallengeBattleNum = (numWins == MAX_SPARRING_STREAK) ? numWins ; numWins++;
-    gSaveBlock2Ptr->frontier.curChallengeBattleNum = MAX_SPARRING_STREAK;
+    gSaveBlock2Ptr->frontier.curChallengeBattleNum = (numWins == MAX_SPARRING_STREAK) ? numWins : ++numWins;
+    //gSaveBlock2Ptr->frontier.curChallengeBattleNum = MAX_SPARRING_STREAK;
 
     SaveCurrentStreak();
 }

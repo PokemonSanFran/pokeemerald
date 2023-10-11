@@ -173,7 +173,6 @@ script MasterDojo_Lobby_EventScript_EnterElevator{
         special(CallFrontierUtilFunc)
         frontier_saveparty
         setvar(VAR_RESULT, 0)
-        setvar(VAR_RESTRICTEDSPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE)
         sparring_save(CHALLENGE_STATUS_SAVING)
         warp(MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6)
 }

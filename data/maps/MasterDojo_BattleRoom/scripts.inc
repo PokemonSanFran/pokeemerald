@@ -67,7 +67,7 @@ MasterDojo_BattleRoom_EventScript_WarpToLobbyLost::
 
 
 MasterDojo_BattleRoom_EventScript_WarpToLobby::
-	warp MAP_MASTER_DOJO_LOBBY, 7, 9
+	warp MAP_MASTER_DOJO_LOBBY, 7, 8
 	waitstate
 	end
 
@@ -128,7 +128,7 @@ MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5:
 
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo::
-	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+	multichoice 19, 2, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
 	switch VAR_RESULT
 	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_3
 	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_4
@@ -160,7 +160,7 @@ MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_7:
 
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo::
-	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+	multichoice 19, 2, MULTI_GO_ON_REST_RETIRE, TRUE
 	switch VAR_RESULT
 	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_3
 	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_4
@@ -224,7 +224,7 @@ MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_8:
 
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes::
-	multichoice 20, 5, MULTI_GO_ON_HEAL_REST_RETIRE, TRUE
+	multichoice 19, 2, MULTI_GO_ON_HEAL_REST_RETIRE, TRUE
 	switch VAR_RESULT
 	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_3
 	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes_4
