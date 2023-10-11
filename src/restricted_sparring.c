@@ -42,10 +42,13 @@
 #include "tv.h"
 #include "restricted_sparring.h"
 #include "battle_records.h"
+#include "pokemon_icon.h"
 
 #define SPARRING_SAVEDATA gSaveBlock2Ptr->frontier.restrictedSparring
 static EWRAM_DATA u8 sRestrictedSparring_TypeWinsWindowId = 0;
-static EWRAM_DATA u8 sScrollableMultichoice_ItemSpriteId = 0;
+#ifdef RESTRICTED_SPARRING_MONS
+static EWRAM_DATA u16 sScrollableMultichoice_MonIconId[FRONTIER_PARTY_SIZE];
+#endif
 
 static void (* const sRestrictedSparringFuncs[])(void);
 static void InitSparringChallenge(void);
@@ -54,6 +57,7 @@ static void SetSparringData(void);
 static void SetSparringBattleWon(void);
 static void SaveSparringChallenge(void);
 static void SaveCurrentStreak(void);
+static void SaveCurrentParty(u32 typeMode, u8 lvlMode);
 static void GetOpponentIntroSpeech(void);
 static void RestoreNonConsumableHeldItems(void);
 static bool32 IsItemConsumable(u16 item);
@@ -135,6 +139,11 @@ static void SetSparringData(void)
 
 static void SetSparringBattleWon(void)
 {
+    //Debug
+    gSpecialVar_Result = gSaveBlock2Ptr->frontier.curChallengeBattleNum++;
+    gSpecialVar_Result = gSaveBlock2Ptr->frontier.curChallengeBattleNum++;
+    gSpecialVar_Result = gSaveBlock2Ptr->frontier.curChallengeBattleNum++;
+    gSpecialVar_Result = gSaveBlock2Ptr->frontier.curChallengeBattleNum++;
     gSpecialVar_Result = gSaveBlock2Ptr->frontier.curChallengeBattleNum++;
     SaveCurrentStreak();
 }
@@ -153,7 +162,37 @@ static void SaveCurrentStreak(void)
 
     if (oldStreak == (SPARRING_REWARD_BONUS_ROUND - 1))
         FlagSet(FLAG_SPARRING_FIRST_TYPE_WIN);
+
+#ifdef RESTRICTED_SPARRING_MONS
+    SaveCurrentParty(typeMode,lvlMode);
 }
+
+static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
+{
+    u32 i = 0;
+    u32 species;
+    u32 personality;
+
+    DebugPrintf("typeMode %d lvlMode %d",typeMode,lvlMode);
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i)
+    {
+        if (gSaveBlock2Ptr->frontier.selectedPartyMons[i] == 0)
+            break;
+
+        species = GetMonData(&gSaveBlock1Ptr->playerParty[gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1], MON_DATA_SPECIES, NULL);
+        personality = GetMonData(&gSaveBlock1Ptr->playerParty[gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1], MON_DATA_PERSONALITY, NULL);
+
+        SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].species = species;
+        SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].personality = personality;
+
+        DebugPrintf("slot %d: species %d personality%d",i,species,personality);
+
+    }
+#endif
+}
+
+
 
 static void SaveSparringChallenge(void)
 {
@@ -335,12 +374,6 @@ static void CheckSparringSymbol(void)
 
 u32 MaxChallengeNumInRestrictingSparring(u8 challengeNum)
 {
-    /*
-    if (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING)
-        return UCHAR_MAX;
-    else
-        return challengeNum;
-        */
     return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING) ? UCHAR_MAX : challengeNum;
 }
 
@@ -378,21 +411,37 @@ void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
     ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_LEFT_ALIGN, CountDigits(num));
     StringExpandPlaceholders(gStringVar2,gText_WinStreak);
     AddTextPrinterParameterized2(1, FONT_NORMAL, gStringVar2, 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
-    //ShowRestrictedSparringTypeMons(selection);
+
+#ifdef RESTRICTED_SPARRING_MONS
+    for (i = 0; i < FRONTIER_PARTY_SIZE; i)
+        ShowRestrictedSparringTypeMons(i, selection);
 }
 
-static void ShowRestrictedSparringTypeMons(u16 item)
+void DestroyMonIconAndFreeResources(void)
 {
-    FreeSpriteTilesByTag(TAG_ITEM_ICON);
-    FreeSpritePaletteByTag(TAG_ITEM_ICON);
-    //sScrollableMultichoice_ItemSpriteId = AddItemIconSprite(TAG_ITEM_ICON, TAG_ITEM_ICON, item);
+    for (u8 i = 0; i < FRONTIER_PARTY_SIZE; i++)
+        DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_MonIconId[i]]);
+}
 
-    if (sScrollableMultichoice_ItemSpriteId != MAX_SPRITES)
-    {
-        gSprites[sScrollableMultichoice_ItemSpriteId].oam.priority = 0;
-        gSprites[sScrollableMultichoice_ItemSpriteId].x = 36;
-        gSprites[sScrollableMultichoice_ItemSpriteId].y = 92;
-    }
+void InitRestrictedSparringMons(void)
+{
+    for (u8 i = 0; i < FRONTIER_PARTY_SIZE; i++)
+        sScrollableMultichoice_MonIconId[i] = 0;
+}
+
+static void ShowRestrictedSparringTypeMons(u32 index, u16 typeMode)
+{
+    u32 x = 36 + (index * 30);
+    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u32 species = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].species;
+    u32 personality = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].personality;
+
+    if (species == SPECIES_NONE)
+        return;
+
+    LoadMonIconPalette(species);
+    sScrollableMultichoice_MonIconId[index] = CreateMonIcon(species,SpriteCallbackDummy,x,92,0,personality,FALSE);
+#endif
 }
 
 static const struct WindowTemplate sFrontierResultsWindowTemplate =

@@ -2585,6 +2585,9 @@ static void Task_ShowScrollableMultichoice(u8 taskId)
     LockPlayerFieldControls();
     sScrollableMultichoice_ScrollOffset = 0;
     sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
+#ifdef RESTRICTED_SPARRING_MONS
+    InitRestrictedSparringMons();
+#endif
     FillFrontierExchangeCornerWindowAndItemIcon(task->tScrollMultiId, 0);
     ShowBattleFrontierTutorWindow(task->tScrollMultiId, 0);
     sScrollableMultichoice_ListMenuItem = AllocZeroed(task->tNumItems * 8);
@@ -3085,9 +3088,12 @@ static void HideFrontierExchangeCornerItemIcon(u16 menu, u16 unused)
         case SCROLL_MULTI_BF_EXCHANGE_CORNER_VITAMIN_VENDOR:
         case SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR:
             DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_ItemSpriteId]);
+#ifdef RESTRICTED_SPARRING_MONS
         case SCROLL_MULTI_POKEMON_TYPE:
-            return; //destroy mon sprites
+            DestroyMonIconAndFreeResources();
+            FreeMonIconPalettes();
             break;
+#endif
         }
         sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
     }

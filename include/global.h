@@ -364,9 +364,19 @@ struct BattleDomeTrainer
     u16 forfeited:3;
 };
 
+#ifdef RESTRICTED_SPARRING_MONS
+struct RestrictedSparringMon
+{
+    u16 species;
+    u32 personality;
+}__attribute__((packed));
 struct RestrictedSparring
 {
-    //u16 monId[FRONTIER_PARTY_SIZE-1];
+    struct RestrictedSparringMon sparringMon[FRONTIER_PARTY_SIZE];
+#else
+struct RestrictedSparring
+{
+#endif
     u8 winStreak;
 }__attribute__((packed));
 
