@@ -128,7 +128,7 @@ MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_5:
 
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo::
-	multichoice 19, 2, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+	multichoice 21, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
 	switch VAR_RESULT
 	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_3
 	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo_4
@@ -187,7 +187,7 @@ MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo_6:
 
 
 MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes::
-	multichoice 19, 2, MULTI_GO_ON_HEAL_RECORD_REST_RETIRE, TRUE
+	multichoice 20, 2, MULTI_GO_ON_HEAL_RECORD_REST_RETIRE, TRUE
 	switch VAR_RESULT
 	case 0, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_3
 	case 1, MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes_4

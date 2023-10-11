@@ -104,7 +104,7 @@ script MasterDojo_BattleRoom_EventScript_AskReadyForOpponent{
 }
 
 script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo{
-    multichoice(19,2,MULTI_GO_ON_RECORD_REST_RETIRE,TRUE)
+    multichoice(21,4,MULTI_GO_ON_RECORD_REST_RETIRE,TRUE)
         switch(var(VAR_RESULT)){
             case 0: goto(MasterDojo_BattleRoom_EventScript_ContinueChallenge)
             case 1: goto(MasterDojo_BattleRoom_EventScript_AskRecordBattle)
@@ -127,7 +127,7 @@ script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo{
 }
 
 script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes{
-    multichoice(19,2,MULTI_GO_ON_HEAL_RECORD_REST_RETIRE,TRUE)
+    multichoice(22,2,MULTI_GO_ON_HEAL_RECORD_REST_RETIRE,TRUE)
         switch(var(VAR_RESULT)){
             case 0: goto(MasterDojo_BattleRoom_EventScript_ContinueChallenge)
             case 1: goto(MasterDojo_BattleRoom_EventScript_AskHeal)
