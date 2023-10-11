@@ -77,8 +77,18 @@ script MasterDojo_BattleRoom_EventScript_DefeatedOpponent{
         waitmovement(CAMERA)
         removeobject(OPPONENT)
         waitmovement(ATTENDANT)
+        call(MasterDojo_BattleRoom_EventScript_StopChallenge)
         msgbox(MasterDojo_BattleRoom_Text_WellDone,MSGBOX_DEFAULT)
         goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
+}
+
+script MasterDojo_BattleRoom_EventScript_StopChallenge{
+        sparring_checkmaxstreak
+        if (!var(VAR_RESULT)){
+            return
+        }
+        msgbox(MasterDojo_Lobby_Text_MaxedOutStreak,MSGBOX_DEFAULT)
+        goto(MasterDojo_BattleRoom_EventScript_RetireChallenge)
 }
 
 script MasterDojo_BattleRoom_EventScript_AskReadyForOpponent{
@@ -307,5 +317,9 @@ text MasterDojo_BattleRoom_Text_DoYouWantToContinue{
 }
 
 text MasterDojo_BattleRoom_Text_DoYouWantToRestore{
-    format("Do you want to restore your Pokémon? (You can restore them {STR_VAR_1} more time.)")
+    format("Do you want to restore your POKéMON? (You can restore them {STR_VAR_1} more time(s).)")
+}
+
+text MasterDojo_Lobby_Text_MaxedOutStreak{
+    format("Wow, {PLAYER}, {STR_VAR_1} win(s) in a row... I think we all need a break!")
 }

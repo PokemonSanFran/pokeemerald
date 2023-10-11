@@ -120,96 +120,15 @@ MasterDojo_Lobby_EventScript_CreateTypeList::
 	waitstate
 	special CloseRestrictedSparringTypeWinsWindow
 	switch VAR_RESULT
-	case 0, MasterDojo_Lobby_EventScript_CreateTypeList_3
-	case 1, MasterDojo_Lobby_EventScript_CreateTypeList_4
-	case 2, MasterDojo_Lobby_EventScript_CreateTypeList_5
-	case 3, MasterDojo_Lobby_EventScript_CreateTypeList_6
-	case 4, MasterDojo_Lobby_EventScript_CreateTypeList_7
-	case 5, MasterDojo_Lobby_EventScript_CreateTypeList_8
-	case 6, MasterDojo_Lobby_EventScript_CreateTypeList_9
-	case 7, MasterDojo_Lobby_EventScript_CreateTypeList_10
-	case 8, MasterDojo_Lobby_EventScript_CreateTypeList_11
-	case 9, MasterDojo_Lobby_EventScript_CreateTypeList_12
-	case 10, MasterDojo_Lobby_EventScript_CreateTypeList_13
-	case 11, MasterDojo_Lobby_EventScript_CreateTypeList_14
-	case 12, MasterDojo_Lobby_EventScript_CreateTypeList_15
-	case 13, MasterDojo_Lobby_EventScript_CreateTypeList_16
-	case 14, MasterDojo_Lobby_EventScript_CreateTypeList_17
-	case 15, MasterDojo_Lobby_EventScript_CreateTypeList_18
-	case 16, MasterDojo_Lobby_EventScript_CreateTypeList_19
-	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_CreateTypeList_20
-MasterDojo_Lobby_EventScript_CreateTypeList_20:
-	goto MasterDojo_Lobby_EventScript_CancelChallenge
+	case 17, MasterDojo_Lobby_EventScript_CreateTypeList_4
+	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_CreateTypeList_4
+	sparring_convertmenutotype
 MasterDojo_Lobby_EventScript_CreateTypeList_1:
 	sparring_buffersparringtype
 	return
 
-MasterDojo_Lobby_EventScript_CreateTypeList_3:
-	setvar VAR_SPARRING_TYPE, TYPE_NORMAL
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
 MasterDojo_Lobby_EventScript_CreateTypeList_4:
-	setvar VAR_SPARRING_TYPE, TYPE_FIGHTING
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_5:
-	setvar VAR_SPARRING_TYPE, TYPE_FLYING
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_6:
-	setvar VAR_SPARRING_TYPE, TYPE_POISON
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_7:
-	setvar VAR_SPARRING_TYPE, TYPE_GROUND
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_8:
-	setvar VAR_SPARRING_TYPE, TYPE_ROCK
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_9:
-	setvar VAR_SPARRING_TYPE, TYPE_BUG
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_10:
-	setvar VAR_SPARRING_TYPE, TYPE_GHOST
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_11:
-	setvar VAR_SPARRING_TYPE, TYPE_STEEL
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_12:
-	setvar VAR_SPARRING_TYPE, TYPE_FIRE
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_13:
-	setvar VAR_SPARRING_TYPE, TYPE_WATER
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_14:
-	setvar VAR_SPARRING_TYPE, TYPE_GRASS
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_15:
-	setvar VAR_SPARRING_TYPE, TYPE_ELECTRIC
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_16:
-	setvar VAR_SPARRING_TYPE, TYPE_PSYCHIC
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_17:
-	setvar VAR_SPARRING_TYPE, TYPE_ICE
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_18:
-	setvar VAR_SPARRING_TYPE, TYPE_DRAGON
-	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
-
-MasterDojo_Lobby_EventScript_CreateTypeList_19:
-	setvar VAR_SPARRING_TYPE, TYPE_DARK
+	goto MasterDojo_Lobby_EventScript_CancelChallenge
 	goto MasterDojo_Lobby_EventScript_CreateTypeList_1
 
 
@@ -246,7 +165,7 @@ MasterDojo_Lobby_EventScript_ExplainChallenge_1:
 	end
 
 MasterDojo_Lobby_EventScript_ExplainChallenge_2:
-	goto MasterDojo_Lobby_EventScript_SaveBeforeChallenge
+	goto MasterDojo_Lobby_EventScript_TryEnterChallenge
 	goto MasterDojo_Lobby_EventScript_ExplainChallenge_1
 
 
@@ -284,15 +203,14 @@ MasterDojo_Lobby_EventScript_DenyChallenge::
 
 
 MasterDojo_Lobby_EventScript_EnterElevator::
-	sparring_save CHALLENGE_STATUS_SAVING
 	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
 	special CallFrontierUtilFunc
 	frontier_saveparty
 	setvar VAR_RESULT, 0
 	setvar VAR_RESTRICTEDSPARRING_HEAL_COUNT, SPARRING_MAX_NUM_RESTORE
-	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 	sparring_save CHALLENGE_STATUS_SAVING
+	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 	return
 
 
@@ -516,16 +434,16 @@ MasterDojo_Lobby_Text_RulesAreListed::
 	.string "listed.$"
 
 MasterDojo_Lobby_Text_OverviewBoard::
-	.string "Restricted Sparring is challenges you\n"
-	.string "to battle using up to three Pokémon of\l"
+	.string "RESTRICTED SPARRING is challenges you\n"
+	.string "to battle using up to three POKéMON of\l"
 	.string "a single type. Select a level mode and a\l"
 	.string "type, then battle your way through\l"
 	.string "five consecutive battles.$"
 
 MasterDojo_Lobby_Text_RestrictionsBoard::
-	.string "No duplicate Pokémon or items are\n"
+	.string "No duplicate POKéMON or items are\n"
 	.string "allowed. You can only restore your\l"
-	.string "Pokémon twice in total, so use your\l"
+	.string "POKéMON twice in total, so use your\l"
 	.string "opportunities wisely.$"
 
 MasterDojo_Lobby_Text_RewardsBoard::
@@ -535,12 +453,9 @@ MasterDojo_Lobby_Text_RewardsBoard::
 	.string "You'll recieve a reward for completing\l"
 	.string "training for all types in a level mode.$"
 
-MasterDojo_Lobby_Text_::
-	.string "$"
-
 MasterDojo_Lobby_Text_HiyahDo::
 	.string "Hi-yah! {PLAYER}! Do you want to try\n"
-	.string "Restricted Sparring?$"
+	.string "RESTRICTED SPARRING?$"
 
 MasterDojo_Lobby_Text_SelectTheTypeYouWant::
 	.string "Select the type you want to use for\n"
@@ -551,62 +466,47 @@ MasterDojo_Lobby_Text_IWontForceYou::
 	.string "don't want to do. Some other time, then.$"
 
 MasterDojo_Lobby_Text_RestrictedSparringIsATraining::
-	.string "Restricted Sparring is a training\n"
+	.string "RESTRICTED SPARRING is a training\n"
 	.string "course that restricts the type of\l"
-	.string "Pokémon you can use. Select a type\l"
+	.string "POKéMON you can use. Select a type\l"
 	.string "first, and then battle using up to\l"
-	.string "three Pokémon of that type. No\l"
-	.string "duplicate Pokémon or items are allowed.\l"
+	.string "three POKéMON of that type. No\l"
+	.string "duplicate POKéMON or items are allowed.\l"
 	.string "If you can win five times in a row,\l"
 	.string "you'll complete the training. However,\l"
 	.string "if you lose even once, the sparring will\l"
 	.string "end there! You can restore your\l"
-	.string "Pokémon between battles, but only\l"
+	.string "POKéMON between battles, but only\l"
 	.string "twice in total, so use the\l"
 	.string "opportunities very wisely. That's all!\l"
-	.string "Do you want to try Restricted\l"
-	.string "Sparring?$"
+	.string "Do you want to try RESTRICTED\l"
+	.string "SPARRING?$"
 
 MasterDojo_Lobby_Text_OhYouChangedYour::
 	.string "Oh, you changed your mind? Some other\n"
 	.string "time, then.$"
 
-MasterDojo_Lobby_Text_LetTheBattlesBegin::
-	.string "Let the battles begin! Battle No. 1!\n"
-	.string "Ready...$"
-
-MasterDojo_Lobby_Text_NextBattleNo::
-	.string "Next. Battle No. {STR_VAR_1}!\n"
-	.string "Ready...$"
-
-MasterDojo_Lobby_Text_Go::
-	.string "Go!$"
-
-MasterDojo_Lobby_Text_DoYouWantToRestore::
-	.string "Do you want to restore your Pokémon?\n"
-	.string "(You can restore them {STR_VAR_1}\l"
-	.string "more {STR_VAR_2}.)$"
-
 MasterDojo_Lobby_Text_YouLostbutTrainYourself::
 	.string "You lost...but train yourself and your\n"
-	.string "Pokémon, and try again! I'm looking\l"
+	.string "POKéMON, and try again! I'm looking\l"
 	.string "forward to your next challenge.$"
 
 MasterDojo_Lobby_Text_YourResultForThisRestricted::
-	.string "Your result for this Restricted\n"
-	.string "Sparring set is... You had\l"
-	.string "{STR_VAR_1} wins with the\l"
-	.string "{STR_VAR_3}-type Pokémon\l"
+	.string "Your result for this RESTRICTED\n"
+	.string "SPARRING set is... You had\l"
+	.string "{STR_VAR_1} win(s) with the\l"
+	.string "{STR_VAR_3}-type POKéMON\l"
 	.string "restriction!$"
 
 MasterDojo_Lobby_Text_TheWayYouHandleType::
 	.string "The way you handle\n"
-	.string "{STR_VAR_3}-type Pokémon is\l"
+	.string "{STR_VAR_3}-type POKéMON is\l"
 	.string "flawless!$"
 
 MasterDojo_Lobby_Text_WhatYouCompletedRestricted::
-	.string "What?! You completed Restricted\n"
-	.string "Sparring with {STR_VAR_1} types?!$"
+	.string "What?! You completed RESTRICTED\n"
+	.string "SPARRING with {STR_VAR_1}\l"
+	.string "type(s)?!$"
 
 MasterDojo_Lobby_Text_ThatsExcellentWork::
 	.string "That's excellent work!$"
@@ -627,14 +527,6 @@ MasterDojo_Lobby_Text_IHopeYoullKeep::
 	.string "I hope you'll keep exceeding your own\n"
 	.string "limits!$"
 
-MasterDojo_Lobby_Text_DoYouWantToContinueNoHeal::
-	.string "Do you want to continue sparring?$"
-
-MasterDojo_Lobby_Text_DoYouWantToContinue::
-	.string "Do you want to continue sparring? (You\n"
-	.string "can restore them {STR_VAR_1} more\l"
-	.string "{STR_VAR_2}.)$"
-
 MasterDojo_Lobby_Text_DidntSaveBeforeQuitting::
 	.string "Oops! {PLAYER}, it seems you didn't\n"
 	.string "save before quitting your challenge\l"
@@ -652,7 +544,7 @@ MasterDojo_Lobby_Text_WeveBeenWaitingForYou::
 	.string "We've been waiting for you, {PLAYER}!$"
 
 MasterDojo_Lobby_Text_ProgressWillBeSaved::
-	.string "Before entering a BATTLE ROOM, your\n"
+	.string "Before entering the BATTLE COURT, your\n"
 	.string "progress will be saved. Hang tight!$"
 
 MasterDojo_Lobby_Text_ThereWasAGlitch::
@@ -661,14 +553,14 @@ MasterDojo_Lobby_Text_ThereWasAGlitch::
 	.string "next time!$"
 
 MasterDojo_Lobby_Text_OffersTwoLevels::
-	.string "Restricted Sparring offers two levels\n"
+	.string "RESTRICTED SPARRING offers two levels\n"
 	.string "of challenge, Level 50 and Open Level.\l"
 	.string "So, which one is your pick?$"
 
 MasterDojo_Lobby_Text_BeforeDivingInto::
-	.string "Before diving into Restricted Sparring,\n"
-	.string "your progress must be saved. Is that\l"
-	.string "cool?$"
+	.string "Before diving into RESTRICTED\n"
+	.string "SPARRING, your progress must be saved.\l"
+	.string "Is that cool?$"
 
 MasterDojo_Lobby_Text_NotEnoughValidMonsLv50Singles::
 	.string "Hold up, {PLAYER}! You need three\n"
@@ -688,8 +580,9 @@ MasterDojo_Lobby_Text_NotEnoughValidMonsLvOpenSingles::
 	.string "back when you're ready!$"
 
 MasterDojo_Lobby_Text_RecordLastMatch::
-	.string "Want me to record your last Restricted\n"
-	.string "Sparring match on your FRONTIER PASS?$"
+	.string "Want me to record your last RESTRICTED\n"
+	.string "SPARRING match on your FRONTIER\l"
+	.string "PASS?$"
 
 MasterDojo_Lobby_Text_YouEarned::
 	.string "You earned {STR_VAR_1} BP!$"

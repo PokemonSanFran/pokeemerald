@@ -81,8 +81,21 @@ MasterDojo_BattleRoom_EventScript_DefeatedOpponent::
 	waitmovement OBJ_EVENT_ID_CAMERA
 	removeobject 2
 	waitmovement 1
+	call MasterDojo_BattleRoom_EventScript_StopChallenge
 	msgbox MasterDojo_BattleRoom_Text_WellDone, MSGBOX_DEFAULT
 	goto MasterDojo_BattleRoom_EventScript_AskReadyForOpponent
+	return
+
+
+MasterDojo_BattleRoom_EventScript_StopChallenge::
+	sparring_checkmaxstreak
+	compare VAR_RESULT, 0
+	goto_if_eq MasterDojo_BattleRoom_EventScript_StopChallenge_2
+	msgbox MasterDojo_Lobby_Text_MaxedOutStreak, MSGBOX_DEFAULT
+	goto MasterDojo_BattleRoom_EventScript_RetireChallenge
+	return
+
+MasterDojo_BattleRoom_EventScript_StopChallenge_2:
 	return
 
 
@@ -459,6 +472,10 @@ MasterDojo_BattleRoom_Text_DoYouWantToContinue::
 	.string "Do you want to continue sparring?$"
 
 MasterDojo_BattleRoom_Text_DoYouWantToRestore::
-	.string "Do you want to restore your Pokémon?\n"
+	.string "Do you want to restore your POKéMON?\n"
 	.string "(You can restore them {STR_VAR_1}\l"
-	.string "more time.)$"
+	.string "more time(s).)$"
+
+MasterDojo_Lobby_Text_MaxedOutStreak::
+	.string "Wow, {PLAYER}, {STR_VAR_1} win(s)\n"
+	.string "in a row... I think we all need a break!$"

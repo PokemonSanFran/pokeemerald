@@ -87,3 +87,15 @@
     setvar VAR_0x8004, SPARRING_FUNC_CHECK_SYMBOL
     special CallRestrictedSparringFunc
     .endm
+
+    @ Take the input from ShowRestrictedSparringTypeWinsWindow and set VAR_SPARRING_TYPE by skipping TYPE_MYSTERY
+    .macro sparring_convertmenutotype
+    setvar VAR_0x8004, SPARRING_FUNC_CONVERT_TYPE
+    special CallRestrictedSparringFunc
+    .endm
+
+    @ Check the number of wins for the player, and if over the max, returns TRUE to VAR_RESULT
+    .macro sparring_checkmaxstreak
+    setvar VAR_0x8004, SPARRING_FUNC_CHECK_MAX
+    special CallRestrictedSparringFunc
+    .endm
