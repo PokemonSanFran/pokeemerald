@@ -2113,7 +2113,8 @@ static void CheckPartyIneligibility(void)
     else
     {
         gSpecialVar_0x8004 = FALSE;
-        gSaveBlock2Ptr->frontier.lvlMode = gSpecialVar_Result;
+        if (VarGet(VAR_FRONTIER_FACILITY) != FRONTIER_FACILITY_SPARRING)
+            gSaveBlock2Ptr->frontier.lvlMode = gSpecialVar_Result;
     }
     #undef numEligibleMons
 }

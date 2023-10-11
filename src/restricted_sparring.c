@@ -54,7 +54,6 @@ static void SetSparringData(void);
 static void SetSparringBattleWon(void);
 static void SaveSparringChallenge(void);
 static void SaveCurrentStreak(void);
-static u32 GetCurrentSparringWinStreak(u8, u32);
 static void GetOpponentIntroSpeech(void);
 static void RestoreNonConsumableHeldItems(void);
 static bool32 IsItemConsumable(u16 item);
@@ -92,7 +91,6 @@ void CallRestrictedSparringFunc(void)
 
 static void InitSparringChallenge(void)
 {
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     u32 typeMode= VarGet(VAR_SPARRING_TYPE);
 
@@ -108,7 +106,7 @@ static void InitSparringChallenge(void)
 
 static void GetSparringData(void)
 {
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     u32 typeMode= VarGet(VAR_SPARRING_TYPE);
 
@@ -127,10 +125,6 @@ static void GetSparringData(void)
 
 static void SetSparringData(void)
 {
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
-    u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-    u32 typeMode = VarGet(VAR_SPARRING_TYPE);
-
     switch (gSpecialVar_0x8005)
     {
     case SPARRING_DATA_WIN_STREAK:
@@ -159,16 +153,6 @@ static void SaveCurrentStreak(void)
 
     if (oldStreak == (SPARRING_REWARD_BONUS_ROUND - 1))
         FlagSet(FLAG_SPARRING_FIRST_TYPE_WIN);
-}
-
-static u32 GetCurrentSparringWinStreak(u8 lvlMode, u32 typeMode)
-{
-    u32 winStreak = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak = winStreak;
-
-    if (winStreak > MAX_SPARRING_STREAK)
-        return MAX_SPARRING_STREAK;
-    else
-        return winStreak;
 }
 
 static void SaveSparringChallenge(void)
@@ -306,7 +290,7 @@ static void BufferSparringTypeNameToString(void)
     StringCopy(gStringVar3, gTypeNames[VarGet(VAR_SPARRING_TYPE)]);
 }
 
-static u32 CountNumberTypeWin(u32 lvlMode)
+static u32 CountNumberTypeWin(u8 lvlMode)
 {
     u32 i, numWins = 0;
 
@@ -320,7 +304,7 @@ static u32 CountNumberTypeWin(u32 lvlMode)
 
 static u32 CountNumberTypeWinFromSaveblock(void)
 {
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     return CountNumberTypeWin(lvlMode);
 }
 
@@ -385,7 +369,7 @@ void CloseRestrictedSparringTypeWinsWindow(void)
 }
 void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
 {
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u32 num = SPARRING_SAVEDATA[selection][lvlMode].winStreak;
     u32 width = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_WIDTH);
     u32 height = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_HEIGHT);
