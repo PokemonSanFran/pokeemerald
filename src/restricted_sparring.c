@@ -412,6 +412,9 @@ void CloseRestrictedSparringTypeWinsWindow(void)
 {
     ClearStdWindowAndFrameToTransparent(sRestrictedSparring_TypeWinsWindowId, TRUE);
     RemoveWindow(sRestrictedSparring_TypeWinsWindowId);
+#ifdef RESTRICTED_SPARRING_MONS
+    CloseRestrictedSparringTypeMonsWindow();
+#endif
 }
 void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
 {
@@ -545,6 +548,18 @@ void ShowSparringResultsWindow(void)
 
     PutWindowTilemap(gRecordsWindowId);
     CopyWindowToVram(gRecordsWindowId, COPYWIN_FULL);
+
+#ifdef RESTRICTED_SPARRING_MONS
+    ShowRestrictedSparringTypeMonsWindow();
+}
+
+void ShowRestrictedSparringTypeMonsWindow(void)
+{
+}
+
+void CloseRestrictedSparringTypeMonsWindow(void)
+{
+#endif
 }
 
 static void CompareStreakToMax(void)
