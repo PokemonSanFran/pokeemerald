@@ -69,7 +69,7 @@ static void ConvertMenuInputToTypeAndSetVar(void);
 static void BufferSparringTypeNameToString(void);
 static u32 CountNumberTypeWinFromSaveblock(void);
 static void CheckSparringSymbol(void);
-static void ShowRestrictedSparringTypeMons(u16 item);
+static void ShowRestrictedSparringTypeMons(u32 index, u16 typeMode);
 static void SparringPrintStreak(const u8 *str, u16 num, u8 x, u8 y);
 static void CompareStreakToMax();
 
@@ -177,7 +177,7 @@ static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
 
     DebugPrintf("typeMode %d lvlMode %d",typeMode,lvlMode);
 
-    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i)
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
         if (gSaveBlock2Ptr->frontier.selectedPartyMons[i] == 0)
             break;
@@ -423,6 +423,7 @@ void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
     u32 num = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak;
     u32 width = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_WIDTH) * 8;
     u32 height = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_HEIGHT) * 8;
+    u32 i = 0;
 
     DebugPrintf("type is %d and streak is %d",typeMode,num);
 
@@ -437,7 +438,10 @@ void FillRestrictedSparringWinWindowAndPokemonIcon(u16 selection)
 
 
 #ifdef RESTRICTED_SPARRING_MONS
-    for (i = 0; i < FRONTIER_PARTY_SIZE; i)
+    if (num == 0)
+        return;
+
+    for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
         ShowRestrictedSparringTypeMons(i, typeMode);
 }
 
