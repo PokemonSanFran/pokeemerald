@@ -161,8 +161,8 @@ static void SaveCurrentStreak(void)
 
     SPARRING_SAVEDATA[typeMode][lvlMode].winStreak = currentStreak;
 
-    if (oldStreak < (SPARRING_REWARD_BONUS_ROUND - 1))
-        if (currentStreak > (SPARRING_REWARD_BONUS_ROUND - 1))
+    if (oldStreak < SPARRING_REWARD_BONUS_ROUND)
+        if (currentStreak >= SPARRING_REWARD_BONUS_ROUND)
             FlagSet(FLAG_SPARRING_FIRST_TYPE_WIN);
 
 #ifdef RESTRICTED_SPARRING_MONS
