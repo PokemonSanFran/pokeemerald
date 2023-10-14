@@ -25,3 +25,4 @@
 [] If that works, you either need to make this multichoice wider OR make new strings that have spacers at the end
 [] Code cleanup
 https://hastebin.com/share/sekukufiso
+https://archives.bulbagarden.net/media/upload/d/dc/Company_Icon_Master_Dojo.png
