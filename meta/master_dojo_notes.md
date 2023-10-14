@@ -26,3 +26,7 @@
 [] Code cleanup
 https://hastebin.com/share/sekukufiso
 https://archives.bulbagarden.net/media/upload/d/dc/Company_Icon_Master_Dojo.png
+https://raw.githubusercontent.com/PokemonSanFran/pokeemerald/BattleFrontier_Poryscript/data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory
+https://raw.githubusercontent.com/PokemonSanFran/pokeemerald/BattleFrontier_Poryscript/data/maps/BattleFrontier_BattleTowerLobby/scripts.pory
+https://bulbapedia.bulbagarden.net/wiki/Restricted_Sparring
+https://www.youtube.com/watch?v=bif6BYHg85M&list=PL3jZk06_XHp26hBfl5M4pDuKk-q4tUDz1&index=23
