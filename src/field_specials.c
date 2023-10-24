@@ -3015,7 +3015,7 @@ static void FillFrontierExchangeCornerWindowAndItemIcon(u16 menu, u16 selection)
     #include "data/battle_frontier/battle_frontier_exchange_corner.h"
 
     if (menu == SCROLL_MULTI_POKEMON_TYPE)
-        FillRestrictedSparringWindows(selection);
+        Sparring_FillWindows(selection); // master_dojo
 
     if (menu >= SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1 && menu <= SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR)
     {
@@ -3088,9 +3088,11 @@ static void HideFrontierExchangeCornerItemIcon(u16 menu, u16 unused)
         }
         sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
     }
+// Start master_dojo
 #ifdef RESTRICTED_SPARRING_MONS
-    DestroyMonIconAndFreeResources(menu);
+    Sparring_DestroyMonIconFreeResources(menu);
 #endif
+// End master_dojo
 }
 
 static const u16 sBattleFrontier_TutorMoves1[] =

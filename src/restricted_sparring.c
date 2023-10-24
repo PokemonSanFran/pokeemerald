@@ -49,15 +49,13 @@ static bool32 IsFirstTypeWin(void);
 static u8 ConvertMenuInputToType(u8);
 static void ConvertMenuInputToTypeAndSetVar(void);
 static void BufferSparringTypeNameToString(void);
-static u32 CountNumberTypeWinFromSaveblock(void);
+static u32 GetNumberTypeWinFromSaveblock(void);
 static void CheckSparringSymbol(void);
-static void SparringPrintStreak(const u8*, u16, u8, u8);
+static void PrintSparringStreak(const u8*, u16, u8, u8);
 static void CompareStreakToMax();
-void InitRestrictedSparringMons(void);
-void ShowRestrictedSparringTypeWinsWindow(void);
-void CloseRestrictedSparringTypeWinsWindow(void);
-void ShowRestrictedSparringTypeMonsWindow(void);
-void CloseRestrictedSparringTypeMonsWindow(void);
+static void ShowRestrictedSparringTypeWinsWindow(void);
+static void CloseRestrictedSparringTypeWinsWindow(void);
+static void GetContinueMenuType(void);
 //void ShowRestrictedSparringMarkWindow(void);
 //void CloseRestrictedSparringMarkWindow(void);
 
@@ -72,6 +70,9 @@ static const struct WindowTemplate sRestrictedSparring_TypeWinsWindowTemplate =
     .baseBlock = 20,
 };
 #ifdef RESTRICTED_SPARRING_MONS
+static void InitRestrictedSparringMons(void);
+static void ShowRestrictedSparringTypeMonsWindow(void);
+static void CloseRestrictedSparringTypeMonsWindow(void);
 static const struct WindowTemplate sRestrictedSparring_TypeMonsWindowTemplate =
 {
     .bg = 0,
@@ -326,7 +327,7 @@ static void GiveBattlePoints(void)
     gSaveBlock2Ptr->frontier.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 }
 
-bool32 CheckIfPartyMonMatchesType(struct Pokemon *mon)
+bool32 Sparring_CheckIfPartyMonMatchesType(struct Pokemon *mon)
 {
     u32 species = GetMonData(mon, MON_DATA_SPECIES);
     u32 chosenType = VarGet(VAR_SPARRING_TYPE);
@@ -353,14 +354,14 @@ static u32 CountNumberTypeWin(u8 lvlMode)
     return numWins;
 }
 
-static u32 CountNumberTypeWinFromSaveblock(void)
+static u32 GetNumberTypeWinFromSaveblock(void)
 {
     return CountNumberTypeWin(gSaveBlock2Ptr->frontier.lvlMode);
 }
 
 static void CheckSparringSymbol(void)
 {
-    u32 numWins = CountNumberTypeWinFromSaveblock();
+    u32 numWins = GetNumberTypeWinFromSaveblock();
     u8 numDigits = CountDigits(numWins);
     u32 hasSilver = FlagGet(FLAG_SYS_ARENA_SILVER);
     u32 hasGold = FlagGet(FLAG_SYS_ARENA_GOLD);
@@ -377,7 +378,7 @@ static void CheckSparringSymbol(void)
         gSpecialVar_Result = SPARRING_GET_NONE;
 }
 
-u32 MaxChallengeNumInRestrictingSparring(u8 challengeNum)
+u32 Sparring_SetChallengeNumToMax(u8 challengeNum)
 {
     return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING) ? UCHAR_MAX : challengeNum;
 }
@@ -392,7 +393,7 @@ static void ConvertMenuInputToTypeAndSetVar(void)
     VarSet(VAR_SPARRING_TYPE,ConvertMenuInputToType(gSpecialVar_Result));
 }
 
-void ShowRestrictedSparringWinsWindow(void)
+void Sparring_ShowWinsWindow(void)
 {
     //ShowRestrictedSparringMarkWindow();
     ShowRestrictedSparringTypeWinsWindow();
@@ -402,7 +403,7 @@ void ShowRestrictedSparringWinsWindow(void)
 #endif
 }
 
-void CloseRestrictedSparringWinsWindow(void)
+void Sparring_CloseWindsWindow(void)
 {
     //CloseRestrictedSparringMarkWindow();
     CloseRestrictedSparringTypeWinsWindow();
@@ -411,7 +412,7 @@ void CloseRestrictedSparringWinsWindow(void)
 #endif
 }
 
-void ShowRestrictedSparringTypeWinsWindow(void)
+static void ShowRestrictedSparringTypeWinsWindow(void)
 {
     sRestrictedSparring_TypeWinsWindowId = AddWindow(&sRestrictedSparring_TypeWinsWindowTemplate);
     SetStandardWindowBorderStyle(sRestrictedSparring_TypeWinsWindowId, FALSE);
@@ -419,13 +420,13 @@ void ShowRestrictedSparringTypeWinsWindow(void)
     CopyWindowToVram(sRestrictedSparring_TypeWinsWindowId, COPYWIN_GFX);
 }
 
-void CloseRestrictedSparringTypeWinsWindow(void)
+static void CloseRestrictedSparringTypeWinsWindow(void)
 {
     ClearStdWindowAndFrameToTransparent(sRestrictedSparring_TypeWinsWindowId, TRUE);
     RemoveWindow(sRestrictedSparring_TypeWinsWindowId);
 }
 
-void ShowRestrictedSparringTypeMonsWindow(void)
+static void ShowRestrictedSparringTypeMonsWindow(void)
 {
     sRestrictedSparring_TypeMonsWindowId = AddWindow(&sRestrictedSparring_TypeMonsWindowTemplate);
     SetStandardWindowBorderStyle(sRestrictedSparring_TypeMonsWindowId, FALSE);
@@ -433,7 +434,7 @@ void ShowRestrictedSparringTypeMonsWindow(void)
     CopyWindowToVram(sRestrictedSparring_TypeMonsWindowId, COPYWIN_GFX);
 }
 
-void CloseRestrictedSparringTypeMonsWindow(void)
+static void CloseRestrictedSparringTypeMonsWindow(void)
 {
     ClearStdWindowAndFrameToTransparent(sRestrictedSparring_TypeMonsWindowId, TRUE);
     RemoveWindow(sRestrictedSparring_TypeMonsWindowId);
@@ -480,7 +481,7 @@ void FillRestrictedSparringTypeMons(u16 typeMode)
     }
 }
 
-void DestroyMonIconAndFreeResources(u16 menu)
+void Sparring_DestroyMonIconFreeResources(u16 menu)
 {
     u32 i = 0;
 
@@ -492,7 +493,7 @@ void DestroyMonIconAndFreeResources(u16 menu)
         DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_MonIconId[i]]);
 }
 
-void InitRestrictedSparringMons(void)
+static void InitRestrictedSparringMons(void)
 {
     u32 i = 0;
 
@@ -502,7 +503,7 @@ void InitRestrictedSparringMons(void)
 
 static void SparringPrintTypesMastered(u8 lvlMode, u8 x, u8 y)
 {
-    SparringPrintStreak(gText_TypesMastered, CountNumberTypeWin(lvlMode), x, y);
+    PrintSparringStreak(gText_TypesMastered, CountNumberTypeWin(lvlMode), x, y);
 }
 
 static u32 GetBestTypeWinAmount(u8 lvlMode)
@@ -536,10 +537,10 @@ static const u8 *GetBestTypeWinType(u8 lvlMode)
 static void SparringPrintBestStreak(u8 lvlMode, u8 x, u8 y)
 {
     StringCopy(gStringVar2,GetBestTypeWinType(lvlMode));
-    SparringPrintStreak(gText_BestStreak,GetBestTypeWinAmount(lvlMode),x,y);
+    PrintSparringStreak(gText_BestStreak,GetBestTypeWinAmount(lvlMode),x,y);
 }
 
-static void SparringPrintStreak(const u8 *str, u16 num, u8 x, u8 y)
+static void PrintSparringStreak(const u8 *str, u16 num, u8 x, u8 y)
 {
     if (num > MAX_SPARRING_STREAK)
         num = MAX_SPARRING_STREAK;
@@ -549,7 +550,7 @@ static void SparringPrintStreak(const u8 *str, u16 num, u8 x, u8 y)
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, NULL);
 }
 
-void ShowSparringResultsWindow(void)
+void Sparring_ShowResultsWindow(void)
 {
     static const struct WindowTemplate sFrontierResultsWindowTemplate =
     {
@@ -592,7 +593,7 @@ static void CompareStreakToMax(void)
     gSpecialVar_Result = TRUE;
 }
 
-void FillRestrictedSparringWindows(u16 selection)
+void Sparring_FillWindows(u16 selection)
 {
     //FillRestrictedSparringMarkWindow(selection);
     FillRestrictedSparringWinWindow(selection);

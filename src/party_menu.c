@@ -5606,7 +5606,7 @@ static bool8 GetBattleEntryEligibility(struct Pokemon *mon)
     case FACILITY_UNION_ROOM:
         return TRUE;
     case FRONTIER_FACILITY_SPARRING:
-        if (!CheckIfPartyMonMatchesType(mon))
+        if (!Sparring_CheckIfPartyMonMatchesType(mon)) // master_dojo
             return FALSE;
     default: // Battle Frontier
         species = GetMonData(mon, MON_DATA_SPECIES);

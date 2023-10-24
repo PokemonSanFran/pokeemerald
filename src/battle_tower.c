@@ -1105,7 +1105,7 @@ static void SetNextFacilityOpponent(void)
 u16 GetRandomScaledFrontierTrainerId(u8 challengeNum, u8 battleNum)
 {
     u16 trainerId;
-    challengeNum = MaxChallengeNumInRestrictingSparring(challengeNum);
+    challengeNum = Sparring_SetChallengeNumToMax(challengeNum); // master_dojo
 
     if (challengeNum <= 7)
     {
