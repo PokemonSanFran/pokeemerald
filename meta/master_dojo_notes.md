@@ -19,8 +19,8 @@
 [x] Seperate out tower functions from sparring functions
 [x] Difficulty should start on final level from the jump
 [x] figure out how SwSh builds opponents and then mimic
-[] Show mons on saveblock
-[] window needs to be 120 wide because each pokemon is 40 wide max
+[x] Show mons on saveblock
+[x] window needs to be 120 wide because each pokemon is 40 wide max
 [] Crown icon shows when user has completed that streak, use the same function that is printing the text to the win streak window to print text in the type name window
 [] If that works, you either need to make this multichoice wider OR make new strings that have spacers at the end
 [] Code cleanup

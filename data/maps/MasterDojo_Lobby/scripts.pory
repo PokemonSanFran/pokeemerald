@@ -93,10 +93,10 @@ script MasterDojo_Lobby_EventScript_TryEnterChallenge{
 script MasterDojo_Lobby_EventScript_CreateTypeList{
     setvar(VAR_0x8009,0)
         setvar(VAR_0x8004,SCROLL_MULTI_POKEMON_TYPE)
-        special(ShowRestrictedSparringTypeWinsWindow)
+        special(ShowRestrictedSparringWinsWindow)
         special(ShowScrollableMultichoice)
         waitstate
-        special(CloseRestrictedSparringTypeWinsWindow)
+        special(CloseRestrictedSparringWinsWindow)
 
         switch(var(VAR_RESULT)){
             default: sparring_convertmenutotype

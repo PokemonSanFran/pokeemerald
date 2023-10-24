@@ -2585,9 +2585,6 @@ static void Task_ShowScrollableMultichoice(u8 taskId)
     LockPlayerFieldControls();
     sScrollableMultichoice_ScrollOffset = 0;
     sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
-#ifdef RESTRICTED_SPARRING_MONS
-    InitRestrictedSparringMons();
-#endif
     FillFrontierExchangeCornerWindowAndItemIcon(task->tScrollMultiId, 0);
     ShowBattleFrontierTutorWindow(task->tScrollMultiId, 0);
     sScrollableMultichoice_ListMenuItem = AllocZeroed(task->tNumItems * 8);
@@ -3018,7 +3015,7 @@ static void FillFrontierExchangeCornerWindowAndItemIcon(u16 menu, u16 selection)
     #include "data/battle_frontier/battle_frontier_exchange_corner.h"
 
     if (menu == SCROLL_MULTI_POKEMON_TYPE)
-        FillRestrictedSparringWinWindowAndPokemonIcon(selection);
+        FillRestrictedSparringWindows(selection);
 
     if (menu >= SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1 && menu <= SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR)
     {
@@ -3083,20 +3080,17 @@ static void HideFrontierExchangeCornerItemIcon(u16 menu, u16 unused)
     {
         switch (menu)
         {
-        case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1:
-        case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_2:
-        case SCROLL_MULTI_BF_EXCHANGE_CORNER_VITAMIN_VENDOR:
-        case SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR:
-            DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_ItemSpriteId]);
-#ifdef RESTRICTED_SPARRING_MONS
-        case SCROLL_MULTI_POKEMON_TYPE:
-            DestroyMonIconAndFreeResources();
-            FreeMonIconPalettes();
-            break;
-#endif
+            case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1:
+            case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_2:
+            case SCROLL_MULTI_BF_EXCHANGE_CORNER_VITAMIN_VENDOR:
+            case SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR:
+                DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_ItemSpriteId]);
         }
         sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
     }
+#ifdef RESTRICTED_SPARRING_MONS
+    DestroyMonIconAndFreeResources(menu);
+#endif
 }
 
 static const u16 sBattleFrontier_TutorMoves1[] =
