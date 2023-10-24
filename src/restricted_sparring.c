@@ -23,7 +23,8 @@
 #include "pokemon_icon.h"
 #endif
 
-#define SPARRING_SAVEDATA gSaveBlock2Ptr->frontier.restrictedSparring
+#define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
+#define SPARRING_SAVEDATA FRONTIER_SAVEDATA.restrictedSparring
 
 static EWRAM_DATA u8 sRestrictedSparring_TypeWinsWindowId = 0;
 static EWRAM_DATA u8 sRestrictedSparring_MarkWindowId = 0;
@@ -33,31 +34,42 @@ static EWRAM_DATA u16 sScrollableMultichoice_MonIconId[FRONTIER_PARTY_SIZE];
 #endif
 
 static void (* const sRestrictedSparringFuncs[])(void);
+
 static void InitSparringChallenge(void);
 static void GetSparringData(void);
 static void SetSparringData(void);
 static void SetSparringBattleWon(void);
-static void SaveSparringChallenge(void);
 static void SaveCurrentStreak(void);
 static void SaveCurrentParty(u32, u8);
+static void SaveSparringChallenge(void);
 static void GetOpponentIntroSpeech(void);
-static void RestoreNonConsumableHeldItems(void);
+static void GetContinueMenuType(void);
 static bool32 IsItemConsumable(u16);
+static void RestoreNonConsumableHeldItems(void);
 static void ResetSketchedMoves(void);
-static void GiveBattlePoints(void);
 static bool32 IsFirstTypeWin(void);
-static u8 ConvertMenuInputToType(u8);
-static void ConvertMenuInputToTypeAndSetVar(void);
+static u32 CalculateBattlePoints(u32);
+static void GiveBattlePoints(void);
 static void BufferSparringTypeNameToString(void);
+static u32 CountNumberTypeWin(u8);
 static u32 GetNumberTypeWinFromSaveblock(void);
 static void CheckSparringSymbol(void);
-static void PrintSparringStreak(const u8*, u16, u8, u8);
-static void CompareStreakToMax();
+static u8 ConvertMenuInputToType(u8);
+static void ConvertMenuInputToTypeAndSetVar(void);
 static void ShowRestrictedSparringTypeWinsWindow(void);
 static void CloseRestrictedSparringTypeWinsWindow(void);
-static void GetContinueMenuType(void);
+static void ShowRestrictedSparringTypeMonsWindow(void);
+static void CloseRestrictedSparringTypeMonsWindow(void);
+static void InitRestrictedSparringMons(void);
+static void SparringPrintTypesMastered(u8, u8, u8);
+static u32 GetBestTypeWinAmount(u8);
+static const u8 *GetBestTypeWinType(u8);
+static void SparringPrintBestStreak(u8, u8, u8);
+static void PrintSparringStreak(const u8*, u16, u8, u8);
+static void CompareStreakToMax(void);
 //void ShowRestrictedSparringMarkWindow(void);
 //void CloseRestrictedSparringMarkWindow(void);
+//void void FillRestrictedSparringMarkWindow(u16);
 
 static const struct WindowTemplate sRestrictedSparring_TypeWinsWindowTemplate =
 {
@@ -121,10 +133,10 @@ void CallRestrictedSparringFunc(void)
 static void InitSparringChallenge(void)
 {
     FlagClear(FLAG_SPARRING_FIRST_TYPE_WIN);
-    gSaveBlock2Ptr->frontier.challengeStatus = 0;
-    gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
-    gSaveBlock2Ptr->frontier.challengePaused = FALSE;
-    gSaveBlock2Ptr->frontier.disableRecordBattle = FALSE;
+    FRONTIER_SAVEDATA.challengeStatus = 0;
+    FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
+    FRONTIER_SAVEDATA.challengePaused = FALSE;
+    FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
     VarSet(VAR_RESTRICTEDSPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE);
 
     gTrainerBattleOpponent_A = 0;
@@ -132,14 +144,14 @@ static void InitSparringChallenge(void)
 
 static void GetSparringData(void)
 {
-    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     u32 typeMode= VarGet(VAR_SPARRING_TYPE);
 
     switch (gSpecialVar_0x8005)
     {
     case SPARRING_DATA_WIN_STREAK:
-        gSpecialVar_Result = (gSaveBlock2Ptr->frontier.curChallengeBattleNum);
+        gSpecialVar_Result = (FRONTIER_SAVEDATA.curChallengeBattleNum);
         break;
     case SPARRING_DATA_LVL_MODE:
         gSpecialVar_Result = lvlMode;
@@ -154,26 +166,26 @@ static void SetSparringData(void)
     switch (gSpecialVar_0x8005)
     {
     case SPARRING_DATA_WIN_STREAK:
-        gSaveBlock2Ptr->frontier.curChallengeBattleNum = gSpecialVar_0x8006;
+        FRONTIER_SAVEDATA.curChallengeBattleNum = gSpecialVar_0x8006;
         break;
     }
 }
 
 static void SetSparringBattleWon(void)
 {
-    u8 numWins = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+    u8 numWins = FRONTIER_SAVEDATA.curChallengeBattleNum;
 
-    gSaveBlock2Ptr->frontier.curChallengeBattleNum = (numWins == MAX_SPARRING_STREAK) ? numWins : ++numWins;
+    FRONTIER_SAVEDATA.curChallengeBattleNum = (numWins == MAX_SPARRING_STREAK) ? numWins : ++numWins;
 
     SaveCurrentStreak();
 }
 
 static void SaveCurrentStreak(void)
 {
-    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 typeMode = VarGet(VAR_SPARRING_TYPE);
     u32 oldStreak = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak;
-    u32 currentStreak = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+    u32 currentStreak = FRONTIER_SAVEDATA.curChallengeBattleNum;
 
     if (oldStreak >= currentStreak)
         return;
@@ -196,11 +208,11 @@ static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
-        if (gSaveBlock2Ptr->frontier.selectedPartyMons[i] == 0)
+        if (FRONTIER_SAVEDATA.selectedPartyMons[i] == 0)
             break;
 
-        species = GetMonData(&gSaveBlock1Ptr->playerParty[gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1], MON_DATA_SPECIES, NULL);
-        personality = GetMonData(&gSaveBlock1Ptr->playerParty[gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1], MON_DATA_PERSONALITY, NULL);
+        species = GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_SPECIES, NULL);
+        personality = GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_PERSONALITY, NULL);
 
         SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].species = species;
         SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].personality = personality;
@@ -210,9 +222,9 @@ static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
 
 static void SaveSparringChallenge(void)
 {
-    gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+    FRONTIER_SAVEDATA.challengeStatus = gSpecialVar_0x8005;
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
-    gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+    FRONTIER_SAVEDATA.challengePaused = TRUE;
     SaveGameFrontier();
 }
 
@@ -224,7 +236,7 @@ static void GetOpponentIntroSpeech(void)
 u32 CalculateMenuType(void)
 {
     bool32 hasHeal = (!(VarGet(VAR_RESTRICTEDSPARRING_HEAL_COUNT) == 0));
-    bool32 canRecord = (gSaveBlock2Ptr->frontier.disableRecordBattle == FALSE);
+    bool32 canRecord = (FRONTIER_SAVEDATA.disableRecordBattle == FALSE);
 
     if (canRecord && hasHeal)
         return RECORDYES_HEALYES;
@@ -236,7 +248,7 @@ u32 CalculateMenuType(void)
         return RECORDNO_HEALNO;
 }
 
-void GetContinueMenuType(void)
+static void GetContinueMenuType(void)
 {
     gSpecialVar_Result = CalculateMenuType();
 }
@@ -253,10 +265,10 @@ static void RestoreNonConsumableHeldItems(void)
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
-        if (gSaveBlock2Ptr->frontier.selectedPartyMons[i] == 0)
+        if (FRONTIER_SAVEDATA.selectedPartyMons[i] == 0)
             break;
 
-        item = GetMonData(&gSaveBlock1Ptr->playerParty[gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1], MON_DATA_HELD_ITEM, NULL);
+        item = GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_HELD_ITEM, NULL);
 
         if (!IsItemConsumable(item))
             SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
@@ -270,7 +282,7 @@ static void ResetSketchedMoves(void)
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
-        monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+        monId = FRONTIER_SAVEDATA.selectedPartyMons[i] - 1;
 
         if (monId >= PARTY_SIZE)
             continue;
@@ -279,7 +291,7 @@ static void ResetSketchedMoves(void)
         {
             for (k = 0; k < MAX_MON_MOVES; k++)
             {
-                if (GetMonData(&gSaveBlock1Ptr->playerParty[gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1], MON_DATA_MOVE1 + k, NULL)
+                if (GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_MOVE1 + k, NULL)
                         == GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j, NULL))
                     break;
             }
@@ -318,13 +330,13 @@ static u32 CalculateBattlePoints(u32 numWins)
 
 static void GiveBattlePoints(void)
 {
-    u32 points = CalculateBattlePoints(gSaveBlock2Ptr->frontier.curChallengeBattleNum);
+    u32 points = CalculateBattlePoints(FRONTIER_SAVEDATA.curChallengeBattleNum);
 
     IncrementDailyBattlePoints(points);
     ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
-    gSaveBlock2Ptr->frontier.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
-    gSaveBlock2Ptr->frontier.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
+    FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
+    FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 }
 
 bool32 Sparring_CheckIfPartyMonMatchesType(struct Pokemon *mon)
@@ -356,7 +368,7 @@ static u32 CountNumberTypeWin(u8 lvlMode)
 
 static u32 GetNumberTypeWinFromSaveblock(void)
 {
-    return CountNumberTypeWin(gSaveBlock2Ptr->frontier.lvlMode);
+    return CountNumberTypeWin(FRONTIER_SAVEDATA.lvlMode);
 }
 
 static void CheckSparringSymbol(void)
@@ -442,7 +454,7 @@ static void CloseRestrictedSparringTypeMonsWindow(void)
 
 void FillRestrictedSparringWinWindow(u16 selection)
 {
-    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 typeMode = ConvertMenuInputToType(selection);
     u32 num = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak;
     u32 width = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_WIDTH) * 8;
@@ -460,7 +472,7 @@ void FillRestrictedSparringWinWindow(u16 selection)
 
 void FillRestrictedSparringTypeMons(u16 typeMode)
 {
-    u8 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 priority = 0;
     u32 species, personality, index;
     s32 x = (GetWindowAttribute(sRestrictedSparring_TypeMonsWindowId, WINDOW_TILEMAP_LEFT) * SPARRING_TILES) + SPARRING_TYPE_MON_X_OFFSET;
@@ -586,7 +598,7 @@ static void CompareStreakToMax(void)
 {
     gSpecialVar_Result = FALSE;
 
-    if (gSaveBlock2Ptr->frontier.curChallengeBattleNum != MAX_SPARRING_STREAK)
+    if (FRONTIER_SAVEDATA.curChallengeBattleNum != MAX_SPARRING_STREAK)
         return;
 
     ConvertIntToDecimalStringN(gStringVar1,MAX_SPARRING_STREAK,STR_CONV_MODE_LEFT_ALIGN,CountDigits(MAX_SPARRING_STREAK));
