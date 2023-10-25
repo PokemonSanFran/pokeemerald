@@ -257,7 +257,14 @@ static void GetContinueMenuType(void)
 
 static bool32 IsItemConsumable(u16 item)
 {
-    return (gItems[item].pocket == POCKET_BERRIES);
+    u32 holdEffect = gItems[item].holdEffect;
+
+    return (
+            (holdEffect > HOLD_EFFECT_NONE
+             && holdEffect < HOLD_EFFECT_EVASION_UP)
+            || (holdEffect == HOLD_EFFECT_RESTORE_STATS)
+            || (holdEffect == HOLD_EFFECT_CURE_ATTRACT)
+           );
 }
 
 static void RestoreNonConsumableHeldItems(void)
@@ -397,6 +404,7 @@ static void CheckSparringSymbol(void)
 
 u32 Sparring_SetChallengeNumToMax(u8 challengeNum)
 {
+    return 1;
     return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING) ? UCHAR_MAX : challengeNum;
 }
 
