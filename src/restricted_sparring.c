@@ -11,6 +11,7 @@
 #include "string_util.h"
 #include "item.h"
 #include "tv.h"
+#include "overworld.h"
 #include "restricted_sparring.h"
 #include "battle_records.h"
 #include "constants/battle_frontier.h"
@@ -132,7 +133,6 @@ void CallRestrictedSparringFunc(void)
 
 static void InitSparringChallenge(void)
 {
-    DebugPrintf("%d",sizeof(SPARRING_SAVEDATA));
     FlagClear(FLAG_SPARRING_FIRST_TYPE_WIN);
     FRONTIER_SAVEDATA.challengeStatus = 0;
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
@@ -141,6 +141,7 @@ static void InitSparringChallenge(void)
     VarSet(VAR_RESTRICTEDSPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE);
 
     gTrainerBattleOpponent_A = 0;
+    SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
 }
 
 static void GetSparringData(void)
@@ -298,6 +299,7 @@ static void ResetSketchedMoves(void)
             }
             if (k == MAX_MON_MOVES)
                 SetMonMoveSlot(&gPlayerParty[i], MOVE_SKETCH, j);
+                PokemonUseItemEffects(&gPlayerParty[i],ITEM_MAX_ETHER,i,MON_DATA_MOVE1 + k,FALSE);
         }
     }
 }

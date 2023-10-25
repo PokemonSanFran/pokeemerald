@@ -208,8 +208,8 @@ MasterDojo_Lobby_EventScript_EnterElevator::
 	special CallFrontierUtilFunc
 	frontier_saveparty
 	setvar VAR_RESULT, 0
-	sparring_save CHALLENGE_STATUS_SAVING
 	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
+	sparring_save CHALLENGE_STATUS_SAVING
 	return
 
 
@@ -236,6 +236,7 @@ MasterDojo_Lobby_EventScript_LostChallenge_1:
 MasterDojo_Lobby_EventScript_Results_NoWins::
 	lock
 	faceplayer
+	call MasterDojo_Lobby_EventScript_SaveResult
 	call MasterDojo_Lobby_EventScript_AskSaveBattle
 	msgbox MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT
 	goto MasterDojo_Lobby_EventScript_SetChallengeStatusEnd
@@ -245,6 +246,7 @@ MasterDojo_Lobby_EventScript_Results_NoWins::
 MasterDojo_Lobby_EventScript_Results::
 	lock
 	faceplayer
+	call MasterDojo_Lobby_EventScript_SaveResult
 	sparring_buffersparringtype
 	msgbox MasterDojo_Lobby_Text_YourResultForThisRestricted
 	call MasterDojo_Lobby_EventScript_AwardPoints
@@ -260,8 +262,33 @@ MasterDojo_Lobby_EventScript_Results_2:
 	goto MasterDojo_Lobby_EventScript_Results_1
 
 
-MasterDojo_Lobby_EventScript_AwardPoints::
+MasterDojo_Lobby_EventScript_SaveResult::
+	message MasterDojo_Lobby_Text_RecordWillBeSaved
+	waitmessage
+	frontier_checkairshow
 	sparring_givepoints
+	sparring_checksymbol
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
+	goto_if_eq MasterDojo_Lobby_EventScript_SaveResult_2
+	compare VAR_RESULT, SPARRING_SYMBOL_GOLD
+	goto_if_eq MasterDojo_Lobby_EventScript_SaveResult_3
+MasterDojo_Lobby_EventScript_SaveResult_1:
+	special LoadPlayerParty
+	sparring_save 0
+	playse SE_SAVE
+	waitse
+	return
+
+MasterDojo_Lobby_EventScript_SaveResult_2:
+	setflag FLAG_SYS_ARENA_SILVER
+	goto MasterDojo_Lobby_EventScript_SaveResult_1
+
+MasterDojo_Lobby_EventScript_SaveResult_3:
+	setflag FLAG_SYS_ARENA_GOLD
+	goto MasterDojo_Lobby_EventScript_SaveResult_1
+
+
+MasterDojo_Lobby_EventScript_AwardPoints::
 	msgbox MasterDojo_Lobby_Text_YouEarned
 	return
 
@@ -293,10 +320,8 @@ MasterDojo_Lobby_EventScript_GiveSymbol_1:
 MasterDojo_Lobby_EventScript_GiveSymbol_5:
 	waitmessage
 	waitfanfare
-	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
+	compare VAR_RESULT, SPARRING_SYMBOL_GOLD
 	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_10
-	setflag FLAG_SYS_ARENA_GOLD
-	msgbox MasterDojo_Lobby_Text_IHopeYoullKeep
 MasterDojo_Lobby_EventScript_GiveSymbol_9:
 	return
 
@@ -309,18 +334,11 @@ MasterDojo_Lobby_EventScript_GiveSymbol_6:
 	goto MasterDojo_Lobby_EventScript_GiveSymbol_5
 
 MasterDojo_Lobby_EventScript_GiveSymbol_10:
-	setflag FLAG_SYS_ARENA_SILVER
+	msgbox MasterDojo_Lobby_Text_IHopeYoullKeep
 	goto MasterDojo_Lobby_EventScript_GiveSymbol_9
 
 
 MasterDojo_Lobby_EventScript_AskSaveBattle::
-	message MasterDojo_Lobby_Text_RecordWillBeSaved
-	waitmessage
-	frontier_checkairshow
-	special LoadPlayerParty
-	sparring_save 0
-	playse SE_SAVE
-	waitse
 	frontier_get FRONTIER_DATA_RECORD_DISABLED
 	compare VAR_RESULT, TRUE
 	goto_if_eq MasterDojo_Lobby_EventScript_AskSaveBattle_2

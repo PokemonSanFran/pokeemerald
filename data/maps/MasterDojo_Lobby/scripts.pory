@@ -173,8 +173,8 @@ script MasterDojo_Lobby_EventScript_EnterElevator{
         special(CallFrontierUtilFunc)
         frontier_saveparty
         setvar(VAR_RESULT, 0)
-        sparring_save(CHALLENGE_STATUS_SAVING)
         warp(MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6)
+        sparring_save(CHALLENGE_STATUS_SAVING)
 }
 
 script MasterDojo_Lobby_EventScript_WonChallenge{
@@ -196,6 +196,7 @@ script MasterDojo_Lobby_EventScript_LostChallenge{
 script MasterDojo_Lobby_EventScript_Results_NoWins{
     lock
         faceplayer
+        call(MasterDojo_Lobby_EventScript_SaveResult)
         call(MasterDojo_Lobby_EventScript_AskSaveBattle)
         msgbox(MasterDojo_Lobby_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT)
         goto(MasterDojo_Lobby_EventScript_SetChallengeStatusEnd)
@@ -204,6 +205,7 @@ script MasterDojo_Lobby_EventScript_Results_NoWins{
 script MasterDojo_Lobby_EventScript_Results{
     lock
         faceplayer
+        call(MasterDojo_Lobby_EventScript_SaveResult)
         sparring_buffersparringtype
         msgbox(MasterDojo_Lobby_Text_YourResultForThisRestricted)
         call(MasterDojo_Lobby_EventScript_AwardPoints)
@@ -217,8 +219,25 @@ script MasterDojo_Lobby_EventScript_Results{
         goto(MasterDojo_Lobby_EventScript_SetChallengeStatusEnd)
 }
 
-script MasterDojo_Lobby_EventScript_AwardPoints{
+script MasterDojo_Lobby_EventScript_SaveResult{
+    message(MasterDojo_Lobby_Text_RecordWillBeSaved)
+    waitmessage
+    frontier_checkairshow
     sparring_givepoints
+    sparring_checksymbol
+    if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER){
+        setflag(FLAG_SYS_ARENA_SILVER)
+    }elif (var(VAR_RESULT) == SPARRING_SYMBOL_GOLD){
+        setflag(FLAG_SYS_ARENA_GOLD)
+    }
+    special(LoadPlayerParty)
+    sparring_save(0)
+    playse(SE_SAVE)
+    waitse
+    return
+}
+
+script MasterDojo_Lobby_EventScript_AwardPoints{
         msgbox(MasterDojo_Lobby_Text_YouEarned)
         return
 }
@@ -253,24 +272,13 @@ script MasterDojo_Lobby_EventScript_GiveSymbol{
     waitmessage
         waitfanfare
 
-        if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER){
-            setflag(FLAG_SYS_ARENA_SILVER)
-        }else{
-            setflag(FLAG_SYS_ARENA_GOLD)
-                msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
+        if (var(VAR_RESULT) == SPARRING_SYMBOL_GOLD){
+            msgbox(MasterDojo_Lobby_Text_IHopeYoullKeep)
         }
     return
 }
 
 script MasterDojo_Lobby_EventScript_AskSaveBattle{
-    message(MasterDojo_Lobby_Text_RecordWillBeSaved)
-        waitmessage
-        frontier_checkairshow
-        special(LoadPlayerParty)
-        sparring_save(0)
-        playse(SE_SAVE)
-        waitse
-
         frontier_get(FRONTIER_DATA_RECORD_DISABLED)
         if (var(VAR_RESULT) == TRUE){
             return

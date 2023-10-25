@@ -19,7 +19,7 @@ return
 }
 
 script MasterDojo_BattleRoom_EventScript_EnterRoom{
-    setvar(VAR_TEMP_0,1)
+        setvar(VAR_TEMP_0,1)
         call(MasterDojo_BattleRoom_EventScript_RefreshOpponent)
         applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantEnter)
         applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerEnter)

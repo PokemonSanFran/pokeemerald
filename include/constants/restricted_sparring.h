@@ -28,7 +28,7 @@
 #define SPARRING_MAX_NUM_RESTORE                               2
 
 #define SPARRING_BP_BASE                                       3
-#define SPARRING_BP_BONUS_MATCH                                5
+#define SPARRING_BP_BONUS_MATCH                                SPARRING_MIN_STREAK
 #define SPARRING_BP_STREAK_BONUS                               20
 #define SPARRING_BP_TYPE_WIN_BONUS                             30
 
