@@ -7,8 +7,8 @@ MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
 	map_script_2 VAR_TEMP_0, 0, MasterDojo_Lobby_EventScript_GetChallengeStatus
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_SAVING, MasterDojo_Lobby_EventScript_QuitWithoutSaving
 	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, MasterDojo_Lobby_EventScript_ResumeChallenge
-	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, MasterDojo_Lobby_EventScript_WonChallenge
-	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, MasterDojo_Lobby_EventScript_LostChallenge
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, MasterDojo_Lobby_EventScript_JudgeChallenge
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, MasterDojo_Lobby_EventScript_JudgeChallenge
 	.2byte 0
 
 MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE:
@@ -30,6 +30,7 @@ MasterDojo_Lobby_EventScript_GetChallengeStatus::
 MasterDojo_Lobby_EventScript_QuitWithoutSaving::
 	lock
 	faceplayer
+	delay 30
 	msgbox MasterDojo_Lobby_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT
 	sparring_set SPARRING_DATA_WIN_STREAK, 0
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, 0
@@ -210,6 +211,19 @@ MasterDojo_Lobby_EventScript_EnterElevator::
 	setvar VAR_RESULT, 0
 	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 	sparring_save CHALLENGE_STATUS_SAVING
+	return
+
+
+MasterDojo_Lobby_EventScript_JudgeChallenge::
+	sparring_get SPARRING_DATA_WIN_STREAK
+	compare VAR_RESULT, 0
+	goto_if_eq MasterDojo_Lobby_EventScript_JudgeChallenge_1
+	buffernumberstring STR_VAR_1, VAR_RESULT
+	goto MasterDojo_Lobby_EventScript_Results
+	return
+
+MasterDojo_Lobby_EventScript_JudgeChallenge_1:
+	goto MasterDojo_Lobby_EventScript_Results_NoWins
 	return
 
 
@@ -410,9 +424,17 @@ MasterDojo_Lobby_EventScript_ShowResults::
 
 MasterDojo_EventScript_RulesBoard::
 	lockall
+	call MasterDojo_Debug
 	msgbox MasterDojo_Lobby_Text_RulesAreListed, MSGBOX_DEFAULT
 	goto MasterDojo_Lobby_EventScript_ReadRulesBoard
 	end
+
+
+MasterDojo_Debug::
+	givemon SPECIES_SMEARGLE, 45, ITEM_LEFTOVERS
+	givemon SPECIES_SNORLAX, 50, ITEM_CHESTO_BERRY
+	givemon SPECIES_AIPOM, 50, ITEM_NONE
+	return
 
 
 MasterDojo_Lobby_EventScript_ReadRulesBoard::

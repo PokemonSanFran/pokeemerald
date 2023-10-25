@@ -11,8 +11,8 @@ mapscripts MasterDojo_Lobby_MapScripts{
         VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: MasterDojo_Lobby_EventScript_GetChallengeStatus
             VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: MasterDojo_Lobby_EventScript_QuitWithoutSaving
             VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: MasterDojo_Lobby_EventScript_ResumeChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: MasterDojo_Lobby_EventScript_WonChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: MasterDojo_Lobby_EventScript_LostChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: MasterDojo_Lobby_EventScript_JudgeChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: MasterDojo_Lobby_EventScript_JudgeChallenge
     ]
 
     MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE[
@@ -34,6 +34,7 @@ script MasterDojo_Lobby_EventScript_GetChallengeStatus{
 script MasterDojo_Lobby_EventScript_QuitWithoutSaving{
     lock
         faceplayer
+        delay(30)
         msgbox(MasterDojo_Lobby_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT)
         sparring_set(SPARRING_DATA_WIN_STREAK, 0)
         frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN)
@@ -177,20 +178,30 @@ script MasterDojo_Lobby_EventScript_EnterElevator{
         sparring_save(CHALLENGE_STATUS_SAVING)
 }
 
-script MasterDojo_Lobby_EventScript_WonChallenge{
+script MasterDojo_Lobby_EventScript_JudgeChallenge{
     sparring_get(SPARRING_DATA_WIN_STREAK)
+    if (var(VAR_RESULT) == 0){
+        goto(MasterDojo_Lobby_EventScript_Results_NoWins)
+    }else{
         buffernumberstring(STR_VAR_1,VAR_RESULT)
         goto(MasterDojo_Lobby_EventScript_Results)
+    }
+}
+
+script MasterDojo_Lobby_EventScript_WonChallenge{
+    sparring_get(SPARRING_DATA_WIN_STREAK)
+    buffernumberstring(STR_VAR_1,VAR_RESULT)
+    goto(MasterDojo_Lobby_EventScript_Results)
 }
 
 script MasterDojo_Lobby_EventScript_LostChallenge{
     sparring_get(SPARRING_DATA_WIN_STREAK)
-        buffernumberstring(STR_VAR_1,VAR_RESULT)
-        if (var(VAR_RESULT) == 0){
-            goto(MasterDojo_Lobby_EventScript_Results_NoWins)
-        }else{
-            goto(MasterDojo_Lobby_EventScript_Results)
-        }
+    buffernumberstring(STR_VAR_1,VAR_RESULT)
+    if (var(VAR_RESULT) == 0){
+        goto(MasterDojo_Lobby_EventScript_Results_NoWins)
+    }else{
+        goto(MasterDojo_Lobby_EventScript_Results)
+    }
 }
 
 script MasterDojo_Lobby_EventScript_Results_NoWins{
@@ -345,9 +356,16 @@ script MasterDojo_Lobby_EventScript_ShowResults{
 
 script MasterDojo_EventScript_RulesBoard{
     lockall
+call(MasterDojo_Debug)
         msgbox(MasterDojo_Lobby_Text_RulesAreListed,MSGBOX_DEFAULT)
         goto(MasterDojo_Lobby_EventScript_ReadRulesBoard)
         end
+}
+
+script MasterDojo_Debug{
+    givemon(SPECIES_SMEARGLE, 45, ITEM_LEFTOVERS)
+    givemon(SPECIES_SNORLAX, 50, ITEM_CHESTO_BERRY)
+    givemon(SPECIES_AIPOM, 50, ITEM_NONE)
 }
 
 script MasterDojo_Lobby_EventScript_ReadRulesBoard{
