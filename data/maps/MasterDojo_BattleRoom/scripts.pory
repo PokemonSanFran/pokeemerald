@@ -96,10 +96,10 @@ script MasterDojo_BattleRoom_EventScript_AskReadyForOpponent{
         waitmessage
         sparring_getcontinuemenutype
         switch(var(VAR_RESULT)){
-            case RECORDYES_HEALYES: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes)
-            case RECORDYES_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo)
-            case RECORDNO_HEALYES: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes)
-            case RECORDNO_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo)
+            case SPARRING_RECORDYES_HEALYES: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes)
+            case SPARRING_RECORDYES_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo)
+            case SPARRING_RECORDNO_HEALYES: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes)
+            case SPARRING_RECORDNO_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo)
         }
 }
 
@@ -168,10 +168,10 @@ script MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal{
         waitmessage
         sparring_getcontinuemenutype
         switch(var(VAR_RESULT)){
-            case RECORDYES_HEALYES:
-            case RECORDYES_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo)
-            case RECORDNO_HEALYES:
-            case RECORDNO_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo)
+            case SPARRING_RECORDYES_HEALYES:
+            case SPARRING_RECORDYES_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo)
+            case SPARRING_RECORDNO_HEALYES:
+            case SPARRING_RECORDNO_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo)
         }
 }
 

@@ -118,7 +118,7 @@ MasterDojo_Lobby_EventScript_CreateTypeList::
 	special Sparring_ShowWinsWindow
 	special ShowScrollableMultichoice
 	waitstate
-	special Sparring_CloseWindsWindow
+	special Sparring_CloseWinsWindow
 	switch VAR_RESULT
 	case 17, MasterDojo_Lobby_EventScript_CreateTypeList_4
 	case MULTI_B_PRESSED, MasterDojo_Lobby_EventScript_CreateTypeList_4
@@ -268,7 +268,7 @@ MasterDojo_Lobby_EventScript_AwardPoints::
 
 MasterDojo_Lobby_EventScript_CheckSymbol::
 	sparring_checksymbol
-	compare VAR_RESULT, SPARRING_GET_NONE
+	compare VAR_RESULT, SPARRING_SYMBOL_NONE
 	goto_if_gt MasterDojo_Lobby_EventScript_CheckSymbol_2
 MasterDojo_Lobby_EventScript_CheckSymbol_1:
 	return
@@ -280,20 +280,20 @@ MasterDojo_Lobby_EventScript_CheckSymbol_2:
 
 MasterDojo_Lobby_EventScript_GiveSymbol::
 	msgbox MasterDojo_Lobby_Text_WhatYouCompletedRestricted
-	compare VAR_RESULT, SPARRING_GET_SILVER
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
 	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_2
 	msgbox MasterDojo_Lobby_Text_ICantBelieveIt
 	msgbox MasterDojo_Lobby_Text_ThisAccomplishmentIsSureTo
 MasterDojo_Lobby_EventScript_GiveSymbol_1:
 	msgbox MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement
 	playfanfare MUS_OBTAIN_SYMBOL
-	compare VAR_RESULT, SPARRING_GET_SILVER
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
 	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_6
 	message BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine
 MasterDojo_Lobby_EventScript_GiveSymbol_5:
 	waitmessage
 	waitfanfare
-	compare VAR_RESULT, SPARRING_GET_SILVER
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
 	goto_if_eq MasterDojo_Lobby_EventScript_GiveSymbol_10
 	setflag FLAG_SYS_ARENA_GOLD
 	msgbox MasterDojo_Lobby_Text_IHopeYoullKeep

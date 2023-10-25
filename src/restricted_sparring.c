@@ -132,6 +132,7 @@ void CallRestrictedSparringFunc(void)
 
 static void InitSparringChallenge(void)
 {
+    DebugPrintf("%d",sizeof(SPARRING_SAVEDATA));
     FlagClear(FLAG_SPARRING_FIRST_TYPE_WIN);
     FRONTIER_SAVEDATA.challengeStatus = 0;
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
@@ -175,7 +176,7 @@ static void SetSparringBattleWon(void)
 {
     u8 numWins = FRONTIER_SAVEDATA.curChallengeBattleNum;
 
-    FRONTIER_SAVEDATA.curChallengeBattleNum = (numWins == MAX_SPARRING_STREAK) ? numWins : ++numWins;
+    FRONTIER_SAVEDATA.curChallengeBattleNum = (numWins == SPARRING_MAX_STREAK) ? numWins : ++numWins;
 
     SaveCurrentStreak();
 }
@@ -192,8 +193,8 @@ static void SaveCurrentStreak(void)
 
     SPARRING_SAVEDATA[typeMode][lvlMode].winStreak = currentStreak;
 
-    if (oldStreak < SPARRING_REWARD_BONUS_ROUND)
-        if (currentStreak >= SPARRING_REWARD_BONUS_ROUND)
+    if (oldStreak < SPARRING_MIN_STREAK)
+        if (currentStreak >= SPARRING_MIN_STREAK)
             FlagSet(FLAG_SPARRING_FIRST_TYPE_WIN);
 
 #ifdef RESTRICTED_SPARRING_MONS
@@ -239,13 +240,13 @@ u32 CalculateMenuType(void)
     bool32 canRecord = (FRONTIER_SAVEDATA.disableRecordBattle == FALSE);
 
     if (canRecord && hasHeal)
-        return RECORDYES_HEALYES;
+        return SPARRING_RECORDYES_HEALYES;
     if (canRecord && !hasHeal)
-        return RECORDYES_HEALNO;
+        return SPARRING_RECORDYES_HEALNO;
     if (!canRecord && hasHeal)
-        return RECORDNO_HEALYES;
+        return SPARRING_RECORDNO_HEALYES;
     if (!canRecord && !hasHeal)
-        return RECORDNO_HEALNO;
+        return SPARRING_RECORDNO_HEALNO;
 }
 
 static void GetContinueMenuType(void)
@@ -312,19 +313,21 @@ static u32 CalculateBattlePoints(u32 numWins)
 
     if (numWins == 0)
         return 0;
-    if (numWins < SPARRING_REWARD_BONUS_ROUND)
-        return (numWins * SPARRING_REWARD_BP);
+
+    if (numWins < SPARRING_BP_BONUS_MATCH)
+        return (numWins * SPARRING_BP_BASE);
 
     if (IsFirstTypeWin())
-        points +=  SPARRING_REWARD_FIRST_BONUS;
+        points +=  SPARRING_BP_TYPE_WIN_BONUS;
 
     for (i = 1; i <= numWins; i++)
     {
-        if ((i % SPARRING_MIN_STREAK) == 0)
-            points += SPARRING_REWARD_BP_BONUS;
+        if ((i % SPARRING_BP_STREAK_BONUS) == 0)
+            points += SPARRING_BP_STREAK_BONUS;
         else
-            points += SPARRING_REWARD_BP;
+            points += SPARRING_BP_BASE;
     }
+
     return points;
 }
 
@@ -360,7 +363,7 @@ static u32 CountNumberTypeWin(u8 lvlMode)
     u32 i, numWins = 0;
 
     for (i = 0; i < NUMBER_OF_MON_TYPES; i++)
-        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) >= SPARRING_MIN_STREAK)
+        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) >= SPARRING_BP_STREAK_BONUS)
             numWins++;
 
     return numWins;
@@ -383,11 +386,11 @@ static void CheckSparringSymbol(void)
     ConvertIntToDecimalStringN(gStringVar1, numWins, STR_CONV_MODE_LEFT_ALIGN, numDigits);
 
     if (shouldGetGold && !hasGold)
-        gSpecialVar_Result = SPARRING_GET_GOLD;
+        gSpecialVar_Result = SPARRING_SYMBOL_GOLD;
     else if (shouldGetSilver && !hasSilver)
-        gSpecialVar_Result = SPARRING_GET_SILVER;
+        gSpecialVar_Result = SPARRING_SYMBOL_SILVER;
     else
-        gSpecialVar_Result = SPARRING_GET_NONE;
+        gSpecialVar_Result = SPARRING_SYMBOL_NONE;
 }
 
 u32 Sparring_SetChallengeNumToMax(u8 challengeNum)
@@ -415,7 +418,7 @@ void Sparring_ShowWinsWindow(void)
 #endif
 }
 
-void Sparring_CloseWindsWindow(void)
+void Sparring_CloseWinsWindow(void)
 {
     //CloseRestrictedSparringMarkWindow();
     CloseRestrictedSparringTypeWinsWindow();
@@ -438,6 +441,7 @@ static void CloseRestrictedSparringTypeWinsWindow(void)
     RemoveWindow(sRestrictedSparring_TypeWinsWindowId);
 }
 
+#ifdef RESTRICTED_SPARRING_MONS
 static void ShowRestrictedSparringTypeMonsWindow(void)
 {
     sRestrictedSparring_TypeMonsWindowId = AddWindow(&sRestrictedSparring_TypeMonsWindowTemplate);
@@ -451,17 +455,18 @@ static void CloseRestrictedSparringTypeMonsWindow(void)
     ClearStdWindowAndFrameToTransparent(sRestrictedSparring_TypeMonsWindowId, TRUE);
     RemoveWindow(sRestrictedSparring_TypeMonsWindowId);
 }
+#endif
 
 void FillRestrictedSparringWinWindow(u16 selection)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 typeMode = ConvertMenuInputToType(selection);
     u32 num = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak;
-    u32 width = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_WIDTH) * 8;
-    u32 height = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_HEIGHT) * 8;
+    u32 width = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_WIDTH) * SPARRING_TILES;
+    u32 height = GetWindowAttribute(sRestrictedSparring_TypeWinsWindowId, WINDOW_HEIGHT) * SPARRING_TILES;
 
     FillWindowPixelBuffer(sRestrictedSparring_TypeWinsWindowId,PIXEL_FILL(1));
-    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, CountDigits(MAX_SPARRING_STREAK));
+    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, CountDigits(SPARRING_MAX_STREAK));
     StringExpandPlaceholders(gStringVar2,gText_WinStreak);
 
     if (typeMode == NUMBER_OF_MON_TYPES)
@@ -470,6 +475,7 @@ void FillRestrictedSparringWinWindow(u16 selection)
     AddTextPrinterParameterized2(sRestrictedSparring_TypeWinsWindowId, FONT_NORMAL, gStringVar2, 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
 }
 
+#ifdef RESTRICTED_SPARRING_MONS
 void FillRestrictedSparringTypeMons(u16 typeMode)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
@@ -481,15 +487,17 @@ void FillRestrictedSparringTypeMons(u16 typeMode)
     for (index = 0; index < FRONTIER_PARTY_SIZE; index++)
     {
         species = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].species;
+
         if (species == SPECIES_NONE)
             continue;
 
-        x += SPARRING_TYPE_MON_ICON_SIZE;
         personality = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].personality;
 
         LoadMonIconPalette(species);
         sScrollableMultichoice_MonIconId[index] = CreateMonIcon(species,SpriteCallbackDummy,x,y,priority,personality,FALSE);
         gSprites[sScrollableMultichoice_MonIconId[index]].oam.priority = priority;
+
+        x += SPARRING_TYPE_MON_ICON_SIZE;
     }
 }
 
@@ -512,6 +520,7 @@ static void InitRestrictedSparringMons(void)
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
         sScrollableMultichoice_MonIconId[i] = 0;
 }
+#endif
 
 static void SparringPrintTypesMastered(u8 lvlMode, u8 x, u8 y)
 {
@@ -554,10 +563,10 @@ static void SparringPrintBestStreak(u8 lvlMode, u8 x, u8 y)
 
 static void PrintSparringStreak(const u8 *str, u16 num, u8 x, u8 y)
 {
-    if (num > MAX_SPARRING_STREAK)
-        num = MAX_SPARRING_STREAK;
+    if (num > SPARRING_MAX_STREAK)
+        num = SPARRING_MAX_STREAK;
 
-    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, CountDigits(MAX_SPARRING_STREAK));
+    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, CountDigits(SPARRING_MAX_STREAK));
     StringExpandPlaceholders(gStringVar4, str);
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, NULL);
 }
@@ -579,7 +588,7 @@ void Sparring_ShowResultsWindow(void)
     DrawStdWindowFrame(gRecordsWindowId, FALSE);
 
     StringExpandPlaceholders(gStringVar4, gText_RestrictedSparringResults);
-    PrintAligned(gStringVar4, SPARRING_RECORD_HEADER_HEIGHT);
+    PrintAligned(gStringVar4, SPARRING_RECORD_HEADER_Y_POS);
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_Lv502, SPARRING_RECORD_LEVEL_HEADER_X_POS, SPARRING_RECORD_50_LEVEL_Y_POS, TEXT_SKIP_DRAW, NULL);
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_OpenLv, SPARRING_RECORD_LEVEL_HEADER_X_POS, SPARRING_RECORD_OPEN_LEVEL_Y_POS, TEXT_SKIP_DRAW, NULL);
 
@@ -598,10 +607,10 @@ static void CompareStreakToMax(void)
 {
     gSpecialVar_Result = FALSE;
 
-    if (FRONTIER_SAVEDATA.curChallengeBattleNum != MAX_SPARRING_STREAK)
+    if (FRONTIER_SAVEDATA.curChallengeBattleNum != SPARRING_MAX_STREAK)
         return;
 
-    ConvertIntToDecimalStringN(gStringVar1,MAX_SPARRING_STREAK,STR_CONV_MODE_LEFT_ALIGN,CountDigits(MAX_SPARRING_STREAK));
+    ConvertIntToDecimalStringN(gStringVar1,SPARRING_MAX_STREAK,STR_CONV_MODE_LEFT_ALIGN,CountDigits(SPARRING_MAX_STREAK));
     gSpecialVar_Result = TRUE;
 }
 
@@ -628,7 +637,6 @@ void CloseRestrictedSparringMarkWindow(void)
     //ClearStdWindowAndFrameToTransparent(sRestrictedSparring_MarkWindowId, TRUE);
     RemoveWindow(sRestrictedSparring_MarkWindowId);
 }
-
 
 void FillRestrictedSparringMarkWindow(u16 selection)
 {

@@ -96,7 +96,7 @@ script MasterDojo_Lobby_EventScript_CreateTypeList{
         special(Sparring_ShowWinsWindow)
         special(ShowScrollableMultichoice)
         waitstate
-        special(Sparring_CloseWindsWindow)
+        special(Sparring_CloseWinsWindow)
 
         switch(var(VAR_RESULT)){
             default: sparring_convertmenutotype
@@ -225,7 +225,7 @@ script MasterDojo_Lobby_EventScript_AwardPoints{
 
 script MasterDojo_Lobby_EventScript_CheckSymbol{
     sparring_checksymbol
-        if (var(VAR_RESULT) > SPARRING_GET_NONE){
+        if (var(VAR_RESULT) > SPARRING_SYMBOL_NONE){
             call(MasterDojo_Lobby_EventScript_GiveSymbol)
         }
     return
@@ -234,7 +234,7 @@ script MasterDojo_Lobby_EventScript_CheckSymbol{
 script MasterDojo_Lobby_EventScript_GiveSymbol{
     msgbox(MasterDojo_Lobby_Text_WhatYouCompletedRestricted)
 
-        if (var(VAR_RESULT) == SPARRING_GET_SILVER){
+        if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER){
             msgbox(MasterDojo_Lobby_Text_ThatsExcellentWork)
         }else{
             msgbox(MasterDojo_Lobby_Text_ICantBelieveIt)
@@ -244,7 +244,7 @@ script MasterDojo_Lobby_EventScript_GiveSymbol{
     msgbox(MasterDojo_Lobby_Text_ToCommemorateThisMonumentalAchievement)
         playfanfare(MUS_OBTAIN_SYMBOL)
 
-        if (var(VAR_RESULT) == SPARRING_GET_SILVER){
+        if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER){
             message(BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol)
         }else{
             message(BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine)
@@ -253,7 +253,7 @@ script MasterDojo_Lobby_EventScript_GiveSymbol{
     waitmessage
         waitfanfare
 
-        if (var(VAR_RESULT) == SPARRING_GET_SILVER){
+        if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER){
             setflag(FLAG_SYS_ARENA_SILVER)
         }else{
             setflag(FLAG_SYS_ARENA_GOLD)

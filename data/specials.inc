@@ -536,5 +536,5 @@ gSpecials::
 	def_special CloseDeptStoreElevatorWindow
 	def_special TrySetBattleTowerLinkType
     def_special CallRestrictedSparringFunc
-    def_special Sparring_CloseWindsWindow
+    def_special Sparring_CloseWinsWindow
     def_special Sparring_ShowWinsWindow

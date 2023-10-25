@@ -57,6 +57,6 @@
 
 // Uncomment to enable the storage of which Pokémon were used during a Restricted Sparring challenge
 // URL
-#define RESTRICTED_SPARRING_MONS
+//#define RESTRICTED_SPARRING_MONS
 
 #endif // GUARD_CONFIG_H
