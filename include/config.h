@@ -55,8 +55,12 @@
 #endif
 #endif
 
+// Start master_dojo
+
 // Uncomment to enable the storage of which Pokémon were used during a Restricted Sparring challenge
-// URL
-#define RESTRICTED_SPARRING_MONS
+// https://github.com/PokemonSanFran/pokeemerald/wiki/master_dojo#record-used-mons
+//#define RESTRICTED_SPARRING_MONS
+
+// End master_dojo
 
 #endif // GUARD_CONFIG_H
