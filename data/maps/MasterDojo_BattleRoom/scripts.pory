@@ -1,253 +1,72 @@
-//MasterDojo_BattleRoom_
 const PLAYER = OBJ_EVENT_ID_PLAYER
 const CAMERA = OBJ_EVENT_ID_CAMERA
 const ATTENDANT = 1
 const OPPONENT = 2
-const VAR_CURRENT_BATTLE_NUM = VAR_TEMP_E
 
-mapscripts MasterDojo_BattleRoom_MapScripts{
-    MAP_SCRIPT_ON_FRAME_TABLE[
-        VAR_TEMP_0, 0: MasterDojo_BattleRoom_EventScript_EnterRoom
+const VAR_NEED_TO_FACE_EAST = VAR_TEMP_1
+
+mapscripts MasterDojo_BattleRoom_MapScripts
+{
+    MAP_SCRIPT_ON_FRAME_TABLE
+    [
+        VAR_TEMP_0, 0: RestrictedSparring_BattleCourt_EventScript_SetUpOpponent
+    ]
+
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+    [
+        VAR_NEED_TO_FACE_EAST, 0:MasterDojo_Lobby_EventScript_PlayerFaceEast
     ]
 }
 
-script MasterDojo_BattleRoom_EventScript_RefreshOpponent{
-        removeobject(OPPONENT)
-        tower_setopponent
-        addobject(OPPONENT)
-return
+script MasterDojo_Lobby_EventScript_PlayerFaceEast
+{
+    setvar(VAR_NEED_TO_FACE_EAST, 1)
+    turnobject(PLAYER, DIR_EAST)
+    end
 }
 
-script MasterDojo_BattleRoom_EventScript_EnterRoom{
-        setvar(VAR_TEMP_0,1)
-        call(MasterDojo_BattleRoom_EventScript_RefreshOpponent)
-        applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantEnter)
-        applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerEnter)
-        waitmovement(ATTENDANT)
-        goto(MasterDojo_BattleRoom_EventScript_OpponentEnter)
-}
-
-script MasterDojo_BattleRoom_EventScript_OpponentEnter{
-        waitmovement(CAMERA)
-        special(RemoveCameraObject)
-        applymovement(ATTENDANT,Common_Movement_WalkInPlaceDown)
-        frontier_get(FRONTIER_DATA_BATTLE_NUM)
-        if (var(VAR_RESULT) == 0){
-            msgbox(MasterDojo_BattleRoom_Text_LetTheBattle,MSGBOX_DEFAULT)
-        }
-        else
-        {
-            copyvar(VAR_CURRENT_BATTLE_NUM, VAR_RESULT)
-                addvar(VAR_CURRENT_BATTLE_NUM,1)
-                buffernumberstring(STR_VAR_1,VAR_CURRENT_BATTLE_NUM)
-                msgbox(MasterDojo_BattleRoom_Text_Next,MSGBOX_DEFAULT)
-        }
-    delay(15)
-        msgbox(MasterDojo_BattleRoom_Text_Go,MSGBOX_DEFAULT)
-        closemessage
-        waitmovement(ATTENDANT)
-        sparring_getopponentintro
-        msgbox(gStringVar4,MSGBOX_DEFAULT)
-        waitmessage
-        call(MasterDojo_BattleRoom_EventScript_DoTowerBattle)
-        switch (var(VAR_RESULT)){
-            case B_OUTCOME_WON: goto(MasterDojo_BattleRoom_EventScript_DefeatedOpponent)
-        }
-    goto(MasterDojo_BattleRoom_EventScript_WarpToLobbyLost)
-}
-
-script MasterDojo_BattleRoom_EventScript_WarpToLobbyLost{
-    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS,CHALLENGE_STATUS_LOST)
-        sparring_set(SPARRING_DATA_LVL_MODE)
-        goto(MasterDojo_BattleRoom_EventScript_WarpToLobby)
-}
-
-script MasterDojo_BattleRoom_EventScript_WarpToLobby{
-    warp(MAP_MASTER_DOJO_LOBBY,7,8)
-        waitstate
-        end
-}
-
-script MasterDojo_BattleRoom_EventScript_DefeatedOpponent{
-        sparring_setbattlewon
-        special(SpawnCameraObject)
-        applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanLeft)
-        applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerReturnPosition)
-        applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantApproachPlayer)
-        waitmovement(CAMERA)
-        removeobject(OPPONENT)
-        waitmovement(ATTENDANT)
-        call(MasterDojo_BattleRoom_EventScript_StopChallenge)
-        msgbox(MasterDojo_BattleRoom_Text_WellDone,MSGBOX_DEFAULT)
-        goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-}
-
-script MasterDojo_BattleRoom_EventScript_StopChallenge{
-        sparring_checkmaxstreak
-        if (!var(VAR_RESULT)){
-            return
-        }
-        msgbox(MasterDojo_Lobby_Text_MaxedOutStreak,MSGBOX_DEFAULT)
-        goto(MasterDojo_BattleRoom_EventScript_RetireChallenge)
-}
-
-script MasterDojo_BattleRoom_EventScript_AskReadyForOpponent{
-    message(MasterDojo_BattleRoom_Text_DoYouWantToContinue)
-        waitmessage
-        sparring_getcontinuemenutype
-        switch(var(VAR_RESULT)){
-            case SPARRING_RECORDYES_HEALYES: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes)
-            case SPARRING_RECORDYES_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo)
-            case SPARRING_RECORDNO_HEALYES: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes)
-            case SPARRING_RECORDNO_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo)
-        }
-}
-
-script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo{
-    multichoice(22,4,MULTI_GO_ON_RECORD_REST_RETIRE,TRUE)
-        switch(var(VAR_RESULT)){
-            case 0: goto(MasterDojo_BattleRoom_EventScript_ContinueChallenge)
-            case 1: goto(MasterDojo_BattleRoom_EventScript_AskRecordBattle)
-            case 2: goto(MasterDojo_BattleRoom_EventScript_AskPauseChallenge)
-            case 3: goto(MasterDojo_BattleRoom_EventScript_AskRetireChallenge)
-            case MULTI_B_PRESSED: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-        }
+script MasterDojo_BattleRoom_EventScript_EnterRoomMovement
+{
+    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantEnter)
+    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerEnter)
+    waitmovement(ATTENDANT)
     return
 }
 
-script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo{
-    multichoice(22,5,MULTI_GO_ON_REST_RETIRE,TRUE)
-        switch(var(VAR_RESULT)){
-            case 0: goto(MasterDojo_BattleRoom_EventScript_ContinueChallenge)
-            case 1: goto(MasterDojo_BattleRoom_EventScript_AskPauseChallenge)
-            case 2: goto(MasterDojo_BattleRoom_EventScript_AskRetireChallenge)
-            case 3: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-        }
+script MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
+{
+    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerStartBattle)
+    applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanRight)
+    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantReturnToPosition)
+    waitmovement(ATTENDANT)
     return
 }
 
-script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealYes{
-    multichoice(22,2,MULTI_GO_ON_HEAL_RECORD_REST_RETIRE,TRUE)
-        switch(var(VAR_RESULT)){
-            case 0: goto(MasterDojo_BattleRoom_EventScript_ContinueChallenge)
-            case 1: goto(MasterDojo_BattleRoom_EventScript_AskHeal)
-            case 2: goto(MasterDojo_BattleRoom_EventScript_AskRecordBattle)
-            case 3: goto(MasterDojo_BattleRoom_EventScript_AskPauseChallenge)
-            case 4: goto(MasterDojo_BattleRoom_EventScript_AskRetireChallenge)
-            case MULTI_B_PRESSED: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-        }
+script MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
+{
+    waitmovement(CAMERA)
+    special(RemoveCameraObject)
+    applymovement(ATTENDANT,Common_Movement_WalkInPlaceDown)
     return
 }
 
-script MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealYes{
-    multichoice(22,4,MULTI_GO_ON_HEAL_REST_RETIRE,TRUE)
-        switch(var(VAR_RESULT)){
-            case 0: goto(MasterDojo_BattleRoom_EventScript_ContinueChallenge)
-            case 1: goto(MasterDojo_BattleRoom_EventScript_AskHeal)
-            case 2: goto(MasterDojo_BattleRoom_EventScript_AskPauseChallenge)
-            case 3: goto(MasterDojo_BattleRoom_EventScript_AskRetireChallenge)
-            case 4: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-        }
+script MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
+{
+    special(SpawnCameraObject)
+    applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanLeft)
+    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerReturnPosition)
+    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantApproachPlayer)
+    waitmovement(CAMERA)
+    removeobject(OPPONENT)
+    waitmovement(ATTENDANT)
     return
 }
 
-script MasterDojo_BattleRoom_EventScript_AskHeal{
-    buffernumberstring(STR_VAR_1, VAR_RESTRICTEDSPARRING_HEAL_COUNT)
-        msgbox(MasterDojo_BattleRoom_Text_DoYouWantToRestore,MSGBOX_YESNO)
-        waitmessage
-        if(var(VAR_RESULT) == YES){
-            frontier_restorehelditems
-            sparring_restore
-            goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal)
-        }
-    goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-}
-
-script MasterDojo_BattleRoom_EventScript_AskReadyForOpponent_PostHeal{
-    message(MasterDojo_BattleRoom_Text_DoYouWantToContinue)
-        waitmessage
-        sparring_getcontinuemenutype
-        switch(var(VAR_RESULT)){
-            case SPARRING_RECORDYES_HEALYES:
-            case SPARRING_RECORDYES_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordYesHealNo)
-            case SPARRING_RECORDNO_HEALYES:
-            case SPARRING_RECORDNO_HEALNO: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponentRecordNoHealNo)
-        }
-}
-
-script MasterDojo_BattleRoom_EventScript_AskRecordBattle{
-    msgbox(MasterDojo_Lobby_Text_RecordLastMatch,MSGBOX_YESNO)
-        waitmessage
-        if(var(VAR_RESULT) == YES){
-            call(BattleFrontier_EventScript_SaveBattle)
-        }
-    goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-}
-
-script MasterDojo_BattleRoom_EventScript_AskPauseChallenge{
-    msgbox(BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame,MSGBOX_YESNO)
-        switch (var(VAR_RESULT)){
-            case YES: goto(MasterDojo_BattleRoom_EventScript_PauseChallenge)
-            case NO:
-            case MULTI_B_PRESSED: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-        }
-}
-
-script MasterDojo_BattleRoom_EventScript_AskRetireChallenge{
-    msgbox(BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge,MSGBOX_YESNO)
-        waitmessage
-        switch(var(VAR_RESULT)){
-            case YES: goto(MasterDojo_BattleRoom_EventScript_RetireChallenge)
-            case NO:
-            case MULTI_B_PRESSED: goto(MasterDojo_BattleRoom_EventScript_AskReadyForOpponent)
-        }
-}
-
-script MasterDojo_BattleRoom_EventScript_ContinueChallenge{
-    closemessage
-        call(MasterDojo_BattleRoom_EventScript_RefreshOpponent)
-        applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerStartBattle)
-        applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanRight)
-        applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantReturnToPosition)
-        waitmovement(ATTENDANT)
-        goto(MasterDojo_BattleRoom_EventScript_OpponentEnter)
-}
-
-script MasterDojo_BattleRoom_EventScript_WarpToLobbyWon{
-    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS,CHALLENGE_STATUS_WON)
-        sparring_set(TOWER_DATA_LVL_MODE)
-        goto(MasterDojo_BattleRoom_EventScript_WarpToLobby)
-}
-
-script MasterDojo_BattleRoom_EventScript_PauseChallenge{
-    message(BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait)
-        waitmessage
-        sparring_save(CHALLENGE_STATUS_PAUSED)
-        playse(SE_SAVE)
-        waitse
-        fadescreen(FADE_TO_BLACK)
-        frontier_reset
-        end
-}
-
-script MasterDojo_BattleRoom_EventScript_DoTowerBattle{
-    closemessage
-        setvar(VAR_TEMP_2,0)
-        frontier_set(FRONTIER_DATA_RECORD_DISABLED,FALSE)
-        setvar(VAR_0x8004,SPECIAL_BATTLE_SPARRING)
-        setvar(VAR_0x8005,0)
-        special(DoSpecialTrainerBattle)
-        waitstate
-        copyvar(VAR_0x8004,VAR_FRONTIER_BATTLE_MODE)
-        sparring_restorehelditems
-        sparring_resetsketch
-        frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
-        return
-}
-
-script MasterDojo_BattleRoom_EventScript_RetireChallenge{
-    setflag(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE)
-        goto(MasterDojo_BattleRoom_EventScript_WarpToLobbyWon)
+script MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
+{
+    removeobject(OPPONENT)
+    addobject(OPPONENT)
+    return
 }
 
 movement MasterDojo_BattleRoom_Movement_AttendantEnter{
@@ -296,30 +115,3 @@ movement MasterDojo_BattleRoom_Movement_CameraPanRight{
         step_end
 }
 
-text MasterDojo_BattleRoom_Text_WellDone{
-    format("Well done!")
-}
-
-text MasterDojo_BattleRoom_Text_LetTheBattle{
-    format("Let the battles begin! Battle No. 1! Ready...")
-}
-
-text MasterDojo_BattleRoom_Text_Next{
-    format("Next. Battle No. {STR_VAR_1}! Ready...")
-}
-
-text MasterDojo_BattleRoom_Text_Go{
-    format("Go!")
-}
-
-text MasterDojo_BattleRoom_Text_DoYouWantToContinue{
-    format("Do you want to continue sparring?")
-}
-
-text MasterDojo_BattleRoom_Text_DoYouWantToRestore{
-    format("Do you want to restore your POKéMON? (You can restore them {STR_VAR_1} more time(s).)")
-}
-
-text MasterDojo_Lobby_Text_MaxedOutStreak{
-    format("Wow, {PLAYER}, {STR_VAR_1} win(s) in a row... I think we all need a break!")
-}

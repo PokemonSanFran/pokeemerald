@@ -1,0 +1,961 @@
+RestrictedSparring_Entrance_EventScript_GetChallengeStatus::
+	frontier_getstatus
+	end
+
+
+RestrictedSparring_Entrance_EventScript_QuitWithoutSaving::
+	lock
+	faceplayer
+	delay 30
+	msgbox RestrictedSparring_Entrance_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT
+	sparring_set SPARRING_DATA_WIN_STREAK, 0
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, 0
+	setvar VAR_TEMP_0, 255
+	goto RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd
+	return
+
+
+RestrictedSparring_Entrance_EventScript_AskEnterChallenge::
+	lock
+	faceplayer
+	setvar VAR_FRONTIER_FACILITY, FRONTIER_FACILITY_SPARRING
+	special SavePlayerParty
+	message RestrictedSparring_Entrance_Text_HiyahDo
+	waitmessage
+	multichoice 17, 6, MULTI_CHALLENGEINFO, FALSE
+	switch VAR_RESULT
+	case 0, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_2
+	case 1, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_3
+	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_4
+	case 2, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_4
+	return
+
+RestrictedSparring_Entrance_EventScript_AskEnterChallenge_2:
+	goto RestrictedSparring_Entrance_EventScript_TryEnterChallenge
+	return
+
+RestrictedSparring_Entrance_EventScript_AskEnterChallenge_3:
+	goto RestrictedSparring_Entrance_EventScript_ExplainChallenge
+	return
+
+RestrictedSparring_Entrance_EventScript_AskEnterChallenge_4:
+	goto RestrictedSparring_Entrance_EventScript_DenyChallenge
+	return
+
+
+RestrictedSparring_Entrance_EventScript_TryEnterChallenge::
+	message RestrictedSparring_Entrance_Text_OffersTwoLevels
+	waitmessage
+	multichoice 17, 6, MULTI_LEVEL_MODE, FALSE
+	switch VAR_RESULT
+	case FRONTIER_LVL_TENT, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_3
+	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_3
+RestrictedSparring_Entrance_EventScript_TryEnterChallenge_1:
+	message RestrictedSparring_Entrance_Text_SelectTheTypeYouWant
+	waitmessage
+	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
+	call RestrictedSparring_Entrance_EventScript_CreateTypeList
+	frontier_checkineligible
+	goto_if_eq VAR_0x8004, TRUE, RestrictedSparring_Entrance_EventScript_NotEnoughValidMons
+	fadescreen FADE_TO_BLACK
+	frontier_get FRONTIER_DATA_LVL_MODE
+	copyvar VAR_0x8004, VAR_RESULT
+	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
+	special ChoosePartyForBattleFrontier
+	waitstate
+	goto_if_eq VAR_RESULT, 0, RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge
+	msgbox RestrictedSparring_Entrance_Text_BeforeDivingInto, MSGBOX_YESNO
+	switch VAR_RESULT
+	case YES, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_5
+	case NO, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_6
+	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_6
+	return
+
+RestrictedSparring_Entrance_EventScript_TryEnterChallenge_3:
+	goto RestrictedSparring_Entrance_EventScript_CancelChallenge
+	goto RestrictedSparring_Entrance_EventScript_TryEnterChallenge_1
+
+RestrictedSparring_Entrance_EventScript_TryEnterChallenge_5:
+	goto RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge
+	return
+
+RestrictedSparring_Entrance_EventScript_TryEnterChallenge_6:
+	goto RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge
+	return
+
+
+RestrictedSparring_Entrance_EventScript_CreateTypeList::
+	setvar VAR_0x8009, 0
+	setvar VAR_0x8004, SCROLL_MULTI_POKEMON_TYPE
+	special Sparring_ShowWinsWindow
+	special ShowScrollableMultichoice
+	waitstate
+	special Sparring_CloseWinsWindow
+	switch VAR_RESULT
+	case 17, RestrictedSparring_Entrance_EventScript_CreateTypeList_4
+	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_CreateTypeList_4
+	sparring_convertmenutotype
+RestrictedSparring_Entrance_EventScript_CreateTypeList_1:
+	sparring_buffersparringtype
+	return
+
+RestrictedSparring_Entrance_EventScript_CreateTypeList_4:
+	goto RestrictedSparring_Entrance_EventScript_CancelChallenge
+	goto RestrictedSparring_Entrance_EventScript_CreateTypeList_1
+
+
+RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge::
+	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
+	setvar VAR_TEMP_0, 0
+	sparring_init
+	frontier_set FRONTIER_DATA_PAUSED, FALSE
+	special LoadPlayerParty
+	closemessage
+	delay 2
+	call Common_EventScript_SaveGame
+	special HealPlayerParty
+	setvar VAR_TEMP_0, 255
+	compare VAR_RESULT, 0
+	goto_if_eq RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_2
+RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_1:
+	goto RestrictedSparring_Entrance_EventScript_WarpToBattleRoom
+	return
+
+RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_2:
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS
+	goto RestrictedSparring_Entrance_EventScript_DenyChallenge
+	goto RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_1
+
+
+RestrictedSparring_Entrance_EventScript_ExplainChallenge::
+	msgbox RestrictedSparring_Entrance_Text_RestrictedSparringIsATraining, MSGBOX_YESNO
+	compare VAR_RESULT, YES
+	goto_if_eq RestrictedSparring_Entrance_EventScript_ExplainChallenge_2
+RestrictedSparring_Entrance_EventScript_ExplainChallenge_1:
+	msgbox RestrictedSparring_Entrance_Text_IWontForceYou, MSGBOX_DEFAULT
+	releaseall
+	end
+
+RestrictedSparring_Entrance_EventScript_ExplainChallenge_2:
+	goto RestrictedSparring_Entrance_EventScript_TryEnterChallenge
+	goto RestrictedSparring_Entrance_EventScript_ExplainChallenge_1
+
+
+RestrictedSparring_Entrance_EventScript_NotEnoughValidMons::
+	frontier_get FRONTIER_DATA_LVL_MODE
+	copyvar VAR_0x8004, VAR_RESULT
+	compare VAR_RESULT, FRONTIER_LVL_50
+	goto_if_eq RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_2
+	msgbox RestrictedSparring_Entrance_Text_NotEnoughValidMonsLvOpenSingles, MSGBOX_DEFAULT
+RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_1:
+	release
+	end
+
+RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_2:
+	msgbox RestrictedSparring_Entrance_Text_NotEnoughValidMonsLv50Singles, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_1
+
+
+RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge::
+	special LoadPlayerParty
+	goto RestrictedSparring_Entrance_EventScript_CancelChallenge
+	return
+
+
+RestrictedSparring_Entrance_EventScript_CancelChallenge::
+	msgbox RestrictedSparring_Entrance_Text_OhYouChangedYour, MSGBOX_DEFAULT
+	release
+	end
+
+
+RestrictedSparring_Entrance_EventScript_DenyChallenge::
+	msgbox RestrictedSparring_Entrance_Text_IWontForceYou, MSGBOX_DEFAULT
+	release
+	end
+
+
+RestrictedSparring_Entrance_EventScript_WarpToBattleRoom::
+	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
+	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
+	special CallFrontierUtilFunc
+	frontier_saveparty
+	setvar VAR_RESULT, 0
+	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
+	sparring_save CHALLENGE_STATUS_SAVING
+	return
+
+
+RestrictedSparring_Entrance_EventScript_JudgeChallenge::
+	sparring_get SPARRING_DATA_WIN_STREAK
+	compare VAR_RESULT, 0
+	goto_if_eq RestrictedSparring_Entrance_EventScript_JudgeChallenge_1
+	buffernumberstring STR_VAR_1, VAR_RESULT
+	goto RestrictedSparring_Entrance_EventScript_Results
+	return
+
+RestrictedSparring_Entrance_EventScript_JudgeChallenge_1:
+	goto RestrictedSparring_Entrance_EventScript_Results_NoWins
+	return
+
+
+RestrictedSparring_Entrance_EventScript_Results_NoWins::
+	lock
+	faceplayer
+	call RestrictedSparring_Entrance_EventScript_SaveResult
+	call RestrictedSparring_Entrance_EventScript_AskSaveBattle
+	msgbox RestrictedSparring_Entrance_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd
+	return
+
+
+RestrictedSparring_Entrance_EventScript_Results::
+	lock
+	faceplayer
+	call RestrictedSparring_Entrance_EventScript_SaveResult
+	sparring_buffersparringtype
+	sparring_get SPARRING_DATA_WIN_STREAK
+	buffernumberstring STR_VAR_1, VAR_RESULT
+	msgbox RestrictedSparring_Entrance_Text_YourResultForThisRestricted
+	call RestrictedSparring_Entrance_EventScript_AwardPoints
+	goto_if_set FLAG_SPARRING_FIRST_TYPE_WIN, RestrictedSparring_Entrance_EventScript_Results_2
+RestrictedSparring_Entrance_EventScript_Results_1:
+	call RestrictedSparring_Entrance_EventScript_AskSaveBattle
+	goto RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd
+	return
+
+RestrictedSparring_Entrance_EventScript_Results_2:
+	msgbox RestrictedSparring_Entrance_Text_TheWayYouHandleType
+	call RestrictedSparring_Entrance_EventScript_CheckSymbol
+	goto RestrictedSparring_Entrance_EventScript_Results_1
+
+
+RestrictedSparring_Entrance_EventScript_SaveResult::
+	message RestrictedSparring_Entrance_Text_RecordWillBeSaved
+	waitmessage
+	frontier_checkairshow
+	sparring_givepoints
+	sparring_checksymbol
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
+	goto_if_eq RestrictedSparring_Entrance_EventScript_SaveResult_2
+	compare VAR_RESULT, SPARRING_SYMBOL_GOLD
+	goto_if_eq RestrictedSparring_Entrance_EventScript_SaveResult_3
+RestrictedSparring_Entrance_EventScript_SaveResult_1:
+	special LoadPlayerParty
+	sparring_save 0
+	playse SE_SAVE
+	waitse
+	return
+
+RestrictedSparring_Entrance_EventScript_SaveResult_2:
+	setflag FLAG_SYS_ARENA_SILVER
+	goto RestrictedSparring_Entrance_EventScript_SaveResult_1
+
+RestrictedSparring_Entrance_EventScript_SaveResult_3:
+	setflag FLAG_SYS_ARENA_GOLD
+	goto RestrictedSparring_Entrance_EventScript_SaveResult_1
+
+
+RestrictedSparring_Entrance_EventScript_AwardPoints::
+	msgbox RestrictedSparring_Entrance_Text_YouEarned
+	return
+
+
+RestrictedSparring_Entrance_EventScript_CheckSymbol::
+	sparring_checksymbol
+	compare VAR_RESULT, SPARRING_SYMBOL_NONE
+	goto_if_gt RestrictedSparring_Entrance_EventScript_CheckSymbol_2
+RestrictedSparring_Entrance_EventScript_CheckSymbol_1:
+	return
+
+RestrictedSparring_Entrance_EventScript_CheckSymbol_2:
+	call RestrictedSparring_Entrance_EventScript_GiveSymbol
+	goto RestrictedSparring_Entrance_EventScript_CheckSymbol_1
+
+
+RestrictedSparring_Entrance_EventScript_GiveSymbol::
+	msgbox RestrictedSparring_Entrance_Text_WhatYouCompletedRestricted
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
+	goto_if_eq RestrictedSparring_Entrance_EventScript_GiveSymbol_2
+	msgbox RestrictedSparring_Entrance_Text_ICantBelieveIt
+	msgbox RestrictedSparring_Entrance_Text_ThisAccomplishmentIsSureTo
+RestrictedSparring_Entrance_EventScript_GiveSymbol_1:
+	msgbox RestrictedSparring_Entrance_Text_ToCommemorateThisMonumentalAchievement
+	playfanfare MUS_OBTAIN_SYMBOL
+	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
+	goto_if_eq RestrictedSparring_Entrance_EventScript_GiveSymbol_6
+	message BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine
+RestrictedSparring_Entrance_EventScript_GiveSymbol_5:
+	waitmessage
+	waitfanfare
+	compare VAR_RESULT, SPARRING_SYMBOL_GOLD
+	goto_if_eq RestrictedSparring_Entrance_EventScript_GiveSymbol_10
+RestrictedSparring_Entrance_EventScript_GiveSymbol_9:
+	return
+
+RestrictedSparring_Entrance_EventScript_GiveSymbol_2:
+	msgbox RestrictedSparring_Entrance_Text_ThatsExcellentWork
+	goto RestrictedSparring_Entrance_EventScript_GiveSymbol_1
+
+RestrictedSparring_Entrance_EventScript_GiveSymbol_6:
+	message BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol
+	goto RestrictedSparring_Entrance_EventScript_GiveSymbol_5
+
+RestrictedSparring_Entrance_EventScript_GiveSymbol_10:
+	msgbox RestrictedSparring_Entrance_Text_IHopeYoullKeep
+	goto RestrictedSparring_Entrance_EventScript_GiveSymbol_9
+
+
+RestrictedSparring_Entrance_EventScript_AskSaveBattle::
+	frontier_get FRONTIER_DATA_RECORD_DISABLED
+	compare VAR_RESULT, TRUE
+	goto_if_eq RestrictedSparring_Entrance_EventScript_AskSaveBattle_2
+	message RestrictedSparring_Entrance_Text_RecordLastMatch
+	waitmessage
+	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+	compare VAR_RESULT, 0
+	goto_if_eq RestrictedSparring_Entrance_EventScript_AskSaveBattle_5
+RestrictedSparring_Entrance_EventScript_AskSaveBattle_4:
+	return
+
+RestrictedSparring_Entrance_EventScript_AskSaveBattle_2:
+	return
+
+RestrictedSparring_Entrance_EventScript_AskSaveBattle_5:
+	call RestrictedSparring_Entrance_EventScript_SaveBattle
+	goto RestrictedSparring_Entrance_EventScript_AskSaveBattle_4
+
+
+RestrictedSparring_Entrance_EventScript_SaveBattle::
+	frontier_savebattle
+	compare VAR_RESULT, 0
+	goto_if_ne RestrictedSparring_Entrance_EventScript_SaveBattle_2
+	msgbox RestrictedSparring_Entrance_Text_ThereWasAGlitch, MSGBOX_DEFAULT
+RestrictedSparring_Entrance_EventScript_SaveBattle_1:
+	return
+
+RestrictedSparring_Entrance_EventScript_SaveBattle_2:
+	playse SE_SAVE
+	msgbox BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_SaveBattle_1
+
+
+RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd::
+	setvar VAR_TEMP_0, 255
+	closemessage
+	setvar VAR_SPARRING_TYPE, TYPE_NONE
+	release
+	end
+
+
+RestrictedSparring_Entrance_EventScript_ResumeChallenge::
+	lock
+	faceplayer
+	message RestrictedSparring_Entrance_Text_WeveBeenWaitingForYou
+	waitmessage
+	message RestrictedSparring_Entrance_Text_ProgressWillBeSaved
+	waitmessage
+	playse SE_SAVE
+	waitse
+	frontier_set FRONTIER_DATA_PAUSED, FALSE
+	goto RestrictedSparring_Entrance_EventScript_WarpToBattleRoom
+	end
+
+
+RestrictedSparring_Entrance_EventScript_ShowResults::
+	lockall
+	frontier_results FRONTIER_FACILITY_SPARRING, 0
+	waitbuttonpress
+	special RemoveRecordsWindow
+	releaseall
+	end
+
+
+RestrictedSparring_EventScript_RulesBoard::
+	lockall
+	msgbox RestrictedSparring_Entrance_Text_RulesAreListed, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard
+	end
+
+
+RestrictedSparring_Entrance_EventScript_ReadRulesBoard::
+	message BattleFrontier_BattleTowerLobby_Text_ReadWhichHeading
+	waitmessage
+	multichoice 17, 2, MULTI_RESTRICTED_SPARRING_RULES, FALSE
+	switch VAR_RESULT
+	case 0, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_3
+	case 1, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_4
+	case 2, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_5
+	case 3, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6
+	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6
+RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1:
+	goto RestrictedSparring_EventScript_RulesBoard
+	end
+
+RestrictedSparring_Entrance_EventScript_ReadRulesBoard_3:
+	msgbox RestrictedSparring_Entrance_Text_OverviewBoard, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1
+
+RestrictedSparring_Entrance_EventScript_ReadRulesBoard_4:
+	msgbox RestrictedSparring_Entrance_Text_RestrictionsBoard, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1
+
+RestrictedSparring_Entrance_EventScript_ReadRulesBoard_5:
+	msgbox RestrictedSparring_Entrance_Text_RewardsBoard, MSGBOX_DEFAULT
+	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1
+
+RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6:
+	releaseall
+	end
+
+
+RestrictedSparring_BattleCourt_EventScript_RefreshOpponent::
+	tower_setopponent
+	call MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_SetUpOpponent::
+	setvar VAR_TEMP_0, 1
+	call RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
+	goto MasterDojo_BattleRoom_EventScript_EnterRoomMovement
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_OpponentEnter::
+	call MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
+	frontier_get FRONTIER_DATA_BATTLE_NUM
+	compare VAR_RESULT, 0
+	goto_if_eq RestrictedSparring_BattleCourt_EventScript_OpponentEnter_2
+	copyvar VAR_TEMP_E, VAR_RESULT
+	addvar VAR_TEMP_E, 1
+	buffernumberstring STR_VAR_1, VAR_TEMP_E
+	msgbox RestrictedSparring_BattleCourt_Text_Next, MSGBOX_DEFAULT
+RestrictedSparring_BattleCourt_EventScript_OpponentEnter_1:
+	delay 15
+	msgbox RestrictedSparring_BattleCourt_Text_Go, MSGBOX_DEFAULT
+	closemessage
+	sparring_getopponentintro
+	msgbox gStringVar4, MSGBOX_DEFAULT
+	waitmessage
+	call RestrictedSparring_BattleCourt_EventScript_DoTowerBattle
+	switch VAR_RESULT
+	case B_OUTCOME_WON, RestrictedSparring_BattleCourt_EventScript_OpponentEnter_7
+RestrictedSparring_BattleCourt_EventScript_OpponentEnter_5:
+	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost
+	return
+
+RestrictedSparring_BattleCourt_EventScript_OpponentEnter_2:
+	msgbox RestrictedSparring_BattleCourt_Text_LetTheBattle, MSGBOX_DEFAULT
+	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter_1
+
+RestrictedSparring_BattleCourt_EventScript_OpponentEnter_7:
+	goto RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent
+	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter_5
+
+
+RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost::
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
+	sparring_set SPARRING_DATA_LVL_MODE
+	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobby
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_WarpToLobby::
+	warp MAP_MASTER_DOJO_LOBBY, 7, 8
+	waitstate
+	end
+
+
+RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent::
+	sparring_setbattlewon
+	call MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
+	call RestrictedSparring_BattleCourt_EventScript_StopChallenge
+	msgbox RestrictedSparring_BattleCourt_Text_WellDone, MSGBOX_DEFAULT
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_StopChallenge::
+	sparring_checkmaxstreak
+	compare VAR_RESULT, 0
+	goto_if_eq RestrictedSparring_BattleCourt_EventScript_StopChallenge_2
+	msgbox MasterDojo_Lobby_Text_MaxedOutStreak, MSGBOX_DEFAULT
+	goto RestrictedSparring_BattleCourt_EventScript_RetireChallenge
+	return
+
+RestrictedSparring_BattleCourt_EventScript_StopChallenge_2:
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent::
+	message RestrictedSparring_BattleCourt_Text_DoYouWantToContinue
+	waitmessage
+	sparring_getcontinuemenutype
+	switch VAR_RESULT
+	case SPARRING_RECORDYES_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_2
+	case SPARRING_RECORDYES_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_3
+	case SPARRING_RECORDNO_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_4
+	case SPARRING_RECORDNO_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_5
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_2:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_3:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_4:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_5:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo::
+	multichoice 22, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_3
+	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_4
+	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_5
+	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_6
+	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_7
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1:
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_3:
+	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_4:
+	goto RestrictedSparring_BattleCourt_EventScript_AskRecordBattle
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_5:
+	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_6:
+	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_7:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
+
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo::
+	multichoice 22, 5, MULTI_GO_ON_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_3
+	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_4
+	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_5
+	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_6
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1:
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_3:
+	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_4:
+	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_5:
+	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_6:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
+
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes::
+	multichoice 22, 2, MULTI_GO_ON_HEAL_RECORD_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_3
+	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_4
+	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_5
+	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_6
+	case 4, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_7
+	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_8
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1:
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_3:
+	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_4:
+	goto RestrictedSparring_BattleCourt_EventScript_AskHeal
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_5:
+	goto RestrictedSparring_BattleCourt_EventScript_AskRecordBattle
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_6:
+	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_7:
+	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_8:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
+
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes::
+	multichoice 22, 4, MULTI_GO_ON_HEAL_REST_RETIRE, TRUE
+	switch VAR_RESULT
+	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_3
+	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_4
+	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_5
+	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_6
+	case 4, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_7
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1:
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_3:
+	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_4:
+	goto RestrictedSparring_BattleCourt_EventScript_AskHeal
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_5:
+	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_6:
+	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_7:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
+
+
+RestrictedSparring_BattleCourt_EventScript_AskHeal::
+	buffernumberstring STR_VAR_1, VAR_RESTRICTEDSPARRING_HEAL_COUNT
+	msgbox RestrictedSparring_BattleCourt_Text_DoYouWantToRestore, MSGBOX_YESNO
+	waitmessage
+	compare VAR_RESULT, YES
+	goto_if_eq RestrictedSparring_BattleCourt_EventScript_AskHeal_2
+RestrictedSparring_BattleCourt_EventScript_AskHeal_1:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskHeal_2:
+	frontier_restorehelditems
+	sparring_restore
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal
+	goto RestrictedSparring_BattleCourt_EventScript_AskHeal_1
+
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal::
+	message RestrictedSparring_BattleCourt_Text_DoYouWantToContinue
+	waitmessage
+	sparring_getcontinuemenutype
+	switch VAR_RESULT
+	case SPARRING_RECORDYES_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_2
+	case SPARRING_RECORDYES_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_2
+	case SPARRING_RECORDNO_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_3
+	case SPARRING_RECORDNO_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_3
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_2:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_3:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_AskRecordBattle::
+	msgbox RestrictedSparring_Entrance_Text_RecordLastMatch, MSGBOX_YESNO
+	waitmessage
+	compare VAR_RESULT, YES
+	goto_if_eq RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_2
+RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_1:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_2:
+	call BattleFrontier_EventScript_SaveBattle
+	goto RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_1
+
+
+RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge::
+	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame, MSGBOX_YESNO
+	switch VAR_RESULT
+	case YES, RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_2
+	case NO, RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_3
+	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_3
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_2:
+	goto RestrictedSparring_BattleCourt_EventScript_PauseChallenge
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_3:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge::
+	msgbox BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge, MSGBOX_YESNO
+	waitmessage
+	switch VAR_RESULT
+	case YES, RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_2
+	case NO, RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3
+	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_2:
+	goto RestrictedSparring_BattleCourt_EventScript_RetireChallenge
+	return
+
+RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3:
+	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_ContinueChallenge::
+	closemessage
+	call RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
+	call MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
+	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon::
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
+	sparring_set TOWER_DATA_LVL_MODE
+	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobby
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_PauseChallenge::
+	message BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait
+	waitmessage
+	sparring_save CHALLENGE_STATUS_PAUSED
+	playse SE_SAVE
+	waitse
+	fadescreen FADE_TO_BLACK
+	frontier_reset
+	end
+
+
+RestrictedSparring_BattleCourt_EventScript_DoTowerBattle::
+	closemessage
+	setvar VAR_TEMP_2, 0
+	frontier_set FRONTIER_DATA_RECORD_DISABLED, FALSE
+	setvar VAR_0x8004, SPECIAL_BATTLE_SPARRING
+	setvar VAR_0x8005, 0
+	special DoSpecialTrainerBattle
+	waitstate
+	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
+	sparring_restorehelditems
+	sparring_resetsketch
+	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
+	return
+
+
+RestrictedSparring_BattleCourt_EventScript_RetireChallenge::
+	setflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
+	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon
+	return
+
+
+RestrictedSparring_Entrance_Text_RulesAreListed::
+	.string "The RESTRICTED SPARRING rules are\n"
+	.string "listed.$"
+
+RestrictedSparring_Entrance_Text_OverviewBoard::
+	.string "RESTRICTED SPARRING is challenges you\n"
+	.string "to battle using up to three POKéMON of\l"
+	.string "a single type. Select a level mode and a\l"
+	.string "type, then battle your way through\l"
+	.string "five consecutive battles.$"
+
+RestrictedSparring_Entrance_Text_RestrictionsBoard::
+	.string "No duplicate POKéMON or items are\n"
+	.string "allowed. You can only restore your\l"
+	.string "POKéMON twice in total, so use your\l"
+	.string "opportunities wisely.$"
+
+RestrictedSparring_Entrance_Text_RewardsBoard::
+	.string "If you can win five times in a row, you\n"
+	.string "will complete the training, but you can\l"
+	.string "continue to increase your streak.\l"
+	.string "You'll recieve a reward for completing\l"
+	.string "training for all types in a level mode.$"
+
+RestrictedSparring_Entrance_Text_HiyahDo::
+	.string "Hi-yah! {PLAYER}! Do you want to try\n"
+	.string "RESTRICTED SPARRING?$"
+
+RestrictedSparring_Entrance_Text_SelectTheTypeYouWant::
+	.string "Select the type you want to use for\n"
+	.string "sparring.$"
+
+RestrictedSparring_Entrance_Text_IWontForceYou::
+	.string "I won't force you to do anything you\n"
+	.string "don't want to do. Some other time, then.$"
+
+RestrictedSparring_Entrance_Text_RestrictedSparringIsATraining::
+	.string "RESTRICTED SPARRING is a training\n"
+	.string "course that restricts the type of\l"
+	.string "POKéMON you can use. Select a type\l"
+	.string "first, and then battle using up to\l"
+	.string "three POKéMON of that type. No\l"
+	.string "duplicate POKéMON or items are allowed.\l"
+	.string "If you can win five times in a row,\l"
+	.string "you'll complete the training. However,\l"
+	.string "if you lose even once, the sparring will\l"
+	.string "end there! You can restore your\l"
+	.string "POKéMON between battles, but only\l"
+	.string "twice in total, so use the\l"
+	.string "opportunities very wisely. That's all!\l"
+	.string "Do you want to try RESTRICTED\l"
+	.string "SPARRING?$"
+
+RestrictedSparring_Entrance_Text_OhYouChangedYour::
+	.string "Oh, you changed your mind? Some other\n"
+	.string "time, then.$"
+
+RestrictedSparring_Entrance_Text_YouLostbutTrainYourself::
+	.string "You lost...but train yourself and your\n"
+	.string "POKéMON, and try again! I'm looking\l"
+	.string "forward to your next challenge.$"
+
+RestrictedSparring_Entrance_Text_YourResultForThisRestricted::
+	.string "Your result for this RESTRICTED\n"
+	.string "SPARRING set is... You had\l"
+	.string "{STR_VAR_1} win(s) with the\l"
+	.string "{STR_VAR_3}-type POKéMON\l"
+	.string "restriction!$"
+
+RestrictedSparring_Entrance_Text_TheWayYouHandleType::
+	.string "The way you handle\n"
+	.string "{STR_VAR_3}-type POKéMON is\l"
+	.string "flawless!$"
+
+RestrictedSparring_Entrance_Text_WhatYouCompletedRestricted::
+	.string "What?! You completed RESTRICTED\n"
+	.string "SPARRING with {STR_VAR_1}\l"
+	.string "type(s)?!$"
+
+RestrictedSparring_Entrance_Text_ThatsExcellentWork::
+	.string "That's excellent work!$"
+
+RestrictedSparring_Entrance_Text_ICantBelieveIt::
+	.string "I can't believe it... Your achievement is\n"
+	.string "just phenomenal!$"
+
+RestrictedSparring_Entrance_Text_ThisAccomplishmentIsSureTo::
+	.string "This accomplishment is sure to go down\n"
+	.string "in dojo history!$"
+
+RestrictedSparring_Entrance_Text_ToCommemorateThisMonumentalAchievement::
+	.string "To commemorate this monumental\n"
+	.string "achievement, I'll grant you this!$"
+
+RestrictedSparring_Entrance_Text_IHopeYoullKeep::
+	.string "I hope you'll keep exceeding your own\n"
+	.string "limits!$"
+
+RestrictedSparring_Entrance_Text_DidntSaveBeforeQuitting::
+	.string "Oops! {PLAYER}, it seems you didn't\n"
+	.string "save before quitting your challenge\l"
+	.string "last time. Because of that, your\l"
+	.string "challenge so far has been disqualified.\l"
+	.string "Sorry!$"
+
+RestrictedSparring_Entrance_Text_ThankYouForPlaying::
+	.string "Thanks for playing, {PLAYER}!$"
+
+RestrictedSparring_Entrance_Text_RecordWillBeSaved::
+	.string "Your record will be saved soon.$"
+
+RestrictedSparring_Entrance_Text_WeveBeenWaitingForYou::
+	.string "We've been waiting for you, {PLAYER}!$"
+
+RestrictedSparring_Entrance_Text_ProgressWillBeSaved::
+	.string "Before entering the BATTLE COURT, your\n"
+	.string "progress will be saved. Hang tight!$"
+
+RestrictedSparring_Entrance_Text_ThereWasAGlitch::
+	.string "Oops! There was a glitch, and your\n"
+	.string "record couldn't be saved. Better luck\l"
+	.string "next time!$"
+
+RestrictedSparring_Entrance_Text_OffersTwoLevels::
+	.string "RESTRICTED SPARRING offers two levels\n"
+	.string "of challenge, Level 50 and Open Level.\l"
+	.string "So, which one is your pick?$"
+
+RestrictedSparring_Entrance_Text_BeforeDivingInto::
+	.string "Before diving into RESTRICTED\n"
+	.string "SPARRING, your progress must be saved.\l"
+	.string "Is that cool?$"
+
+RestrictedSparring_Entrance_Text_NotEnoughValidMonsLv50Singles::
+	.string "Hold up, {PLAYER}! You need three\n"
+	.string "different POKéMON of Level 50 or less\l"
+	.string "to enter. They must all share the\l"
+	.string "{STR_VAR_3}-type and hold\l"
+	.string "different items. EGGS{STR_VAR_1}\l"
+	.string "not allowed. Come back when you're\l"
+	.string "ready!$"
+
+RestrictedSparring_Entrance_Text_NotEnoughValidMonsLvOpenSingles::
+	.string "Hold up, {PLAYER}! You need three\n"
+	.string "different POKéMON to enter. They must\l"
+	.string "all share the {STR_VAR_3}-type and\l"
+	.string "hold different items.\l"
+	.string "EGGS{STR_VAR_1} not allowed. Come\l"
+	.string "back when you're ready!$"
+
+RestrictedSparring_Entrance_Text_RecordLastMatch::
+	.string "Want me to record your last RESTRICTED\n"
+	.string "SPARRING match on your FRONTIER\l"
+	.string "PASS?$"
+
+RestrictedSparring_Entrance_Text_YouEarned::
+	.string "You earned {STR_VAR_2} BP!$"
+
+RestrictedSparring_BattleCourt_Text_WellDone::
+	.string "Well done!$"
+
+RestrictedSparring_BattleCourt_Text_LetTheBattle::
+	.string "Let the battles begin! Battle No. 1!\n"
+	.string "Ready...$"
+
+RestrictedSparring_BattleCourt_Text_Next::
+	.string "Next. Battle No. {STR_VAR_1}!\n"
+	.string "Ready...$"
+
+RestrictedSparring_BattleCourt_Text_Go::
+	.string "Go!$"
+
+RestrictedSparring_BattleCourt_Text_DoYouWantToContinue::
+	.string "Do you want to continue sparring?$"
+
+RestrictedSparring_BattleCourt_Text_DoYouWantToRestore::
+	.string "Do you want to restore your POKéMON?\n"
+	.string "(You can restore them {STR_VAR_1}\l"
+	.string "more time(s).)$"
+
+MasterDojo_Lobby_Text_MaxedOutStreak::
+	.string "Wow, {PLAYER}, {STR_VAR_1} win(s)\n"
+	.string "in a row... I think we all need a break!$"
