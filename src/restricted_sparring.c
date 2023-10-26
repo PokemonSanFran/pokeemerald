@@ -20,6 +20,7 @@
 #include "constants/moves.h"
 #include "constants/restricted_sparring.h"
 #include "constants/field_specials.h"
+#include "constants/hold_effects.h"
 #ifdef RESTRICTED_SPARRING_MONS
 #include "pokemon_icon.h"
 #endif
@@ -345,7 +346,7 @@ static void GiveBattlePoints(void)
     u32 points = CalculateBattlePoints(FRONTIER_SAVEDATA.curChallengeBattleNum);
 
     IncrementDailyBattlePoints(points);
-    ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
+    ConvertIntToDecimalStringN(gStringVar2, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
@@ -404,7 +405,6 @@ static void CheckSparringSymbol(void)
 
 u32 Sparring_SetChallengeNumToMax(u8 challengeNum)
 {
-    return 1;
     return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING) ? UCHAR_MAX : challengeNum;
 }
 
@@ -486,13 +486,14 @@ void FillRestrictedSparringWinWindow(u16 selection)
 }
 
 #ifdef RESTRICTED_SPARRING_MONS
-void FillRestrictedSparringTypeMons(u16 typeMode)
+void FillRestrictedSparringTypeMons(u16 selection)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 priority = 0;
     u32 species, personality, index;
     s32 x = (GetWindowAttribute(sRestrictedSparring_TypeMonsWindowId, WINDOW_TILEMAP_LEFT) * SPARRING_TILES) + SPARRING_TYPE_MON_X_OFFSET;
     u32 y = (GetWindowAttribute(sRestrictedSparring_TypeMonsWindowId, WINDOW_TILEMAP_TOP) * SPARRING_TILES) + SPARRING_TILES;
+    u32 typeMode = ConvertMenuInputToType(selection);
 
     for (index = 0; index < FRONTIER_PARTY_SIZE; index++)
     {
@@ -500,7 +501,6 @@ void FillRestrictedSparringTypeMons(u16 typeMode)
 
         if (species == SPECIES_NONE)
             continue;
-
         personality = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].personality;
 
         LoadMonIconPalette(species);
@@ -518,9 +518,9 @@ void Sparring_DestroyMonIconFreeResources(u16 menu)
     if (menu != SCROLL_MULTI_POKEMON_TYPE)
         return;
 
-    FreeMonIconPalettes();
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
-        DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_MonIconId[i]]);
+        if (sScrollableMultichoice_MonIconId[i] != 0)
+            DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_MonIconId[i]]);
 }
 
 static void InitRestrictedSparringMons(void)
