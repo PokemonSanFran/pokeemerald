@@ -188,22 +188,6 @@ script MasterDojo_Lobby_EventScript_JudgeChallenge{
     }
 }
 
-script MasterDojo_Lobby_EventScript_WonChallenge{
-    sparring_get(SPARRING_DATA_WIN_STREAK)
-    buffernumberstring(STR_VAR_1,VAR_RESULT)
-    goto(MasterDojo_Lobby_EventScript_Results)
-}
-
-script MasterDojo_Lobby_EventScript_LostChallenge{
-    sparring_get(SPARRING_DATA_WIN_STREAK)
-    buffernumberstring(STR_VAR_1,VAR_RESULT)
-    if (var(VAR_RESULT) == 0){
-        goto(MasterDojo_Lobby_EventScript_Results_NoWins)
-    }else{
-        goto(MasterDojo_Lobby_EventScript_Results)
-    }
-}
-
 script MasterDojo_Lobby_EventScript_Results_NoWins{
     lock
         faceplayer
@@ -217,7 +201,11 @@ script MasterDojo_Lobby_EventScript_Results{
     lock
         faceplayer
         call(MasterDojo_Lobby_EventScript_SaveResult)
+
         sparring_buffersparringtype
+        sparring_get(SPARRING_DATA_WIN_STREAK)
+        buffernumberstring(STR_VAR_1,VAR_RESULT)
+
         msgbox(MasterDojo_Lobby_Text_YourResultForThisRestricted)
         call(MasterDojo_Lobby_EventScript_AwardPoints)
 
@@ -506,5 +494,5 @@ text MasterDojo_Lobby_Text_RecordLastMatch{
 }
 
 text MasterDojo_Lobby_Text_YouEarned{
-    format("You earned {STR_VAR_1} BP!")
+    format("You earned {STR_VAR_2} BP!")
 }

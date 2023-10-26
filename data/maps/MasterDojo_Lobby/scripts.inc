@@ -227,26 +227,6 @@ MasterDojo_Lobby_EventScript_JudgeChallenge_1:
 	return
 
 
-MasterDojo_Lobby_EventScript_WonChallenge::
-	sparring_get SPARRING_DATA_WIN_STREAK
-	buffernumberstring STR_VAR_1, VAR_RESULT
-	goto MasterDojo_Lobby_EventScript_Results
-	return
-
-
-MasterDojo_Lobby_EventScript_LostChallenge::
-	sparring_get SPARRING_DATA_WIN_STREAK
-	buffernumberstring STR_VAR_1, VAR_RESULT
-	compare VAR_RESULT, 0
-	goto_if_eq MasterDojo_Lobby_EventScript_LostChallenge_1
-	goto MasterDojo_Lobby_EventScript_Results
-	return
-
-MasterDojo_Lobby_EventScript_LostChallenge_1:
-	goto MasterDojo_Lobby_EventScript_Results_NoWins
-	return
-
-
 MasterDojo_Lobby_EventScript_Results_NoWins::
 	lock
 	faceplayer
@@ -262,6 +242,8 @@ MasterDojo_Lobby_EventScript_Results::
 	faceplayer
 	call MasterDojo_Lobby_EventScript_SaveResult
 	sparring_buffersparringtype
+	sparring_get SPARRING_DATA_WIN_STREAK
+	buffernumberstring STR_VAR_1, VAR_RESULT
 	msgbox MasterDojo_Lobby_Text_YourResultForThisRestricted
 	call MasterDojo_Lobby_EventScript_AwardPoints
 	goto_if_set FLAG_SPARRING_FIRST_TYPE_WIN, MasterDojo_Lobby_EventScript_Results_2
@@ -624,4 +606,4 @@ MasterDojo_Lobby_Text_RecordLastMatch::
 	.string "PASS?$"
 
 MasterDojo_Lobby_Text_YouEarned::
-	.string "You earned {STR_VAR_1} BP!$"
+	.string "You earned {STR_VAR_2} BP!$"
