@@ -57,8 +57,10 @@
 
 // Start master_dojo
 
-// Uncomment to enable the storage of which Pokémon were used during a Restricted Sparring challenge
-// https://github.com/PokemonSanFran/pokeemerald/wiki/master_dojo#record-used-mons
+// Uncomment RESTRICTED_SPARRING_MONS to enable the storage of which Pokémon were used during a Restricted Sparring challenge.
+// This requires significant SaveBlock2 space to compile, and a dynamic overworld palette management system to look correct.
+// Read more on the feature's wiki:
+// https://github.com/PokemonSanFran/pokeemerald/wiki/restricted_sparring#record-used-mons
 //#define RESTRICTED_SPARRING_MONS
 
 // End master_dojo

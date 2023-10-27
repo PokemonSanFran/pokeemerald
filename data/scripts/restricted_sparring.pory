@@ -1,3 +1,11 @@
+// If you pulled the `restricted_sparring` branch, this feature will not work out of the box.
+// data/maps/MasterDojo_Lobby/scripts.inc has the mapscripts that are required to go in the entrance or lobby of your intended Battle Facility.
+// data/maps/MasterDojo_BattleRoom/scripts.inc has the mapscripts that are required to go in the arena of Battle Room of your intended Battle Facility.
+// data/scripts/restricted_sparring.inc has all of the scripts for Restricted Sparring to work, but all of the calls to map specific scripts have been commented out.
+// You will need to manually re-enable them.
+// Read more on the feature's wiki:
+// https://github.com/PokemonSanFran/pokeemerald/wiki/restricted_sparring#script-dependency
+
 const PLAYER = OBJ_EVENT_ID_PLAYER
 
 const CHALLENGE_STATUS_UNKNOWN = 0
@@ -180,7 +188,7 @@ script RestrictedSparring_Entrance_EventScript_WarpToBattleRoom
     special(CallFrontierUtilFunc)
     frontier_saveparty
     setvar(VAR_RESULT, 0)
-    warp(MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6)
+    //warp(MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6)
     sparring_save(CHALLENGE_STATUS_SAVING)
 }
 
@@ -564,7 +572,7 @@ text RestrictedSparring_Entrance_Text_YouEarned
 script RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
 {
     tower_setopponent
-    call(MasterDojo_BattleRoom_EventScript_RefreshOpponentObject)
+    //call(MasterDojo_BattleRoom_EventScript_RefreshOpponentObject)
     return
 }
 
@@ -572,13 +580,13 @@ script RestrictedSparring_BattleCourt_EventScript_SetUpOpponent
 {
     setvar(VAR_TEMP_0,1)
     call(RestrictedSparring_BattleCourt_EventScript_RefreshOpponent)
-    call(MasterDojo_BattleRoom_EventScript_EnterRoomMovement)
+    //call(MasterDojo_BattleRoom_EventScript_EnterRoomMovement)
     goto(RestrictedSparring_BattleCourt_EventScript_OpponentEnter)
 }
 
 script RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 {
-    call(MasterDojo_BattleRoom_EventScript_OpponentEnterMovement)
+    //call(MasterDojo_BattleRoom_EventScript_OpponentEnterMovement)
 
     frontier_get(FRONTIER_DATA_BATTLE_NUM)
     if (var(VAR_RESULT) == 0){
@@ -606,17 +614,17 @@ script RestrictedSparring_BattleCourt_EventScript_OpponentEnter
         case B_OUTCOME_WON: goto(RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent)
     }
 
-    goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost)
+    goto(RestrictedSparring_BattleCourt_EventScript_WarpToEntranceLost)
 }
 
-script RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost
+script RestrictedSparring_BattleCourt_EventScript_WarpToEntranceLost
 {
     frontier_set(FRONTIER_DATA_CHALLENGE_STATUS,CHALLENGE_STATUS_LOST)
     sparring_set(SPARRING_DATA_LVL_MODE)
-    goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobby)
+    goto(RestrictedSparring_BattleCourt_EventScript_WarpToEntrance)
 }
 
-script RestrictedSparring_BattleCourt_EventScript_WarpToLobby
+script RestrictedSparring_BattleCourt_EventScript_WarpToEntrance
 {
     warp(MAP_MASTER_DOJO_LOBBY,7,8)
     waitstate
@@ -626,7 +634,7 @@ script RestrictedSparring_BattleCourt_EventScript_WarpToLobby
 script RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent
 {
     sparring_setbattlewon
-    call(MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement)
+    //call(MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement)
     call(RestrictedSparring_BattleCourt_EventScript_StopChallenge)
     msgbox(RestrictedSparring_BattleCourt_Text_WellDone,MSGBOX_DEFAULT)
     goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
@@ -639,8 +647,8 @@ script RestrictedSparring_BattleCourt_EventScript_StopChallenge
     {
         return
     }
-    msgbox(MasterDojo_Lobby_Text_MaxedOutStreak,MSGBOX_DEFAULT)
-    goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon)
+    msgbox(RestrictedSparring_Entrance_MaxedOutStreak,MSGBOX_DEFAULT)
+    goto(RestrictedSparring_BattleCourt_EventScript_WarpToEntranceWon)
 }
 
 script RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu
@@ -774,7 +782,7 @@ script RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
     waitmessage
     switch(var(VAR_RESULT))
     {
-        case YES: goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon)
+        case YES: goto(RestrictedSparring_BattleCourt_EventScript_WarpToEntranceWon)
         case NO:
         case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
     }
@@ -784,15 +792,15 @@ script RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
 {
     closemessage
     call(RestrictedSparring_BattleCourt_EventScript_RefreshOpponent)
-    call(MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement)
+    //call(MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement)
     goto(RestrictedSparring_BattleCourt_EventScript_OpponentEnter)
 }
 
-script RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon
+script RestrictedSparring_BattleCourt_EventScript_WarpToEntranceWon
 {
     frontier_set(FRONTIER_DATA_CHALLENGE_STATUS,CHALLENGE_STATUS_WON)
     sparring_set(TOWER_DATA_LVL_MODE)
-    goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobby)
+    goto(RestrictedSparring_BattleCourt_EventScript_WarpToEntrance)
 }
 
 script RestrictedSparring_BattleCourt_EventScript_PauseChallenge
@@ -853,7 +861,7 @@ text RestrictedSparring_BattleCourt_Text_DoYouWantToRestore
     format("Do you want to restore your POKéMON? (You can restore them {STR_VAR_1} more time(s).)")
 }
 
-text MasterDojo_Lobby_Text_MaxedOutStreak
+text RestrictedSparring_Entrance_MaxedOutStreak
 {
     format("Wow, {PLAYER}, {STR_VAR_1} win(s) in a row... I think we all need a break!")
 }
