@@ -48,17 +48,7 @@ InsideOfTruck_EventScript_SetIntroFlagsFemale::
 	end
 
 InsideOfTruck_EventScript_MovingBox::
-    goto_if_set FLAG_SYS_POKEMON_GET, WarpPlayerDojo
-    givemon SPECIES_SNORLAX, 50, ITEM_LEFTOVERS
-    givemon SPECIES_SPINDA, 50, ITEM_ORAN_BERRY
-    givemon SPECIES_FURRET, 50, ITEM_NONE
-    setflag FLAG_SYS_POKEMON_GET
-    setflag FLAG_SYS_FRONTIER_PASS
-	//msgbox InsideOfTruck_Text_BoxPrintedWithMonLogo, MSGBOX_SIGN
-	end
-
-WarpPlayerDojo::
-    warp MAP_MASTER_DOJO_LOBBY,7,9
+	msgbox InsideOfTruck_Text_BoxPrintedWithMonLogo, MSGBOX_SIGN
 	end
 
 InsideOfTruck_Text_BoxPrintedWithMonLogo:

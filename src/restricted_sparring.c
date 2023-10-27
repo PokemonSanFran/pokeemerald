@@ -139,7 +139,7 @@ static void InitSparringChallenge(void)
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
-    VarSet(VAR_RESTRICTEDSPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE);
+    VarSet(VAR_SPARRING_HEAL_COUNT,SPARRING_MAX_NUM_RESTORE);
 
     gTrainerBattleOpponent_A = 0;
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
@@ -238,7 +238,7 @@ static void GetOpponentIntroSpeech(void)
 
 u32 CalculateMenuType(void)
 {
-    bool32 hasHeal = (!(VarGet(VAR_RESTRICTEDSPARRING_HEAL_COUNT) == 0));
+    bool32 hasHeal = (!(VarGet(VAR_SPARRING_HEAL_COUNT) == 0));
     bool32 canRecord = (FRONTIER_SAVEDATA.disableRecordBattle == FALSE);
 
     if (canRecord && hasHeal)

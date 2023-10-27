@@ -644,7 +644,7 @@ RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_7:
 
 
 RestrictedSparring_BattleCourt_EventScript_AskHeal::
-	buffernumberstring STR_VAR_1, VAR_RESTRICTEDSPARRING_HEAL_COUNT
+	buffernumberstring STR_VAR_1, VAR_SPARRING_HEAL_COUNT
 	msgbox RestrictedSparring_BattleCourt_Text_DoYouWantToRestore, MSGBOX_YESNO
 	waitmessage
 	compare VAR_RESULT, YES

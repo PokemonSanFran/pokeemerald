@@ -36,7 +36,7 @@
 #include "constants/trainers.h"
 #include "constants/event_objects.h"
 #include "constants/moves.h"
-#include "restricted_sparring.h"
+#include "restricted_sparring.h" // restricted_sparring
 
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_MaxieTrainer[];
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_TabithaTrainer[];
@@ -1105,7 +1105,7 @@ static void SetNextFacilityOpponent(void)
 u16 GetRandomScaledFrontierTrainerId(u8 challengeNum, u8 battleNum)
 {
     u16 trainerId;
-    challengeNum = Sparring_SetChallengeNumToMax(challengeNum); // master_dojo
+    challengeNum = Sparring_SetChallengeNumToMax(challengeNum); // restricted_sparring
 
     if (challengeNum <= 7)
     {
@@ -1638,7 +1638,7 @@ static void FillTrainerParty(u16 trainerId, u8 firstMonId, u8 monCount)
     s32 i, j;
     u16 chosenMonIndices[MAX_FRONTIER_PARTY_SIZE];
     u8 friendship = MAX_FRIENDSHIP;
-    u8 level = 1; // SetFacilityPtrsGetLevel(); TESTING
+    u8 level = SetFacilityPtrsGetLevel();
     u8 fixedIV = 0;
     u8 bfMonCount;
     const u16 *monSet = NULL;
@@ -1969,6 +1969,7 @@ static void HandleSpecialTrainerBattleEnd(void)
     case SPECIAL_BATTLE_PIKE_SINGLE:
     case SPECIAL_BATTLE_PIKE_DOUBLE:
     case SPECIAL_BATTLE_PYRAMID:
+    case SPECIAL_BATTLE_SPARRING: // restricted_sparring
         if (gSaveBlock2Ptr->frontier.battlesCount < 0xFFFFFF)
         {
             gSaveBlock2Ptr->frontier.battlesCount++;
@@ -2012,6 +2013,15 @@ void DoSpecialTrainerBattle(void)
     gBattleScripting.specialTrainerBattleType = gSpecialVar_0x8004;
     switch (gSpecialVar_0x8004)
     {
+    // Start restricted_sparring
+    case SPECIAL_BATTLE_SPARRING:
+        gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
+        FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
+        CreateTask(Task_StartBattleAfterTransition, 1);
+        PlayMapChosenOrBattleBGM(0);
+        BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_ARENA));
+        break;
+    // End restricted_sparring
     case SPECIAL_BATTLE_TOWER:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         switch (VarGet(VAR_FRONTIER_BATTLE_MODE))

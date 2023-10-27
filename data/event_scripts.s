@@ -11,7 +11,7 @@
 #include "constants/battle_setup.h"
 #include "constants/battle_tent.h"
 #include "constants/battle_tower.h"
-#include "constants/restricted_sparring.h"
+#include "constants/restricted_sparring.h" // restricted_sparring
 #include "constants/berry.h"
 #include "constants/cable_club.h"
 #include "constants/coins.h"
@@ -1057,8 +1057,8 @@ Common_EventScript_LegendaryFlewAway::
 	.include "data/text/save.inc"
 	.include "data/text/birch_speech.inc"
     
-    // Start master_dojo
+    // Start restricted_sparring
     .include "data/scripts/restricted_sparring.inc"
 	.include "data/maps/MasterDojo_Lobby/scripts.inc"
 	.include "data/maps/MasterDojo_BattleRoom/scripts.inc"
-    // End master_dojo
+    // End restricted_sparring

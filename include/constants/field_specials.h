@@ -40,10 +40,11 @@
 #define SCROLL_MULTI_BF_MOVE_TUTOR_2                      10
 #define SCROLL_MULTI_SS_TIDAL_DESTINATION                 11
 #define SCROLL_MULTI_BATTLE_TENT_RULES                    12
-#define SCROLL_MULTI_POKEMON_TYPE 13
+#define SCROLL_MULTI_POKEMON_TYPE                         13  // restricted_sparring
 
 #define MAX_SCROLL_MULTI_ON_SCREEN 6
-#define MAX_SCROLL_MULTI_LENGTH 18
+//#define MAX_SCROLL_MULTI_LENGTH 16 // restricted_sparring
+#define MAX_SCROLL_MULTI_LENGTH NUMBER_OF_MON_TYPES - 1 // restricted_sparring
 
 // Dept Store Floor Numbers
 #define DEPT_STORE_FLOORNUM_B4F       0

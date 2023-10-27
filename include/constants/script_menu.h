@@ -122,9 +122,14 @@
 #define MULTI_SLATEPORT_TENT_RULES         111
 #define MULTI_FALLARBOR_TENT_RULES         112
 #define MULTI_TAG_MATCH_TYPE               113
+
+// Start restricted_sparring
+
 #define MULTI_GO_ON_HEAL_RECORD_REST_RETIRE 114
 #define MULTI_GO_ON_HEAL_REST_RETIRE 115
 #define MULTI_RESTRICTED_SPARRING_RULES 116
+
+// End restricted_sparring
 
 // Lilycove SS Tidal Multichoice Selections
 #define SSTIDAL_SELECTION_SLATEPORT        0

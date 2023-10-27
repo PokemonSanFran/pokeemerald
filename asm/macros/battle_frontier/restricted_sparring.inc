@@ -55,7 +55,7 @@
     @ Heal player in Restricted Sparring
     .macro sparring_restore
     call Common_EventScript_OutOfCenterPartyHeal
-    subvar VAR_RESTRICTEDSPARRING_HEAL_COUNT,1
+    subvar VAR_SPARRING_HEAL_COUNT,1
     .endm
 
     @ Restore player's non-berry held items

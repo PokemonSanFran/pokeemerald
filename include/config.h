@@ -12,7 +12,7 @@
 // the various AGBPrint functions to be used. (See include/gba/isagbprint.h).
 // See below for enabling different pretty printing versions.
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 
 #define PRETTY_PRINT_MINI_PRINTF (0)
 #define PRETTY_PRINT_LIBC (1)

@@ -18,7 +18,7 @@
 #define FACILITY_LINK_CONTEST      7
 #define FACILITY_UNION_ROOM        8
 #define FACILITY_MULTI_OR_EREADER  9  // Direct Corner multi battles, multi battle with Steven, and e-Reader battles
-#define FRONTIER_FACILITY_SPARRING 10
+#define FRONTIER_FACILITY_SPARRING 10 // restricted_sparring
 
 // Battle Frontier battle modes.
 #define FRONTIER_MODE_SINGLES      0
@@ -45,7 +45,7 @@
 #define SPECIAL_BATTLE_STEVEN 8
 #define SPECIAL_BATTLE_PIKE_DOUBLE 9
 #define SPECIAL_BATTLE_PYRAMID 10
-#define SPECIAL_BATTLE_SPARRING 0
+#define SPECIAL_BATTLE_SPARRING 11 // restricted_sparring
 
 #define MAX_BATTLE_FRONTIER_POINTS 9999
 #define MAX_STREAK 9999

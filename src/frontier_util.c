@@ -36,9 +36,9 @@
 #include "constants/moves.h"
 #include "constants/items.h"
 #include "constants/event_objects.h"
-#include "constants/restricted_sparring.h"
+#include "constants/restricted_sparring.h" // restricted_sparring
 #include "party_menu.h"
-#include "restricted_sparring.h"
+#include "restricted_sparring.h" // restricted_sparring
 
 struct FrontierBrainMon
 {
@@ -948,9 +948,11 @@ static void ShowFacilityResultsWindow(void)
     case FACILITY_LINK_CONTEST:
         ShowLinkContestResultsWindow();
         break;
+    // Start restricted_sparring
     case FRONTIER_FACILITY_SPARRING:
-        Sparring_ShowResultsWindow(); // master_dojo
+        Sparring_ShowResultsWindow();
         break;
+    // End restricted_sparring
     }
 }
 
@@ -962,14 +964,16 @@ static bool8 IsWinStreakActive(u32 challenge)
         return FALSE;
 }
 
-void PrintAligned(const u8 *str, s32 y)
+//static void PrintAligned(const u8 *str, s32 y) // restricted_sparring
+void PrintAligned(const u8 *str, s32 y) // restricted_sparring
 {
     s32 x = GetStringCenterAlignXOffset(FONT_NORMAL, str, DISPLAY_WIDTH - 16);
     y = (y * 8) + 1;
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, str, x, y, TEXT_SKIP_DRAW, NULL);
 }
 
-void PrintHyphens(s32 y)
+//static void PrintHyphens(s32 y) // restricted_sparring
+void PrintHyphens(s32 y) // restricted_sparring
 {
     s32 i;
     u8 text[37];
@@ -1828,8 +1832,10 @@ u32 GetCurrentFacilityWinStreak(void)
         return gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode];
     case FRONTIER_FACILITY_PYRAMID:
         return gSaveBlock2Ptr->frontier.pyramidWinStreaks[lvlMode];
+    // Start restricted_sparring
     case FRONTIER_FACILITY_SPARRING:
         return gSaveBlock2Ptr->frontier.restrictedSparring[VarGet(VAR_SPARRING_TYPE)][lvlMode].winStreak;
+    // End restricted_sparring
     default:
         return 0;
     }
@@ -1998,13 +2004,15 @@ static void AppendIfValid(u16 species, u16 heldItem, u16 hp, u8 lvlMode, u8 monL
     if (i != *count)
         return;
 
+    // Start restricted_sparring
     if (VarGet(VAR_SPARRING_TYPE) != TYPE_NONE)
     {
         u32 chosenType = VarGet(VAR_SPARRING_TYPE);
-
-        if((gSpeciesInfo[species].types[0] != chosenType) && (gSpeciesInfo[species].types[1] != chosenType))
+        if ((gSpeciesInfo[species].types[0] != chosenType)
+        && (gSpeciesInfo[species].types[1] != chosenType))
             return;
     }
+    // End restricted_sparring
 
     if (heldItem != 0)
     {
@@ -2113,7 +2121,7 @@ static void CheckPartyIneligibility(void)
     else
     {
         gSpecialVar_0x8004 = FALSE;
-        if (VarGet(VAR_FRONTIER_FACILITY) != FRONTIER_FACILITY_SPARRING)
+        if (VarGet(VAR_FRONTIER_FACILITY) != FRONTIER_FACILITY_SPARRING) // restricted_sparring
             gSaveBlock2Ptr->frontier.lvlMode = gSpecialVar_Result;
     }
     #undef numEligibleMons
