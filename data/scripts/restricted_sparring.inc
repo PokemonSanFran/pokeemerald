@@ -188,7 +188,7 @@ RestrictedSparring_Entrance_EventScript_WarpToBattleRoom::
 	special CallFrontierUtilFunc
 	frontier_saveparty
 	setvar VAR_RESULT, 0
-	//warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
+	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 	sparring_save CHALLENGE_STATUS_SAVING
 	return
 
@@ -418,19 +418,19 @@ RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6:
 
 RestrictedSparring_BattleCourt_EventScript_RefreshOpponent::
 	tower_setopponent
-	//call MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
+	call MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_SetUpOpponent::
 	setvar VAR_TEMP_0, 1
 	call RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
-	//goto MasterDojo_BattleRoom_EventScript_EnterRoomMovement
+	goto MasterDojo_BattleRoom_EventScript_EnterRoomMovement
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter::
-	//call MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
+	call MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
 	frontier_get FRONTIER_DATA_BATTLE_NUM
 	compare VAR_RESULT, 0
 	goto_if_eq RestrictedSparring_BattleCourt_EventScript_OpponentEnter_2
@@ -469,14 +469,14 @@ RestrictedSparring_BattleCourt_EventScript_WarpToEntranceLost::
 
 
 RestrictedSparring_BattleCourt_EventScript_WarpToEntrance::
-	//warp MAP_MASTER_DOJO_LOBBY, 7, 8
+	warp MAP_MASTER_DOJO_LOBBY, 7, 8
 	waitstate
 	end
 
 
 RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent::
 	sparring_setbattlewon
-	//call MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
+	call MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
 	call RestrictedSparring_BattleCourt_EventScript_StopChallenge
 	msgbox RestrictedSparring_BattleCourt_Text_WellDone, MSGBOX_DEFAULT
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
@@ -740,7 +740,7 @@ RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3:
 RestrictedSparring_BattleCourt_EventScript_ContinueChallenge::
 	closemessage
 	call RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
-	//call MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
+	call MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
 	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 	return
 
