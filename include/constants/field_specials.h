@@ -44,7 +44,7 @@
 
 #define MAX_SCROLL_MULTI_ON_SCREEN 6
 //#define MAX_SCROLL_MULTI_LENGTH 16 // restricted_sparring
-#define MAX_SCROLL_MULTI_LENGTH NUMBER_OF_MON_TYPES - 1 // restricted_sparring
+#define MAX_SCROLL_MULTI_LENGTH NUMBER_OF_MON_TYPES + 1 // restricted_sparring
 
 // Dept Store Floor Numbers
 #define DEPT_STORE_FLOORNUM_B4F       0
