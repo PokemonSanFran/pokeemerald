@@ -55,17 +55,15 @@
 #endif
 #endif
 
-// Start restricted_sparring
-
+//#define RESTRICTED_SPARRING //Uncomment this line to enable the restricted_sparring functionality.
+#ifdef RESTRICTED_SPARRING
 #define VAR_SPARRING_HEAL_COUNT           0 // This var keeps track of how many heals the player has left during a challenge. It must be set for the game to compile.
 #define VAR_SPARRING_TYPE                 0 // This var keeps track of which type the player has chosen for their challenge.
 #define FLAG_SPARRING_FIRST_TYPE_WIN      0 // During a challenge, this flag is set when the player masters a type for the first time.
 
-// Uncomment RESTRICTED_SPARRING_MONS to enable the storage of which Pokémon were used during a Restricted Sparring challenge.
-// This requires significant SaveBlock2 space to compile, and a dynamic overworld palette management system to look correct.
+//#define RESTRICTED_SPARRING_MONS // Uncomment this line to enable the storage of which Pokémon were used during a Restricted Sparring challenge.
+// RESTRICTED_SPARRING_MONS requires significant SaveBlock2 space to compile, and a dynamic overworld palette management system to look correct.
 // Read more on the feature's wiki:
 // https://github.com/PokemonSanFran/pokeemerald/wiki/restricted_sparring#record-used-mons
-//#define RESTRICTED_SPARRING_MONS
-// End restricted_sparring
-
+#endif
 #endif // GUARD_CONFIG_H

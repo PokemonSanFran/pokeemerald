@@ -1,3 +1,4 @@
+#ifdef RESTRICTED_SPARRING
 const PLAYER = OBJ_EVENT_ID_PLAYER
 const CAMERA = OBJ_EVENT_ID_CAMERA
 const ATTENDANT = 1
@@ -114,4 +115,4 @@ movement MasterDojo_BattleRoom_Movement_CameraPanRight{
     walk_right * 5
         step_end
 }
-
+#endif
