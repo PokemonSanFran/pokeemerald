@@ -29,7 +29,6 @@
 #define SPARRING_SAVEDATA FRONTIER_SAVEDATA.restrictedSparring
 
 static EWRAM_DATA u8 sRestrictedSparring_TypeWinsWindowId = 0;
-static EWRAM_DATA u8 sRestrictedSparring_MarkWindowId = 0;
 #ifdef RESTRICTED_SPARRING_MONS
 static EWRAM_DATA u8 sRestrictedSparring_TypeMonsWindowId = 0;
 static EWRAM_DATA u16 sScrollableMultichoice_MonIconId[FRONTIER_PARTY_SIZE];
@@ -69,9 +68,6 @@ static const u8 *GetBestTypeWinType(u8);
 static void SparringPrintBestStreak(u8, u8, u8);
 static void PrintSparringStreak(const u8*, u16, u8, u8);
 static void CompareStreakToMax(void);
-//void ShowRestrictedSparringMarkWindow(void);
-//void CloseRestrictedSparringMarkWindow(void);
-//void void FillRestrictedSparringMarkWindow(u16);
 
 static const struct WindowTemplate sRestrictedSparring_TypeWinsWindowTemplate =
 {
@@ -96,16 +92,6 @@ static const struct WindowTemplate sRestrictedSparring_TypeMonsWindowTemplate =
     .height = 3,
     .paletteNum = 15,
     .baseBlock = 41,
-};
-static const struct WindowTemplate sRestrictedSparring_MarkWindowTemplate =
-{
-    .bg = 0,
-    .tilemapLeft = 24,
-    .tilemapTop = 1,
-    .width = 12,
-    .height = 12,
-    .paletteNum = 15,
-    .baseBlock = 41 + (12 * 12),
 };
 #endif
 
@@ -420,7 +406,6 @@ static void ConvertMenuInputToTypeAndSetVar(void)
 
 void Sparring_ShowWinsWindow(void)
 {
-    //ShowRestrictedSparringMarkWindow();
     ShowRestrictedSparringTypeWinsWindow();
 #ifdef RESTRICTED_SPARRING_MONS
     InitRestrictedSparringMons();
@@ -430,7 +415,6 @@ void Sparring_ShowWinsWindow(void)
 
 void Sparring_CloseWinsWindow(void)
 {
-    //CloseRestrictedSparringMarkWindow();
     CloseRestrictedSparringTypeWinsWindow();
 #ifdef RESTRICTED_SPARRING_MONS
     CloseRestrictedSparringTypeMonsWindow();
@@ -626,38 +610,9 @@ static void CompareStreakToMax(void)
 
 void Sparring_FillWindows(u16 selection)
 {
-    //FillRestrictedSparringMarkWindow(selection);
     FillRestrictedSparringWinWindow(selection);
 #ifdef RESTRICTED_SPARRING_MONS
     FillRestrictedSparringTypeMons(selection);
     return;
 #endif
 }
-
-/*
-void ShowRestrictedSparringMarkWindow()
-{
-    sRestrictedSparring_MarkWindowId = AddWindow(&sRestrictedSparring_MarkWindowTemplate);
-    PutWindowTilemap(sRestrictedSparring_MarkWindowId);
-    CopyWindowToVram(sRestrictedSparring_MarkWindowId, COPYWIN_GFX);
-}
-
-void CloseRestrictedSparringMarkWindow(void)
-{
-    //ClearStdWindowAndFrameToTransparent(sRestrictedSparring_MarkWindowId, TRUE);
-    RemoveWindow(sRestrictedSparring_MarkWindowId);
-}
-
-void FillRestrictedSparringMarkWindow(u16 selection)
-{
-    u8 i;
-    u32 y = 0;
-
-    for (i;i < MAX_SCROLL_MULTI_ON_SCREEN ; i ++)
-    {
-        AddTextPrinterParameterized3(sRestrictedSparring_MarkWindowId, FONT_NORMAL, 10, y, 0, TEXT_SKIP_DRAW,gText_SelectorArrow2);
-        y += 8;
-
-    }
-}
-*/
