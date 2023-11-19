@@ -36,6 +36,9 @@
 #include "constants/trainers.h"
 #include "constants/event_objects.h"
 #include "constants/moves.h"
+#ifdef RESTRICTED_SPARRING
+#include "restricted_sparring.h"
+#endif
 
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_MaxieTrainer[];
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_TabithaTrainer[];
@@ -1104,6 +1107,9 @@ static void SetNextFacilityOpponent(void)
 u16 GetRandomScaledFrontierTrainerId(u8 challengeNum, u8 battleNum)
 {
     u16 trainerId;
+#ifdef RESTRICTED_SPARRING
+    challengeNum = Sparring_SetChallengeNumToMax(challengeNum);
+#endif
 
     if (challengeNum <= 7)
     {
@@ -1968,6 +1974,9 @@ static void HandleSpecialTrainerBattleEnd(void)
     case SPECIAL_BATTLE_PIKE_SINGLE:
     case SPECIAL_BATTLE_PIKE_DOUBLE:
     case SPECIAL_BATTLE_PYRAMID:
+#ifdef RESTRICTED_SPARRING
+    case SPECIAL_BATTLE_SPARRING:
+#endif
         if (gSaveBlock2Ptr->frontier.battlesCount < 0xFFFFFF)
         {
             gSaveBlock2Ptr->frontier.battlesCount++;
@@ -2011,6 +2020,15 @@ void DoSpecialTrainerBattle(void)
     gBattleScripting.specialTrainerBattleType = gSpecialVar_0x8004;
     switch (gSpecialVar_0x8004)
     {
+#ifdef RESTRICTED_SPARRING
+    case SPECIAL_BATTLE_SPARRING:
+        gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
+        FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
+        CreateTask(Task_StartBattleAfterTransition, 1);
+        PlayMapChosenOrBattleBGM(0);
+        BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_ARENA));
+        break;
+#endif
     case SPECIAL_BATTLE_TOWER:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         switch (VarGet(VAR_FRONTIER_BATTLE_MODE))

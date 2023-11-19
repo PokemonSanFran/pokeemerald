@@ -65,6 +65,9 @@
 #include "constants/weather.h"
 #include "constants/metatile_labels.h"
 #include "palette.h"
+#ifdef RESTRICTED_SPARRING
+#include "restricted_sparring.h"
+#endif
 
 #define TAG_ITEM_ICON 5500
 
@@ -2380,6 +2383,18 @@ void ShowScrollableMultichoice(void)
         task->tKeepOpenAfterSelect = FALSE;
         task->tTaskId = taskId;
         break;
+#ifdef RESTRICTED_SPARRING
+    case SCROLL_MULTI_POKEMON_TYPE:
+        task->tMaxItemsOnScreen = MAX_SCROLL_MULTI_ON_SCREEN;
+        task->tNumItems = NUMBER_OF_MON_TYPES;
+        task->tLeft = 24;
+        task->tTop = 1;
+        task->tWidth = 12;
+        task->tHeight = 12;
+        task->tKeepOpenAfterSelect = FALSE;
+        task->tTaskId = taskId;
+        break;
+#endif
     default:
         gSpecialVar_Result = MULTI_B_PRESSED;
         DestroyTask(taskId);
@@ -2540,6 +2555,29 @@ static const u8 *const sScrollableMultichoiceOptions[][MAX_SCROLL_MULTI_LENGTH] 
         gText_Underpowered,
         gText_WhenInDanger,
         gText_Exit
+#ifdef RESTRICTED_SPARRING
+    },
+    [SCROLL_MULTI_POKEMON_TYPE] =
+    {
+        gTypeNames[TYPE_NORMAL],
+        gTypeNames[TYPE_FIGHTING],
+        gTypeNames[TYPE_FLYING],
+        gTypeNames[TYPE_POISON],
+        gTypeNames[TYPE_GROUND],
+        gTypeNames[TYPE_ROCK],
+        gTypeNames[TYPE_BUG],
+        gTypeNames[TYPE_GHOST],
+        gTypeNames[TYPE_STEEL],
+        gTypeNames[TYPE_FIRE],
+        gTypeNames[TYPE_WATER],
+        gTypeNames[TYPE_GRASS],
+        gTypeNames[TYPE_ELECTRIC],
+        gTypeNames[TYPE_PSYCHIC],
+        gTypeNames[TYPE_ICE],
+        gTypeNames[TYPE_DRAGON],
+        gTypeNames[TYPE_DARK],
+        gText_Cancel2,
+#endif
     }
 };
 
@@ -2982,6 +3020,10 @@ static void FillFrontierExchangeCornerWindowAndItemIcon(u16 menu, u16 selection)
 {
     #include "data/battle_frontier/battle_frontier_exchange_corner.h"
 
+#ifdef RESTRICTED_SPARRING
+    if (menu == SCROLL_MULTI_POKEMON_TYPE)
+        Sparring_FillWindows(selection);
+#endif
     if (menu >= SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1 && menu <= SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR)
     {
         FillWindowPixelRect(0, PIXEL_FILL(1), 0, 0, 216, 32);
@@ -3054,6 +3096,11 @@ static void HideFrontierExchangeCornerItemIcon(u16 menu, u16 unused)
         }
         sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
     }
+#ifdef RESTRICTED_SPARRING
+#ifdef RESTRICTED_SPARRING_MONS
+    Sparring_DestroyMonIconFreeResources(menu);
+#endif
+#endif
 }
 
 static const u16 sBattleFrontier_TutorMoves1[] =

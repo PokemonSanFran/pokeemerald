@@ -1,0 +1,118 @@
+#ifdef RESTRICTED_SPARRING
+const PLAYER = OBJ_EVENT_ID_PLAYER
+const CAMERA = OBJ_EVENT_ID_CAMERA
+const ATTENDANT = 1
+const OPPONENT = 2
+
+const VAR_NEED_TO_FACE_EAST = VAR_TEMP_1
+
+mapscripts MasterDojo_BattleRoom_MapScripts
+{
+    MAP_SCRIPT_ON_FRAME_TABLE
+    [
+        VAR_TEMP_0, 0: RestrictedSparring_BattleCourt_EventScript_SetUpOpponent
+    ]
+
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+    [
+        VAR_NEED_TO_FACE_EAST, 0:MasterDojo_Lobby_EventScript_PlayerFaceEast
+    ]
+}
+
+script MasterDojo_Lobby_EventScript_PlayerFaceEast
+{
+    setvar(VAR_NEED_TO_FACE_EAST, 1)
+    turnobject(PLAYER, DIR_EAST)
+    end
+}
+
+script MasterDojo_BattleRoom_EventScript_EnterRoomMovement
+{
+    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantEnter)
+    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerEnter)
+    waitmovement(ATTENDANT)
+    return
+}
+
+script MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
+{
+    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerStartBattle)
+    applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanRight)
+    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantReturnToPosition)
+    waitmovement(ATTENDANT)
+    return
+}
+
+script MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
+{
+    waitmovement(CAMERA)
+    special(RemoveCameraObject)
+    applymovement(ATTENDANT,Common_Movement_WalkInPlaceDown)
+    return
+}
+
+script MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
+{
+    special(SpawnCameraObject)
+    applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanLeft)
+    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerReturnPosition)
+    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantApproachPlayer)
+    waitmovement(CAMERA)
+    removeobject(OPPONENT)
+    waitmovement(ATTENDANT)
+    return
+}
+
+script MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
+{
+    removeobject(OPPONENT)
+    addobject(OPPONENT)
+    return
+}
+
+movement MasterDojo_BattleRoom_Movement_AttendantEnter{
+    walk_right * 6
+        walk_up * 2
+        face_down
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_AttendantApproachPlayer{
+    walk_left * 3
+        walk_down
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_AttendantReturnToPosition{
+    walk_up
+        walk_right * 3
+        face_down
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_PlayerEnter{
+    walk_right * 6
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_PlayerStartBattle{
+    walk_right * 2
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_PlayerReturnPosition{
+    walk_left * 2
+        face_up
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_CameraPanLeft{
+    walk_left * 5
+        step_end
+}
+
+movement MasterDojo_BattleRoom_Movement_CameraPanRight{
+    walk_right * 5
+        step_end
+}
+#endif

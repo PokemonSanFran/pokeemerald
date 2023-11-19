@@ -1,0 +1,24 @@
+#ifdef RESTRICTED_SPARRING
+MasterDojo_Lobby_MapScripts::
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
+	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+	.byte 0
+
+MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
+	map_script_2 VAR_TEMP_0, 0, RestrictedSparring_Entrance_EventScript_GetChallengeStatus
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_SAVING, RestrictedSparring_Entrance_EventScript_QuitWithoutSaving
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, RestrictedSparring_Entrance_EventScript_ResumeChallenge
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, RestrictedSparring_Entrance_EventScript_JudgeChallenge
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, RestrictedSparring_Entrance_EventScript_JudgeChallenge
+	.2byte 0
+
+MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE:
+	map_script_2 VAR_TEMP_1, 0, MasterDojo_Lobby_EventScript_PlayerFaceNorth
+	.2byte 0
+
+
+MasterDojo_Lobby_EventScript_PlayerFaceNorth::
+	setvar VAR_TEMP_1, 1
+	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
+	end
+#endif

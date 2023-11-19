@@ -14,3 +14,6 @@
 	.include "asm/macros/battle_frontier/battle_pyramid.inc"
 	.include "asm/macros/battle_frontier/battle_tower.inc"
 	.include "asm/macros/battle_frontier/frontier_util.inc"
+#ifdef RESTRICTED_SPARRING
+    .include "asm/macros/battle_frontier/restricted_sparring.inc"
+#endif

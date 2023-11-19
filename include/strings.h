@@ -3026,4 +3026,13 @@ extern const u8 gText_BoxName[];
 extern const u8 gText_PkmnsNickname[];
 extern const u8 gText_TellHimTheWords[];
 
+#ifdef RESTRICTED_SPARRING
+extern const u8 gText_Heal[];
+extern const u8 gText_Overview[];
+extern const u8 gText_Restrictions[];
+extern const u8 gText_Rewards[];
+extern const u8 gText_RestrictedSparringResults[];
+extern const u8 gText_BestStreak[];
+extern const u8 gText_TypesMastered[];
+#endif
 #endif // GUARD_STRINGS_H

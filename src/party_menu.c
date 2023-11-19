@@ -72,6 +72,9 @@
 #include "constants/party_menu.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
+#ifdef RESTRICTED_SPARRING
+#include "restricted_sparring.h"
+#endif
 
 enum {
     MENU_SUMMARY,
@@ -5604,6 +5607,11 @@ static bool8 GetBattleEntryEligibility(struct Pokemon *mon)
         return FALSE;
     case FACILITY_UNION_ROOM:
         return TRUE;
+#ifdef RESTRICTED_SPARRING
+    case FRONTIER_FACILITY_SPARRING:
+        if (!Sparring_CheckIfPartyMonMatchesType(mon))
+            return FALSE;
+#endif
     default: // Battle Frontier
         species = GetMonData(mon, MON_DATA_SPECIES);
         for (; gFrontierBannedSpecies[i] != 0xFFFF; i++)
