@@ -1,3 +1,4 @@
+#ifdef RESTRICTED_SPARRING
 	@ Initialize the Battle Tower challenge
 	.macro sparring_init
 	setvar VAR_0x8004, SPARRING_FUNC_INIT
@@ -99,3 +100,4 @@
     setvar VAR_0x8004, SPARRING_FUNC_CHECK_MAX
     special CallRestrictedSparringFunc
     .endm
+#endif

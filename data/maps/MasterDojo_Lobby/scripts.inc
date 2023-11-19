@@ -1,3 +1,4 @@
+#ifdef RESTRICTED_SPARRING
 MasterDojo_Lobby_MapScripts::
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, MasterDojo_Lobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
@@ -20,4 +21,4 @@ MasterDojo_Lobby_EventScript_PlayerFaceNorth::
 	setvar VAR_TEMP_1, 1
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
 	end
-
+#endif

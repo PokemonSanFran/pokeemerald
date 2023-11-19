@@ -24,8 +24,10 @@ u16 GetFrontierBrainMonMove(u8 monId, u8 moveSlotId);
 u8 GetFrontierBrainMonNature(u8 monId);
 u8 GetFrontierBrainMonEvs(u8 monId, u8 evStatId);
 s32 GetFronterBrainSymbol(void);
-void PrintAligned(const u8 *str, s32 y); // restricted_sparring
-void PrintHyphens(s32 y); // restricted_sparring
+#ifdef RESTRICTED_SPARRING
+void PrintAligned(const u8 *str, s32 y);
+void PrintHyphens(s32 y);
+#endif
 
 extern const u16 gFrontierBannedSpecies[];
 

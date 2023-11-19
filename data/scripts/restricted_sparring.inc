@@ -1,3 +1,4 @@
+#ifdef RESTRICTED_SPARRING
 // If you pulled the `restricted_sparring` branch, this feature will not work out of the box.
 // data/maps/MasterDojo_Lobby/scripts.inc has the mapscripts that are required to go in the entrance or lobby of your intended Battle Facility.
 // data/maps/MasterDojo_BattleRoom/scripts.inc has the mapscripts that are required to go in the arena of Battle Room of your intended Battle Facility.
@@ -967,3 +968,4 @@ RestrictedSparring_BattleCourt_Text_DoYouWantToRestore::
 RestrictedSparring_Entrance_MaxedOutStreak::
 	.string "Wow, {PLAYER}, {STR_VAR_1} win(s)\n"
 	.string "in a row... I think we all need a break!$"
+#endif

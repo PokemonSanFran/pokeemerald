@@ -21,6 +21,7 @@
 #include "constants/restricted_sparring.h"
 #include "constants/field_specials.h"
 #include "constants/hold_effects.h"
+#ifdef RESTRICTED_SPARRING
 #ifdef RESTRICTED_SPARRING_MONS
 #include "pokemon_icon.h"
 #endif
@@ -112,6 +113,10 @@ static void (* const sRestrictedSparringFuncs[])(void) =
     [SPARRING_FUNC_CONVERT_TYPE]           = ConvertMenuInputToTypeAndSetVar,
     [SPARRING_FUNC_CHECK_MAX]              = CompareStreakToMax,
 };
+
+STATIC_ASSERT(VAR_SPARRING_HEAL_COUNT > 0, AssignAVarTo_VAR_SPARRING_HEAL_COUNT_ToUseRestrictedSparring);
+STATIC_ASSERT(VAR_SPARRING_TYPE > 0, AssignAVarTo_VAR_SPARRING_TYPE_ToUseRestrictedSparring);
+STATIC_ASSERT(FLAG_SPARRING_FIRST_TYPE_WIN > 0, AssignAFlagTo_FLAG_SPARRING_FIRST_TYPE_WIN_ToUseRestrictedSparring);
 
 void CallRestrictedSparringFunc(void)
 {
@@ -616,3 +621,4 @@ void Sparring_FillWindows(u16 selection)
     return;
 #endif
 }
+#endif
