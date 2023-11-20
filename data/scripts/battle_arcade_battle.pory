@@ -312,4 +312,289 @@ text BattleArcade_Entrance_MaxedOutStreak
 {
     format("Wow, {PLAYER}, {STR_VAR_1} win(s) in a row... I think we all need a break!")
 }
+
+text BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn
+{
+	format("First, I’ll need to hold on to any items held by your Pokémon.")
+}
+text BattleArcade_RouletteRoom_Text_PleaseWaitAMoment
+{
+	format("Please wait a moment.")
+}
+text BattleArcade_RouletteRoom_Text_GoodGoingWellHeal
+{
+	format("Good going! We’ll heal your Pokémon now.")
+}
+text BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady
+{
+	format("Next up, game no. {STR_VAR_1}! Are you ready?")
+}
+text BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveTheLastBattle
+{
+	format("Would you like to save the last battle as your Battle Video?")
+}
+text BattleArcade_RouletteRoom_Text_BattleHasBeenSaved
+{
+	format("{STR_VAR_1}’s battle has been saved as a Battle Video.")
+}
+text BattleArcade_RouletteRoom_Text_ThereWasAnError
+{
+	format("There was an error. The Battle Video couldn’t be saved.")
+}
+text BattleArcade_RouletteRoom_Text_DeleteYourExistingBattleVideo
+{
+	format("Delete your existing Battle Video and save the last battle?")
+}
+text BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower
+{
+	format("Saving... Don’t turn off the power.")
+}
+text BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveAndTakeABreak
+{
+	format("Would you like to save and take a break from playing?")
+}
+text BattleArcade_RouletteRoom_Text_WouldYouLikeToRetire
+{
+	format("Would you like to retire from this challenge?")
+}
+text BattleArcade_RouletteRoom_Text_IsChoosingPleaseWait
+{
+	format("{STR_VAR_1} is choosing. Please wait.")
+}
+text BattleArcade_RouletteRoom_Text_ChoseToRetire
+{
+	format("{STR_VAR_1} chose to retire.")
+}
+text BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade
+{
+	format("Welcome to the Battle Arcade!")
+}
+text BattleArcade_RouletteRoom_Text_GameNoComeOn
+{
+	format("Game no. {STR_VAR_1}! Come on!")
+}
+text BattleArcade_RouletteRoom_Text_WithoutFurtherAdo
+{
+	format("Without further ado... Let’s activate the game board!")
+}
+text BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent
+{
+	format("This is our current event!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon without full HP!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothWithoutFullHp
+{
+	format("The match will commence with {STR_VAR_1}’s and {STR_VAR_2}’s Pokémon without full HP!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceLeveledUp
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon leveled up!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothLeveledUp
+{
+	format("The match will commence with {STR_VAR_1}’s and {STR_VAR_2}’s Pokémon leveled up!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommencePoisoned
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon poisoned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothPoisoned
+{
+	format("The match will commence with {STR_VAR_1} and {STR_VAR_2}’s Pokémon poisoned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceParalyzed
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon paralyzed!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothParalyzed
+{
+	format("The match will commence with {STR_VAR_1} and {STR_VAR_2}’s Pokémon paralyzed!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBurned
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon burned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothBurned
+{
+	format("The match will commence with {STR_VAR_1} and {STR_VAR_2}’s Pokémon burned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceAsleep
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon asleep!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothAsleep
+{
+	format("The match will commence with {STR_VAR_1} and {STR_VAR_2}’s Pokémon asleep!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceFrozen
+{
+	format("The match will commence with {STR_VAR_1}’s Pokémon frozen!")
+}
+text BattleArcade_RouletteRoom_Text_MatchCommenceBothFrozen
+{
+	format("The match will commence with {STR_VAR_1} and {STR_VAR_2}’s Pokémon frozen!")
+}
+text BattleArcade_RouletteRoom_Text_PokemonWillBeLoanedThe
+{
+	format("{STR_VAR_1}’s Pokémon will be loaned the {STR_VAR_3}.")
+}
+text BattleArcade_RouletteRoom_Text_BothPokemonWillBeLoanedThe
+{
+	format("{STR_VAR_1} and {STR_VAR_2}’s Pokémon will be loaned the {STR_VAR_3}.")
+}
+text BattleArcade_RouletteRoom_Text_HereYouGo
+{
+	format("Here you go!")
+}
+text BattleArcade_RouletteRoom_Text_MatchConductedHarshSunlight
+{
+	format("This match will be conducted under harsh sunlight.")
+}
+text BattleArcade_RouletteRoom_Text_MatchConductedSteadyRainfall
+{
+	format("This match will be conducted under a steady rainfall.")
+}
+text BattleArcade_RouletteRoom_Text_MatchConductedRagingSandstorm
+{
+	format("This match will be conducted under a raging sandstorm.")
+}
+text BattleArcade_RouletteRoom_Text_MatchConductedPeltingHail
+{
+	format("This match will be conducted under pelting hail.")
+}
+text BattleArcade_RouletteRoom_Text_MatchConductedDenseFog
+{
+	format("This match will be conducted in a dense fog.")
+}
+text BattleArcade_RouletteRoom_Text_MatchConductedTimeAndSpaceAreDistorted
+{
+	format("This match will be conducted on a floor where time and space are distorted.")
+}
+text BattleArcade_RouletteRoom_Text_YourPokemonWillBeSwitched
+{
+	format("Your Pokémon will be switched with the other Trainer’s for this match.")
+}
+text BattleArcade_RouletteRoom_Text_BoardspeedIncreased
+{
+	format("From the next game on, the game board’s speed will be increased.")
+}
+text BattleArcade_RouletteRoom_Text_BoardspeedDecreased
+{
+	format("From the next game on, the game board’s speed will be decreased.")
+}
+text BattleArcade_RouletteRoom_Text_BoardmotionRandom
+{
+	format("For the next game, the game board’s motion will become random.")
+}
+text BattleArcade_RouletteRoom_Text_ReceivedBp
+{
+	format("{STR_VAR_1} received {STR_VAR_3} BP!")
+}
+text BattleArcade_RouletteRoom_Text_AndReceivedBp
+{
+	format("{STR_VAR_1} and {STR_VAR_2} received {STR_VAR_3} BP!")
+}
+text BattleArcade_RouletteRoom_Text_AreYouReady
+{
+	format("Are you ready?")
+}
+text BattleArcade_RouletteRoom_Text_OhLuckyYouCanSkip
+{
+	format("Oh! Lucky! You can skip the battle!")
+}
+text BattleArcade_RouletteRoom_Text_TooBadThereIsNo
+{
+	format("Too bad! There is no event this time!")
+}
+text BattleArcade_RouletteRoom_Text_OkLetTheBattleCommence
+{
+	format("OK! Let the battle commence!")
+}
+text BattleArcade_RouletteRoom_Text_MatchPoisonedLuckyBreak
+{
+	format("{STR_VAR_1}’s Pokémon will enter the match poisoned... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be poisoned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchBothPoisonedLuckyBreak
+{
+	format("{STR_VAR_1}’s and {STR_VAR_2}’s Pokémon will begin poisoned... Oh! A lucky break! Neither of them has a Pokémon that can be poisoned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchParalyzedLuckyBreak
+{
+	format("{STR_VAR_1}’s Pokémon will enter the match paralyzed... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be paralyzed!")
+}
+text BattleArcade_RouletteRoom_Text_MatchBothParalyzedLuckyBreak
+{
+	format("{STR_VAR_1}’s and {STR_VAR_2}’s Pokémon will begin paralyzed... Oh! A lucky break! Neither of them has a Pokémon that can be paralyzed!")
+}
+text BattleArcade_RouletteRoom_Text_MatchBurnedLuckyBreak
+{
+	format("{STR_VAR_1}’s Pokémon will enter the match burned... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be burned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchBothBurnedLuckyBreak
+{
+	format("{STR_VAR_1}’s and {STR_VAR_2}’s Pokémon will begin burned... Oh! A lucky break! Neither of them has a Pokémon that can be burned!")
+}
+text BattleArcade_RouletteRoom_Text_MatchAsleepLuckyBreak
+{
+	format("{STR_VAR_1}’s Pokémon will enter the match asleep... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be made to sleep!")
+}
+text BattleArcade_RouletteRoom_Text_MatchBothAsleepLuckyBreak
+{
+	format("{STR_VAR_1}’s and {STR_VAR_2}’s Pokémon will begin asleep... Oh! A lucky break! Neither of them has a Pokémon that can be made to sleep!")
+}
+text BattleArcade_RouletteRoom_Text_MatchFrozenLuckyBreak
+{
+	format("{STR_VAR_1}’s Pokémon will enter the match frozen... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be frozen!")
+}
+text BattleArcade_RouletteRoom_Text_MatchBothFrozenLuckyBreak
+{
+	format("{STR_VAR_1}’s and {STR_VAR_2}’s Pokémon will begin frozen... Oh! A lucky break! Neither of them has a Pokémon that can be frozen!")
+}
+text BattleArcade_RouletteRoom_Text_YouHaveClearedYourSeventh
+{
+	format("You have cleared your seventh battle! Congratulations! You have earned BP as your prize!")
+}
+text BattleArcade_RouletteRoom_Text_WeWillReturnAnyItems
+{
+	format("We will return any items we were holding for you.")
+}
+text BattleArcade_RouletteRoom_Text_Continue
+{
+	format("CONTINUE")
+}
+text BattleArcade_RouletteRoom_Text_Record
+{
+	format("RECORD")
+}
+text BattleArcade_RouletteRoom_Text_Rest
+{
+	format("REST")
+}
+text BattleArcade_RouletteRoom_Text_Retire
+{
+	format("RETIRE")
+}
+text BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition
+{
+	format("Congratulations, Trainer! In recognition of your outstanding skill, our Frontier Brain is demanding a match with you. So, your next match is against the Arcade Star; no ifs or buts! Are you ready?")
+}
+text BattleArcade_RouletteRoom_Text_IKnowOneThingFor
+{
+	format("Dahlia: No need to worry. {EMOJI_NOTE} Let chance do what it does. Like surprises from the game board, life goes through twists and turns. No need to worry. {EMOJI_NOTE} Things will go as they will. But, enough of that. I know one thing for certain. You have arrived here not merely because you were lucky. Let us not waste any time. I wish to test your skills myself!")
+}
+text BattleArcade_RouletteRoom_Text_YouAreProvingYourselfIncredible
+{
+	format("Dahlia: No need to worry. {EMOJI_NOTE} Let chance do what it does. Like surprises from the game board, life goes through twists and turns. No need to worry. {EMOJI_NOTE} Things will go as they will. But, enough of that. You are proving yourself incredible. Are you incredible because you are so lucky you shrug off bad luck entirely? Or, are you so incredibly talented to not be swayed by luck, good or bad? I wish to see for myself what brought you to me today!")
+}
+text BattleArcade_RouletteRoom_Text_HowFabulousOfYouYour
+{
+	format("Dahlia: How fabulous of you! Your love of Pokémon shone through, and, in turn, your Pokémon believed in you. That is why you handled everything thrown your way splendidly. A most wonderful victory it was!")
+}
+text BattleArcade_RouletteRoom_Text_TrulyItWasSoVery
+{
+	format("Dahlia: Truly, it was so very fabulous of all of you! Bad luck, you cast aside, and good luck, you netted. That you did so is evidence of your abilities. By defeating me, Dahlia, you have proven your mastery brilliantly! I am sincerely happy for having this battle against you!")
+}
 #endif

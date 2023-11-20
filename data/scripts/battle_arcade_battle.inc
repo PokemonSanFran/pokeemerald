@@ -390,3 +390,332 @@ BattleArcade_RouletteRoom_Text_DoYouWantToRestore::
 BattleArcade_Entrance_MaxedOutStreak::
 	.string "Wow, {PLAYER}, {STR_VAR_1} win(s)\n"
 	.string "in a row... I think we all need a break!$"
+
+BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn::
+	.string "First, I’ll need to hold on to any items\n"
+	.string "held by your Pokémon.$"
+
+BattleArcade_RouletteRoom_Text_PleaseWaitAMoment::
+	.string "Please wait a moment.$"
+
+BattleArcade_RouletteRoom_Text_GoodGoingWellHeal::
+	.string "Good going! We’ll heal your Pokémon now.$"
+
+BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady::
+	.string "Next up, game no. {STR_VAR_1}! Are\n"
+	.string "you ready?$"
+
+BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveTheLastBattle::
+	.string "Would you like to save the last battle\n"
+	.string "as your Battle Video?$"
+
+BattleArcade_RouletteRoom_Text_BattleHasBeenSaved::
+	.string "{STR_VAR_1}’s battle has been saved\n"
+	.string "as a Battle Video.$"
+
+BattleArcade_RouletteRoom_Text_ThereWasAnError::
+	.string "There was an error. The Battle Video\n"
+	.string "couldn’t be saved.$"
+
+BattleArcade_RouletteRoom_Text_DeleteYourExistingBattleVideo::
+	.string "Delete your existing Battle Video and\n"
+	.string "save the last battle?$"
+
+BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower::
+	.string "Saving... Don’t turn off the power.$"
+
+BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveAndTakeABreak::
+	.string "Would you like to save and take a break\n"
+	.string "from playing?$"
+
+BattleArcade_RouletteRoom_Text_WouldYouLikeToRetire::
+	.string "Would you like to retire from this\n"
+	.string "challenge?$"
+
+BattleArcade_RouletteRoom_Text_IsChoosingPleaseWait::
+	.string "{STR_VAR_1} is choosing. Please\n"
+	.string "wait.$"
+
+BattleArcade_RouletteRoom_Text_ChoseToRetire::
+	.string "{STR_VAR_1} chose to retire.$"
+
+BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade::
+	.string "Welcome to the Battle Arcade!$"
+
+BattleArcade_RouletteRoom_Text_GameNoComeOn::
+	.string "Game no. {STR_VAR_1}! Come on!$"
+
+BattleArcade_RouletteRoom_Text_WithoutFurtherAdo::
+	.string "Without further ado... Let’s activate\n"
+	.string "the game board!$"
+
+BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent::
+	.string "This is our current event!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon without full\n"
+	.string "HP!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothWithoutFullHp::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon without full HP!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceLeveledUp::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon leveled up!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothLeveledUp::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon leveled up!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommencePoisoned::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon poisoned!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothPoisoned::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
+	.string "Pokémon poisoned!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceParalyzed::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon paralyzed!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothParalyzed::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
+	.string "Pokémon paralyzed!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBurned::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon burned!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothBurned::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
+	.string "Pokémon burned!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceAsleep::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon asleep!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothAsleep::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
+	.string "Pokémon asleep!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceFrozen::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1}’s Pokémon frozen!$"
+
+BattleArcade_RouletteRoom_Text_MatchCommenceBothFrozen::
+	.string "The match will commence with\n"
+	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
+	.string "Pokémon frozen!$"
+
+BattleArcade_RouletteRoom_Text_PokemonWillBeLoanedThe::
+	.string "{STR_VAR_1}’s Pokémon will be loaned\n"
+	.string "the {STR_VAR_3}.$"
+
+BattleArcade_RouletteRoom_Text_BothPokemonWillBeLoanedThe::
+	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
+	.string "Pokémon will be loaned the\n"
+	.string "{STR_VAR_3}.$"
+
+BattleArcade_RouletteRoom_Text_HereYouGo::
+	.string "Here you go!$"
+
+BattleArcade_RouletteRoom_Text_MatchConductedHarshSunlight::
+	.string "This match will be conducted under\n"
+	.string "harsh sunlight.$"
+
+BattleArcade_RouletteRoom_Text_MatchConductedSteadyRainfall::
+	.string "This match will be conducted under a\n"
+	.string "steady rainfall.$"
+
+BattleArcade_RouletteRoom_Text_MatchConductedRagingSandstorm::
+	.string "This match will be conducted under a\n"
+	.string "raging sandstorm.$"
+
+BattleArcade_RouletteRoom_Text_MatchConductedPeltingHail::
+	.string "This match will be conducted under\n"
+	.string "pelting hail.$"
+
+BattleArcade_RouletteRoom_Text_MatchConductedDenseFog::
+	.string "This match will be conducted in a dense\n"
+	.string "fog.$"
+
+BattleArcade_RouletteRoom_Text_MatchConductedTimeAndSpaceAreDistorted::
+	.string "This match will be conducted on a floor\n"
+	.string "where time and space are distorted.$"
+
+BattleArcade_RouletteRoom_Text_YourPokemonWillBeSwitched::
+	.string "Your Pokémon will be switched with the\n"
+	.string "other Trainer’s for this match.$"
+
+BattleArcade_RouletteRoom_Text_BoardspeedIncreased::
+	.string "From the next game on, the game board’s\n"
+	.string "speed will be increased.$"
+
+BattleArcade_RouletteRoom_Text_BoardspeedDecreased::
+	.string "From the next game on, the game board’s\n"
+	.string "speed will be decreased.$"
+
+BattleArcade_RouletteRoom_Text_BoardmotionRandom::
+	.string "For the next game, the game board’s\n"
+	.string "motion will become random.$"
+
+BattleArcade_RouletteRoom_Text_ReceivedBp::
+	.string "{STR_VAR_1} received\n"
+	.string "{STR_VAR_3} BP!$"
+
+BattleArcade_RouletteRoom_Text_AndReceivedBp::
+	.string "{STR_VAR_1} and {STR_VAR_2}\n"
+	.string "received {STR_VAR_3} BP!$"
+
+BattleArcade_RouletteRoom_Text_AreYouReady::
+	.string "Are you ready?$"
+
+BattleArcade_RouletteRoom_Text_OhLuckyYouCanSkip::
+	.string "Oh! Lucky! You can skip the battle!$"
+
+BattleArcade_RouletteRoom_Text_TooBadThereIsNo::
+	.string "Too bad! There is no event this time!$"
+
+BattleArcade_RouletteRoom_Text_OkLetTheBattleCommence::
+	.string "OK! Let the battle commence!$"
+
+BattleArcade_RouletteRoom_Text_MatchPoisonedLuckyBreak::
+	.string "{STR_VAR_1}’s Pokémon will enter the\n"
+	.string "match poisoned... Oh! A lucky break!\n"
+	.string "{STR_VAR_1} has no Pokémon that\l"
+	.string "can be poisoned!$"
+
+BattleArcade_RouletteRoom_Text_MatchBothPoisonedLuckyBreak::
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon will begin poisoned... Oh! A\n"
+	.string "lucky break! Neither of them has a\l"
+	.string "Pokémon that can be poisoned!$"
+
+BattleArcade_RouletteRoom_Text_MatchParalyzedLuckyBreak::
+	.string "{STR_VAR_1}’s Pokémon will enter the\n"
+	.string "match paralyzed... Oh! A lucky break!\n"
+	.string "{STR_VAR_1} has no Pokémon that\l"
+	.string "can be paralyzed!$"
+
+BattleArcade_RouletteRoom_Text_MatchBothParalyzedLuckyBreak::
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon will begin paralyzed... Oh! A\n"
+	.string "lucky break! Neither of them has a\l"
+	.string "Pokémon that can be paralyzed!$"
+
+BattleArcade_RouletteRoom_Text_MatchBurnedLuckyBreak::
+	.string "{STR_VAR_1}’s Pokémon will enter the\n"
+	.string "match burned... Oh! A lucky break!\n"
+	.string "{STR_VAR_1} has no Pokémon that\l"
+	.string "can be burned!$"
+
+BattleArcade_RouletteRoom_Text_MatchBothBurnedLuckyBreak::
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon will begin burned... Oh! A lucky\n"
+	.string "break! Neither of them has a Pokémon\l"
+	.string "that can be burned!$"
+
+BattleArcade_RouletteRoom_Text_MatchAsleepLuckyBreak::
+	.string "{STR_VAR_1}’s Pokémon will enter the\n"
+	.string "match asleep... Oh! A lucky break!\n"
+	.string "{STR_VAR_1} has no Pokémon that\l"
+	.string "can be made to sleep!$"
+
+BattleArcade_RouletteRoom_Text_MatchBothAsleepLuckyBreak::
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon will begin asleep... Oh! A lucky\n"
+	.string "break! Neither of them has a Pokémon\l"
+	.string "that can be made to sleep!$"
+
+BattleArcade_RouletteRoom_Text_MatchFrozenLuckyBreak::
+	.string "{STR_VAR_1}’s Pokémon will enter the\n"
+	.string "match frozen... Oh! A lucky break!\n"
+	.string "{STR_VAR_1} has no Pokémon that\l"
+	.string "can be frozen!$"
+
+BattleArcade_RouletteRoom_Text_MatchBothFrozenLuckyBreak::
+	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
+	.string "Pokémon will begin frozen... Oh! A lucky\n"
+	.string "break! Neither of them has a Pokémon\l"
+	.string "that can be frozen!$"
+
+BattleArcade_RouletteRoom_Text_YouHaveClearedYourSeventh::
+	.string "You have cleared your seventh battle!\n"
+	.string "Congratulations! You have earned BP as\n"
+	.string "your prize!$"
+
+BattleArcade_RouletteRoom_Text_WeWillReturnAnyItems::
+	.string "We will return any items we were holding\n"
+	.string "for you.$"
+
+BattleArcade_RouletteRoom_Text_Continue::
+	.string "CONTINUE$"
+
+BattleArcade_RouletteRoom_Text_Record::
+	.string "RECORD$"
+
+BattleArcade_RouletteRoom_Text_Rest::
+	.string "REST$"
+
+BattleArcade_RouletteRoom_Text_Retire::
+	.string "RETIRE$"
+
+BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition::
+	.string "Congratulations, Trainer! In\n"
+	.string "recognition of your outstanding skill,\n"
+	.string "our Frontier Brain is demanding a match\l"
+	.string "with you. So, your next match is\l"
+	.string "against the Arcade Star; no ifs or\l"
+	.string "buts! Are you ready?$"
+
+BattleArcade_RouletteRoom_Text_IKnowOneThingFor::
+	.string "Dahlia: No need to worry. {EMOJI_NOTE} Let chance do\n"
+	.string "what it does. Like surprises from the\n"
+	.string "game board, life goes through twists\l"
+	.string "and turns. No need to worry. {EMOJI_NOTE} Things will\l"
+	.string "go as they will. But, enough of that. I\l"
+	.string "know one thing for certain. You have\l"
+	.string "arrived here not merely because you\l"
+	.string "were lucky. Let us not waste any time. I\l"
+	.string "wish to test your skills myself!$"
+
+BattleArcade_RouletteRoom_Text_YouAreProvingYourselfIncredible::
+	.string "Dahlia: No need to worry. {EMOJI_NOTE} Let chance do\n"
+	.string "what it does. Like surprises from the\n"
+	.string "game board, life goes through twists\l"
+	.string "and turns. No need to worry. {EMOJI_NOTE} Things will\l"
+	.string "go as they will. But, enough of that.\l"
+	.string "You are proving yourself incredible.\l"
+	.string "Are you incredible because you are so\l"
+	.string "lucky you shrug off bad luck entirely?\l"
+	.string "Or, are you so incredibly talented to\l"
+	.string "not be swayed by luck, good or bad? I\l"
+	.string "wish to see for myself what brought\l"
+	.string "you to me today!$"
+
+BattleArcade_RouletteRoom_Text_HowFabulousOfYouYour::
+	.string "Dahlia: How fabulous of you! Your love\n"
+	.string "of Pokémon shone through, and, in turn,\n"
+	.string "your Pokémon believed in you. That is\l"
+	.string "why you handled everything thrown\l"
+	.string "your way splendidly. A most wonderful\l"
+	.string "victory it was!$"
+
+BattleArcade_RouletteRoom_Text_TrulyItWasSoVery::
+	.string "Dahlia: Truly, it was so very fabulous\n"
+	.string "of all of you! Bad luck, you cast aside,\n"
+	.string "and good luck, you netted. That you did\l"
+	.string "so is evidence of your abilities. By\l"
+	.string "defeating me, Dahlia, you have proven\l"
+	.string "your mastery brilliantly! I am sincerely\l"
+	.string "happy for having this battle against\l"
+	.string "you!$"

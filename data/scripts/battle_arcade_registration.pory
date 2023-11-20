@@ -567,4 +567,148 @@ text BattleArcade_Entrance_Text_YouEarned
 {
     format("You earned {STR_VAR_2} BP!")
 }
+text BattleArcade_Entrance_Text_WelcomeToTheBattleArcade
+{
+	format("Welcome to the Battle Arcade! I am your guide to the Single and Double Battle challenges. Please be aware that these challenges are designed for a single Trainer.")
+}
+text BattleArcade_Entrance_Text_WhichChallengeWouldYouLike
+{
+	format("Which challenge would you like to take?")
+}
+text BattleArcade_Entrance_Text_AtTheBattleArcade
+{
+	format("At the Battle Arcade, you may take a Single or Double Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. Some events will be good for the challenger, while others won't be. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). If you want to interrupt your challenge, please save the game. If you don't save, you will be disqualified from your challenge. Please be aware of that!")
+}
+text BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti
+{
+	format("Welcome to the Battle Arcade! I am your guide to the Multi Battle challenge. Please be aware that this challenge requires two Trainers.")
+}
+text BattleArcade_Entrance_Text_WouldYouLikeToTake
+{
+	format("Would you like to take the Battle Arcade Multi Battle challenge?")
+}
+text BattleArcade_Entrance_Text_YouMayTeamUpWith
+{
+	format("You may team up with a friend for a Multi Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. The events may have great impact on the match's outcome, good or bad. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). Please note: a Battle Arcade Multi Battle challenge can't be interrupted.")
+}
+text BattleArcade_Entrance_Text_WeHopeToSeeYou
+{
+	format("We hope to see you again!")
+}
+text BattleArcade_Entrance_Text_PleaseSelectThePokemonYou
+{
+	format("Please select the Pokémon you wish to enter.")
+}
+text BattleArcade_Entrance_Text_ExcuseMeYouDont
+{
+	format("Excuse me! You don't have {STR_VAR_1} eligible Pokémon. You must have {STR_VAR_2} different Pokémon to enter.")
+}
+text BattleArcade_Entrance_Text_AlsoEggsAreIneligible
+{
+	format("Also, Eggs are ineligible to enter.")
+}
+text BattleArcade_Entrance_Text_EggsAndAre
+{
+	format("Eggs and {STR_VAR_1} are not allowed to enter.")
+}
+text BattleArcade_Entrance_Text_PleaseComeSeeMeWhen
+{
+	format("Please come see me when you are ready.")
+}
+text BattleArcade_Entrance_Text_RightThisWayPlease
+{
+	format("Right this way, please!")
+}
+text BattleArcade_Entrance_Text_WeveMissedYou
+{
+	format("We've missed you! You must save the game before you resume your challenge. Please wait.")
+}
+text BattleArcade_Entrance_Text_ExcuseMeYouDidnt
+{
+	format("Excuse me! You didn't save before you quit your challenge last time. Because of that, you have been disqualified from your challenge!")
+}
+text BattleArcade_Entrance_Text_CongratulationsInHonorOf
+{
+	format("Congratulations! In honor of your victory, we present you with this commemorative print!")
+}
+text BattleArcade_Entrance_Text_TheGoldPrintWasAdded
+{
+	format("The Gold Print was added to {PLAYER}'s Vs. Recorder!")
+}
+text BattleArcade_Entrance_Text_TheSilverPrintWasAdded
+{
+	format("The Silver Print was added to {PLAYER}'s Vs. Recorder!")
+}
+text BattleArcade_Entrance_Text_SingleBattle
+{
+	format("SINGLE BATTLE")
+}
+text BattleArcade_Entrance_Text_DoubleBattle
+{
+	format("DOUBLE BATTLE")
+}
+text BattleArcade_Entrance_Text_TakeChallenge
+{
+	format("TAKE CHALLENGE")
+}
+text BattleArcade_Entrance_Text_Info
+{
+	format("INFO")
+}
+text BattleArcade_Entrance_Text_Cancel
+{
+	format("CANCEL")
+}
+text BattleArcade_Entrance_Text_OneTrainerShouldSelectBecome
+{
+	format("One Trainer should select “BECOME LEADER.” The other Trainer must select “JOIN GROUP.”")
+}
+text BattleArcade_Entrance_Text_WeNeedToLaunchDs
+{
+	format("We need to launch DS Wireless Communications.")
+}
+text BattleArcade_Entrance_Text_YouMustSaveTheGame
+{
+	format("You must save the game before I show you in. Please wait.")
+}
+text BattleArcade_Entrance_Text_ThoseWhoRuleTheGame
+{
+	format("Those who rule the game board reign at the Battle Arcade! It sounds sort of profound, but it's actually no-kidding obvious!")
+}
+text BattleArcade_Entrance_Text_ItAllComesDownTo
+{
+	format("It all comes down to luck here… My cute Pokémon… They were helplessly frozen.")
+}
+text BattleArcade_Entrance_Text_TheresNothingYouCan
+{
+	format("There's nothing you can do about luck. It's just there or not.")
+}
+text BattleArcade_Entrance_Text_DontBeAwestruckWatching
+{
+	format("Don't be awestruck watching the motion of the game board. If you don't stop it in 30 seconds, it will stop by itself.")
+}
+text BattleArcade_Entrance_Text_TheBrainHasAPeculiar
+{
+	format("The Brain has a peculiar fashion sense. She flits around oddly, too. Kind of like this. A little bump, a wiggle… …Please don't look at me that way. It's not nice.")
+}
+text BattleArcade_Entrance_Text_YikesTheyCanEven
+{
+	format("Yikes, they can even start battles with the move Trick Room in effect? A strategy built around Speed could backfire right in your face!")
+}
+text BattleArcade_Entrance_Text_BeThrilledByTheUnknown
+{
+	format("Be thrilled by the unknown hand of luck! Leap into battles ruled by fickle fate! That's how you enjoy the Battle Arcade!")
+}
+text BattleArcade_Entrance_Text_BlamingTheGameBoardFor
+{
+	format("Blaming the game board for losing is pitiful. It's poor form. The game board will show better choices the greater the wins you achieve.")
+}
+text BattleArcade_Entrance_Text_DidYouFigureThisOne
+{
+	format("Did you figure this one out? Poisoning or freezing events can be made ineffective. …If the Pokémon's type or ability protects it from such status problems.")
+}
+text BattleArcade_Entrance_Text_IfTheGameBoardTriggers
+{
+	format("If the game board triggers a paralyzing event here, Ground types aren't affected.")
+}
 #endif
