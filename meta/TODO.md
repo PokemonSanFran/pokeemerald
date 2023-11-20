@@ -22,3 +22,5 @@ show parties on arcade board
 show OW spritres on arcade board
 bug fixes
 handle ARCADE TODO
+
+documentation should be clear that Multi Link is not supported, but I will accept a PR to do so
