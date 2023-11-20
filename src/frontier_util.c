@@ -37,9 +37,9 @@
 #include "constants/items.h"
 #include "constants/event_objects.h"
 #include "party_menu.h"
-#ifdef RESTRICTED_SPARRING
-#include "constants/restricted_sparring.h"
-#include "restricted_sparring.h"
+#ifdef BATTLE_ARCADE
+#include "constants/battle_arcade.h"
+#include "battle_arcade.h"
 #endif
 
 struct FrontierBrainMon
@@ -950,9 +950,9 @@ static void ShowFacilityResultsWindow(void)
     case FACILITY_LINK_CONTEST:
         ShowLinkContestResultsWindow();
         break;
-#ifdef RESTRICTED_SPARRING
-    case FRONTIER_FACILITY_SPARRING:
-        Sparring_ShowResultsWindow();
+#ifdef BATTLE_ARCADE
+    case FRONTIER_FACILITY_ARCADE:
+        Arcade_ShowResultsWindow();
         break;
 #endif
     }
@@ -966,7 +966,7 @@ static bool8 IsWinStreakActive(u32 challenge)
         return FALSE;
 }
 
-#ifndef RESTRICTED_SPARRING
+#ifndef BATTLE_ARCADE
 static void PrintAligned(const u8 *str, s32 y)
 #else
 void PrintAligned(const u8 *str, s32 y)
@@ -977,7 +977,7 @@ void PrintAligned(const u8 *str, s32 y)
     AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, str, x, y, TEXT_SKIP_DRAW, NULL);
 }
 
-#ifndef RESTRICTED_SPARRING
+#ifndef BATTLE_ARCADE
 static void PrintHyphens(s32 y)
 #else
 void PrintHyphens(s32 y)
@@ -1840,9 +1840,9 @@ u32 GetCurrentFacilityWinStreak(void)
         return gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode];
     case FRONTIER_FACILITY_PYRAMID:
         return gSaveBlock2Ptr->frontier.pyramidWinStreaks[lvlMode];
-#ifdef RESTRICTED_SPARRING
-    case FRONTIER_FACILITY_SPARRING:
-        return gSaveBlock2Ptr->frontier.restrictedSparring[VarGet(VAR_SPARRING_TYPE)][lvlMode].winStreak;
+#ifdef BATTLE_ARCADE
+    case FRONTIER_FACILITY_ARCADE:
+        return gSaveBlock2Ptr->frontier.battleArcade[VarGet(VAR_ARCADE_TYPE)][lvlMode].winStreak;
 #endif
     default:
         return 0;
@@ -2012,10 +2012,10 @@ static void AppendIfValid(u16 species, u16 heldItem, u16 hp, u8 lvlMode, u8 monL
     if (i != *count)
         return;
 
-#ifdef RESTRICTED_SPARRING
-    if (VarGet(VAR_SPARRING_TYPE) != TYPE_NONE)
+#ifdef BATTLE_ARCADE
+    if (VarGet(VAR_ARCADE_TYPE) != TYPE_NONE)
     {
-        u32 chosenType = VarGet(VAR_SPARRING_TYPE);
+        u32 chosenType = VarGet(VAR_ARCADE_TYPE);
         if ((gSpeciesInfo[species].types[0] != chosenType)
         && (gSpeciesInfo[species].types[1] != chosenType))
             return;
@@ -2128,8 +2128,8 @@ static void CheckPartyIneligibility(void)
     else
     {
         gSpecialVar_0x8004 = FALSE;
-#ifdef RESTRICTED_SPARRING
-        if (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_SPARRING)
+#ifdef BATTLE_ARCADE
+        if (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_ARCADE)
             return;
 #endif
         gSaveBlock2Ptr->frontier.lvlMode = gSpecialVar_Result;

@@ -584,8 +584,8 @@
     "NavelRock_Down11",
     "NavelRock_Bottom",
     "TrainerHill_Elevator",
-    "MasterDojo_Lobby",
-    "MasterDojo_BattleRoom"
+    "BattleArcade_Lobby",
+    "BattleArcade_BattleRoom"
   ],
   "gMapGroup_IndoorRoute104Prototype": [
     "Route104_Prototype",

@@ -364,20 +364,9 @@ struct BattleDomeTrainer
     u16 forfeited:3;
 };
 
-#ifdef RESTRICTED_SPARRING
-#ifdef RESTRICTED_SPARRING_MONS
-struct RestrictedSparringMon
+#ifdef BATTLE_ARCADE
+struct BattleArcade
 {
-    u16 species;
-    u32 personality;
-}__attribute__((packed));
-struct RestrictedSparring
-{
-    struct RestrictedSparringMon sparringMon[FRONTIER_PARTY_SIZE];
-#else
-struct RestrictedSparring
-{
-#endif
     u8 winStreak;
 }__attribute__((packed));
 #endif
@@ -468,8 +457,8 @@ struct BattleFrontier
     /*0xEFA*/ u8 unused_EFA;
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
-#ifdef RESTRICTED_SPARRING
-              struct RestrictedSparring restrictedSparring[NUMBER_OF_MON_TYPES][FRONTIER_LVL_MODE_COUNT];
+#ifdef BATTLE_ARCADE
+              struct BattleArcade battleArcade[NUMBER_OF_MON_TYPES][FRONTIER_LVL_MODE_COUNT];
 #endif
 };
 struct ApprenticeQuestion
