@@ -15,6 +15,7 @@
 #include "constants/pokemon.h"
 #include "constants/easy_chat.h"
 #include "constants/trainer_hill.h"
+#include "constants/battle_frontier.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
@@ -438,6 +439,10 @@ struct BattleFrontier
     /*0xEFA*/ u8 unused_EFA;
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
+#ifdef BATTLE_ARCADE
+    /*0xCE0*/ u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
+    /*0xCF0*/ u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
+#endif
 };
 
 struct ApprenticeQuestion

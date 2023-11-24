@@ -28,6 +28,10 @@
 #include "save.h"
 #include "load_save.h"
 #include "battle_dome.h"
+#ifdef BATTLE_ARCADE
+#include "battle_arcade.h"
+#include "constants/battle_arcade.h"
+#endif
 #include "constants/battle_frontier.h"
 #include "constants/battle_pike.h"
 #include "constants/frontier_util.h"
@@ -1823,6 +1827,10 @@ u32 GetCurrentFacilityWinStreak(void)
         return gSaveBlock2Ptr->frontier.pikeWinStreaks[lvlMode];
     case FRONTIER_FACILITY_PYRAMID:
         return gSaveBlock2Ptr->frontier.pyramidWinStreaks[lvlMode];
+#ifdef BATTLE_ARCADE
+    case FRONTIER_FACILITY_ARCADE:
+        return gSaveBlock2Ptr->frontier.arcadeWinStreaks[battleMode][lvlMode];
+#endif
     default:
         return 0;
     }
@@ -1863,6 +1871,11 @@ static void GiveBattlePoints(void)
     case FRONTIER_FACILITY_TOWER:
         challengeNum = gSaveBlock2Ptr->frontier.towerWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
         break;
+#ifdef BATTLE_ARCADE
+    case FRONTIER_FACILITY_ARCADE:
+        challengeNum = gSaveBlock2Ptr->frontier.arcadeWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
+        break;
+#endif
     case FRONTIER_FACILITY_DOME:
         challengeNum = gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode];
         break;
@@ -1911,13 +1924,21 @@ static void GiveBattlePoints(void)
 
 static void GetFacilitySymbolCount(void)
 {
+#ifdef BATTLE_ARCADE
+    s32 facility = (FRONTIER_FACILITY_ARCADE == VarGet(VAR_FRONTIER_FACILITY)) ? FRONTIER_FACILITY_PIKE : VarGet(VAR_FRONTIER_FACILITY);
+#else
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+#endif
     gSpecialVar_Result = GetPlayerSymbolCountForFacility(facility);
 }
 
 static void GiveFacilitySymbol(void)
 {
+#ifdef BATTLE_ARCADE
+    s32 facility = (FRONTIER_FACILITY_ARCADE == VarGet(VAR_FRONTIER_FACILITY)) ? FRONTIER_FACILITY_PIKE : VarGet(VAR_FRONTIER_FACILITY);
+#else
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+#endif
     if (GetPlayerSymbolCountForFacility(facility) == 0)
         FlagSet(FLAG_SYS_TOWER_SILVER + facility * 2);
     else

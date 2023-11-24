@@ -23,6 +23,9 @@
 #include "field_message_box.h"
 #include "tv.h"
 #include "battle_factory.h"
+#ifdef BATTLE_ARCADE
+#include "battle_arcade.h"
+#endif
 #include "constants/apprentice.h"
 #include "constants/battle_dome.h"
 #include "constants/battle_frontier.h"
@@ -1967,6 +1970,9 @@ static void HandleSpecialTrainerBattleEnd(void)
     case SPECIAL_BATTLE_PIKE_SINGLE:
     case SPECIAL_BATTLE_PIKE_DOUBLE:
     case SPECIAL_BATTLE_PYRAMID:
+#ifdef BATTLE_ARCADE
+    case SPECIAL_BATTLE_ARCADE:
+#endif
         if (gSaveBlock2Ptr->frontier.battlesCount < 0xFFFFFF)
         {
             gSaveBlock2Ptr->frontier.battlesCount++;
@@ -2010,6 +2016,30 @@ void DoSpecialTrainerBattle(void)
     gBattleScripting.specialTrainerBattleType = gSpecialVar_0x8004;
     switch (gSpecialVar_0x8004)
     {
+#ifdef BATTLE_ARCADE
+    case SPECIAL_BATTLE_ARCADE:
+        gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_ARCADE;
+        switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
+        {
+        case FRONTIER_MODE_SINGLES:
+            FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
+            break;
+        case FRONTIER_MODE_DOUBLES:
+            FillFrontierTrainerParty(FRONTIER_DOUBLES_PARTY_SIZE);
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+            break;
+        case FRONTIER_MODE_MULTIS:
+            FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
+            gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
+            FillPartnerParty(gPartnerTrainerId);
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
+            break;
+        }
+        CreateTask(Task_StartBattleAfterTransition, 1);
+        PlayMapChosenOrBattleBGM(0);
+        BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
+        break;
+#endif
     case SPECIAL_BATTLE_TOWER:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
