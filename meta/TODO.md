@@ -1,7 +1,7 @@
 this feature started on nov 18
 
 DONE install poryscript
-use ffmpeg to download and cut youtube video
+//skip use ffmpeg to download and cut youtube video
 make lobby text and options working
 make battle room text and options working
 make maps

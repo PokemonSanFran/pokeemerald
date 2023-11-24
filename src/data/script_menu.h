@@ -796,6 +796,14 @@ static const struct MenuAction MultichoiceList_BattleArcadeRules[] =
     {gText_Rewards},
     {gText_Exit},
 };
+
+static const struct MenuAction MultichoiceList_ChallengeTypeInfo[] =
+{
+    {gText_SingleBattle},
+    {gText_DoubleBattle},
+    {gText_Info2},
+    {gText_Cancel2},
+};
 #endif
 static const struct MenuAction MultichoiceList_Exit[] =
 {
@@ -928,6 +936,7 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_GO_ON_HEAL_RECORD_REST_RETIRE] = MULTICHOICE(MultichoiceList_GoOnHealRecordRestRetire),
     [MULTI_GO_ON_HEAL_REST_RETIRE] = MULTICHOICE(MultichoiceList_GoOnHealRestRetire),
     [MULTI_BATTLE_ARCADE_RULES] = MULTICHOICE(MultichoiceList_BattleArcadeRules),
+    [MULTI_CHALLENGE_TYPE_INFO] = MULTICHOICE(MultichoiceList_ChallengeTypeInfo),
 #endif
 };
 

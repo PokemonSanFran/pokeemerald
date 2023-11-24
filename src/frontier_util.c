@@ -1932,13 +1932,21 @@ static void GiveBattlePoints(void)
 
 static void GetFacilitySymbolCount(void)
 {
+#ifdef BATTLE_ARCADE
+    s32 facility = (FRONTIER_FACILITY_ARCADE == VarGet(VAR_FRONTIER_FACILITY)) ? FRONTIER_FACILITY_PIKE : VarGet(VAR_FRONTIER_FACILITY);
+#else
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+#endif
     gSpecialVar_Result = GetPlayerSymbolCountForFacility(facility);
 }
 
 static void GiveFacilitySymbol(void)
 {
+#ifdef BATTLE_ARCADE
+    s32 facility = (FRONTIER_FACILITY_ARCADE == VarGet(VAR_FRONTIER_FACILITY)) ? FRONTIER_FACILITY_PIKE : VarGet(VAR_FRONTIER_FACILITY);
+#else
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+#endif
     if (GetPlayerSymbolCountForFacility(facility) == 0)
         FlagSet(FLAG_SYS_TOWER_SILVER + facility * 2);
     else

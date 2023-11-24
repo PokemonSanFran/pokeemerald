@@ -27,7 +27,7 @@ script BattleArcade_Entrance_EventScript_QuitWithoutSaving
     lock
     faceplayer
     delay(30)
-    msgbox(BattleArcade_Entrance_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT)
+    msgbox(BattleArcade_Entrance_Text_ExcuseMeYouDidnt, MSGBOX_DEFAULT)
     arcade_set(ARCADE_DATA_WIN_STREAK, 0)
     frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
@@ -40,22 +40,24 @@ script BattleArcade_Entrance_EventScript_AskEnterChallenge
     faceplayer
     setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE)
     special(SavePlayerParty)
-    message(BattleArcade_Entrance_Text_HiyahDo)
+    message(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
     waitmessage
 
-    multichoice(17, 6, MULTI_CHALLENGEINFO, FALSE)
+    multichoice(17, 6, MULTI_CHALLENGE_TYPE_INFO, FALSE)
     switch(var(VAR_RESULT))
     {
-        case 0: goto(BattleArcade_Entrance_EventScript_TryEnterChallenge)
-        case 1: goto(BattleArcade_Entrance_EventScript_ExplainChallenge)
+        case FRONTIER_MODE_SINGLES:
+        case FRONTIER_MODE_DOUBLES: goto(BattleArcade_Entrance_EventScript_TryEnterChallenge)
+        case 2: goto(BattleArcade_Entrance_EventScript_ExplainChallenge)
         case MULTI_B_PRESSED:
-        case 2: goto(BattleArcade_Entrance_EventScript_DenyChallenge)
+        case 3: goto(BattleArcade_Entrance_EventScript_DenyChallenge)
     }
 }
 
 script BattleArcade_Entrance_EventScript_TryEnterChallenge
 {
-    message(BattleArcade_Entrance_Text_OffersTwoLevels)
+    setvar(VAR_ARCADE_TYPE,VAR_RESULT)
+    message(BattleArcade_Entrance_Text_WhichLevelMode)
     waitmessage
 
     multichoice(17, 6, MULTI_LEVEL_MODE, FALSE)
@@ -64,11 +66,7 @@ script BattleArcade_Entrance_EventScript_TryEnterChallenge
         case FRONTIER_LVL_TENT:
         case MULTI_B_PRESSED: goto(BattleArcade_Entrance_EventScript_CancelChallenge)
     }
-
-    message(BattleArcade_Entrance_Text_SelectTheTypeYouWant)
-    waitmessage
     frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
-    call(BattleArcade_Entrance_EventScript_CreateTypeList)
     frontier_checkineligible
     goto_if_eq(VAR_0x8004, TRUE, BattleArcade_Entrance_EventScript_NotEnoughValidMons)
     fadescreen(FADE_TO_BLACK)
@@ -79,30 +77,7 @@ script BattleArcade_Entrance_EventScript_TryEnterChallenge
     waitstate
     goto_if_eq(VAR_RESULT, 0, BattleArcade_Entrance_EventScript_LoadPartyCancelChallenge)
 
-    msgbox(BattleArcade_Entrance_Text_BeforeDivingInto, MSGBOX_YESNO)
-    switch(var(VAR_RESULT))
-    {
-        case YES: goto(BattleArcade_Entrance_EventScript_SaveBeforeChallenge)
-        case NO:
-        case MULTI_B_PRESSED: goto(BattleArcade_Entrance_EventScript_LoadPartyCancelChallenge)
-    }
-}
-
-script BattleArcade_Entrance_EventScript_CreateTypeList
-{
-    setvar(VAR_0x8009,0)
-    setvar(VAR_0x8004,SCROLL_MULTI_POKEMON_FAN_CLUB_RATER)
-    special(ShowScrollableMultichoice)
-    waitstate
-    switch(var(VAR_RESULT))
-    {
-        default: arcade_convertmenutotype
-        case 17:
-        case MULTI_B_PRESSED: goto(BattleArcade_Entrance_EventScript_CancelChallenge)
-    }
-
-    arcade_bufferarcadetype
-    return
+    goto(BattleArcade_Entrance_EventScript_SaveBeforeChallenge)
 }
 
 script BattleArcade_Entrance_EventScript_SaveBeforeChallenge
@@ -124,22 +99,13 @@ script BattleArcade_Entrance_EventScript_SaveBeforeChallenge
         frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)  // No status provided, so it relies on VAR_0x8006 being 0 already
         goto(BattleArcade_Entrance_EventScript_DenyChallenge)
     }
-
     goto(BattleArcade_Entrance_EventScript_WarpToBattleRoom)
 }
 
 script BattleArcade_Entrance_EventScript_ExplainChallenge
 {
-    msgbox(BattleArcade_Entrance_Text_BattleArcadeIsATraining, MSGBOX_YESNO)
-
-    if (var(VAR_RESULT) == YES)
-    {
-        goto(BattleArcade_Entrance_EventScript_TryEnterChallenge)
-    }
-
-    msgbox(BattleArcade_Entrance_Text_IWontForceYou,MSGBOX_DEFAULT)
-    releaseall
-    end
+    msgbox(BattleArcade_Entrance_Text_AtTheBattleArcade)
+    goto(BattleArcade_Entrance_EventScript_TryEnterChallenge)
 }
 
 script BattleArcade_Entrance_EventScript_NotEnoughValidMons
@@ -147,15 +113,14 @@ script BattleArcade_Entrance_EventScript_NotEnoughValidMons
     frontier_get(FRONTIER_DATA_LVL_MODE)
     copyvar(VAR_0x8004, VAR_RESULT)
 
+    msgbox(BattleArcade_Entrance_Text_ExcuseMeYouDont,MSGBOX_DEFAULT)
+
     if(var(VAR_RESULT) == FRONTIER_LVL_50)
     {
-        msgbox(BattleArcade_Entrance_Text_NotEnoughValidMonsLv50Singles, MSGBOX_DEFAULT)
-    }
-    else
-    {
-        msgbox(BattleArcade_Entrance_Text_NotEnoughValidMonsLvOpenSingles, MSGBOX_DEFAULT)
+        msgbox(BattleArcade_Entrance_Text_UnderLevel50,MSGBOX_DEFAULT)
     }
 
+    msgbox(BattleArcade_Entrance_Text_EggsAndAre,MSGBOX_DEFAULT)
     release
     end
 }
@@ -168,20 +133,22 @@ script BattleArcade_Entrance_EventScript_LoadPartyCancelChallenge
 
 script BattleArcade_Entrance_EventScript_CancelChallenge
 {
-    msgbox(BattleArcade_Entrance_Text_OhYouChangedYour, MSGBOX_DEFAULT)
+    msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou,MSGBOX_DEFAULT)
     release
     end
 }
 
 script BattleArcade_Entrance_EventScript_DenyChallenge
 {
-    msgbox(BattleArcade_Entrance_Text_IWontForceYou, MSGBOX_DEFAULT)
+    msgbox(BattleArcade_Entrance_Text_PleaseComeSeeMeWhen, MSGBOX_DEFAULT)
     release
     end
 }
 
 script BattleArcade_Entrance_EventScript_WarpToBattleRoom
 {
+    msgbox(BattleArcade_Entrance_Text_RightThisWayPlease,MSGBOX_DEFAULT)
+    closemessage
     setvar(VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER)
     setvar(VAR_0x8005, FRONTIER_PARTY_SIZE)
     special(CallFrontierUtilFunc)
@@ -193,59 +160,16 @@ script BattleArcade_Entrance_EventScript_WarpToBattleRoom
 
 script BattleArcade_Entrance_EventScript_JudgeChallenge
 {
-    arcade_get(ARCADE_DATA_WIN_STREAK)
-
-    if (var(VAR_RESULT) == 0)
-    {
-        goto(BattleArcade_Entrance_EventScript_Results_NoWins)
-    }
-    else
-    {
-        buffernumberstring(STR_VAR_1,VAR_RESULT)
-        goto(BattleArcade_Entrance_EventScript_Results)
-    }
-}
-
-script BattleArcade_Entrance_EventScript_Results_NoWins
-{
     lock
-    faceplayer
-    call(BattleArcade_Entrance_EventScript_SaveResult)
-    call(BattleArcade_Entrance_EventScript_AskSaveBattle)
-    msgbox(BattleArcade_Entrance_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT)
-    goto(BattleArcade_Entrance_EventScript_SetChallengeStatusEnd)
-}
-
-script BattleArcade_Entrance_EventScript_Results
-{
-    lock
-    faceplayer
-    call(BattleArcade_Entrance_EventScript_SaveResult)
-
-    arcade_bufferarcadetype
-    arcade_get(ARCADE_DATA_WIN_STREAK)
-    buffernumberstring(STR_VAR_1,VAR_RESULT)
-
-    msgbox(BattleArcade_Entrance_Text_YourResultForThisRestricted)
-    call(BattleArcade_Entrance_EventScript_AwardPoints)
-
-    if (flag(FLAG_ARCADE_FIRST_TYPE_WIN))
-    {
-        msgbox(BattleArcade_Entrance_Text_TheWayYouHandleType)
-        call(BattleArcade_Entrance_EventScript_CheckSymbol)
-    }
-
-    call(BattleArcade_Entrance_EventScript_AskSaveBattle)
-    goto(BattleArcade_Entrance_EventScript_SetChallengeStatusEnd)
+    call(BattleArcade_Entrance_EventScript_SetChallengeStatusEnd)
+    call(BattleArcade_Entrance_EventScript_CheckSymbol)
+    goto(BattleArcade_Entrance_EventScript_CancelChallenge)
 }
 
 script BattleArcade_Entrance_EventScript_SaveResult
 {
-    message(BattleArcade_Entrance_Text_RecordWillBeSaved)
-    waitmessage
     frontier_checkairshow
     arcade_givepoints
-    arcade_checksymbol
 
     if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
     {
@@ -261,56 +185,51 @@ script BattleArcade_Entrance_EventScript_SaveResult
     playse(SE_SAVE)
     waitse
     return
+//ARCADE TODO move to battle room
 }
 
-script BattleArcade_Entrance_EventScript_AwardPoints{
-    msgbox(BattleArcade_Entrance_Text_YouEarned)
+script BattleArcade_Entrance_EventScript_AwardPoints
+{
+    msgbox(BattleArcade_RouletteRoom_Text_ReceivedBp)
     return
 }
 
 script BattleArcade_Entrance_EventScript_CheckSymbol
 {
-    arcade_checksymbol
-    if (var(VAR_RESULT) > ARCADE_SYMBOL_NONE)
+    frontier_isbrain
+    if(!var(VAR_RESULT))
     {
-        call(BattleArcade_Entrance_EventScript_GiveSymbol)
+        return
     }
+
+    frontier_getsymbols
+    if(var(VAR_RESULT) < ARCADE_SYMBOL_SILVER)
+    {
+        return
+    }
+
+    call(BattleArcade_Entrance_EventScript_GiveSymbolSpeech)
     return
 }
 
-script BattleArcade_Entrance_EventScript_GiveSymbol
+script BattleArcade_Entrance_EventScript_GiveSymbolSpeech
 {
-    msgbox(BattleArcade_Entrance_Text_WhatYouCompletedRestricted)
-
-    if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
-    {
-        msgbox(BattleArcade_Entrance_Text_ThatsExcellentWork)
-    }
-    else
-    {
-        msgbox(BattleArcade_Entrance_Text_ICantBelieveIt)
-        msgbox(BattleArcade_Entrance_Text_ThisAccomplishmentIsSureTo)
-    }
-
-    msgbox(BattleArcade_Entrance_Text_ToCommemorateThisMonumentalAchievement)
-    playfanfare(MUS_OBTAIN_SYMBOL)
-
-    if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
-    {
-        message(BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol)
-    }
-    else
-    {
-        message(BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine)
-    }
-
+    msgbox(BattleArcade_Entrance_Text_CongratulationsInHonorOf,MSGBOX_DEFAULT)
     waitmessage
-    waitfanfare
 
+    frontier_givesymbol
+    playfanfare(MUS_OBTAIN_SYMBOL)
     if (var(VAR_RESULT) == ARCADE_SYMBOL_GOLD)
     {
-        msgbox(BattleArcade_Entrance_Text_IHopeYoullKeep)
+        message(BattleFrontier_BattlePikeRoomNormal_Text_LuckSymbolTookGoldenShine)
     }
+    elif (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
+    {
+        message(BattleFrontier_BattlePikeRoomNormal_Text_ReceivedLuckSymbol)
+    }
+    waitmessage
+    waitfanfare
+    closemessage
     return
 }
 
@@ -344,7 +263,7 @@ script BattleArcade_Entrance_EventScript_SaveBattle
     }
     else
     {
-        msgbox(BattleArcade_Entrance_Text_ThereWasAGlitch, MSGBOX_DEFAULT)
+        msgbox(BattleFrontier_BattleTowerBattleRoom_Text_RecordCouldntBeSaved, MSGBOX_DEFAULT)
     }
     return
 }
@@ -353,9 +272,7 @@ script BattleArcade_Entrance_EventScript_SetChallengeStatusEnd
 {
     setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     closemessage
-    setvar(VAR_ARCADE_TYPE,TYPE_NONE)
-    release
-    end
+    return
 }
 
 script BattleArcade_Entrance_EventScript_ResumeChallenge
@@ -363,9 +280,7 @@ script BattleArcade_Entrance_EventScript_ResumeChallenge
     lock
     faceplayer
 
-    message(BattleArcade_Entrance_Text_WeveBeenWaitingForYou)
-    waitmessage
-    message(BattleArcade_Entrance_Text_ProgressWillBeSaved)
+    message(BattleArcade_Entrance_Text_WeveMissedYou)
     waitmessage
 
     playse(SE_SAVE)
@@ -437,136 +352,6 @@ text BattleArcade_Entrance_Text_RewardsBoard
     format("If you can win five times in a row, you will complete the training, but you can continue to increase your streak. You'll recieve a reward for completing training for all types in a level mode.")
 }
 
-text BattleArcade_Entrance_Text_HiyahDo
-{
-    format("Hi-yah! {PLAYER}! Do you want to try BATTLE ARCADE?")
-}
-
-text BattleArcade_Entrance_Text_SelectTheTypeYouWant
-{
-    format("Select the type you want to use for arcade.")
-}
-
-text BattleArcade_Entrance_Text_IWontForceYou
-{
-    format("I won't force you to do anything you don't want to do. Some other time, then.")
-}
-
-text BattleArcade_Entrance_Text_BattleArcadeIsATraining
-{
-    format("BATTLE ARCADE is a training course that restricts the type of POKéMON you can use. Select a type first, and then battle using up to three POKéMON of that type. No duplicate POKéMON or items are allowed. If you can win five times in a row, you'll complete the training. However, if you lose even once, the arcade will end there! You can restore your POKéMON between battles, but only twice in total, so use the opportunities very wisely. That's all! Do you want to try BATTLE ARCADE?")
-}
-
-text BattleArcade_Entrance_Text_OhYouChangedYour
-{
-    format("Oh, you changed your mind? Some other time, then.")
-}
-
-text BattleArcade_Entrance_Text_YouLostbutTrainYourself
-{
-    format("You lost...but train yourself and your POKéMON, and try again! I'm looking forward to your next challenge.")
-}
-
-text BattleArcade_Entrance_Text_YourResultForThisRestricted
-{
-    format("Your result for this BATTLE ARCADE set is... You had {STR_VAR_1} win(s) with the {STR_VAR_3}-type POKéMON restriction!")
-}
-
-text BattleArcade_Entrance_Text_TheWayYouHandleType
-{
-    format("The way you handle {STR_VAR_3}-type POKéMON is flawless!")
-}
-
-text BattleArcade_Entrance_Text_WhatYouCompletedRestricted
-{
-    format("What?! You completed BATTLE ARCADE with {STR_VAR_1} type(s)?!")
-}
-
-text BattleArcade_Entrance_Text_ThatsExcellentWork
-{
-    format("That's excellent work!")
-}
-
-text BattleArcade_Entrance_Text_ICantBelieveIt
-{
-    format("I can't believe it... Your achievement is just phenomenal!")
-}
-
-text BattleArcade_Entrance_Text_ThisAccomplishmentIsSureTo
-{
-    format("This accomplishment is sure to go down in dojo history!")
-}
-
-text BattleArcade_Entrance_Text_ToCommemorateThisMonumentalAchievement
-{
-    format("To commemorate this monumental achievement, I'll grant you this!")
-}
-
-text BattleArcade_Entrance_Text_IHopeYoullKeep
-{
-    format("I hope you'll keep exceeding your own limits!")
-}
-
-text BattleArcade_Entrance_Text_DidntSaveBeforeQuitting
-{
-    format("Oops! {PLAYER}, it seems you didn't save before quitting your challenge last time. Because of that, your challenge so far has been disqualified. Sorry!")
-}
-
-text BattleArcade_Entrance_Text_ThankYouForPlaying
-{
-    format("Thanks for playing, {PLAYER}!")
-}
-
-text BattleArcade_Entrance_Text_RecordWillBeSaved
-{
-    format("Your record will be saved soon.")
-}
-
-text BattleArcade_Entrance_Text_WeveBeenWaitingForYou
-{
-    format("We've been waiting for you, {PLAYER}!")
-}
-
-text BattleArcade_Entrance_Text_ProgressWillBeSaved
-{
-    format("Before entering the BATTLE COURT, your progress will be saved. Hang tight!")
-}
-
-text BattleArcade_Entrance_Text_ThereWasAGlitch
-{
-    format("Oops! There was a glitch, and your record couldn't be saved. Better luck next time!")
-}
-
-text BattleArcade_Entrance_Text_OffersTwoLevels
-{
-    format("BATTLE ARCADE offers two levels of challenge, Level 50 and Open Level. So, which one is your pick?")
-}
-
-text BattleArcade_Entrance_Text_BeforeDivingInto
-{
-    format("Before diving into BATTLE ARCADE, your progress must be saved. Is that cool?")
-}
-
-
-text BattleArcade_Entrance_Text_NotEnoughValidMonsLv50Singles
-{
-    format("Hold up, {PLAYER}! You need three different POKéMON of Level 50 or less to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!")
-}
-
-text BattleArcade_Entrance_Text_NotEnoughValidMonsLvOpenSingles
-{
-    format("Hold up, {PLAYER}! You need three different POKéMON to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!")
-}
-
-text BattleArcade_Entrance_Text_RecordLastMatch
-{
-    format("Want me to record your last BATTLE ARCADE match on your FRONTIER PASS?")
-}
-
-text BattleArcade_Entrance_Text_YouEarned
-{
-    format("You earned {STR_VAR_2} BP!")
-}
 text BattleArcade_Entrance_Text_WelcomeToTheBattleArcade
 {
 	format("Welcome to the Battle Arcade! I am your guide to the Single and Double Battle challenges. Please be aware that these challenges are designed for a single Trainer.")
@@ -578,6 +363,10 @@ text BattleArcade_Entrance_Text_WhichChallengeWouldYouLike
 text BattleArcade_Entrance_Text_AtTheBattleArcade
 {
 	format("At the Battle Arcade, you may take a Single or Double Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. Some events will be good for the challenger, while others won't be. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). If you want to interrupt your challenge, please save the game. If you don't save, you will be disqualified from your challenge. Please be aware of that!")
+}
+text BattleArcade_Entrance_Text_WhichLevelMode
+{
+    format("The BATTLE ARCADE offers two levels of challenge, Level 50 and Open Level. Which is your choice?")
 }
 text BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti
 {
@@ -601,7 +390,11 @@ text BattleArcade_Entrance_Text_PleaseSelectThePokemonYou
 }
 text BattleArcade_Entrance_Text_ExcuseMeYouDont
 {
-	format("Excuse me! You don't have {STR_VAR_1} eligible Pokémon. You must have {STR_VAR_2} different Pokémon to enter.")
+	format("Excuse me! You don't have {STR_VAR_2} eligible Pokémon. You must have {STR_VAR_2} different Pokémon to enter.")
+}
+text BattleArcade_Entrance_Text_UnderLevel50
+{
+    format("The {STR_VAR_2} different Pokémon must all be Level 50 or lower.")
 }
 text BattleArcade_Entrance_Text_AlsoEggsAreIneligible
 {
@@ -609,7 +402,7 @@ text BattleArcade_Entrance_Text_AlsoEggsAreIneligible
 }
 text BattleArcade_Entrance_Text_EggsAndAre
 {
-	format("Eggs and {STR_VAR_1} are not allowed to enter.")
+	format("Eggs{STR_VAR_1} are not allowed to enter.")
 }
 text BattleArcade_Entrance_Text_PleaseComeSeeMeWhen
 {
@@ -627,6 +420,12 @@ text BattleArcade_Entrance_Text_ExcuseMeYouDidnt
 {
 	format("Excuse me! You didn't save before you quit your challenge last time. Because of that, you have been disqualified from your challenge!")
 }
+
+text BattleArcade_Entrance_Text_ThereWasAn
+{
+    format("There was an error, and we couldn't save!")
+}
+
 text BattleArcade_Entrance_Text_CongratulationsInHonorOf
 {
 	format("Congratulations! In honor of your victory, we present you with this commemorative print!")
@@ -710,5 +509,9 @@ text BattleArcade_Entrance_Text_DidYouFigureThisOne
 text BattleArcade_Entrance_Text_IfTheGameBoardTriggers
 {
 	format("If the game board triggers a paralyzing event here, Ground types aren't affected.")
+}
+text BattleArcade_Entrance_Text_RecordLastMatch
+{
+    format("Want me to record your last BATTLE ARCADE match on your FRONTIER PASS?")
 }
 #endif
