@@ -2018,7 +2018,7 @@ void DoSpecialTrainerBattle(void)
     {
 #ifdef BATTLE_ARCADE
     case SPECIAL_BATTLE_ARCADE:
-        gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_ARCADE;
+        gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
         {
         case FRONTIER_MODE_SINGLES:
