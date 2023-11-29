@@ -1,5 +1,5 @@
 BattleFrontier_BattleArcadeLobby_EventScript_PlayerFaceNorth::
-	setvar VAR_NEED_TO_FACE_NORTH, 1
+	setvar VAR_TEMP_1, 1
 	turnobject OBJ_EVENT_ID_PLAYER, DIR_NORTH
 	end
 
@@ -163,26 +163,9 @@ BattleFrontier_BattleArcadeLobby_EventScript_AskSaveBattle_5:
 	goto BattleFrontier_BattleArcadeLobby_EventScript_AskSaveBattle_4
 
 
-BattleFrontier_EventScript_SaveBattle::
-	frontier_savebattle
-	compare VAR_RESULT, 0
-	goto_if_ne BattleFrontier_EventScript_SaveBattle_2
-	msgbox BattleFrontier_BattleArcadeBattleRoom_Text_RecordCouldntBeSaved, MSGBOX_DEFAULT
-BattleFrontier_EventScript_SaveBattle_1:
-	return
-
-BattleFrontier_EventScript_SaveBattle_2:
-	playse SE_SAVE
-	msgbox BattleFrontier_BattleArcadeLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT
-	goto BattleFrontier_EventScript_SaveBattle_1
-
-
 BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge::
 	lock
 	faceplayer
-	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_SINGLES
-	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge_2
-BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge_1:
 	message BattleArcade_Entrance_Text_WeveMissedYou
 	waitmessage
 	arcade_save CHALLENGE_STATUS_SAVING
@@ -192,33 +175,22 @@ BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge_1:
 	goto BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator
 	end
 
-BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge_2:
-	setvar VAR_BRAVO_TRAINER_BATTLE_ARCADE_ON, TRUE
-	goto BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge_1
-
 
 BattleFrontier_BattleArcadeLobby_EventScript_Attendant::
 	lock
 	faceplayer
 	setvar VAR_FRONTIER_FACILITY, FRONTIER_FACILITY_ARCADE
-	compare VAR_LAST_TALKED, ATTENDANT_MULTIS
-	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_Attendant_2
-BattleFrontier_BattleArcadeLobby_EventScript_Attendant_1:
 	special SavePlayerParty
 	compare VAR_TEMP_2, FRONTIER_MODE_SINGLES
-	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_Attendant_5
+	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_Attendant_2
 	msgbox BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti, MSGBOX_DEFAULT
-BattleFrontier_BattleArcadeLobby_EventScript_Attendant_4:
+BattleFrontier_BattleArcadeLobby_EventScript_Attendant_1:
 	goto BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_Attendant_2:
-	clearflag FLAG_CHOSEN_MULTI_BATTLE_NPC_PARTNER
-	goto BattleFrontier_BattleArcadeLobby_EventScript_Attendant_1
-
-BattleFrontier_BattleArcadeLobby_EventScript_Attendant_5:
 	msgbox BattleArcade_Entrance_Text_WelcomeToTheBattleArcade, MSGBOX_DEFAULT
-	goto BattleFrontier_BattleArcadeLobby_EventScript_Attendant_4
+	goto BattleFrontier_BattleArcadeLobby_EventScript_Attendant_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge::
@@ -266,7 +238,9 @@ BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_5:
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_8:
 	special ChoosePartyForBattleFrontier
 	waitstate
-	goto_if_eq VAR_RESULT, 0, BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge
+	compare VAR_RESULT, 0
+	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_14
+BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_13:
 	goto BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge
 	return
 
@@ -294,6 +268,10 @@ BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_12:
 	setvar VAR_0x8005, FRONTIER_MULTI_PARTY_SIZE
 	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_8
 
+BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_14:
+	goto BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge
+	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_13
+
 
 BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge::
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
@@ -304,25 +282,18 @@ BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge::
 	special LoadPlayerParty
 	closemessage
 	delay 2
-	compare VAR_LAST_TALKED, ATTENDANT_LINK_MULTIS
-	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_2
-BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_1:
 	call Common_EventScript_SaveGame
 	setvar VAR_TEMP_0, 255
 	compare VAR_RESULT, 0
-	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_5
-BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_4:
+	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_2
+BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_1:
 	goto BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_2:
-	arcade_save 0
-	goto BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_1
-
-BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_5:
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS
 	goto BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge
-	goto BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_4
+	goto BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge::
@@ -445,7 +416,6 @@ BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator::
 BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad::
 	call BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom
 	clearflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
-	warp MAP_BATTLE_FRONTIER_BATTLE_ARCADE_ELEVATOR, 1, 6
 	setvar VAR_TEMP_0, 0
 	waitstate
 	end
@@ -524,16 +494,6 @@ BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_6:
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_7:
 	releaseall
 	end
-
-
-BattleFrontier_EventScript_GetCantRecordBattle::
-	frontier_get FRONTIER_DATA_RECORD_DISABLED
-	return
-
-
-BattleFrontier_EventScript_GetLvlMode::
-	frontier_get FRONTIER_DATA_LVL_MODE
-	return
 
 
 BattleFrontier_BattleArcadeLobby_Text_DidntSaveBeforeQuitting::
@@ -879,10 +839,6 @@ BattleFrontier_BattleArcadeLobby_Text_CongratsDefeatedMaiden::
 BattleFrontier_BattleArcadeLobby_Text_AwardYouTheseBattlePoints::
 	.string "In recognition of your infinite talent,\n"
 	.string "we award you these Battle Point(s).$"
-
-BattleFrontier_Text_ObtainedXBattlePoints::
-	.string "{PLAYER} obtained {STR_VAR_1}\n"
-	.string "Battle Point(s).$"
 
 BattleFrontier_BattleArcadeLobby_Text_RulesAreListed::
 	.string "The BATTLE ARCADE rules are listed.$"

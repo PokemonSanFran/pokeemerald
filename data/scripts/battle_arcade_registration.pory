@@ -5,6 +5,8 @@ const CHALLENGE_STATUS_END = 255
 const LOCAL_VAR_PARTY_SIZE = VAR_0x8005
 const LOCAL_VAR_ARCADE_MODE_FORMAT = VAR_0x8007
 
+const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
+
 const MODE_50_SINGLES = 51
 const MODE_50_DOUBLES = 52
 const MODE_50_MULTIS = 53
@@ -175,30 +177,10 @@ script BattleFrontier_BattleArcadeLobby_EventScript_AskSaveBattle
     return
 }
 
-script BattleFrontier_EventScript_SaveBattle
-{
-    frontier_savebattle
-    if (var(VAR_RESULT))
-    {
-        playse(SE_SAVE)
-            msgbox(BattleFrontier_BattleArcadeLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT)
-    }
-    else
-    {
-        msgbox(BattleFrontier_BattleArcadeBattleRoom_Text_RecordCouldntBeSaved, MSGBOX_DEFAULT)
-    }
-    return
-}
-
 script BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge
 {
     lock
     faceplayer
-
-    if (var(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_SINGLES)
-    {
-        setvar(VAR_BRAVO_TRAINER_BATTLE_ARCADE_ON, TRUE)
-    }
 
     message(BattleArcade_Entrance_Text_WeveMissedYou)
     waitmessage
@@ -217,11 +199,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
     lock
     faceplayer
     setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE)
-
-    if (var(VAR_LAST_TALKED) == ATTENDANT_MULTIS)
-    {
-        clearflag(FLAG_CHOSEN_MULTI_BATTLE_NPC_PARTNER)
-    }
 
     special(SavePlayerParty)
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
@@ -282,7 +259,10 @@ script BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge
     }
     special(ChoosePartyForBattleFrontier)
     waitstate
-    goto_if_eq(VAR_RESULT, 0, BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge)
+    if (var(VAR_RESULT) == 0)
+    {
+        goto(BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge)
+    }
 goto(BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge)
 }
 
@@ -302,11 +282,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge
     //As a result the player can save their party and quit without having saved the PC.
     //This allows players to clone pokemon and their held items by withdrawing them (or erase them by despositing).
     // https://bulbapedia.bulbagarden.net/wiki/Cloning_glitches#Battle_Arcade
-    if (var(VAR_LAST_TALKED) == ATTENDANT_LINK_MULTIS)
-    {
-        arcade_save(0) //This line prevents the aforementioned cloning. If this line is absent, cloning will be possible.
-    }
-
     call(Common_EventScript_SaveGame)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
 
@@ -427,7 +402,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad
 {
     call(BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom)
     clearflag(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE)
-    warp(MAP_BATTLE_FRONTIER_BATTLE_ARCADE_ELEVATOR, 1, 6)
+    //warp(MAP_BATTLE_FRONTIER_BATTLE_ARCADE_ELEVATOR, 1, 6)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
     waitstate
     end
@@ -754,11 +729,6 @@ text BattleFrontier_BattleArcadeLobby_Text_AwardYouTheseBattlePoints
     format("In recognition of your infinite talent,\nwe award you these Battle Point(s).")
 }
 
-text BattleFrontier_Text_ObtainedXBattlePoints
-{
-    format("{PLAYER} obtained {STR_VAR_1} Battle Point(s).")
-}
-
 text BattleFrontier_BattleArcadeLobby_Text_RulesAreListed
 {
     format("The BATTLE ARCADE rules are listed.")
@@ -787,18 +757,6 @@ text BattleFrontier_BattleArcadeLobby_Text_ExplainSalonRules
 text BattleFrontier_BattleArcadeLobby_Text_ExplainMultiLinkRules
 {
     format("The LINK MULTI BATTLE Mode is for two\nfriends to mount a challenge together.\pYou and your friend must be linked with\nWireless Adapters or a GBA Game Link\lcable.\pYou must choose two POKéMON at\nthe registration counter.\pThese POKéMON must be different\nfrom those of your friend.\pYou may not interrupt this challenge\nin the middle, unlike other modes.")
-}
-
-script BattleFrontier_EventScript_GetCantRecordBattle
-{
-    frontier_get(FRONTIER_DATA_RECORD_DISABLED)
-    return
-}
-
-script BattleFrontier_EventScript_GetLvlMode
-{
-    frontier_get(FRONTIER_DATA_LVL_MODE)
-    return
 }
 
 text BattleArcade_Entrance_Text_RulesAreListed

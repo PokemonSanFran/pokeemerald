@@ -1,6 +1,7 @@
-mapscripts BattleFrontier_BattleArcadeBattleRoom_MapScripts
+mapscripts BattleArcade_BattleRoom_MapScripts
 {
-    MAP_SCRIPT_ON_FRAME_TABLE
-[
-]
+    MAP_SCRIPT_ON_TRANSITION
+    {
+        return
+    }
 }

@@ -1,4 +1,3 @@
-#ifdef BATTLE_ARCADE
 	@ Initialize the Battle Arcade challenge
 	.macro arcade_init
 	setvar VAR_0x8004, ARCADE_FUNC_INIT
@@ -100,4 +99,3 @@
     setvar VAR_0x8004, ARCADE_FUNC_CHECK_MAX
     special CallBattleArcadeFunc
     .endm
-#endif

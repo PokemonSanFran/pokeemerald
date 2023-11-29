@@ -1,7 +1,7 @@
-BattleFrontier_BattleArcadeBattleRoom_MapScripts::
-	map_script MAP_SCRIPT_ON_FRAME_TABLE, BattleFrontier_BattleArcadeBattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
+BattleArcade_BattleRoom_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, BattleArcade_BattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION
 	.byte 0
 
-BattleFrontier_BattleArcadeBattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
-	.2byte 0
+BattleArcade_BattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION:
+	return
 

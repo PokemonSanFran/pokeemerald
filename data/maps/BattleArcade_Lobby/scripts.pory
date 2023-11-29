@@ -14,7 +14,7 @@ const MODE_OPEN_SINGLES = 101
 const MODE_OPEN_DOUBLES = 102
 const MODE_OPEN_MULTIS = 103
 
-mapscripts BattleFrontier_BattleArcadeLobby_MapScripts
+mapscripts BattleArcade_Lobby_MapScripts
 {
     MAP_SCRIPT_ON_FRAME_TABLE
         [
@@ -27,7 +27,7 @@ mapscripts BattleFrontier_BattleArcadeLobby_MapScripts
 
         MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
         [
-            VAR_NEED_TO_FACE_NORTH, 0:BattleFrontier_BattleArcadeLobby_EventScript_PlayerFaceNorth
+            VAR_NEED_TO_FACE_NORTH, 0 :BattleFrontier_BattleArcadeLobby_EventScript_PlayerFaceNorth
         ]
 }
 
@@ -60,4 +60,3 @@ movement BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator
     set_invisible
     step_end
 }
-
