@@ -1,0 +1,6 @@
+mapscripts BattleFrontier_BattleArcadeBattleRoom_MapScripts
+{
+    MAP_SCRIPT_ON_FRAME_TABLE
+[
+]
+}

@@ -1,0 +1,42 @@
+BattleFrontier_BattleArcadeLobby_MapScripts::
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, BattleFrontier_BattleArcadeLobby_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
+	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, BattleFrontier_BattleArcadeLobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+	.byte 0
+
+BattleFrontier_BattleArcadeLobby_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
+	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleArcadeLobby_EventScript_GetChallengeStatus
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_SAVING, BattleFrontier_BattleArcadeLobby_EventScript_QuitWithoutSaving
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_PAUSED, BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_WON, BattleFrontier_BattleArcadeLobby_EventScript_WonChallenge
+	map_script_2 VAR_TEMP_0, CHALLENGE_STATUS_LOST, BattleFrontier_BattleArcadeLobby_EventScript_LostChallenge
+	.2byte 0
+
+BattleFrontier_BattleArcadeLobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE:
+	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleArcadeLobby_EventScript_PlayerFaceNorth
+	.2byte 0
+
+
+BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator::
+	closemessage
+	applymovement VAR_LAST_TALKED, BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator
+	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator
+	waitmovement OBJ_EVENT_ID_PLAYER
+	return
+
+
+BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator:
+	walk_up
+	walk_up
+	walk_up
+	step_end
+
+BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator:
+	walk_up
+	set_invisible
+	step_end
+
+BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator:
+	walk_up
+	walk_up
+	set_invisible
+	step_end
