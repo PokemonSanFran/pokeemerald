@@ -1871,11 +1871,6 @@ static void GiveBattlePoints(void)
     case FRONTIER_FACILITY_TOWER:
         challengeNum = gSaveBlock2Ptr->frontier.towerWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
         break;
-#ifdef BATTLE_ARCADE
-    case FRONTIER_FACILITY_ARCADE:
-        challengeNum = gSaveBlock2Ptr->frontier.arcadeWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
-        break;
-#endif
     case FRONTIER_FACILITY_DOME:
         challengeNum = gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode];
         break;

@@ -21,6 +21,7 @@
 #include "constants/battle_arcade.h"
 #include "constants/field_specials.h"
 #include "constants/hold_effects.h"
+#include "constants/trainers.h"
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -44,7 +45,6 @@ static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(void);
-static void BufferArcadeTypeNameToString(void);
 static u32 CountNumberTypeWin(u8);
 static void CheckArcadeSymbol(void);
 static u8 ConvertMenuInputToType(u8);
@@ -82,13 +82,23 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_GET_CONTINUE_MENU_TYPE] = GetContinueMenuType,
     [ARCADE_FUNC_RESTORE_HELD_ITEMS]     = RestoreNonConsumableHeldItems,
     [ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePoints,
-    [ARCADE_FUNC_GET_TYPE_NAME]          = BufferArcadeTypeNameToString,
     [ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
     [ARCADE_FUNC_CONVERT_TYPE]           = ConvertMenuInputToTypeAndSetVar,
 };
 
-STATIC_ASSERT(VAR_ARCADE_HEAL_COUNT > 0, AssignAVarTo_VAR_ARCADE_HEAL_COUNT_ToUseBattleArcade);
-STATIC_ASSERT(VAR_ARCADE_TYPE > 0, AssignAVarTo_VAR_ARCADE_TYPE_ToUseBattleArcade);
+static const u32 sWinStreakFlags[][2] =
+{
+    {STREAK_ARCADE_SINGLES_50,     STREAK_ARCADE_SINGLES_OPEN},
+    {STREAK_ARCADE_DOUBLES_50,     STREAK_ARCADE_DOUBLES_OPEN},
+    {STREAK_ARCADE_MULTIS_50,      STREAK_ARCADE_MULTIS_OPEN},
+};
+
+static const u32 sWinStreakMasks[][2] =
+{
+    {~(STREAK_ARCADE_SINGLES_50),     ~(STREAK_ARCADE_SINGLES_OPEN)},
+    {~(STREAK_ARCADE_DOUBLES_50),     ~(STREAK_ARCADE_DOUBLES_OPEN)},
+    {~(STREAK_ARCADE_MULTIS_50),      ~(STREAK_ARCADE_MULTIS_OPEN)},
+};
 
 void CallBattleArcadeFunc(void)
 {
@@ -101,7 +111,6 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
-    VarSet(VAR_ARCADE_HEAL_COUNT,ARCADE_MAX_NUM_RESTORE);
 
     gTrainerBattleOpponent_A = 0;
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
@@ -111,7 +120,6 @@ static void GetArcadeData(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-    u32 typeMode= VarGet(VAR_ARCADE_TYPE);
 
     switch (gSpecialVar_0x8005)
     {
@@ -126,11 +134,22 @@ static void GetArcadeData(void)
 
 static void SetArcadeData(void)
 {
+    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+
     switch (gSpecialVar_0x8005)
     {
-    case ARCADE_DATA_WIN_STREAK:
-        FRONTIER_SAVEDATA.curChallengeBattleNum = gSpecialVar_0x8006;
-        break;
+        case 0:
+            break;
+        case ARCADE_DATA_WIN_STREAK:
+            FRONTIER_SAVEDATA.curChallengeBattleNum = gSpecialVar_0x8006;
+            break;
+        case ARCADE_DATA_WIN_STREAK_ACTIVE:
+            if (gSpecialVar_0x8006)
+                gSaveBlock2Ptr->frontier.winStreakActiveFlags |= sWinStreakFlags[battleMode][lvlMode];
+            else
+                gSaveBlock2Ptr->frontier.winStreakActiveFlags &= sWinStreakMasks[battleMode][lvlMode];
+            break;
     }
 }
 
@@ -218,52 +237,46 @@ static void RestoreNonConsumableHeldItems(void)
     }
 }
 
-static u32 CalculateBattlePoints(u32 numWins)
+static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =
 {
-    u32 points = 0, i;
+    {2,2,2},
+    {2,2,2},
+    {2,2,2},
+    {2,2,2},
+    {4,4,4},
+    {4,4,4},
+    {4,5,5},
+    {6,6,6},
+};
 
-    if (numWins == 0)
-        return 0;
+static u32 CalculateBattlePoints(u32 challengeNum)
+{
+    u32 maxChallengeNum = ARRAY_COUNT(sArcadeBattlePointAwards);
+    u32 points;
 
-    if (numWins < ARCADE_BP_BONUS_MATCH)
-        return (numWins * ARCADE_BP_BASE);
+    if (challengeNum != 0)
+        challengeNum--;
 
-    for (i = 1; i <= numWins; i++)
-    {
-        if ((i % ARCADE_BP_STREAK_BONUS) == 0)
-            points += ARCADE_BP_STREAK_BONUS;
-        else
-            points += ARCADE_BP_BASE;
-    }
+    if (challengeNum >= maxChallengeNum)
+        challengeNum = (maxChallengeNum - 1);
+
+    points = sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
+
+    if (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN)
+        points = 20;
 
     return points;
 }
 
 static void GiveBattlePoints(void)
 {
-    u32 points = CalculateBattlePoints(FRONTIER_SAVEDATA.curChallengeBattleNum);
+    u32 points = CalculateBattlePoints(((gSaveBlock2Ptr->frontier.arcadeWinStreaks[VarGet(VAR_FRONTIER_BATTLE_MODE)][gSaveBlock2Ptr->frontier.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
 
     IncrementDailyBattlePoints(points);
     ConvertIntToDecimalStringN(gStringVar2, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
-}
-
-bool32 Arcade_CheckIfPartyMonMatchesType(struct Pokemon *mon)
-{
-    u32 species = GetMonData(mon, MON_DATA_SPECIES);
-    u32 chosenType = VarGet(VAR_ARCADE_TYPE);
-
-    if((gSpeciesInfo[species].types[0] != chosenType) && (gSpeciesInfo[species].types[1] != chosenType))
-        return FALSE;
-
-    return TRUE;
-}
-
-static void BufferArcadeTypeNameToString(void)
-{
-    StringCopy(gStringVar3, gTypeNames[VarGet(VAR_ARCADE_TYPE)]);
 }
 
 static void CheckArcadeSymbol(void)
