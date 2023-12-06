@@ -705,13 +705,13 @@ bool32 PartyHasMonLearnsKnowsFieldMove(u16 itemId)
         if ((PartyCanLearnMoveLevelUp(species, moveId)
                 || (monCanLearnTM) == ALREADY_KNOWS_MOVE)
                 || (monCanLearnTM) == CAN_LEARN_MOVE)
-            SetMonResultVariables(i,species);
+            return SetMonResultVariables(i,species);
 
         for (i = 0; i < TUTOR_MOVE_COUNT; i++)
         {
             monCanLearnTutor = CanMonLearnTMTutor(mon, 0, i);
             if (monCanLearnTutor == ALREADY_KNOWS_MOVE || monCanLearnTutor == CAN_LEARN_MOVE)
-                SetMonResultVariables(i,species);
+                return SetMonResultVariables(i,species);
         }
     }
     return FALSE;
