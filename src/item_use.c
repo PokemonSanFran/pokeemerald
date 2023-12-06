@@ -76,10 +76,12 @@ static void Task_UseRepel(u8);
 static void Task_CloseCantUseKeyItemMessage(u8);
 static void SetDistanceOfClosestHiddenItem(u8, s16, s16);
 static void CB2_OpenPokeblockFromBag(void);
+// Start qol_field_moves
 static void ItemUseOnFieldCB_TeleportTool(u8);
 static void SetUpFieldAndUseTeleportTool(u8 taskId);
 static void UseTeleportToolYesNo(u8 taskId);
 static void AskPlayerTeleportTool(u8 taskId);
+// End qol_field_moves
 
 // EWRAM variables
 EWRAM_DATA static void(*sItemUseOnFieldCB)(u8 taskId) = NULL;
@@ -1335,5 +1337,4 @@ void ItemUseOnFieldCB_SweetScentTool(u8 taskId)
     DestroyTask(taskId);
 }
 // End qol_field_moves
-
 #undef tUsingRegisteredKeyItem
