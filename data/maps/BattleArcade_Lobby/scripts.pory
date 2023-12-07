@@ -35,28 +35,20 @@ mapscripts BattleArcade_Lobby_MapScripts
 script BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator
 {
     closemessage
-    applymovement(VAR_LAST_TALKED, BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator)
-    applymovement(OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator)
-    waitmovement(OBJ_EVENT_ID_PLAYER)
-    return
-}
 
-movement BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator
-{
-    walk_up * 3
-    step_end
+    applymovement(VAR_LAST_TALKED,BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator)
+    applymovement(OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator)
+    waitmovement(OBJ_EVENT_ID_PLAYER)
 }
 
 movement BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator
 {
-    walk_up
+    walk_up * 2
     set_invisible
-    step_end
 }
 
 movement BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator
 {
-    walk_up * 2
+    walk_up * 3
     set_invisible
-    step_end
 }

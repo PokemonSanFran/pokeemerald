@@ -4410,26 +4410,36 @@
       "secondary_tileset": "gTileset_MysteryEventsHouse",
       "border_filepath": "data/layouts/SootopolisCity_MysteryEventsHouse_1F_StairsUnblocked/border.bin",
       "blockdata_filepath": "data/layouts/SootopolisCity_MysteryEventsHouse_1F_StairsUnblocked/map.bin"
-          },
+    },
     {
       "id": "LAYOUT_BATTLE_ARCADE_LOBBY",
       "name": "BattleArcade_Lobby_Layout",
-      "width": 16,
+      "width": 12,
       "height": 13,
       "primary_tileset": "gTileset_Building",
-      "secondary_tileset": "gTileset_BattleArena",
+      "secondary_tileset": "gTileset_BattlePike",
       "border_filepath": "data/layouts/BattleArcade_Lobby/border.bin",
       "blockdata_filepath": "data/layouts/BattleArcade_Lobby/map.bin"
     },
     {
       "id": "LAYOUT_BATTLE_ARCADE_BATTLE_ROOM",
       "name": "BattleArcade_BattleRoom_Layout",
-      "width": 16,
-      "height": 11,
+      "width": 9,
+      "height": 8,
       "primary_tileset": "gTileset_Building",
-      "secondary_tileset": "gTileset_BattleArena",
+      "secondary_tileset": "gTileset_BattlePike",
       "border_filepath": "data/layouts/BattleArcade_BattleRoom/border.bin",
       "blockdata_filepath": "data/layouts/BattleArcade_BattleRoom/map.bin"
+    },
+    {
+      "id": "LAYOUT_BATTLE_ARCADE_HALLWAY",
+      "name": "BattleArcade_Hallway_Layout",
+      "width": 17,
+      "height": 5,
+      "primary_tileset": "gTileset_Building",
+      "secondary_tileset": "gTileset_BattleFrontier",
+      "border_filepath": "data/layouts/BattleArcade_Hallway/border.bin",
+      "blockdata_filepath": "data/layouts/BattleArcade_Hallway/map.bin"
     }
   ]
 }

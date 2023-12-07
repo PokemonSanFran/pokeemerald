@@ -1060,3 +1060,5 @@ Common_EventScript_LegendaryFlewAway::
     .include "data/scripts/battle_arcade_battle.inc"
 	.include "data/maps/BattleArcade_Lobby/scripts.inc"
 	.include "data/maps/BattleArcade_BattleRoom/scripts.inc"
+
+	.include "data/maps/BattleArcade_Hallway/scripts.inc"

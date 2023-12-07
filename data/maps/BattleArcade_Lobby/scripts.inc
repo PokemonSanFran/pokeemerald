@@ -18,24 +18,20 @@ BattleArcade_Lobby_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE:
 
 BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator::
 	closemessage
-	applymovement VAR_LAST_TALKED, BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator
-	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator
+	applymovement VAR_LAST_TALKED, BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator
+	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator
 	waitmovement OBJ_EVENT_ID_PLAYER
 	return
 
 
-BattleFrontier_BattleArcadeLobby_Movement_WalkToElevator:
-	walk_up
-	walk_up
-	walk_up
-	step_end
-
 BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator:
+	walk_up
 	walk_up
 	set_invisible
 	step_end
 
 BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator:
+	walk_up
 	walk_up
 	walk_up
 	set_invisible

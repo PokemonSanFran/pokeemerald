@@ -143,7 +143,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_AskSaveBattle
     message(BattleFrontier_BattleArcadeLobby_Text_RecordWillBeSaved)
     waitmessage
     special(LoadPlayerParty)
-    special(HealPlayerParty)
     arcade_save(0)
     playse(SE_SAVE)
     waitse
@@ -189,7 +188,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
     special(SavePlayerParty)
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
     {
-        msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade, MSGBOX_DEFAULT)
+        msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
     }
     else
     {
@@ -202,17 +201,18 @@ script BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge
 {
     message(BattleArcade_Entrance_Text_WhichChallengeWouldYouLike)
     waitmessage
-    multichoice(17, 6, MULTI_CHALLENGE_TYPES_INFO, FALSE)
+    multichoice(17, 4, MULTI_CHALLENGE_TYPES_INFO, FALSE)
     switch(var(VAR_RESULT))
     {
+        case 0:
+        case 1:
+            copyvar(VAR_FRONTIER_BATTLE_MODE, VAR_RESULT)
+            goto(BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge)
         case 2:
             goto(BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge)
         case 3:
         case MULTI_B_PRESSED:
             goto(BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge)
-        default:
-            setvar(VAR_FRONTIER_BATTLE_MODE, VAR_RESULT)
-            goto(BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge)
     }
 }
 
@@ -220,7 +220,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge
 {
     message(BattleFrontier_BattleArcadeLobby_Text_WhichLevelMode)
     waitmessage
-    multichoice(17, 6, MULTI_LEVEL_MODE, FALSE)
+    multichoice(17, 4, MULTI_LEVEL_MODE, FALSE)
     switch(var(VAR_RESULT))
     {
         case FRONTIER_LVL_TENT: goto(BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge)
@@ -229,6 +229,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge
     frontier_checkineligible
     if (var(VAR_0x8004))
     {
+        call(BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize)
         goto(BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons)
     }
     frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
@@ -237,19 +238,15 @@ script BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge
     fadescreen(FADE_TO_BLACK)
     frontier_get(FRONTIER_DATA_LVL_MODE)
     copyvar(VAR_0x8004, VAR_RESULT)
-    switch(var(VAR_FRONTIER_BATTLE_MODE))
-    {
-        case FRONTIER_MODE_SINGLES: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_PARTY_SIZE)
-        case FRONTIER_MODE_DOUBLES: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_DOUBLES_PARTY_SIZE)
-        case FRONTIER_MODE_MULTIS: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_MULTI_PARTY_SIZE)
-    }
+    call(BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize)
+
     special(ChoosePartyForBattleFrontier)
     waitstate
     if (var(VAR_RESULT) == 0)
     {
         goto(BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge)
     }
-goto(BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge)
+    goto(BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge)
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge
@@ -382,8 +379,9 @@ script BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator
 script BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad
 {
     call(BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom)
+    special(HealPlayerParty)
     clearflag(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE)
-    //warp(MAP_BATTLE_FRONTIER_BATTLE_ARCADE_ELEVATOR, 1, 6)
+    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 6)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
     waitstate
     end
@@ -392,7 +390,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad
 script BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom
 {
     msgbox(BattleArcade_Entrance_Text_RightThisWayPlease, MSGBOX_DEFAULT)
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator)
+    call(BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator)
     return
 }
 
@@ -403,7 +401,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize
         case FRONTIER_MODE_SINGLES: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_PARTY_SIZE)
         case FRONTIER_MODE_DOUBLES: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_DOUBLES_PARTY_SIZE)
         case FRONTIER_MODE_MULTIS: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_MULTI_PARTY_SIZE)
-        case FRONTIER_MODE_LINK_MULTIS: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_MULTI_PARTY_SIZE)
     }
     return
 }
@@ -764,6 +761,7 @@ text BattleArcade_Entrance_Text_WelcomeToTheBattleArcade
 {
 	format("Welcome to the Battle Arcade! I am your guide to the Single and Double Battle challenges. Please be aware that these challenges are designed for a single Trainer.")
 }
+
 text BattleArcade_Entrance_Text_WhichChallengeWouldYouLike
 {
 	format("Which challenge would you like to take?")

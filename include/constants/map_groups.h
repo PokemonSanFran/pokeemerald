@@ -556,6 +556,7 @@
 #define MAP_TRAINER_HILL_ELEVATOR                           (88 | (26 << 8))
 #define MAP_BATTLE_ARCADE_LOBBY                             (89 | (26 << 8))
 #define MAP_BATTLE_ARCADE_BATTLE_ROOM                       (90 | (26 << 8))
+#define MAP_BATTLE_ARCADE_HALLWAY                           (91 | (26 << 8))
 
 // gMapGroup_IndoorRoute104Prototype
 #define MAP_ROUTE104_PROTOTYPE                          (0 | (27 << 8))
