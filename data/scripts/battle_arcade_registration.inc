@@ -391,7 +391,7 @@ BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad::
 	call BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom
 	special HealPlayerParty
 	clearflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
-	warpsilent MAP_BATTLE_ARCADE_HALLWAY, 1, 6
+	warpsilent MAP_BATTLE_ARCADE_HALLWAY, 1, 2
 	setvar VAR_TEMP_0, 0
 	waitstate
 	end
