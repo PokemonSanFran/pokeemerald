@@ -1,749 +1,1107 @@
 BattleFrontier_BattleTowerBattleRoom_MapScripts::
+# 20 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, BattleFrontier_BattleTowerBattleRoom_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+# 23 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, BattleFrontier_BattleTowerBattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
 	.byte 0
 
 BattleFrontier_BattleTowerBattleRoom_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE:
+# 21 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleTowerBattleRoom_EventScript_SetUpObjects
 	.2byte 0
 
 BattleFrontier_BattleTowerBattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
+# 24 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleTowerBattleRoom_EventScript_EnterRoom
 	.2byte 0
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_SetUpObjects::
+# 29 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_TEMP_1, 1
+# 30 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleTowerBattleRoom_Movement_SetInvisible
 	end
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_EnterRoom::
+# 35 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_TEMP_0, 1
+# 36 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerBattleRoom_Movement_PlayerEnter
+# 37 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 39 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_get FRONTIER_DATA_BATTLE_NUM
+# 40 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_EnterRoom_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_EnterRoom_1:
+# 44 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerBattleRoom_Movement_AttendantApproachPlayer
+# 45 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 46 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerBattleRoom_Movement_PlayerFaceAttendant
+# 47 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 49 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_TEMP_2, 1
+# 50 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_RECORD_DISABLED, TRUE
+# 51 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_EnterRoom_2:
+# 41 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_EnterRoom_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter::
+# 55 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_setopponent
+# 57 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addobject 1
+# 58 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 1, BattleFrontier_BattleTowerBattleRoom_Movement_OpponentEnter
+# 59 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 61 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_getopponentintro 0
+# 62 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox gStringVar4, MSGBOX_DEFAULT
+# 63 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
+# 65 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle
+# 66 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter_1:
+# 69 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTower_EventScript_WarpToLobbyLost
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter_2:
+# 67 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter_1
 
 
 BattleFrontier_BattleTower_EventScript_SetChallengeStatus::
+# 73 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_set TOWER_DATA_LVL_MODE
+# 74 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_0x8004, FANCOUNTER_USED_BATTLE_TOWER
+# 75 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	special Script_TryGainNewFanFromCounter
+# 76 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby
 	return
 
 
 BattleFrontier_BattleTower_EventScript_WarpToLobbyLost::
+# 80 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
+# 81 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTower_EventScript_SetChallengeStatus
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobbyWon::
+# 85 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
+# 86 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTower_EventScript_SetChallengeStatus
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent::
+# 90 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_IncrementWinStreak
+# 92 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_setbattlewon
+# 93 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 7
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_1:
+# 97 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 1, BattleFrontier_BattleTowerBattleRoom_Movement_OpponentExit
+# 98 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 99 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	removeobject 1
+# 101 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_getbrainstatus
+# 102 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, FRONTIER_BRAIN_NOT_READY
 	goto_if_ne BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_5
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_4:
+# 106 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerBattleRoom_Movement_AttendantApproachPlayer
+# 107 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 108 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerBattleRoom_Movement_PlayerFaceAttendant
+# 109 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 111 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_RestoreMonsToFullHealth, MSGBOX_DEFAULT
+# 112 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	playfanfare MUS_HEAL
+# 113 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitfanfare
+# 114 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	special HealPlayerParty
+# 116 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_2:
+# 94 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobbyWon
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_5:
+# 103 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_SecondAttendantEnter
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedOpponent_4
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent::
+# 119 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_getbrainstatus
+# 120 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	copyvar VAR_TEMP_F, VAR_RESULT
+# 121 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_TEMP_F, FRONTIER_BRAIN_NOT_READY
 	goto_if_ne BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_1:
+# 125 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_get FRONTIER_DATA_BATTLE_NUM
+# 126 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_ReadyForOpponent
+# 128 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_GetCantRecordBattle
+# 129 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_5
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_4:
+# 133 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+# 134 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 135 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_8
+# 136 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_9
+# 137 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_10
+# 138 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 3, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_11
+# 139 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_12
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_2:
+# 122 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_MaidenUpNext
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_5:
+# 130 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_4
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_8:
+# 135 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_ContinueChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_9:
+# 136 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_10:
+# 137 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_11:
+# 138 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent_12:
+# 139 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord::
+# 144 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+# 145 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 146 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_2
+# 147 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_3
+# 148 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_4
+# 149 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_5
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_2:
+# 146 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_ContinueChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_3:
+# 147 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_4:
+# 148 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponentNoRecord_5:
+# 149 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle::
+# 154 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle
+# 155 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
+# 156 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+# 157 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle_1:
+# 160 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle_2:
+# 158 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_SaveBattle
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge::
+# 164 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame, MSGBOX_YESNO
+# 165 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge_1:
+# 169 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge_2:
+# 166 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_PauseChallenge
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge::
+# 173 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge
+# 174 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
+# 175 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+# 176 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge_1:
+# 180 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge_2:
+# 177 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_RetireChallenge
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_ContinueChallenge::
+# 184 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	closemessage
+# 186 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerBattleRoom_Movement_PlayerFaceBattle
+# 187 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 188 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerBattleRoom_Movement_AttendantReturnToPos
+# 189 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 191 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_OpponentEnter
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_PauseChallenge::
+# 196 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait
+# 197 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
+# 199 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_save CHALLENGE_STATUS_PAUSED
+# 200 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	playse SE_SAVE
+# 201 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitse
+# 203 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	fadescreen FADE_TO_BLACK
+# 204 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_reset
 	end
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_ReadyForOpponent::
+# 209 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	copyvar VAR_TEMP_E, VAR_RESULT
+# 210 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addvar VAR_TEMP_E, 1
+# 211 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	buffernumberstring STR_VAR_3, VAR_TEMP_E
+# 213 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_ReadyForXOpponent
+# 214 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
 	return
 
 
 BattleFrontier_EventScript_IncrementWinStreak::
+# 220 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_incrementstreak
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_SecondAttendantEnter::
+# 225 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleTowerBattleRoom_Movement_SecondAttendantEnter
+# 226 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 227 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 3, Common_Movement_WalkInPlaceLeft
+# 228 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 230 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	playse SE_PIN
+# 232 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, Common_Movement_ExclamationMark
+# 233 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 234 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, Common_Movement_Delay48
+# 235 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 237 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleTowerBattleRoom_Movement_SecondAttendantDelay
+# 238 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerBattleRoom_Movement_AttendantFaceSecondAttendant
+# 239 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 240 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleTowerBattleRoom_Movement_SecondAttendantExit
+# 241 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_MaidenUpNext::
+# 247 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_TEMP_2, 1
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_MaidenUpNext_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_MaidenUpNext_1:
+# 251 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SalonMaidenOnHerWay, MSGBOX_DEFAULT
+# 252 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_TEMP_2, 1
+# 254 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_MaidenUpNext_2:
+# 248 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_MaidenUpNext_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden::
+# 258 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_ReadyForSalonMaiden
+# 259 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
+# 261 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_GetCantRecordBattle
+# 262 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_1:
+# 266 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+# 267 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 268 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_5
+# 269 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_6
+# 270 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_7
+# 271 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 3, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_8
+# 272 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_9
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_2:
+# 263 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_5:
+# 268 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_BattleAnabel
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_6:
+# 269 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRecordBattle
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_7:
+# 270 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_8:
+# 271 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden_9:
+# 272 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord::
+# 277 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+# 278 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 279 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_2
+# 280 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_3
+# 281 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_4
+# 282 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_5
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_2:
+# 279 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_BattleAnabel
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_3:
+# 280 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskPauseChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_4:
+# 281 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaidenNoRecord_5:
+# 282 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AskReadyForMaiden
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_BattleAnabel::
+# 287 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_SetBrainObjectGfx
+# 288 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	closemessage
+# 289 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleTowerBattleRoom_Movement_PlayerFaceBattle
+# 290 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 291 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerBattleRoom_Movement_AttendantReturnToPos
+# 292 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 293 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addobject 1
+# 294 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	applymovement 1, BattleFrontier_BattleTowerBattleRoom_Movement_AnabelEnter
+# 295 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmovement 0
+# 296 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_Anabel
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType::
+# 300 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_TEMP_D, 0
+# 302 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_get FRONTIER_DATA_HEARD_BRAIN_SPEECH
+# 303 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_2
+# 306 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addvar VAR_TEMP_D, 0
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_1:
+# 309 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	switch VAR_TEMP_F
+# 310 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_BRAIN_SILVER, BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_7
+# 311 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_BRAIN_GOLD, BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_8
+# 312 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_BRAIN_STREAK, BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_9
+# 313 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_BRAIN_STREAK_LONG, BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_9
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_5:
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_2:
+# 304 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addvar VAR_TEMP_D, 2
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_7:
+# 310 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addvar VAR_TEMP_D, 50
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_5
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_8:
+# 311 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addvar VAR_TEMP_D, 100
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_5
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_9:
+# 313 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	addvar VAR_TEMP_D, 200
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType_5
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro::
+# 319 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_DetermineIntroType
+# 321 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_TEMP_D, 50
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_1:
+# 325 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_TEMP_D, 100
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_5
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_4:
+# 330 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_TEMP_D, 100
 	goto_if_lt BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_8
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_7:
+# 333 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_TEMP_D, 52
 	goto_if_gt BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_10
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_2:
+# 322 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_GreetingsImAnabel, MSGBOX_DEFAULT
+# 323 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_HEARD_BRAIN_SPEECH
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_5:
+# 326 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_AnabelYouCameBack, MSGBOX_DEFAULT
+# 327 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_HEARD_BRAIN_SPEECH
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_4
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_8:
+# 331 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_LetMeSeeYourTalent, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_7
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro_10:
+# 334 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_LetsBeginShallWe, MSGBOX_DEFAULT
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_Anabel::
+# 339 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_AnabelIntro
+# 341 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle
+# 342 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_Anabel_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_Anabel_1:
+# 346 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTower_EventScript_WarpToLobbyLost
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_Anabel_2:
+# 343 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedAnabel
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_Anabel_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle::
+# 350 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	closemessage
+# 352 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_TEMP_2, 0
+# 353 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_RECORD_DISABLED, FALSE
+# 355 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	special HealPlayerParty
+# 356 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_0x8004, SPECIAL_BATTLE_TOWER
+# 357 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setvar VAR_0x8005, 0
+# 359 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	special DoSpecialTrainerBattle
+# 360 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitstate
+# 361 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
+# 363 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_0x8004, FRONTIER_MODE_LINK_MULTIS
 	goto_if_ne BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle_1:
+# 369 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_setinterviewdata
+# 370 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle_2:
+# 364 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_restorehelditems
+# 365 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	special HealPlayerParty
+# 366 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_resetsketch
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedAnabel::
+# 375 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_IncrementWinStreak
+# 376 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_getsymbols
+# 378 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 2
 	goto_if_eq BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedAnabel_2
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedAnabel_1:
+# 382 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTower_EventScript_AnabelCongratsText
+# 384 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	playfanfare MUS_OBTAIN_SYMBOL
+# 385 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTower_EventScript_FrontierPassText
+# 386 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitmessage
+# 387 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitfanfare
+# 388 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_givesymbol
+# 390 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTower_EventScript_AnabelConclusionText
+# 392 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobbyWon
 	return
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedAnabel_2:
+# 379 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobbyWon
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_DefeatedAnabel_1
 
 
 BattleFrontier_BattleTower_EventScript_AnabelCongratsText::
+# 396 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTower_EventScript_AnabelCongratsText_2
 BattleFrontier_BattleTower_EventScript_AnabelCongratsText_1:
+# 399 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 1
 	goto_if_eq BattleFrontier_BattleTower_EventScript_AnabelCongratsText_5
 BattleFrontier_BattleTower_EventScript_AnabelCongratsText_4:
 	return
 
 BattleFrontier_BattleTower_EventScript_AnabelCongratsText_2:
+# 397 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_AnabelTalentShallBeRecognized, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleTower_EventScript_AnabelCongratsText_1
 
 BattleFrontier_BattleTower_EventScript_AnabelCongratsText_5:
+# 400 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_AnabelCongratsYourPassPlease, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleTower_EventScript_AnabelCongratsText_4
 
 
 BattleFrontier_BattleTower_EventScript_FrontierPassText::
+# 406 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTower_EventScript_FrontierPassText_2
 BattleFrontier_BattleTower_EventScript_FrontierPassText_1:
+# 409 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 1
 	goto_if_eq BattleFrontier_BattleTower_EventScript_FrontierPassText_5
 BattleFrontier_BattleTower_EventScript_FrontierPassText_4:
 	return
 
 BattleFrontier_BattleTower_EventScript_FrontierPassText_2:
+# 407 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_ReceivedAbilitySymbol
 	goto BattleFrontier_BattleTower_EventScript_FrontierPassText_1
 
 BattleFrontier_BattleTower_EventScript_FrontierPassText_5:
+# 410 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_AbilitySymbolTookGoldenShine
 	goto BattleFrontier_BattleTower_EventScript_FrontierPassText_4
 
 
 BattleFrontier_BattleTower_EventScript_AnabelConclusionText::
+# 416 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTower_EventScript_AnabelConclusionText_2
 BattleFrontier_BattleTower_EventScript_AnabelConclusionText_1:
+# 419 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	compare VAR_RESULT, 1
 	goto_if_eq BattleFrontier_BattleTower_EventScript_AnabelConclusionText_5
 BattleFrontier_BattleTower_EventScript_AnabelConclusionText_4:
 	return
 
 BattleFrontier_BattleTower_EventScript_AnabelConclusionText_2:
+# 417 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_UntilNextTime, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleTower_EventScript_AnabelConclusionText_1
 
 BattleFrontier_BattleTower_EventScript_AnabelConclusionText_5:
+# 420 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_WishICouldBattleYouAgain, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleTower_EventScript_AnabelConclusionText_4
 
 
+# 425 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_PlayerEnter:
+# 426 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 426 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 426 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 427 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_right
+# 428 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 431 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_PlayerFaceAttendant:
+# 432 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_down
+# 433 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 436 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_PlayerFaceBattle:
+# 437 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_right
+# 438 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 441 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_OpponentEnter:
+# 442 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_down
+# 442 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_down
+# 442 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_down
+# 442 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_down
+# 443 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_left
+# 444 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 447 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_OpponentExit:
+# 448 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 448 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 448 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 448 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 449 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 452 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_AttendantApproachPlayer:
+# 453 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_right
+# 453 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_right
+# 453 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_right
+# 454 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 455 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 458 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_AttendantReturnToPos:
+# 459 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_down
+# 460 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_left
+# 460 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_left
+# 460 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_left
+# 461 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_right
+# 462 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 465 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_SetInvisible:
+# 466 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	set_invisible
+# 467 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 470 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_SecondAttendantEnter:
+# 471 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	set_visible
+# 472 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 473 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_up
+# 474 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_left
+# 474 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_left
+# 475 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_8
+# 476 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 479 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_SecondAttendantExit:
+# 480 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_right
+# 480 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_right
+# 481 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_down
+# 482 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	set_invisible
+# 483 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 486 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_SecondAttendantDelay:
+# 487 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 487 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 487 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 487 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 488 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 491 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_AttendantFaceSecondAttendant:
+# 492 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_right
+# 493 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 493 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 493 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 493 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	delay_16
+# 494 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_in_place_right
+# 495 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
+# 498 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerBattleRoom_Movement_AnabelEnter:
+# 499 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_slow_down
+# 499 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_slow_down
+# 499 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_slow_down
+# 499 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	walk_slow_down
+# 500 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	face_left
+# 501 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	step_end
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby::
+# 505 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	copyvar VAR_RESULT, VAR_FRONTIER_BATTLE_MODE
+# 506 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 507 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_MODE_SINGLES, BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_3
+# 509 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_MODE_DOUBLES, BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_4
+# 511 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_MODE_MULTIS, BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_5
+# 513 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	case FRONTIER_MODE_LINK_MULTIS, BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_6
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_1:
+# 517 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	waitstate
 	end
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_3:
+# 508 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY, 6, 6
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_4:
+# 510 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY, 10, 6
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_5:
+# 512 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY, 14, 6
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_1
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_6:
+# 514 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	tower_closelink
+# 515 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	warp MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY, 18, 6
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby_1
 
 
 BattleFrontier_BattleTowerBattleRoom_EventScript_RetireChallenge::
+# 522 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	setflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
+# 523 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTower_EventScript_WarpToLobbyLost
 	end
 
 
 BattleFrontier_EventScript_SetBrainObjectGfx::
+# 528 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	frontier_setbrainobj
 	return
 
 
 BattleFrontier_BattleTowerBattleRoom_Text_RestoreMonsToFullHealth::
+# 532 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "We will restore your POKéMON to\nfull health.$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_ReadyForXOpponent::
+# 536 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "You will be facing opponent no. {STR_VAR_3}.\nAre you ready?$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle::
+# 540 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Record your battle on your\nFRONTIER PASS?$"
 
 BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass::
+# 544 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "{PLAYER}'s battle was recorded\non the FRONTIER PASS.$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame::
+# 548 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Would you like to save and\nquit the game?$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait::
+# 552 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Saving your battle data.\nPlease wait.$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge::
+# 556 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Would you like to cancel your BATTLE\nROOM challenge?$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_RecordCouldntBeSaved::
+# 560 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "There was an error of some sort.\nYour record could not be saved.$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_SalonMaidenOnHerWay::
+# 564 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Excuse me, but…\pOur leader, the SALON MAIDEN, is on\nher way here in hopes of battling you.\pShe should be arriving very shortly.$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_ReadyForSalonMaiden::
+# 568 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "You will be facing the SALON MAIDEN.\nAre you prepared?$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_GreetingsImAnabel::
+# 572 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Greetings…\nMy name is ANABEL.\pI am the SALON MAIDEN, and I am in\ncharge of running the BATTLE TOWER…\pI have heard several rumors\nabout you…\pIn all honesty, what I have heard does\nnot seem attractive in any way…\pThe reason I've come to see you…\nWell, there is but one reason…$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_LetMeSeeYourTalent::
+# 576 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Let me see your talent in\nits entirety…$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_AnabelTalentShallBeRecognized::
+# 580 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "ANABEL: Fufufu, nicely done…\pYour FRONTIER PASS, please…\nYour talent shall be recognized.$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_ReceivedAbilitySymbol::
+# 584 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "The Ability Symbol was embossed on\nthe FRONTIER PASS!$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_UntilNextTime::
+# 588 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "… … … … … …\pYou have confidence in your POKéMON\nbattling talent, don't you?\pI urge you to keep battling and\nkeep on winning.\pI will be waiting for you.\nUntil the next time we meet…$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_AnabelYouCameBack::
+# 592 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "ANABEL: You really did come back to\nsee me…\p… … … … … …\pYou've won straight matches to see me…\nI won't have to hold back against you…\pIt's been too long now…\pToo long since I've been able to battle\nwithout thinking about anything…$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_LetsBeginShallWe::
+# 596 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "Let's begin, shall we?$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_AnabelCongratsYourPassPlease::
+# 600 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "ANABEL: Fufu, congratulations…\nYour FRONTIER PASS, please…$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_AbilitySymbolTookGoldenShine::
+# 604 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "The Ability Symbol took on\na golden shine!$"
 
 BattleFrontier_BattleTowerBattleRoom_Text_WishICouldBattleYouAgain::
+# 608 "data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory"
 	.string "That was fun…\pI have never had a POKéMON battle\nso enjoyable before…\pI wish I could battle with you again…$"

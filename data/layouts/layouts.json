@@ -4425,7 +4425,7 @@
       "id": "LAYOUT_BATTLE_ARCADE_BATTLE_ROOM",
       "name": "BattleArcade_BattleRoom_Layout",
       "width": 9,
-      "height": 8,
+      "height": 18,
       "primary_tileset": "gTileset_Building",
       "secondary_tileset": "gTileset_BattlePike",
       "border_filepath": "data/layouts/BattleArcade_BattleRoom/border.bin",

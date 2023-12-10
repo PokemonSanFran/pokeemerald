@@ -1,555 +1,824 @@
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts::
+# 11 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	map_script MAP_SCRIPT_ON_TRANSITION, BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION
+# 22 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+# 26 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE
 	.byte 0
 
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION:
+# 12 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_2
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_1:
+# 16 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_5
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_4:
 	end
 
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_2:
+# 13 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetObjGfx
 	goto BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_1
 
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_5:
+# 17 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special SetBattleTowerLinkPlayerGfx
 	goto BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_TRANSITION_4
 
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE:
+# 23 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	map_script_2 VAR_TEMP_1, 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_HidePlayerObj
 	.2byte 0
 
 BattleFrontier_BattleTowerMultiBattleRoom_MapScripts_MAP_SCRIPT_ON_FRAME_TABLE:
+# 27 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	map_script_2 VAR_TEMP_0, 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom
 	.2byte 0
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetObjGfx::
+# 36 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_setpartnergfx
+# 37 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	checkplayergender
+# 38 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, FEMALE
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetObjGfx_2
+# 41 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_OBJ_GFX_ID_F, OBJ_EVENT_GFX_BRENDAN_NORMAL
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetObjGfx_1:
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetObjGfx_2:
+# 39 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_OBJ_GFX_ID_F, OBJ_EVENT_GFX_MAY_NORMAL
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetObjGfx_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_HidePlayerObj::
+# 47 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	hideobjectat OBJ_EVENT_ID_PLAYER, MAP_BATTLE_FRONTIER_BATTLE_TOWER_MULTI_BATTLE_ROOM
 	end
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom::
+# 52 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_TEMP_0, 1
+# 53 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 5, BattleFrontier_BattleTowerMultiBattleRoom_Movement_PlayerEnterRoom
+# 54 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 6, BattleFrontier_BattleTowerMultiBattleRoom_Movement_PartnerEnterRoom
+# 55 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 57 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_get FRONTIER_DATA_BATTLE_NUM
+# 58 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom_1:
+# 62 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AttendantGoToChallengers
+# 64 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_RECORD_DISABLED, TRUE
+# 65 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom_2:
+# 59 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_EnterRoom_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AttendantGoToChallengers::
+# 69 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerMultiBattleRoom_Movement_AttendantApproachPlayer
+# 70 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleTowerMultiBattleRoom_Movement_AttendantApproachPlayer
+# 71 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 72 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 5, BattleFrontier_BattleTowerMultiBattleRoom_Movement_FaceAttendant
+# 73 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 6, BattleFrontier_BattleTowerMultiBattleRoom_Movement_FaceAttendant
+# 74 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter::
+# 79 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_setopponent
+# 81 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	addobject 1
+# 82 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	addobject 4
+# 83 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 1, BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent1Enter
+# 84 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 4, BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent2Enter
+# 85 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 87 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros
+# 89 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle
+# 90 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 91 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case B_OUTCOME_WON, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter_3
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter_1:
+# 93 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyLost
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter_3:
+# 91 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DefeatedOpponents
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros::
+# 97 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_getopponentintro 0
+# 99 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	delay 15
+# 100 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 1, BattleFrontier_BattleTowerMultiBattleRoom_Movement_WalkInPlaceLeft
+# 101 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 103 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_2
+# 106 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	msgbox gStringVar4, MSGBOX_DEFAULT
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_1:
+# 108 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 110 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_getopponentintro 1
+# 112 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 4, BattleFrontier_BattleTowerMultiBattleRoom_Movement_WalkInPlaceLeft
+# 113 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 115 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_6
+# 119 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	msgbox gStringVar4, MSGBOX_DEFAULT
+# 120 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_LinkDelayForMsg
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_5:
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_2:
+# 104 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	messageautoscroll gStringVar4
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_1
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_6:
+# 116 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	messageautoscroll gStringVar4
+# 117 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DoOpponentIntros_5
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DefeatedOpponents::
+# 126 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_IncrementWinStreak
+# 128 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_setbattlewon
+# 129 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, 7
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DefeatedOpponents_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DefeatedOpponents_1:
+# 133 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 4, BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent2Exit
+# 134 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 1, BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent1Exit
+# 135 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 136 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	removeobject 1
+# 137 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	removeobject 4
+# 139 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AttendantGoToChallengers
+# 141 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_InformPlayerHeal
+# 142 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RestoreParty
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DefeatedOpponents_2:
+# 130 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyWon
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_DefeatedOpponents_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_InformPlayerHeal::
+# 146 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_InformPlayerHeal_2
+# 150 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_RestoreMonsToFullHealth, MSGBOX_DEFAULT
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_InformPlayerHeal_1:
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_InformPlayerHeal_2:
+# 147 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	messageautoscroll BattleFrontier_BattleTowerBattleRoom_Text_RestoreMonsToFullHealth
+# 148 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_LinkDelayForMsg
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_InformPlayerHeal_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RestoreParty::
+# 156 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special LoadPlayerParty
+# 157 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_setpartyorder FRONTIER_MULTI_PARTY_SIZE
+# 159 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RestoreParty_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RestoreParty_1:
+# 163 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	playfanfare MUS_HEAL
+# 164 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitfanfare
+# 165 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special HealPlayerParty
+# 167 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RestoreParty_2:
+# 160 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReconnectLink
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RestoreParty_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents::
+# 171 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_get FRONTIER_DATA_BATTLE_NUM
+# 172 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReadyForNextOpponentSet
+# 179 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_1:
+# 183 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_GetCantRecordBattle
+# 184 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_5
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_4:
+# 188 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+# 189 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 190 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_8
+# 191 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_9
+# 192 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_10
+# 193 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 3, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_11
+# 194 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_12
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_2:
+# 180 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallenge
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_1
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_5:
+# 185 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_4
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_8:
+# 190 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_9:
+# 191 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_10:
+# 192 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_11:
+# 193 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents_12:
+# 194 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord::
+# 199 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+# 200 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 201 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_2
+# 202 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_3
+# 203 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_4
+# 204 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_5
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_2:
+# 201 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_3:
+# 202 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_4:
+# 203 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsNoRecord_5:
+# 204 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle::
+# 209 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle
+# 210 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 211 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+# 212 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_ne BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_1:
+# 216 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	call BattleFrontier_EventScript_SaveBattle
+# 217 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_5
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_4:
+# 220 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_2:
+# 213 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_1
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_5:
+# 218 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setflag FLAG_TEMP_2
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle_4
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge::
+# 224 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame, MSGBOX_YESNO
+# 225 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 226 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case NO, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge_2
+# 227 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case YES, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge_3
+# 228 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge_4
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge_2:
+# 226 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge_3:
+# 227 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_PauseChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskPauseChallenge_4:
+# 228 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge::
+# 233 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge
+# 234 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 235 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+# 237 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge_1:
+# 241 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponents
 	end
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge_2:
+# 238 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RetireChallenge
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RetireChallenge::
+# 246 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RetireChallenge_1
+# 249 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyLost
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RetireChallenge_1:
+# 247 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RetireChallengeLink
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallenge::
+# 254 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	closemessage
+# 255 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	clearflag FLAG_TEMP_2
+# 257 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 5, BattleFrontier_BattleTowerMultiBattleRoom_Movement_FaceBattle
+# 258 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 6, BattleFrontier_BattleTowerMultiBattleRoom_Movement_FaceBattle
+# 259 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 260 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 2, BattleFrontier_BattleTowerMultiBattleRoom_Movement_AttendantReturnToPos
+# 261 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleTowerMultiBattleRoom_Movement_AttendantReturnToPos
+# 262 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmovement 0
+# 264 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_OpponentsEnter
 	end
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetChallengeStatus::
+# 269 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_set TOWER_DATA_LVL_MODE
+# 270 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_0x8004, FANCOUNTER_USED_BATTLE_TOWER
+# 271 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special Script_TryGainNewFanFromCounter
+# 272 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerBattleRoom_EventScript_WarpToLobby
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyLost::
+# 276 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
+# 277 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetChallengeStatus
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyWon::
+# 281 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
+# 282 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_SetChallengeStatus
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_PauseChallenge::
+# 286 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait
+# 287 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 288 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	tower_save CHALLENGE_STATUS_PAUSED
+# 289 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	playse SE_SAVE
+# 290 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitse
+# 291 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	fadescreen 1
+# 292 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	frontier_reset
 	end
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReadyForNextOpponentSet::
+# 297 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	copyvar VAR_TEMP_E, VAR_RESULT
+# 298 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	addvar VAR_TEMP_E, 1
+# 299 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	buffernumberstring STR_VAR_3, VAR_TEMP_E
+# 301 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_ReadyForXOpponent
+# 302 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 305 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS
 	goto_if_eq BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReadyForNextOpponentSet_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReadyForNextOpponentSet_1:
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReadyForNextOpponentSet_2:
+# 306 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReadyForNextOpponentSet_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_LinkDelayForMsg::
+# 312 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 313 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	delay 48
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink::
+# 318 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto_if_set FLAG_TEMP_2, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_1:
+# 322 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	multichoice 19, 6, MULTI_GO_ON_RECORD_RETIRE, TRUE
+# 323 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 324 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_5
+# 325 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_6
+# 326 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 2, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_7
+# 327 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_8
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_2:
+# 319 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_1
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_5:
+# 324 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_6:
+# 325 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRecordBattle
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_7:
+# 326 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLink_8:
+# 327 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge
 	end
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord::
+# 333 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	multichoice 20, 8, MULTI_GO_ON_RETIRE, TRUE
+# 334 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	switch VAR_RESULT
+# 335 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 0, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord_2
+# 336 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case 1, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord_3
+# 337 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord_4
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord_2:
+# 335 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord_3:
+# 336 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge
 	return
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskReadyForOpponentsLinkNoRecord_4:
+# 337 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_AskRetireChallenge
 	return
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink::
+# 342 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_0x8004, BATTLE_TOWER_LINK_CONTINUE
+# 343 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_0x8005, 0
+# 344 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	message gText_LinkStandby3
+# 345 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 346 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special LinkRetireStatusWithBattleTowerPartner
+# 348 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitstate
+# 349 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	compare VAR_RESULT, BATTLE_TOWER_LINKSTAT_CONTINUE
 	goto_if_ne BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink_2
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink_1:
+# 352 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_LinkDelayForMsg
 	end
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink_2:
+# 350 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyLost
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ContinueChallengeLink_1
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_RetireChallengeLink::
+# 357 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_0x8004, BATTLE_TOWER_LINK_RETIRE
+# 358 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	setvar VAR_0x8005, 0
+# 359 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	message gText_LinkStandby3
+# 360 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitmessage
+# 361 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special LinkRetireStatusWithBattleTowerPartner
+# 362 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	waitstate
+# 363 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	goto BattleFrontier_BattleTowerMultiBattleRoom_EventScript_WarpToLobbyLost
 	end
 
 
 BattleFrontier_BattleTowerMultiBattleRoom_EventScript_ReconnectLink::
+# 368 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	special BattleTowerReconnectLink
 	return
 
 
+# 372 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_PlayerEnterRoom:
+# 373 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 373 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 373 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 373 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 374 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	face_right
+# 375 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 378 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_PartnerEnterRoom:
+# 379 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_left
+# 380 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 380 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 380 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 381 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	face_right
+# 382 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 385 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_FaceAttendant:
+# 386 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	face_left
+# 387 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 390 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_FaceBattle:
+# 391 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_in_place_faster_right
+# 392 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 395 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent1Enter:
+# 396 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 396 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 396 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 396 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 397 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	face_left
+# 398 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 401 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent2Enter:
+# 402 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_right
+# 403 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 403 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 403 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_down
+# 404 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	face_left
+# 405 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 408 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent2Exit:
+# 409 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 409 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 409 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 410 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	set_invisible
+# 411 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 414 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_Opponent1Exit:
+# 415 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 415 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 415 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 415 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_up
+# 416 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 419 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_AttendantApproachPlayer:
+# 420 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_right
+# 420 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_right
+# 421 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 424 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_AttendantReturnToPos:
+# 425 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_left
+# 425 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_left
+# 426 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_in_place_faster_right
+# 427 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
+# 430 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 BattleFrontier_BattleTowerMultiBattleRoom_Movement_WalkInPlaceLeft:
+# 431 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	walk_in_place_left
+# 432 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	step_end
 
 BattleFrontier_BattleTowerMultiBattleRoom_Text_ReadyForXOpponent::
+# 435 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	.string "You will be facing opponent no. {STR_VAR_3}.\nAre you ready?$"
 
 gText_LinkStandby3::
+# 439 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	.string "Link standby…$"
 
 gText_YourPartnerHasRetired::
+# 443 "data/maps/BattleFrontier_BattleTowerMultiBattleRoom/scripts.pory"
 	.string "Your partner has retired.\pYour BATTLE ROOM challenge\nwill be canceled.$"

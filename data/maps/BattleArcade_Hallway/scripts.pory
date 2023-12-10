@@ -4,8 +4,8 @@ mapscripts BattleArcade_Hallway_MapScripts
 {
     MAP_SCRIPT_ON_LOAD
     {
-        setmetatile(0, 0, METATILE_BattleFrontier_CorridorOpenDoor_Top, FALSE)
-        setmetatile(0, 1, METATILE_BattleFrontier_CorridorOpenDoor_Bottom, FALSE)
+        setmetatile(8, 0, METATILE_BattleFrontier_CorridorOpenDoor_Top, FALSE)
+        setmetatile(8, 1, METATILE_BattleFrontier_CorridorOpenDoor_Bottom, FALSE)
     }
     MAP_SCRIPT_ON_FRAME_TABLE
     [
