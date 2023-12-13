@@ -381,7 +381,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad
     call(BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom)
     special(HealPlayerParty)
     clearflag(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE)
-    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
+    call(BattleFrontier_BattleArcadeLobby_EventScript_WarpToHallway)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
     waitstate
     end

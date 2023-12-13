@@ -1,7 +1,139 @@
+const ATTENDANT_ENTRANCE = 1
+const MC = 3
+const OPPONENT = 2
+const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
+const VAR_IMPACT_SIDE = VAR_TEMP_2
+
 mapscripts BattleArcade_BattleRoom_MapScripts
 {
     MAP_SCRIPT_ON_TRANSITION
     {
         return
     }
+    MAP_SCRIPT_ON_FRAME_TABLE
+    [
+        VAR_TEMP_0, 0: BattleArcade_BattleRoom_EventScript_EnterRoom
+        VAR_TEMP_0, 1: BattleFrontier_RouletteRoom_EventScript_BeginChallenge
+    ]
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+    [
+        VAR_NEED_TO_FACE_NORTH, 0: BattleArcade_BattleRoom_EventScript_PlayerFaceNorth
+    ]
+}
+
+script BattleArcade_BattleRoom_EventScript_PlayerFaceNorth
+{
+    setvar(VAR_NEED_TO_FACE_NORTH, 1)
+    turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
+    end
+}
+
+script BattleArcade_BattleRoom_EventScript_EnterRoom
+{
+    setvar(VAR_TEMP_0, 1)
+    removeobject(OPPONENT)
+    special(SpawnCameraObject)
+    applymovement(ATTENDANT_ENTRANCE, BattleArcade_BattleRoom_WatchPlayer)
+    applymovement(OBJ_EVENT_ID_PLAYER, BattleArcade_BattleRoom_Player_WalkToBattlefield)
+    applymovement(OBJ_EVENT_ID_CAMERA, BattleArcade_BattleRoom_Camera_PanBattlefield)
+    waitmovement(OBJ_EVENT_ID_CAMERA)
+    waitmovement(OBJ_EVENT_ID_PLAYER)
+}
+
+script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
+{
+    addobject(OPPONENT)
+    applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
+    waitmovement(OPPONENT)
+}
+
+script BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition
+{
+    applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown)
+    waitmovement(MC)
+}
+
+script BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
+{
+   applymovement(OPPONENT,Common_Movement_WalkInPlaceLeft)
+    waitmovement(OPPONENT)
+}
+
+script BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition
+{
+    applymovement(OPPONENT,BattleArcade_BattleRoom_EventScript_WalkToLeft)
+    applymovement(OBJ_EVENT_ID_PLAYER,BattleArcade_BattleRoom_EventScript_WalkToRight)
+    waitmovement(OBJ_EVENT_ID_PLAYER)
+}
+
+script BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact
+{
+    //arcade_getimpactedside
+    switch(var(VAR_IMPACT_SIDE))
+    {
+        case ARCADE_IMPACT_PLAYER:
+            applymovement(MC,Common_Movement_FacePlayer)
+        case ARCADE_IMPACT_OPPONENT:
+            applymovement(MC,Common_Movement_FaceAwayPlayer)
+        case ARCADE_IMPACT_ALL:
+            return
+    }
+    waitmovement(MC)
+    delay(16)
+    //arcade_playoverworldeffect
+}
+
+script BattleArcade_BattleRoom_EventScript_MoveMCBack
+{
+    applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack)
+    waitmovement(MC)
+}
+
+movement BattleArcade_BattleRoom_EventScript_WalkToLeft
+{
+    walk_left
+}
+
+movement BattleArcade_BattleRoom_EventScript_WalkToRight
+{
+    walk_right
+}
+
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack
+{
+    walk_up
+    walk_in_place_fast_down
+}
+
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
+{
+    walk_down
+}
+
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter
+{
+    walk_up * 3
+    walk_right * 4
+    walk_up * 3
+    walk_in_place_faster_left
+}
+
+movement BattleArcade_BattleRoom_WatchPlayer
+{
+    delay_8
+    delay_8
+    face_up
+}
+
+movement BattleArcade_BattleRoom_Player_WalkToBattlefield
+{
+    walk_up * 8
+    walk_left * 4
+    walk_up * 3
+    walk_in_place_faster_right
+}
+
+movement BattleArcade_BattleRoom_Camera_PanBattlefield
+{
+    walk_up * 12
 }

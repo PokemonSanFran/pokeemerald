@@ -572,7 +572,7 @@ BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad::
 # 383 "data/scripts/battle_arcade_registration.pory"
 	clearflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
 # 384 "data/scripts/battle_arcade_registration.pory"
-	warpsilent MAP_BATTLE_ARCADE_HALLWAY, 1, 2
+	call BattleFrontier_BattleArcadeLobby_EventScript_WarpToHallway
 # 385 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_TEMP_0, 0
 # 386 "data/scripts/battle_arcade_registration.pory"

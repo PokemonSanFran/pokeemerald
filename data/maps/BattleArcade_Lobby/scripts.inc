@@ -36,24 +36,30 @@ BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator::
 	return
 
 
-# 44 "data/maps/BattleArcade_Lobby/scripts.pory"
+BattleFrontier_BattleArcadeLobby_EventScript_WarpToHallway::
+# 46 "data/maps/BattleArcade_Lobby/scripts.pory"
+	warpsilent MAP_BATTLE_ARCADE_HALLWAY, 1, 2
+	return
+
+
+# 48 "data/maps/BattleArcade_Lobby/scripts.pory"
 BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator:
-# 46 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 50 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 46 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 50 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 47 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 51 "data/maps/BattleArcade_Lobby/scripts.pory"
 	set_invisible
 	step_end
 
-# 50 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 54 "data/maps/BattleArcade_Lobby/scripts.pory"
 BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator:
-# 52 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 56 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 52 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 56 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 52 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 56 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 53 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 57 "data/maps/BattleArcade_Lobby/scripts.pory"
 	set_invisible
 	step_end

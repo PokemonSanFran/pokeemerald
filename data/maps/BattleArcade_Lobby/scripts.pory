@@ -41,6 +41,10 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator
     waitmovement(OBJ_EVENT_ID_PLAYER)
 }
 
+script BattleFrontier_BattleArcadeLobby_EventScript_WarpToHallway
+{
+    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
+}
 movement BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator
 {
     walk_up * 2

@@ -30,7 +30,7 @@ BattleArcade_Hallway_EventScript_EnterCorridor::
 # 22 "data/maps/BattleArcade_Hallway/scripts.pory"
 	setvar VAR_TEMP_0, 0
 # 23 "data/maps/BattleArcade_Hallway/scripts.pory"
-	warp MAP_BATTLE_ARCADE_BATTLE_ROOM, 4, 7
+	warp MAP_BATTLE_ARCADE_BATTLE_ROOM, 7, 17
 # 24 "data/maps/BattleArcade_Hallway/scripts.pory"
 	waitstate
 	end
