@@ -63,59 +63,67 @@ BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance::
 	return
 
 
-BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition::
+BattleArcade_BattleRoom_EventScript_MCFaceCrowd::
 # 53 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	applymovement 3, BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
+	applymovement 3, BattleFrontier_BattleArcadeBattleRoom_Movement_FaceCrowd
 # 54 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	waitmovement 3
 	return
 
 
-BattleArcade_BattleRoom_EventScript_OpponentBattleMovement::
+BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition::
 # 59 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	applymovement 2, Common_Movement_WalkInPlaceLeft
+	applymovement 3, BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
 # 60 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	waitmovement 3
+	return
+
+
+BattleArcade_BattleRoom_EventScript_OpponentBattleMovement::
+# 65 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	applymovement 2, Common_Movement_WalkInPlaceLeft
+# 66 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	waitmovement 2
 	return
 
 
 BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition::
-# 65 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 71 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	lock
-# 66 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 72 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	special SpawnCameraObject
-# 67 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 73 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	applymovement 2, BattleArcade_BattleRoom_EventScript_WalkToLeft
-# 68 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 74 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	applymovement OBJ_EVENT_ID_PLAYER, BattleArcade_BattleRoom_EventScript_WalkToRight
-# 69 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 75 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	waitmovement OBJ_EVENT_ID_PLAYER
 	return
 
 
 BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact::
-# 75 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	switch VAR_TEMP_2
-# 77 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	case ARCADE_IMPACT_PLAYER, BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_3
-# 79 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	case ARCADE_IMPACT_OPPONENT, BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_4
 # 81 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	switch VAR_TEMP_2
+# 83 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	case ARCADE_IMPACT_PLAYER, BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_3
+# 85 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	case ARCADE_IMPACT_OPPONENT, BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_4
+# 87 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	case ARCADE_IMPACT_ALL, BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_5
 BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_1:
-# 84 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 90 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	waitmovement 3
-# 85 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 91 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	delay 16
 	return
 
 BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_3:
-# 78 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 84 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	applymovement 3, Common_Movement_FacePlayer
 	goto BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_1
 
 BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_4:
-# 80 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 86 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	applymovement 3, Common_Movement_FaceAwayPlayer
 	goto BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_1
 
@@ -124,135 +132,139 @@ BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_5:
 
 
 BattleArcade_BattleRoom_EventScript_MoveMCBack::
-# 91 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 97 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	applymovement 3, BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack
-# 92 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 98 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	waitmovement 3
 	return
 
 
-# 95 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 101 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 BattleArcade_BattleRoom_EventScript_WalkToLeft:
-# 97 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 103 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_left
 	step_end
 
-# 100 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 106 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 BattleArcade_BattleRoom_EventScript_WalkToRight:
-# 102 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	walk_right
-	step_end
-
-# 105 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack:
-# 107 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	walk_up
 # 108 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	walk_in_place_fast_down
+	walk_right
 	step_end
 
 # 111 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown:
+BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack:
 # 113 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	walk_up
+# 114 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	walk_in_place_fast_down
+	step_end
+
+# 117 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+BattleFrontier_BattleArcadeBattleRoom_Movement_FaceCrowd:
+# 119 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	face_down
+	step_end
+
+# 122 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown:
+# 124 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_down
 	step_end
 
-# 116 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 127 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter:
-# 118 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 129 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 118 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 129 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 118 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	walk_up
-# 119 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 130 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_right
-# 119 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 130 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_right
-# 119 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 130 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_right
-# 119 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 130 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_right
-# 120 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 131 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 120 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 131 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 120 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 131 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 121 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 132 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_in_place_faster_left
 	step_end
 
-# 124 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 135 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 BattleArcade_BattleRoom_WatchPlayer:
-# 126 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 137 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	delay_8
-# 127 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 138 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	delay_8
-# 128 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 139 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	face_up
 	step_end
 
-# 131 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 142 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 BattleArcade_BattleRoom_Player_WalkToBattlefield:
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 133 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 144 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 134 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 145 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_left
-# 134 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 145 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_left
-# 134 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 145 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_left
-# 134 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 145 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_left
-# 135 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 146 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 135 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 146 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 135 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 146 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 136 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 147 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_in_place_faster_right
 	step_end
 
-# 139 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 150 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 BattleArcade_BattleRoom_Camera_PanBattlefield:
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
-# 141 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+# 152 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	walk_up
 	step_end

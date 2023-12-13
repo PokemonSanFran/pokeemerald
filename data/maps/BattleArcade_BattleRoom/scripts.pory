@@ -48,6 +48,12 @@ script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
     waitmovement(OPPONENT)
 }
 
+script BattleArcade_BattleRoom_EventScript_MCFaceCrowd
+{
+    applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_FaceCrowd)
+    waitmovement(MC)
+}
+
 script BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition
 {
     applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown)
@@ -108,6 +114,11 @@ movement BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack
     walk_in_place_fast_down
 }
 
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_FaceCrowd
+{
+    face_down
+}
+
 movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
 {
     walk_down
@@ -115,7 +126,7 @@ movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
 
 movement BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter
 {
-    walk_up * 3
+    walk_up * 2
     walk_right * 4
     walk_up * 3
     walk_in_place_faster_left

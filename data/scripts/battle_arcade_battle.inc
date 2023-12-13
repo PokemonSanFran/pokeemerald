@@ -2,7 +2,7 @@ BattleFrontier_RouletteRoom_EventScript_BeginChallenge::
 # 5 "data/scripts/battle_arcade_battle.pory"
 	setvar VAR_TEMP_0, 2
 # 6 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition
+	call BattleArcade_BattleRoom_EventScript_MCFaceCrowd
 # 7 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade, MSGBOX_DEFAULT
 # 9 "data/scripts/battle_arcade_battle.pory"
