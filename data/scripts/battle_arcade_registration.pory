@@ -188,6 +188,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
     special(SavePlayerParty)
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
     {
+        warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
         msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
     }
     else

@@ -38,6 +38,7 @@ script BattleArcade_BattleRoom_EventScript_EnterRoom
     applymovement(OBJ_EVENT_ID_CAMERA, BattleArcade_BattleRoom_Camera_PanBattlefield)
     waitmovement(OBJ_EVENT_ID_CAMERA)
     waitmovement(OBJ_EVENT_ID_PLAYER)
+    special(RemoveCameraObject)
 }
 
 script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
@@ -61,6 +62,7 @@ script BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
 
 script BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition
 {
+    lock
     special(SpawnCameraObject)
     applymovement(OPPONENT,BattleArcade_BattleRoom_EventScript_WalkToLeft)
     applymovement(OBJ_EVENT_ID_PLAYER,BattleArcade_BattleRoom_EventScript_WalkToRight)
