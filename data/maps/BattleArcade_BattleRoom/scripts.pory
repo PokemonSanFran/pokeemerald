@@ -30,8 +30,8 @@ script BattleArcade_BattleRoom_EventScript_PlayerFaceNorth
 
 script BattleArcade_BattleRoom_EventScript_EnterRoom
 {
-    setvar(VAR_TEMP_0, 1)
     removeobject(OPPONENT)
+    setvar(VAR_TEMP_0, 1)
     special(SpawnCameraObject)
     applymovement(ATTENDANT_ENTRANCE, BattleArcade_BattleRoom_WatchPlayer)
     applymovement(OBJ_EVENT_ID_PLAYER, BattleArcade_BattleRoom_Player_WalkToBattlefield)
@@ -61,6 +61,7 @@ script BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
 
 script BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition
 {
+    special(SpawnCameraObject)
     applymovement(OPPONENT,BattleArcade_BattleRoom_EventScript_WalkToLeft)
     applymovement(OBJ_EVENT_ID_PLAYER,BattleArcade_BattleRoom_EventScript_WalkToRight)
     waitmovement(OBJ_EVENT_ID_PLAYER)

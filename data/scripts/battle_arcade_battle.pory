@@ -3,6 +3,7 @@ const VAR_IMPACT_SIDE = VAR_TEMP_2
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
     setvar(VAR_TEMP_0, 2)
+    call(BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition)
     msgbox(BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade,MSGBOX_DEFAULT)
     //arcade_takeplayeritems ARCADE TODO
     msgbox(BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
@@ -12,6 +13,7 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 script BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber
 {
     frontier_get(FRONTIER_DATA_BATTLE_NUM)
+    addvar(VAR_RESULT,1)
     buffernumberstring(STR_VAR_1,VAR_RESULT)
     msgbox(BattleArcade_RouletteRoom_Text_GameNoComeOn,MSGBOX_DEFAULT)
     closemessage
