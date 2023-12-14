@@ -1,4 +1,5 @@
 const VAR_IMPACT_SIDE = VAR_TEMP_2
+const VAR_BRAIN_STATUS = VAR_TEMP_F
 
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
@@ -10,11 +11,16 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
     goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
 }
 
-script BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber
+script BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber
 {
     frontier_get(FRONTIER_DATA_BATTLE_NUM)
     addvar(VAR_RESULT,1)
     buffernumberstring(STR_VAR_1,VAR_RESULT)
+}
+
+script BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber
+{
+    call(BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber)
     msgbox(BattleArcade_RouletteRoom_Text_GameNoComeOn,MSGBOX_DEFAULT)
     closemessage
 }
@@ -131,7 +137,182 @@ script BattleArcade_RouletteRoom_EventScript_StartBattle
     closemessage
     call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
     call(BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle)
+    if (var(VAR_RESULT) == B_OUTCOME_WON)
+    {
+        goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
+    }
+    goto(BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost)
 }
+
+script BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
+{
+    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST)
+    goto(BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp)
+}
+
+script BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon
+{
+    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON)
+    goto(BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp)
+}
+
+script BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
+{
+    call(BattleFrontier_EventScript_IncrementWinStreak)
+    //arcade_setbattlewon
+    if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
+    {
+        goto(BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon)
+    }
+    call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
+    call(BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement)
+    goto(BattleArcade_RouletteRoom_EventScript_HealPlayer)
+}
+
+script BattleArcade_RouletteRoom_EventScript_HealPlayer
+{
+    msgbox(BattleArcade_RouletteRoom_Text_GoodGoingWellHeal)
+    playfanfare(MUS_HEAL)
+    waitfanfare
+    special(HealPlayerParty)
+    closemessage
+    call(BattleArcade_BattleRoom_EventScript_AttendantLeave)
+    goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+}
+
+script BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
+{
+    frontier_getbrainstatus
+    copyvar(VAR_BRAIN_STATUS, VAR_RESULT)
+    if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
+    {
+        //goto(BattleArcade_RouletteRoom_EventScript_MaidenUpNext)
+    }
+
+    frontier_get(FRONTIER_DATA_BATTLE_NUM)
+    call(BattleArcade_RouletteRoom_EventScript_ReadyForOpponent)
+    call(BattleFrontier_EventScript_GetCantRecordBattle)
+    if(var(VAR_RESULT) == TRUE)
+    {
+        goto(BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord)
+    }
+    goto(BattleArcade_RouletteRoom_EventScript_ReadyMenu)
+
+}
+
+script BattleArcade_RouletteRoom_EventScript_ReadyMenu
+{
+    multichoice(19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE)
+    switch(var(VAR_RESULT))
+    {
+        case 0:goto(BattleArcade_RouletteRoom_EventScript_ContinueChallenge)
+        case 1:goto(BattleArcade_RouletteRoom_EventScript_AskRecordBattle)
+        case 2:goto(BattleArcade_RouletteRoom_EventScript_AskPauseChallenge)
+        case 3:goto(BattleArcade_RouletteRoom_EventScript_AskRetireChallenge)
+        case MULTI_B_PRESSED:goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+    }
+}
+
+script BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord
+{
+    multichoice(20, 6, MULTI_GO_ON_REST_RETIRE, TRUE)
+    switch(var(VAR_RESULT)){
+        case 0:goto(BattleArcade_RouletteRoom_EventScript_ContinueChallenge)
+        case 1:goto(BattleArcade_RouletteRoom_EventScript_AskPauseChallenge)
+        case 2:goto(BattleArcade_RouletteRoom_EventScript_AskRetireChallenge)
+        case MULTI_B_PRESSED:goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+    }
+}
+
+script BattleArcade_RouletteRoom_EventScript_AskRecordBattle
+{
+    message(BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle)
+    waitmessage
+    multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
+    if(var(VAR_RESULT) == 0)
+    {
+        call(BattleFrontier_EventScript_SaveBattle)
+    }
+    goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+}
+
+script BattleArcade_RouletteRoom_EventScript_ReadyForOpponent
+{
+    call(BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber)
+    message(BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady)
+    waitmessage
+    return
+}
+
+script BattleArcade_RouletteRoom_EventScript_AskPauseChallenge
+{
+    msgbox(BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveAndTakeABreak, MSGBOX_YESNO)
+    if(var(VAR_RESULT) == YES)
+{
+    goto(BattleArcade_RouletteRoom_EventScript_PauseChallenge)
+}
+    goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+}
+
+script BattleArcade_RouletteRoom_EventScript_PauseChallenge
+{
+    message(BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower)
+    waitmessage
+
+    tower_save(CHALLENGE_STATUS_PAUSED)
+    playse(SE_SAVE)
+    waitse
+
+    fadescreen(FADE_TO_BLACK)
+    frontier_reset
+    end
+}
+
+script BattleArcade_RouletteRoom_EventScript_AskRetireChallenge
+{
+    message(BattleArcade_RouletteRoom_Text_WouldYouLikeToRetire)
+    waitmessage
+    multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
+    if(var(VAR_RESULT) == 0)
+    {
+        goto(BattleArcade_RouletteRoom_EventScript_RetireChallenge)
+    }
+    goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+}
+
+script BattleArcade_RouletteRoom_EventScript_RetireChallenge
+{
+    setflag(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE)
+    goto(BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost)
+}
+
+script BattleArcade_RouletteRoom_EventScript_ContinueChallenge
+{
+    closemessage
+    goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
+}
+
+script BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp
+{
+    arcade_set(ARCADE_DATA_LVL_MODE)
+    goto(BattleArcade_RouletteRoom_EventScript_WarpToLobby)
+}
+
+script BattleArcade_RouletteRoom_EventScript_WarpToLobby
+{
+    copyvar(VAR_RESULT,VAR_FRONTIER_BATTLE_MODE)
+    if (var(VAR_RESULT) == FRONTIER_MODE_MULTIS)
+    {
+        warpsilent(MAP_BATTLE_ARCADE_LOBBY,6,6)
+    }
+    else
+    {
+        warpsilent(MAP_BATTLE_ARCADE_LOBBY,5,6)
+    }
+    waitstate
+    end
+}
+
 
 text BattleArcade_RouletteRoom_Text_WellDone
 {
