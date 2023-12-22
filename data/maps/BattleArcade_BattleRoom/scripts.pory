@@ -7,10 +7,6 @@ const VAR_IMPACT_SIDE = VAR_TEMP_2
 
 mapscripts BattleArcade_BattleRoom_MapScripts
 {
-    MAP_SCRIPT_ON_TRANSITION
-    {
-        return
-    }
     MAP_SCRIPT_ON_FRAME_TABLE
     [
         VAR_TEMP_0, 0: BattleArcade_BattleRoom_EventScript_EnterRoom
@@ -20,6 +16,11 @@ mapscripts BattleArcade_BattleRoom_MapScripts
     [
         VAR_NEED_TO_FACE_NORTH, 0: BattleArcade_BattleRoom_EventScript_PlayerFaceNorth
     ]
+}
+
+script BattleArcade_BattleRoom_EventScript_SetUpObjects
+{
+    removeobject(OPPONENT)
 }
 
 script BattleArcade_BattleRoom_EventScript_PlayerFaceNorth
@@ -45,7 +46,10 @@ script BattleArcade_BattleRoom_EventScript_EnterRoom
 
 script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 {
-    addobject(OPPONENT)
+    addobject(OPPONENT) // ARCADE TODO opponent is always invisible here
+    setobjectxy(OPPONENT,7,11)
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_SetVisible)
+    waitmovement(OPPONENT)
     applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
     waitmovement(OPPONENT)
 }
@@ -64,7 +68,7 @@ script BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition
 
 script BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
 {
-   applymovement(OPPONENT,Common_Movement_WalkInPlaceLeft)
+    applymovement(OPPONENT,Common_Movement_WalkInPlaceLeft)
     waitmovement(OPPONENT)
 }
 
@@ -104,8 +108,10 @@ script BattleArcade_BattleRoom_EventScript_MoveBattlersBack
 {
     special(SpawnCameraObject) //ARCADE TODO Why does the camera move here?
     applymovement(OBJ_EVENT_ID_CAMERA,BattleArcade_BattleRoom_EventScript_WalkToRight)
-    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_LeaveRoom)
     applymovement(OBJ_EVENT_ID_PLAYER,BattleArcade_BattleRoom_EventScript_ReturnPosition)
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_OpponentReturnPosition)
+    waitmovement(OPPONENT)
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_LeaveRoom)
     waitmovement(OPPONENT)
     removeobject(OPPONENT)
 }
@@ -125,6 +131,10 @@ script BattleArcade_BattleRoom_EventScript_AttendantLeave
     applymovement(OBJ_EVENT_ID_PLAYER, BattleArcade_BattleRoom_Movement_FaceBattlefield)
     applymovement(ATTENDANT,BattleArcade_BattleRoom_Movement_RunOffBattlefield)
     removeobject(ATTENDANT)
+}
+
+script BattleArcade_BattleRoom_EventScript_BrainEntranceMovement
+{
 }
 
 movement BattleArcade_BattleRoom_Movement_RunOffBattlefield
@@ -196,10 +206,16 @@ movement BattleArcade_BattleRoom_EventScript_ReturnPosition
     walk_in_place_right
 }
 
+movement BattleArcade_BattleRoom_Movement_OpponentReturnPosition
+{
+    walk_right
+}
+
 movement BattleArcade_BattleRoom_Movement_LeaveRoom
 {
-    walk_right * 2
-    walk_down * 8
+    walk_down * 2
+    walk_left * 4
+    walk_down * 3
 }
 
 movement BattleArcade_BattleRoom_Movement_RunToHeal
@@ -216,4 +232,9 @@ movement BattleArcade_BattleRoom_Movement_FaceAttendant
 movement BattleArcade_BattleRoom_Movement_SetInvisible
 {
     set_invisible
+}
+
+movement BattleArcade_BattleRoom_Movement_SetVisible
+{
+    set_visible
 }
