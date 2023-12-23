@@ -48,6 +48,7 @@
 #define ARCADE_EVENT_GIVE_ITEM                  7
 #define ARCADE_EVENT_LEVEL_UP                   8
 #define ARCADE_EVENT_SUN                        9
+#define ARCADE_EVENT_FIELD_START  ARCADE_EVENT_SUN
 #define ARCADE_EVENT_RAIN                      10
 #define ARCADE_EVENT_SAND                      11
 #define ARCADE_EVENT_HAIL                      12

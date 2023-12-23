@@ -353,7 +353,7 @@ u32 GetSetImpactSide(u32 event)
 
 static u32 GetImpactSide(u32 event)
 {
-    if (event >= ARCADE_EVENT_SUN)
+    if (event >= ARCADE_EVENT_FIELD_START)
         return ARCADE_IMPACT_ALL;
     else
         return Random() % ARCADE_IMPACT_ALL;
