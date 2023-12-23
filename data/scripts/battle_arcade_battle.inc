@@ -70,51 +70,51 @@ BattleArcade_RouletteRoom_AnnounceImpactString::
 # 53 "data/scripts/battle_arcade_battle.pory"
 	switch VAR_0x8005
 # 55 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_LOWER_HP, BattleArcade_RouletteRoom_AnnounceImpactString_2
+	case ARCADE_EVENT_LOWER_HP, BattleArcade_RouletteRoom_AnnounceImpactString_2
 # 57 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_POISON, BattleArcade_RouletteRoom_AnnounceImpactString_3
+	case ARCADE_EVENT_POISON, BattleArcade_RouletteRoom_AnnounceImpactString_3
 # 59 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_PARALYZE, BattleArcade_RouletteRoom_AnnounceImpactString_4
+	case ARCADE_EVENT_PARALYZE, BattleArcade_RouletteRoom_AnnounceImpactString_4
 # 61 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_BURN, BattleArcade_RouletteRoom_AnnounceImpactString_5
+	case ARCADE_EVENT_BURN, BattleArcade_RouletteRoom_AnnounceImpactString_5
 # 63 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_SLEEP, BattleArcade_RouletteRoom_AnnounceImpactString_6
+	case ARCADE_EVENT_SLEEP, BattleArcade_RouletteRoom_AnnounceImpactString_6
 # 65 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_FREEZE, BattleArcade_RouletteRoom_AnnounceImpactString_7
+	case ARCADE_EVENT_FREEZE, BattleArcade_RouletteRoom_AnnounceImpactString_7
 # 67 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_GIVE_BERRY, BattleArcade_RouletteRoom_AnnounceImpactString_8
+	case ARCADE_EVENT_GIVE_BERRY, BattleArcade_RouletteRoom_AnnounceImpactString_8
 # 68 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_GIVE_ITEM, BattleArcade_RouletteRoom_AnnounceImpactString_8
+	case ARCADE_EVENT_GIVE_ITEM, BattleArcade_RouletteRoom_AnnounceImpactString_8
 # 70 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_LEVEL_UP, BattleArcade_RouletteRoom_AnnounceImpactString_9
+	case ARCADE_EVENT_LEVEL_UP, BattleArcade_RouletteRoom_AnnounceImpactString_9
 # 72 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_SUN, BattleArcade_RouletteRoom_AnnounceImpactString_10
+	case ARCADE_EVENT_SUN, BattleArcade_RouletteRoom_AnnounceImpactString_10
 # 74 "data/scripts/battle_arcade_battle.pory"
-	case ARACDE_RAIN, BattleArcade_RouletteRoom_AnnounceImpactString_11
+	case ARCADE_EVENT_RAIN, BattleArcade_RouletteRoom_AnnounceImpactString_11
 # 76 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_SAND, BattleArcade_RouletteRoom_AnnounceImpactString_12
+	case ARCADE_EVENT_SAND, BattleArcade_RouletteRoom_AnnounceImpactString_12
 # 78 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_HAIL, BattleArcade_RouletteRoom_AnnounceImpactString_13
+	case ARCADE_EVENT_HAIL, BattleArcade_RouletteRoom_AnnounceImpactString_13
 # 80 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_FOG, BattleArcade_RouletteRoom_AnnounceImpactString_14
+	case ARCADE_EVENT_FOG, BattleArcade_RouletteRoom_AnnounceImpactString_14
 # 82 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_TRICK_ROOM, BattleArcade_RouletteRoom_AnnounceImpactString_15
+	case ARCADE_EVENT_TRICK_ROOM, BattleArcade_RouletteRoom_AnnounceImpactString_15
 # 84 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_SWAP, BattleArcade_RouletteRoom_AnnounceImpactString_16
+	case ARCADE_EVENT_SWAP, BattleArcade_RouletteRoom_AnnounceImpactString_16
 # 86 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_SPEED_UP, BattleArcade_RouletteRoom_AnnounceImpactString_17
+	case ARCADE_EVENT_SPEED_UP, BattleArcade_RouletteRoom_AnnounceImpactString_17
 # 88 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_SPEED_DOWN, BattleArcade_RouletteRoom_AnnounceImpactString_18
+	case ARCADE_EVENT_SPEED_DOWN, BattleArcade_RouletteRoom_AnnounceImpactString_18
 # 90 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_RANDOM, BattleArcade_RouletteRoom_AnnounceImpactString_19
+	case ARCADE_EVENT_RANDOM, BattleArcade_RouletteRoom_AnnounceImpactString_19
 # 92 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_GIVE_BP_SMALL, BattleArcade_RouletteRoom_AnnounceImpactString_20
+	case ARCADE_EVENT_GIVE_BP_SMALL, BattleArcade_RouletteRoom_AnnounceImpactString_20
 # 93 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_GIVE_BP_BIG, BattleArcade_RouletteRoom_AnnounceImpactString_20
+	case ARCADE_EVENT_GIVE_BP_BIG, BattleArcade_RouletteRoom_AnnounceImpactString_20
 # 95 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_NO_BATTLE, BattleArcade_RouletteRoom_AnnounceImpactString_21
+	case ARCADE_EVENT_NO_BATTLE, BattleArcade_RouletteRoom_AnnounceImpactString_21
 # 97 "data/scripts/battle_arcade_battle.pory"
-	case ARCADE_NO_EVENT, BattleArcade_RouletteRoom_AnnounceImpactString_22
+	case ARCADE_EVENT_NO_EVENT, BattleArcade_RouletteRoom_AnnounceImpactString_22
 	return
 
 BattleArcade_RouletteRoom_AnnounceImpactString_2:

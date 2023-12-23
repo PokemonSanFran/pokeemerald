@@ -52,49 +52,49 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
 {
     switch(var(VAR_0x8005))
     {
-        case ARCADE_LOWER_HP:
+        case ARCADE_EVENT_LOWER_HP:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp,MSGBOX_DEFAULT)
-        case ARCADE_POISON:
+        case ARCADE_EVENT_POISON:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommencePoisoned,MSGBOX_DEFAULT)
-        case ARCADE_PARALYZE:
+        case ARCADE_EVENT_PARALYZE:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceParalyzed,MSGBOX_DEFAULT)
-        case ARCADE_BURN:
+        case ARCADE_EVENT_BURN:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceBurned,MSGBOX_DEFAULT)
-        case ARCADE_SLEEP:
+        case ARCADE_EVENT_SLEEP:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceAsleep,MSGBOX_DEFAULT)
-        case ARCADE_FREEZE:
+        case ARCADE_EVENT_FREEZE:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceFrozen,MSGBOX_DEFAULT)
-        case ARCADE_GIVE_BERRY:
-        case ARCADE_GIVE_ITEM:
+        case ARCADE_EVENT_GIVE_BERRY:
+        case ARCADE_EVENT_GIVE_ITEM:
             msgbox(BattleArcade_RouletteRoom_Text_PokemonWillBeLoanedThe,MSGBOX_DEFAULT)
-        case ARCADE_LEVEL_UP:
+        case ARCADE_EVENT_LEVEL_UP:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceLeveledUp,MSGBOX_DEFAULT)
-        case ARCADE_SUN:
+        case ARCADE_EVENT_SUN:
             msgbox(BattleArcade_RouletteRoom_Text_MatchConductedHarshSunlight,MSGBOX_DEFAULT)
-        case ARACDE_RAIN:
+        case ARCADE_EVENT_RAIN:
             msgbox(BattleArcade_RouletteRoom_Text_MatchConductedSteadyRainfall,MSGBOX_DEFAULT)
-        case ARCADE_SAND:
+        case ARCADE_EVENT_SAND:
             msgbox(BattleArcade_RouletteRoom_Text_MatchConductedRagingSandstorm,MSGBOX_DEFAULT)
-        case ARCADE_HAIL:
+        case ARCADE_EVENT_HAIL:
             msgbox(BattleArcade_RouletteRoom_Text_MatchConductedPeltingHail,MSGBOX_DEFAULT)
-        case ARCADE_FOG:
+        case ARCADE_EVENT_FOG:
             msgbox(BattleArcade_RouletteRoom_Text_MatchConductedDenseFog,MSGBOX_DEFAULT)
-        case ARCADE_TRICK_ROOM:
+        case ARCADE_EVENT_TRICK_ROOM:
             msgbox(BattleArcade_RouletteRoom_Text_MatchConductedTimeAndSpaceAreDistorted,MSGBOX_DEFAULT)
-        case ARCADE_SWAP:
+        case ARCADE_EVENT_SWAP:
             msgbox(BattleArcade_RouletteRoom_Text_YourPokemonWillBeSwitched,MSGBOX_DEFAULT)
-        case ARCADE_SPEED_UP:
+        case ARCADE_EVENT_SPEED_UP:
             msgbox(BattleArcade_RouletteRoom_Text_BoardspeedIncreased,MSGBOX_DEFAULT)
-        case ARCADE_SPEED_DOWN:
+        case ARCADE_EVENT_SPEED_DOWN:
             msgbox(BattleArcade_RouletteRoom_Text_BoardspeedDecreased,MSGBOX_DEFAULT)
-        case ARCADE_RANDOM:
+        case ARCADE_EVENT_RANDOM:
             msgbox(BattleArcade_RouletteRoom_Text_BoardmotionRandom,MSGBOX_DEFAULT)
-        case ARCADE_GIVE_BP_SMALL:
-        case ARCADE_GIVE_BP_BIG:
+        case ARCADE_EVENT_GIVE_BP_SMALL:
+        case ARCADE_EVENT_GIVE_BP_BIG:
             msgbox(BattleArcade_RouletteRoom_Text_ReceivedBp,MSGBOX_DEFAULT)
-        case ARCADE_NO_BATTLE:
+        case ARCADE_EVENT_NO_BATTLE:
             msgbox(BattleArcade_RouletteRoom_Text_OhLuckyYouCanSkip,MSGBOX_DEFAULT)
-        case ARCADE_NO_EVENT:
+        case ARCADE_EVENT_NO_EVENT:
             msgbox(BattleArcade_RouletteRoom_Text_TooBadThereIsNo,MSGBOX_DEFAULT)
     }
 }

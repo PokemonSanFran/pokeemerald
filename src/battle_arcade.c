@@ -353,7 +353,7 @@ u32 GetSetImpactSide(u32 event)
 
 static u32 GetImpactSide(u32 event)
 {
-    if (event >= ARCADE_SUN)
+    if (event >= ARCADE_EVENT_SUN)
         return ARCADE_IMPACT_ALL;
     else
         return Random() % ARCADE_IMPACT_ALL;
@@ -385,7 +385,7 @@ static void BufferGameItemName(void)
 
 static void BufferGiveString(u32 event)
 {
-    if (event == ARCADE_GIVE_BERRY)
+    if (event == ARCADE_EVENT_GIVE_BERRY)
         BufferGameBerryName();
     else
         BufferGameItemName();
