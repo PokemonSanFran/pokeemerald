@@ -440,6 +440,7 @@ struct BattleFrontier
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
 #ifdef BATTLE_ARCADE
+    /*0xD07*/ u8 arcadeLvlMode;
     /*0xCE0*/ u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
     /*0xCF0*/ u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
 #endif

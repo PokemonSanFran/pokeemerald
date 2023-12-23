@@ -17,11 +17,15 @@
 #include "constants/battle_frontier.h"
 #include "constants/frontier_util.h"
 #include "constants/item.h"
+#include "constants/items.h"
 #include "constants/moves.h"
 #include "constants/battle_arcade.h"
 #include "constants/field_specials.h"
 #include "constants/hold_effects.h"
 #include "constants/trainers.h"
+#include "constants/opponents.h"
+#include "battle_dome.h"
+#include "random.h"
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -41,12 +45,21 @@ static void SaveCurrentParty(u32, u8);
 static void SaveArcadeChallenge(void);
 static void GetOpponentIntroSpeech(void);
 static void GetContinueMenuType(void);
+static u32 GenerateSetEvent(void);
+static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(void);
 static u32 CountNumberTypeWin(u8);
 static void CheckArcadeSymbol(void);
+static void TakePlayerHeldItems(void);
+static void TakeEnemyHeldItems(void);
+static void TakeHeldItems(struct Pokemon *party);
+static void HandleGameBoardResult(void);
+static void GetBrainStatus(void);
+static void GetBrainIntroSpeech(void);
+static void BufferImpactedName(u32 impact);
 static u8 ConvertMenuInputToType(u8);
 static void ConvertMenuInputToTypeAndSetVar(void);
 static void ShowBattleArcadeTypeWinsWindow(void);
@@ -59,6 +72,10 @@ static u32 GetBestTypeWinAmount(u8);
 static const u8 *GetBestTypeWinType(u8);
 static void ArcadePrintBestStreak(u8, u8, u8);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
+static void SaveCurrentWinStreak(void);
+u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode);
+static void BufferGiveString(u32);
+static bool32 DoGameBoardResult(u32, u32);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -79,11 +96,13 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
     [ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
     [ARCADE_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
-    [ARCADE_FUNC_GET_CONTINUE_MENU_TYPE] = GetContinueMenuType,
-    [ARCADE_FUNC_RESTORE_HELD_ITEMS]     = RestoreNonConsumableHeldItems,
     [ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePoints,
     [ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
-    [ARCADE_FUNC_CONVERT_TYPE]           = ConvertMenuInputToTypeAndSetVar,
+    [ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
+    [ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
+    [ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
+    [ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
+    [ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -107,34 +126,45 @@ void CallBattleArcadeFunc(void)
 
 static void InitArcadeChallenge(void)
 {
-    FRONTIER_SAVEDATA.challengeStatus = 0;
+    u32 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+
+    FRONTIER_SAVEDATA.challengeStatus = CHALLENGE_STATUS_SAVING;
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
+    ResetFrontierTrainerIds();
+    if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
+        FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
 
-    gTrainerBattleOpponent_A = 0;
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
+    gTrainerBattleOpponent_A = 0;
 }
 
 static void GetArcadeData(void)
 {
-    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u32 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
     switch (gSpecialVar_0x8005)
     {
+    case 0:
+        break;
     case ARCADE_DATA_WIN_STREAK:
-        gSpecialVar_Result = (FRONTIER_SAVEDATA.curChallengeBattleNum);
+        gSpecialVar_Result = GetCurrentBattleArcadeWinStreak(lvlMode, battleMode);
+        break;
+    case ARCADE_DATA_WIN_STREAK_ACTIVE:
+        gSpecialVar_Result = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]) != 0);
         break;
     case ARCADE_DATA_LVL_MODE:
-        gSpecialVar_Result = lvlMode;
+        FRONTIER_SAVEDATA.arcadeLvlMode = FRONTIER_SAVEDATA.lvlMode;
         break;
     }
 }
 
 static void SetArcadeData(void)
 {
-    u32 lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+    u32 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
     switch (gSpecialVar_0x8005)
@@ -146,20 +176,38 @@ static void SetArcadeData(void)
             break;
         case ARCADE_DATA_WIN_STREAK_ACTIVE:
             if (gSpecialVar_0x8006)
-                gSaveBlock2Ptr->frontier.winStreakActiveFlags |= sWinStreakFlags[battleMode][lvlMode];
+                FRONTIER_SAVEDATA.winStreakActiveFlags |= sWinStreakFlags[battleMode][lvlMode];
             else
-                gSaveBlock2Ptr->frontier.winStreakActiveFlags &= sWinStreakMasks[battleMode][lvlMode];
+                FRONTIER_SAVEDATA.winStreakActiveFlags &= sWinStreakMasks[battleMode][lvlMode];
             break;
     }
 }
 
 static void SetArcadeBattleWon(void)
 {
-    u8 numWins = FRONTIER_SAVEDATA.curChallengeBattleNum;
+    FRONTIER_SAVEDATA.curChallengeBattleNum++;
+    SaveCurrentWinStreak();
+    gSpecialVar_Result = FRONTIER_SAVEDATA.curChallengeBattleNum;
+}
 
-    FRONTIER_SAVEDATA.curChallengeBattleNum = (numWins == ARCADE_MAX_STREAK) ? numWins : ++numWins;
+static void SaveCurrentWinStreak(void)
+{
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+    u16 winStreak = GetCurrentBattleArcadeWinStreak(lvlMode, battleMode);
 
-    SaveCurrentStreak();
+    if (FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] < winStreak)
+        FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = winStreak;
+}
+
+u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode)
+{
+    u16 winStreak = gSaveBlock2Ptr->frontier.arcadeWinStreaks[battleMode][lvlMode];
+
+    if (winStreak > MAX_STREAK)
+        return MAX_STREAK;
+    else
+        return winStreak;
 }
 
 static void SaveCurrentStreak(void)
@@ -177,6 +225,12 @@ static void SaveCurrentStreak(void)
 
 static void SaveArcadeChallenge(void)
 {
+    u16 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u16 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+    s32 challengeNum = (signed)(FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE);
+
+    if (gSpecialVar_0x8005 == 0 && (challengeNum > 1 || FRONTIER_SAVEDATA.curChallengeBattleNum != 0))
+
     FRONTIER_SAVEDATA.challengeStatus = gSpecialVar_0x8005;
     VarSet(VAR_TEMP_0, 0);
     FRONTIER_SAVEDATA.challengePaused = TRUE;
@@ -186,55 +240,6 @@ static void SaveArcadeChallenge(void)
 static void GetOpponentIntroSpeech(void)
 {
     FrontierSpeechToString(gFacilityTrainers[gTrainerBattleOpponent_A].speechBefore);
-}
-
-u32 CalculateMenuType(void)
-{
-    bool32 hasHeal = (!(VarGet(VAR_ARCADE_HEAL_COUNT) == 0));
-    bool32 canRecord = (FRONTIER_SAVEDATA.disableRecordBattle == FALSE);
-
-    if (canRecord && hasHeal)
-        return ARCADE_RECORDYES_HEALYES;
-    if (canRecord && !hasHeal)
-        return ARCADE_RECORDYES_HEALNO;
-    if (!canRecord && hasHeal)
-        return ARCADE_RECORDNO_HEALYES;
-    if (!canRecord && !hasHeal)
-        return ARCADE_RECORDNO_HEALNO;
-}
-
-static void GetContinueMenuType(void)
-{
-    gSpecialVar_Result = CalculateMenuType();
-}
-
-static bool32 IsItemConsumable(u16 item)
-{
-    u32 holdEffect = gItems[item].holdEffect;
-
-    return (
-            (holdEffect > HOLD_EFFECT_NONE
-             && holdEffect < HOLD_EFFECT_EVASION_UP)
-            || (holdEffect == HOLD_EFFECT_RESTORE_STATS)
-            || (holdEffect == HOLD_EFFECT_CURE_ATTRACT)
-           );
-}
-
-static void RestoreNonConsumableHeldItems(void)
-{
-    u32 i;
-    u16 item;
-
-    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-    {
-        if (FRONTIER_SAVEDATA.selectedPartyMons[i] == 0)
-            break;
-
-        item = GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_HELD_ITEM, NULL);
-
-        if (!IsItemConsumable(item))
-            SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
-    }
 }
 
 static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =
@@ -308,9 +313,117 @@ static u8 ConvertMenuInputToType(u8 selection)
     return (selection > TYPE_STEEL) ? ++selection : selection;
 }
 
-static void ConvertMenuInputToTypeAndSetVar(void)
+
+static void TakeEnemyHeldItems(void)
 {
-    VarSet(VAR_ARCADE_TYPE,ConvertMenuInputToType(gSpecialVar_Result));
+    struct Pokemon *party = gEnemyParty;
+    TakeHeldItems(party);
 }
+
+static void TakePlayerHeldItems(void)
+{
+    struct Pokemon *party = gPlayerParty;
+    TakeHeldItems(party);
+}
+
+static void TakeHeldItems(struct Pokemon *party)
+{
+    u32 i;
+    u16 item = ITEM_NONE;
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+            break;
+
+        SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
+    }
+}
+
+#define VAR_IMPACT_SIDE VAR_TEMP_2
+
+u32 GetSetImpactSide(u32 event)
+{
+    u32 impact = GetImpactSide(event);
+    BufferImpactedName(impact);
+    VarSet(VAR_IMPACT_SIDE,impact);
+    return impact;
+}
+
+
+static u32 GetImpactSide(u32 event)
+{
+    if (event >= ARCADE_SUN)
+        return ARCADE_IMPACT_ALL;
+    else
+        return Random() % ARCADE_IMPACT_ALL;
+}
+
+static u32 GenerateSetEvent(void)
+{
+    u32 event = Random() % ARCADE_EVENT_COUNT;
+    gSpecialVar_0x8005 = event;
+}
+
+static void HandleGameBoardResult(void)
+{
+    u32 event = GenerateSetEvent();
+    u32 impact = GetSetImpactSide(event);
+
+    gSpecialVar_Result = DoGameBoardResult(event, impact);
+}
+
+static void BufferGameBerryName(void)
+{
+    CopyItemName(ITEM_APICOT_BERRY, gStringVar3);
+}
+
+static void BufferGameItemName(void)
+{
+    CopyItemName(ITEM_LEFTOVERS, gStringVar3);
+}
+
+static void BufferGiveString(u32 event)
+{
+    if (event == ARCADE_GIVE_BERRY)
+        BufferGameBerryName();
+    else
+        BufferGameItemName();
+}
+
+static bool32 DoGameBoardResult(u32 event, u32 impact)
+{
+    BufferGiveString(event);
+    return TRUE;
+}
+
+static u32 GetImpactedTrainerId(u32 impact)
+{
+    return (impact == ARCADE_IMPACT_PLAYER) ? TRAINER_PLAYER : gTrainerBattleOpponent_A;
+}
+
+static void BufferImpactedName(u32 impact)
+{
+    CopyDomeTrainerName(gStringVar1, GetImpactedTrainerId(impact));
+}
+
+#define VAR_BRAIN_STATUS VAR_TEMP_F
+
+static void GetBrainStatus(void)
+{
+    VarSet(VAR_BRAIN_STATUS,0); //Debug
+    // return true if the brain should be fought here
+    return;
+}
+
+static void GetBrainIntroSpeech(void)
+{
+    //return one string for silver fight and otherwise the gold string
+    return;
+}
+
+// graphical set up off board
+// populate array with effects
+// iterate again over each spot and pick a side
 
 #endif

@@ -11,19 +11,13 @@
 	special CallBattleArcadeFunc
 	.endm
 
-	@ Set some TOWER_DATA_* to val. See SetArcadeData for the data types that can be set
+	@ Set some ARCADE_DATA_* to val. See SetArcadeData for the data types that can be set
 	.macro arcade_set data:req, val=0xFFFF
 	setvar VAR_0x8004, ARCADE_FUNC_SET_DATA
 	setvar VAR_0x8005, \data
 	.if \val != 0xFFFF
 	setvar VAR_0x8006, \val
 	.endif
-	special CallBattleArcadeFunc
-	.endm
-
-	@ Choose and set the gfx for the next opponent. Also used by Battle Tents
-	.macro arcade_setopponent
-	setvar VAR_0x8004, ARCADE_FUNC_SET_OPPONENT
 	special CallBattleArcadeFunc
 	.endm
 
@@ -46,41 +40,11 @@
 	special CallBattleArcadeFunc
 	.endm
 
-    @ Determine what continue menu type to show player
-    .macro arcade_getcontinuemenutype
-    setvar VAR_0x8004, ARCADE_FUNC_GET_CONTINUE_MENU_TYPE
-    special CallBattleArcadeFunc
-    .endm
-
-    @ Heal player in Battle Arcade
-    .macro arcade_restore
-    call Common_EventScript_OutOfCenterPartyHeal
-    subvar VAR_ARCADE_HEAL_COUNT,1
-    .endm
-
-    @ Restore player's non-berry held items
-    .macro arcade_restorehelditems
-    setvar VAR_0x8004, ARCADE_FUNC_RESTORE_HELD_ITEMS
-    special CallBattleArcadeFunc
-    .endm
-
-	@ If any moves were copied using Sketch during the challenge then restore them to Sketch, but don't store the party to the saveblock
-	.macro arcade_resetsketch
-	setvar VAR_0x8004,ARCADE_FUNC_RESET_SKETCH_MOVES
-	special CallBattleArcadeFunc
-	.endm
-
 	@ Awards battle points depending on the number of wins and if that type has already been completed
 	.macro arcade_givepoints
 	setvar VAR_0x8004, ARCADE_FUNC_GIVE_BATTLE_POINTS
 	special CallBattleArcadeFunc
 	.endm
-
-    @ Gets the name of the type chosen for Battle Arcade and buffers it to gStringVar3
-    .macro arcade_bufferarcadetype
-    setvar VAR_0x8004, ARCADE_FUNC_GET_TYPE_NAME
-    special CallBattleArcadeFunc
-    .endm
 
     @ Check the number of types the player has previously won and sets VAR_RESULT to TRUE if the player has not have the appropriate symbol but has qualified for it
     .macro arcade_checksymbol
@@ -88,14 +52,32 @@
     special CallBattleArcadeFunc
     .endm
 
-    @ Take the input from ShowBattleArcadeTypeWinsWindow and set VAR_ARCADE_TYPE by skipping TYPE_MYSTERY
-    .macro arcade_convertmenutotype
-    setvar VAR_0x8004, ARCADE_FUNC_CONVERT_TYPE
+    @ Delete all the held items in the player's party
+    .macro arcade_takeplayerhelditems
+    setvar VAR_0x8004, ARCADE_FUNC_TAKE_PLAYER_ITEMS
     special CallBattleArcadeFunc
     .endm
 
-    @ Check the number of wins for the player, and if over the max, returns TRUE to VAR_RESULT
-    .macro arcade_checkmaxstreak
-    setvar VAR_0x8004, ARCADE_FUNC_CHECK_MAX
+    @ Delete all the held items in the enemy's party
+    .macro arcade_takeenemyhelditems
+    setvar VAR_0x8004, ARCADE_FUNC_TAKE_ENEMY_ITEMS
+    special CallBattleArcadeFunc
+    .endm
+
+    @ Loads the result of the game to VAR_0x8005, the name of the impacted person to STR_VAR_1
+    .macro arcade_handlegameresult
+    setvar VAR_0x8004, ARCADE_FUNC_HANDLE_GAME_RESULT
+    special CallBattleArcadeFunc
+    .endm
+
+    @ Check to see if the Frontier Brain should be the next battle
+    .macro arcade_getbrainstatus
+    setvar VAR_0x8004, ARCADE_FUNC_CHECK_BRAIN_STATUS
+    special CallBattleArcadeFunc
+    .endm
+
+	@ Buffer the Brain's intro speech to STR_VAR_4
+    .macro arcade_getbrainintro
+    setvar VAR_0x8004, ARCADE_FUNC_GET_BRAIN_INTRO
     special CallBattleArcadeFunc
     .endm
