@@ -68,7 +68,7 @@ BattleArcade_RouletteRoom_EventScript_HandleGameResults::
 
 BattleArcade_RouletteRoom_AnnounceImpactString::
 # 53 "data/scripts/battle_arcade_battle.pory"
-	switch VAR_0x8005
+	switch VAR_UNUSED_0x4083
 # 55 "data/scripts/battle_arcade_battle.pory"
 	case ARCADE_EVENT_LOWER_HP, BattleArcade_RouletteRoom_AnnounceImpactString_2
 # 57 "data/scripts/battle_arcade_battle.pory"
@@ -227,81 +227,81 @@ BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard::
 # 106 "data/scripts/battle_arcade_battle.pory"
 	tower_setopponent
 # 107 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
+	arcade_handlegameresult
 # 108 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_StartGameBoard
+	call BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 # 109 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
+	call BattleArcade_RouletteRoom_EventScript_StartGameBoard
 # 110 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_LoadOpponentText
+	call BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
 # 111 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_StartBattle
+	call BattleArcade_RouletteRoom_EventScript_LoadOpponentText
 # 112 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_RouletteRoom_EventScript_StartBattle
+# 113 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_HandleBattleResult
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_StartGameBoard::
-# 117 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition
 # 118 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_PlayGameBoard
+	call BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition
 # 119 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_RouletteRoom_EventScript_PlayGameBoard
+# 120 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_RouletteRoom_EventScript_HandleGameResults
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_LoadOpponentText::
-# 124 "data/scripts/battle_arcade_battle.pory"
-	tower_getopponentintro 0
 # 125 "data/scripts/battle_arcade_battle.pory"
-	msgbox gStringVar4, MSGBOX_DEFAULT
+	tower_getopponentintro 0
 # 126 "data/scripts/battle_arcade_battle.pory"
-	waitmessage
+	msgbox gStringVar4, MSGBOX_DEFAULT
 # 127 "data/scripts/battle_arcade_battle.pory"
+	waitmessage
+# 128 "data/scripts/battle_arcade_battle.pory"
 	closemessage
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_StartBattle::
-# 132 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition
 # 133 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_DoTowerBattle
+	call BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition
+# 134 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
 	return
 
 
-BattleArcade_RouletteRoom_EventScript_DoTowerBattle::
-# 138 "data/scripts/battle_arcade_battle.pory"
+BattleArcade_RouletteRoom_EventScript_DoRouletteBattle::
+# 139 "data/scripts/battle_arcade_battle.pory"
 	closemessage
-# 140 "data/scripts/battle_arcade_battle.pory"
-	setvar VAR_TEMP_2, 0
 # 141 "data/scripts/battle_arcade_battle.pory"
-	frontier_set FRONTIER_DATA_RECORD_DISABLED, FALSE
+	setvar VAR_TEMP_2, 0
 # 142 "data/scripts/battle_arcade_battle.pory"
-	setvar VAR_0x8004, SPECIAL_BATTLE_TOWER
+	frontier_set FRONTIER_DATA_RECORD_DISABLED, FALSE
 # 143 "data/scripts/battle_arcade_battle.pory"
+	setvar VAR_0x8004, SPECIAL_BATTLE_TOWER
+# 144 "data/scripts/battle_arcade_battle.pory"
 	setvar VAR_0x8005, 0
-# 145 "data/scripts/battle_arcade_battle.pory"
-	special DoSpecialTrainerBattle
 # 146 "data/scripts/battle_arcade_battle.pory"
-	waitstate
+	special DoSpecialRouletteTrainerBattle
 # 147 "data/scripts/battle_arcade_battle.pory"
-	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
+	waitstate
 # 149 "data/scripts/battle_arcade_battle.pory"
+	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
+# 150 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_0x8004, FRONTIER_MODE_LINK_MULTIS
-	goto_if_ne BattleArcade_RouletteRoom_EventScript_DoTowerBattle_2
-BattleArcade_RouletteRoom_EventScript_DoTowerBattle_1:
+	goto_if_ne BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_2
+BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_1:
 # 155 "data/scripts/battle_arcade_battle.pory"
 	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
 	return
 
-BattleArcade_RouletteRoom_EventScript_DoTowerBattle_2:
-# 151 "data/scripts/battle_arcade_battle.pory"
-	frontier_restorehelditems
+BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_2:
 # 152 "data/scripts/battle_arcade_battle.pory"
 	frontier_resetsketch
-	goto BattleArcade_RouletteRoom_EventScript_DoTowerBattle_1
+	goto BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_1
 
 
 BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost::

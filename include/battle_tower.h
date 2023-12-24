@@ -84,5 +84,7 @@ s32 GetHighestLevelInPlayerParty(void);
 u8 FacilityClassToGraphicsId(u8 facilityClass);
 bool32 ValidateBattleTowerRecord(u8 recordId); // unused
 void TrySetLinkBattleTowerEnemyPartyLevel(void);
+void FillPartnerParty(u16 trainerId);
+void Task_StartBattleAfterTransition(u8 taskId);
 
 #endif //GUARD_BATTLE_TOWER_H

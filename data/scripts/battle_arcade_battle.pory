@@ -1,7 +1,7 @@
-const VAR_IMPACT_SIDE = VAR_TEMP_2
 const VAR_BRAIN_STATUS = VAR_TEMP_F
-
 const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
+const VAR_ARCADE_IMPACT_SIDE = VAR_UNUSED_0x404E
+const VAR_ARCADE_EVENT = VAR_UNUSED_0x4083
 
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
@@ -50,7 +50,7 @@ script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 
 script BattleArcade_RouletteRoom_AnnounceImpactString
 {
-    switch(var(VAR_0x8005))
+    switch(var(VAR_ARCADE_EVENT))
     {
         case ARCADE_EVENT_LOWER_HP:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp,MSGBOX_DEFAULT)
@@ -104,6 +104,7 @@ script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 {
     call(BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber)
     tower_setopponent
+    arcade_handlegameresult // Debug
     call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
@@ -142,7 +143,7 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
     setvar(VAR_0x8004, SPECIAL_BATTLE_TOWER)
     setvar(VAR_0x8005, 0)
 
-    special(DoSpecialTrainerBattle)
+    special(DoSpecialRouletteTrainerBattle)
     waitstate
 
     copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)

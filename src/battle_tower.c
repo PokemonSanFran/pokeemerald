@@ -78,7 +78,6 @@ static void FillTentTrainerParty_(u16 trainerId, u8 firstMonId, u8 monCount);
 static void FillFactoryFrontierTrainerParty(u16 trainerId, u8 firstMonId);
 static void FillFactoryTentTrainerParty(u16 trainerId, u8 firstMonId);
 static u8 GetFrontierTrainerFixedIvs(u16 trainerId);
-static void FillPartnerParty(u16 trainerId);
 static void SetEReaderTrainerChecksum(struct BattleTowerEReaderTrainer *ereaderTrainer);
 static u8 SetTentPtrsGetLevel(void);
 
@@ -1999,7 +1998,7 @@ static void HandleSpecialTrainerBattleEnd(void)
     SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
 }
 
-static void Task_StartBattleAfterTransition(u8 taskId)
+void Task_StartBattleAfterTransition(u8 taskId)
 {
     if (IsBattleTransitionDone() == TRUE)
     {
@@ -2018,26 +2017,7 @@ void DoSpecialTrainerBattle(void)
     {
 #ifdef BATTLE_ARCADE
     case SPECIAL_BATTLE_ARCADE:
-        gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
-        switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
-        {
-        case FRONTIER_MODE_SINGLES:
-            FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
-            break;
-        case FRONTIER_MODE_DOUBLES:
-            FillFrontierTrainerParty(FRONTIER_DOUBLES_PARTY_SIZE);
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
-            break;
-        case FRONTIER_MODE_MULTIS:
-            FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
-            gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
-            FillPartnerParty(gPartnerTrainerId);
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
-            break;
-        }
-        CreateTask(Task_StartBattleAfterTransition, 1);
-        PlayMapChosenOrBattleBGM(0);
-        BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
+        DoSpecialRouletteTrainerBattle();
         break;
 #endif
     case SPECIAL_BATTLE_TOWER:
@@ -2985,7 +2965,7 @@ void TryHideBattleTowerReporter(void)
 
 #define STEVEN_OTID 61226
 
-static void FillPartnerParty(u16 trainerId)
+void FillPartnerParty(u16 trainerId)
 {
     s32 i, j;
     u32 ivs, level;

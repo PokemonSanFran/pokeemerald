@@ -26,6 +26,7 @@
 #include "constants/opponents.h"
 #include "battle_dome.h"
 #include "random.h"
+#include "battle_transition.h"
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -359,13 +360,11 @@ static void TakeHeldItems(struct Pokemon *party)
     }
 }
 
-#define VAR_IMPACT_SIDE VAR_TEMP_2
-
 u32 GetSetImpactSide(u32 event)
 {
     u32 impact = GetImpactSide(event);
     BufferImpactedName(impact);
-    VarSet(VAR_IMPACT_SIDE,impact);
+    VarSet(VAR_ARCADE_IMPACT_SIDE,impact);
     return impact;
 }
 
@@ -383,7 +382,7 @@ static u32 GenerateSetEvent(void)
 {
     u32 event = Random() % ARCADE_EVENT_COUNT;
     event = ARCADE_EVENT_LOWER_HP; //Debug
-    gSpecialVar_0x8005 = event;
+    VarSet(VAR_ARCADE_EVENT,event);
     return event;
 }
 
@@ -466,7 +465,7 @@ static struct Pokemon *LoadSideParty(u32 impact)
 
 static bool32 BattleArcade_DoLowerHP(u32 impact)
 {
-    u32 i, newHP, oldHP, reduce, x;
+    u32 i, maxHP, reducedHP;
     struct Pokemon *party = LoadSideParty(impact);
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
@@ -474,14 +473,11 @@ static bool32 BattleArcade_DoLowerHP(u32 impact)
         if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
             break;
 
-        oldHP = GetMonData(&party[i], MON_DATA_MAX_HP);
-        //--oldHP;
-        reduce = oldHP * 200 / 1000;
-        newHP = oldHP - reduce;
-        DebugPrintf("old %d, reduce %d, new %d",oldHP,reduce,newHP);
-        SetMonData(&party[i], MON_DATA_HP, &newHP);
-        DebugPrintf("starting HP %d",GetMonData(&party[i], MON_DATA_HP));
+        maxHP = GetMonData(&party[i], MON_DATA_MAX_HP);
+        reducedHP = maxHP - (maxHP * 200 / 1000);
+        SetMonData(&party[i], MON_DATA_HP, &reducedHP);
     }
+
     return TRUE;
 }
 
@@ -583,6 +579,37 @@ static void GetBrainIntroSpeech(void)
 {
     //return one string for silver fight and otherwise the gold string
     return;
+}
+
+void DoSpecialRouletteTrainerBattle(void)
+{
+    gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
+    switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
+    {
+        case FRONTIER_MODE_SINGLES:
+            FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
+            break;
+        case FRONTIER_MODE_DOUBLES:
+            FillFrontierTrainerParty(FRONTIER_DOUBLES_PARTY_SIZE);
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+            break;
+        case FRONTIER_MODE_MULTIS:
+            FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
+            gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
+            FillPartnerParty(gPartnerTrainerId);
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
+            break;
+    }
+
+    if (VarGet(VAR_ARCADE_IMPACT_SIDE) == ARCADE_IMPACT_OPPONENT)
+    {
+        DebugPrintf("shit");
+        DoGameBoardResult(VarGet(VAR_ARCADE_EVENT), ARCADE_IMPACT_OPPONENT);
+    }
+
+    CreateTask(Task_StartBattleAfterTransition, 1);
+    PlayMapChosenOrBattleBGM(0);
+    BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
 }
 
 // graphical set up off board
