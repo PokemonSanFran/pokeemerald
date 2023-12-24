@@ -50,18 +50,18 @@ static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
-static void GiveBattlePoints(void);
+static void GiveBattlePoints(u32 points);
+static void CalculateGiveChallengeBattlePoints(void);
 static u32 CountNumberTypeWin(u8);
 static void CheckArcadeSymbol(void);
 static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
+static struct Pokemon *LoadSideParty(u32);
 static void TakeHeldItems(struct Pokemon *party);
 static void HandleGameBoardResult(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
 static void BufferImpactedName(u32 impact);
-static u8 ConvertMenuInputToType(u8);
-static void ConvertMenuInputToTypeAndSetVar(void);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
 static void ShowBattleArcadeTypeMonsWindow(void);
@@ -76,6 +76,29 @@ static void SaveCurrentWinStreak(void);
 u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode);
 static void BufferGiveString(u32);
 static bool32 DoGameBoardResult(u32, u32);
+static bool32 BattleArcade_DoLowerHP(u32);
+static bool32 BattleArcade_DoPoison(u32);
+static bool32 BattleArcade_DoParalyze(u32);
+static bool32 BattleArcade_DoBurn(u32);
+static bool32 BattleArcade_DoSleep(u32);
+static bool32 BattleArcade_DoFreeze(u32);
+static bool32 BattleArcade_DoGiveBerry(u32);
+static bool32 BattleArcade_DoGiveItem(u32);
+static bool32 BattleArcade_DoLevelUp(u32);
+static bool32 BattleArcade_DoSun(void);
+static bool32 BattleArcade_DoRain(void);
+static bool32 BattleArcade_DoSand(void);
+static bool32 BattleArcade_DoHail(void);
+static bool32 BattleArcade_DoFog(void);
+static bool32 BattleArcade_DoTrickRoom(void);
+static bool32 BattleArcade_DoSwap(void);
+static bool32 BattleArcade_DoSpeedUp(void);
+static bool32 BattleArcade_DoSpeedDown(void);
+static bool32 BattleArcade_DoRandom(void);
+static bool32 BattleArcade_DoGiveBP(void);
+static bool32 BattleArcade_DoNoBattle(void);
+static bool32 BattleArcade_DoNoEvent(void);
+static bool32 BattleArcade_DoGiveBP(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -96,7 +119,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
     [ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
     [ARCADE_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
-    [ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePoints,
+    [ARCADE_FUNC_GIVE_BATTLE_POINTS]     = CalculateGiveChallengeBattlePoints,
     [ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
     [ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
     [ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
@@ -273,10 +296,14 @@ static u32 CalculateBattlePoints(u32 challengeNum)
     return points;
 }
 
-static void GiveBattlePoints(void)
+static void CalculateGiveChallengeBattlePoints(void)
 {
     u32 points = CalculateBattlePoints(((gSaveBlock2Ptr->frontier.arcadeWinStreaks[VarGet(VAR_FRONTIER_BATTLE_MODE)][gSaveBlock2Ptr->frontier.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
+    GiveBattlePoints(points);
+}
 
+static void GiveBattlePoints(u32 points)
+{
     IncrementDailyBattlePoints(points);
     ConvertIntToDecimalStringN(gStringVar2, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
@@ -308,22 +335,14 @@ u32 Arcade_SetChallengeNumToMax(u8 challengeNum)
     return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_ARCADE) ? UCHAR_MAX : challengeNum;
 }
 
-static u8 ConvertMenuInputToType(u8 selection)
-{
-    return (selection > TYPE_STEEL) ? ++selection : selection;
-}
-
-
 static void TakeEnemyHeldItems(void)
 {
-    struct Pokemon *party = gEnemyParty;
-    TakeHeldItems(party);
+    TakeHeldItems(LoadSideParty(ARCADE_IMPACT_OPPONENT));
 }
 
 static void TakePlayerHeldItems(void)
 {
-    struct Pokemon *party = gPlayerParty;
-    TakeHeldItems(party);
+    TakeHeldItems(LoadSideParty(ARCADE_IMPACT_PLAYER));
 }
 
 static void TakeHeldItems(struct Pokemon *party)
@@ -350,9 +369,10 @@ u32 GetSetImpactSide(u32 event)
     return impact;
 }
 
-
 static u32 GetImpactSide(u32 event)
 {
+    return ARCADE_IMPACT_OPPONENT; // Debug
+
     if (event >= ARCADE_EVENT_FIELD_START)
         return ARCADE_IMPACT_ALL;
     else
@@ -362,7 +382,9 @@ static u32 GetImpactSide(u32 event)
 static u32 GenerateSetEvent(void)
 {
     u32 event = Random() % ARCADE_EVENT_COUNT;
+    event = ARCADE_EVENT_LOWER_HP; //Debug
     gSpecialVar_0x8005 = event;
+    return event;
 }
 
 static void HandleGameBoardResult(void)
@@ -393,6 +415,33 @@ static void BufferGiveString(u32 event)
 
 static bool32 DoGameBoardResult(u32 event, u32 impact)
 {
+    switch (event)
+    {
+        case ARCADE_EVENT_LOWER_HP: return BattleArcade_DoLowerHP(impact);
+        case ARCADE_EVENT_POISON: return BattleArcade_DoPoison(impact);
+        case ARCADE_EVENT_PARALYZE: return BattleArcade_DoParalyze(impact);
+        case ARCADE_EVENT_BURN: return BattleArcade_DoBurn(impact);
+        case ARCADE_EVENT_SLEEP: return BattleArcade_DoSleep(impact);
+        case ARCADE_EVENT_FREEZE: return BattleArcade_DoFreeze(impact);
+        case ARCADE_EVENT_GIVE_BERRY: return BattleArcade_DoGiveBerry(impact);
+        case ARCADE_EVENT_GIVE_ITEM: return BattleArcade_DoGiveItem(impact);
+        case ARCADE_EVENT_LEVEL_UP: return BattleArcade_DoLevelUp(impact);
+        case ARCADE_EVENT_SUN: return BattleArcade_DoSun();
+        case ARCADE_EVENT_RAIN: return BattleArcade_DoRain();
+        case ARCADE_EVENT_SAND: return BattleArcade_DoSand();
+        case ARCADE_EVENT_HAIL: return BattleArcade_DoHail();
+        case ARCADE_EVENT_FOG: return BattleArcade_DoFog();
+        case ARCADE_EVENT_TRICK_ROOM: return BattleArcade_DoTrickRoom();
+        case ARCADE_EVENT_SWAP: return BattleArcade_DoSwap();
+        case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
+        case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
+        case ARCADE_EVENT_RANDOM: return BattleArcade_DoRandom();
+        case ARCADE_EVENT_GIVE_BP_SMALL: return BattleArcade_DoGiveBP();
+        case ARCADE_EVENT_GIVE_BP_BIG: return BattleArcade_DoGiveBP();
+        case ARCADE_EVENT_NO_BATTLE: return BattleArcade_DoNoBattle();
+        default:
+        case ARCADE_EVENT_NO_EVENT: return BattleArcade_DoNoEvent();
+    }
     BufferGiveString(event);
     return TRUE;
 }
@@ -405,6 +454,120 @@ static u32 GetImpactedTrainerId(u32 impact)
 static void BufferImpactedName(u32 impact)
 {
     CopyDomeTrainerName(gStringVar1, GetImpactedTrainerId(impact));
+}
+
+static struct Pokemon *LoadSideParty(u32 impact)
+{
+    if (impact == ARCADE_IMPACT_PLAYER)
+        return gPlayerParty;
+    else
+        return gEnemyParty;
+}
+
+static bool32 BattleArcade_DoLowerHP(u32 impact)
+{
+    u32 i, newHP, oldHP, reduce, x;
+    struct Pokemon *party = LoadSideParty(impact);
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
+            break;
+
+        oldHP = GetMonData(&party[i], MON_DATA_MAX_HP);
+        //--oldHP;
+        reduce = oldHP * 200 / 1000;
+        newHP = oldHP - reduce;
+        DebugPrintf("old %d, reduce %d, new %d",oldHP,reduce,newHP);
+        SetMonData(&party[i], MON_DATA_HP, &newHP);
+        DebugPrintf("starting HP %d",GetMonData(&party[i], MON_DATA_HP));
+    }
+    return TRUE;
+}
+
+static bool32 BattleArcade_DoPoison(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoParalyze(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoBurn(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoSleep(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoFreeze(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoGiveBerry(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoGiveItem(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoLevelUp(u32 impact)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoSun(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoRain(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoSand(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoHail(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoFog(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoTrickRoom(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoSwap(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoSpeedUp(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoSpeedDown(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoRandom(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoGiveBP(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoNoBattle(void)
+{
+	return TRUE;
+}
+static bool32 BattleArcade_DoNoEvent(void)
+{
+	return TRUE;
 }
 
 #define VAR_BRAIN_STATUS VAR_TEMP_F

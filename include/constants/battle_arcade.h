@@ -38,17 +38,17 @@
 #define ARCADE_RECORD_OPEN_LEVEL_Y_POS         97
 #define ARCADE_RECORD_OPEN_LEVEL_BEST_Y_POS    113
 
-#define ARCADE_EVENT_LOWER_HP                   0
-#define ARCADE_EVENT_POISON                     1
-#define ARCADE_EVENT_PARALYZE                   2
-#define ARCADE_EVENT_BURN                       3
-#define ARCADE_EVENT_SLEEP                      4
-#define ARCADE_EVENT_FREEZE                     5
-#define ARCADE_EVENT_GIVE_BERRY                 6
-#define ARCADE_EVENT_GIVE_ITEM                  7
-#define ARCADE_EVENT_LEVEL_UP                   8
-#define ARCADE_EVENT_SUN                        9
-#define ARCADE_EVENT_FIELD_START  ARCADE_EVENT_SUN
+#define ARCADE_EVENT_LOWER_HP                  0
+#define ARCADE_EVENT_POISON                    1
+#define ARCADE_EVENT_PARALYZE                  2
+#define ARCADE_EVENT_BURN                      3
+#define ARCADE_EVENT_SLEEP                     4
+#define ARCADE_EVENT_FREEZE                    5
+#define ARCADE_EVENT_GIVE_BERRY                6
+#define ARCADE_EVENT_GIVE_ITEM                 7
+#define ARCADE_EVENT_LEVEL_UP                  8
+#define ARCADE_EVENT_SUN                       9
+#define ARCADE_EVENT_FIELD_START               ARCADE_EVENT_SUN
 #define ARCADE_EVENT_RAIN                      10
 #define ARCADE_EVENT_SAND                      11
 #define ARCADE_EVENT_HAIL                      12
@@ -59,9 +59,9 @@
 #define ARCADE_EVENT_SPEED_DOWN                17
 #define ARCADE_EVENT_RANDOM                    18
 #define ARCADE_EVENT_GIVE_BP_SMALL             19
-#define ARCADE_EVENT_NO_BATTLE                 20
-#define ARCADE_EVENT_NO_EVENT                  21
-#define ARCADE_EVENT_GIVE_BP_BIG               22
+#define ARCADE_EVENT_GIVE_BP_BIG               20
+#define ARCADE_EVENT_NO_BATTLE                 21
+#define ARCADE_EVENT_NO_EVENT                  22
 #define ARCADE_EVENT_COUNT                     23
 
 #define ARCADE_IMPACT_PLAYER                   0

@@ -1,7 +1,7 @@
 const VAR_IMPACT_SIDE = VAR_TEMP_2
 const VAR_BRAIN_STATUS = VAR_TEMP_F
 
-const VAR_HEARD_MAIDEN_INTRO = VAR_TEMP_2
+const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
 
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
@@ -94,6 +94,7 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
             msgbox(BattleArcade_RouletteRoom_Text_ReceivedBp,MSGBOX_DEFAULT)
         case ARCADE_EVENT_NO_BATTLE:
             msgbox(BattleArcade_RouletteRoom_Text_OhLuckyYouCanSkip,MSGBOX_DEFAULT)
+        default:
         case ARCADE_EVENT_NO_EVENT:
             msgbox(BattleArcade_RouletteRoom_Text_TooBadThereIsNo,MSGBOX_DEFAULT)
     }
@@ -129,7 +130,29 @@ script BattleArcade_RouletteRoom_EventScript_LoadOpponentText
 script BattleArcade_RouletteRoom_EventScript_StartBattle
 {
     call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
-    call(BattleFrontier_BattleTowerBattleRoom_EventScript_DoTowerBattle)
+    call(BattleArcade_RouletteRoom_EventScript_DoRouletteBattle)
+}
+
+script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
+{
+    closemessage
+
+    setvar(VAR_HEARD_BRAIN_INTRO, 0)
+    frontier_set(FRONTIER_DATA_RECORD_DISABLED, FALSE)
+    setvar(VAR_0x8004, SPECIAL_BATTLE_TOWER)
+    setvar(VAR_0x8005, 0)
+
+    special(DoSpecialTrainerBattle)
+    waitstate
+
+    copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)
+    if(var(VAR_0x8004) != FRONTIER_MODE_LINK_MULTIS)
+    {
+        frontier_resetsketch
+    }
+
+    frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
+    return
 }
 
 script BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
@@ -307,13 +330,13 @@ script BattleArcade_RouletteRoom_EventScript_WarpToLobby
 
 script BattleArcade_RouletteRoom_EventScript_BrainUpNext
 {
-    if (var(VAR_HEARD_MAIDEN_INTRO) == 1)
+    if (var(VAR_HEARD_BRAIN_INTRO) == 1)
     {
         goto(BattleArcade_RouletteRoom_EventScript_AskReadyForBrain)
     }
 
     msgbox(BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition, MSGBOX_DEFAULT)
-    setvar(VAR_HEARD_MAIDEN_INTRO,1)
+    setvar(VAR_HEARD_BRAIN_INTRO,1)
 
     goto(BattleArcade_RouletteRoom_EventScript_AskReadyForBrain)
 }
