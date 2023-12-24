@@ -100,6 +100,7 @@ static bool32 BattleArcade_DoGiveBP(void);
 static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 static bool32 BattleArcade_DoGiveBP(void);
+static void FillFrontierTrainerParties(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -391,6 +392,7 @@ static void HandleGameBoardResult(void)
     u32 event = GenerateSetEvent();
     u32 impact = GetSetImpactSide(event);
 
+    FillFrontierTrainerParties();
     gSpecialVar_Result = DoGameBoardResult(event, impact);
 }
 
@@ -575,15 +577,35 @@ static void GetBrainStatus(void)
     return;
 }
 
+static bool32 IsOpponentImpacted(void)
+{
+    return (VarGet(VAR_ARCADE_IMPACT_SIDE) == ARCADE_IMPACT_OPPONENT);
+}
+
 static void GetBrainIntroSpeech(void)
 {
     //return one string for silver fight and otherwise the gold string
     return;
 }
 
-void DoSpecialRouletteTrainerBattle(void)
+void SetBattleTypeFlags(void)
 {
     gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
+    switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
+    {
+        case FRONTIER_MODE_SINGLES:
+            break;
+        case FRONTIER_MODE_DOUBLES:
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+            break;
+        case FRONTIER_MODE_MULTIS:
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
+            break;
+    }
+}
+
+void FillFrontierTrainerParties(void)
+{
     switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
     {
         case FRONTIER_MODE_SINGLES:
@@ -591,22 +613,18 @@ void DoSpecialRouletteTrainerBattle(void)
             break;
         case FRONTIER_MODE_DOUBLES:
             FillFrontierTrainerParty(FRONTIER_DOUBLES_PARTY_SIZE);
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
             break;
         case FRONTIER_MODE_MULTIS:
             FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
             gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
             FillPartnerParty(gPartnerTrainerId);
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
             break;
     }
+}
 
-    if (VarGet(VAR_ARCADE_IMPACT_SIDE) == ARCADE_IMPACT_OPPONENT)
-    {
-        DebugPrintf("shit");
-        DoGameBoardResult(VarGet(VAR_ARCADE_EVENT), ARCADE_IMPACT_OPPONENT);
-    }
-
+void DoSpecialRouletteTrainerBattle(void)
+{
+    SetBattleTypeFlags();
     CreateTask(Task_StartBattleAfterTransition, 1);
     PlayMapChosenOrBattleBGM(0);
     BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
