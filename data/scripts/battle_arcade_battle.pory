@@ -104,7 +104,6 @@ script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 {
     call(BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber)
     tower_setopponent
-    arcade_handlegameresult // Debug
     call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)

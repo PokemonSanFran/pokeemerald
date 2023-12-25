@@ -68,4 +68,8 @@
 #define ARCADE_IMPACT_OPPONENT                 1
 #define ARCADE_IMPACT_ALL                      2
 
+#define ARCADE_SPEED_DEFAULT                   10
+#define ARCADE_SPEED_INCREMENT                 1
+#define ARCADE_SPEED_DECREMENT                 2
+
 #endif //GUARD_CONSTANTS_ARCADE_H

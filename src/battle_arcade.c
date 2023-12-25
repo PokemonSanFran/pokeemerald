@@ -27,6 +27,7 @@
 #include "battle_dome.h"
 #include "random.h"
 #include "battle_transition.h"
+#include "battle_pike.h"
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -83,6 +84,7 @@ static bool32 BattleArcade_DoParalyze(u32);
 static bool32 BattleArcade_DoBurn(u32);
 static bool32 BattleArcade_DoSleep(u32);
 static bool32 BattleArcade_DoFreeze(u32);
+static bool32 BattleArcade_DoStatusAilment(u32, u32);
 static bool32 BattleArcade_DoGiveBerry(u32);
 static bool32 BattleArcade_DoGiveItem(u32);
 static bool32 BattleArcade_DoLevelUp(u32);
@@ -382,7 +384,7 @@ static u32 GetImpactSide(u32 event)
 static u32 GenerateSetEvent(void)
 {
     u32 event = Random() % ARCADE_EVENT_COUNT;
-    event = ARCADE_EVENT_LOWER_HP; //Debug
+    event = ARCADE_EVENT_FREEZE; //Debug
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
 }
@@ -479,30 +481,85 @@ static bool32 BattleArcade_DoLowerHP(u32 impact)
         reducedHP = maxHP - (maxHP * 200 / 1000);
         SetMonData(&party[i], MON_DATA_HP, &reducedHP);
     }
-
     return TRUE;
 }
 
 static bool32 BattleArcade_DoPoison(u32 impact)
 {
-	return TRUE;
+	return BattleArcade_DoStatusAilment(impact, STATUS1_POISON);
 }
 static bool32 BattleArcade_DoParalyze(u32 impact)
 {
-	return TRUE;
+	return BattleArcade_DoStatusAilment(impact, STATUS1_PARALYSIS);
 }
 static bool32 BattleArcade_DoBurn(u32 impact)
 {
-	return TRUE;
+	return BattleArcade_DoStatusAilment(impact, STATUS1_BURN);
 }
 static bool32 BattleArcade_DoSleep(u32 impact)
 {
-	return TRUE;
+	return BattleArcade_DoStatusAilment(impact, STATUS1_SLEEP);
 }
 static bool32 BattleArcade_DoFreeze(u32 impact)
 {
-	return TRUE;
+	return BattleArcade_DoStatusAilment(impact, STATUS1_FREEZE);
 }
+
+static bool32 IsStatusSleepOrFreeze(u32 status)
+{
+    return ((status == STATUS1_FREEZE) || (status == STATUS1_SLEEP));
+}
+
+static void InitalizePartyIndex(u32 *newIndex)
+{
+    u32 i;
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+        newIndex[i] = i;
+}
+
+static void ShufflePartyIndex(u32 *newIndex)
+{
+    u32 i, temp;
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+        SWAP(newIndex[i], newIndex[Random() % (i +1)], temp);
+}
+
+static bool32 BattleArcade_DoStatusAilment(u32 impact, u32 status)
+{
+    struct Pokemon *party = LoadSideParty(impact);
+    struct Pokemon *mon;
+    u32 i, impactedCount = 0, species;
+    u32 newIndex[MAX_FRONTIER_PARTY_SIZE];
+
+    InitalizePartyIndex(newIndex);
+
+    if (IsStatusSleepOrFreeze(status))
+        ShufflePartyIndex(newIndex);
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        mon = &party[newIndex[i]];
+
+        if (!GetMonData(mon,MON_DATA_SANITY_HAS_SPECIES))
+            continue;
+
+        if (DoesAbilityPreventStatus(mon, status))
+            continue;
+
+        if (DoesTypePreventStatus(GetMonData(mon,MON_DATA_SPECIES), status))
+            continue;
+
+        SetMonData(mon, MON_DATA_STATUS, &status);
+        impactedCount++;
+
+        if (!IsStatusSleepOrFreeze(status))
+            continue;
+
+        return TRUE;
+    }
+    return (impactedCount > 0);
+}
+
 static bool32 BattleArcade_DoGiveBerry(u32 impact)
 {
 	return TRUE;
@@ -513,7 +570,8 @@ static bool32 BattleArcade_DoGiveItem(u32 impact)
 }
 static bool32 BattleArcade_DoLevelUp(u32 impact)
 {
-	return TRUE;
+    // ARCADE TOOD this should not appear if at level 100
+
 }
 static bool32 BattleArcade_DoSun(void)
 {
