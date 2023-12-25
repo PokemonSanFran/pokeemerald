@@ -373,7 +373,7 @@ u32 GetSetImpactSide(u32 event)
 
 static u32 GetImpactSide(u32 event)
 {
-    return ARCADE_IMPACT_OPPONENT; // Debug
+    return ARCADE_IMPACT_PLAYER; // Debug
 
     if (event >= ARCADE_EVENT_FIELD_START)
         return ARCADE_IMPACT_ALL;
