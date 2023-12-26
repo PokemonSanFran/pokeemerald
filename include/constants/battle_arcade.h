@@ -72,4 +72,15 @@
 #define ARCADE_SPEED_INCREMENT                 1
 #define ARCADE_SPEED_DECREMENT                 2
 
+#define ARCADE_BERRY_GROUP_1                   0
+#define ARCADE_BERRY_GROUP_2                   1
+#define ARCADE_BERRY_GROUP_3                   2
+#define ARCADE_BERRY_GROUP_COUNT               3
+#define ARCADE_BERRY_GROUP_SIZE                10
+
+#define ARCADE_ITEM_GROUP_1                    0
+#define ARCADE_ITEM_GROUP_2                    1
+#define ARCADE_ITEM_GROUP_3                    2
+#define ARCADE_ITEM_GROUP_COUNT                3
+
 #endif //GUARD_CONSTANTS_ARCADE_H

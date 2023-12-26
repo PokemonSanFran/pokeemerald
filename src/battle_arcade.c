@@ -46,6 +46,7 @@ static void SaveCurrentStreak(void);
 static void SaveCurrentParty(u32, u8);
 static void SaveArcadeChallenge(void);
 static void GetOpponentIntroSpeech(void);
+static bool32 BattleArcade_DoGive(u32 impact, u32 type);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
 static u32 GetImpactSide(u32 event);
@@ -76,7 +77,7 @@ static void ArcadePrintBestStreak(u8, u8, u8);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
 static void SaveCurrentWinStreak(void);
 u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode);
-static void BufferGiveString(u32);
+static void BufferGiveString(u32, u32);
 static bool32 DoGameBoardResult(u32, u32);
 static bool32 BattleArcade_DoLowerHP(u32);
 static bool32 BattleArcade_DoPoison(u32);
@@ -101,7 +102,6 @@ static bool32 BattleArcade_DoRandom(void);
 static bool32 BattleArcade_DoGiveBP(void);
 static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
-static bool32 BattleArcade_DoGiveBP(void);
 static void FillFrontierTrainerParties(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
@@ -384,7 +384,7 @@ static u32 GetImpactSide(u32 event)
 static u32 GenerateSetEvent(void)
 {
     u32 event = Random() % ARCADE_EVENT_COUNT;
-    event = ARCADE_EVENT_FREEZE; //Debug
+    event = ARCADE_EVENT_GIVE_BERRY; //Debug
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
 }
@@ -396,24 +396,6 @@ static void HandleGameBoardResult(void)
 
     FillFrontierTrainerParties();
     gSpecialVar_Result = DoGameBoardResult(event, impact);
-}
-
-static void BufferGameBerryName(void)
-{
-    CopyItemName(ITEM_APICOT_BERRY, gStringVar3);
-}
-
-static void BufferGameItemName(void)
-{
-    CopyItemName(ITEM_LEFTOVERS, gStringVar3);
-}
-
-static void BufferGiveString(u32 event)
-{
-    if (event == ARCADE_EVENT_GIVE_BERRY)
-        BufferGameBerryName();
-    else
-        BufferGameItemName();
 }
 
 static bool32 DoGameBoardResult(u32 event, u32 impact)
@@ -445,7 +427,6 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         default:
         case ARCADE_EVENT_NO_EVENT: return BattleArcade_DoNoEvent();
     }
-    BufferGiveString(event);
     return TRUE;
 }
 
@@ -560,19 +541,116 @@ static bool32 BattleArcade_DoStatusAilment(u32 impact, u32 status)
     return (impactedCount > 0);
 }
 
+static void BufferGiveString(u32 event, u32 item)
+{
+    CopyItemName(item,gStringVar3);
+}
+
 static bool32 BattleArcade_DoGiveBerry(u32 impact)
 {
-	return TRUE;
+    return BattleArcade_DoGive(impact, ARCADE_EVENT_GIVE_BERRY);
 }
+
 static bool32 BattleArcade_DoGiveItem(u32 impact)
 {
-	return TRUE;
+    return BattleArcade_DoGive(impact, ARCADE_EVENT_GIVE_ITEM);
 }
+
+static u32 GetGroupIdFromWinStreak(void)
+{
+    u32 challengeNum = GetCurrentBattleArcadeWinStreak(FRONTIER_SAVEDATA.lvlMode, VarGet(VAR_FRONTIER_BATTLE_MODE)) / FRONTIER_STAGES_PER_CHALLENGE;
+
+    if (challengeNum < 3)
+        return ARCADE_BERRY_GROUP_1;
+    else if (challengeNum > 6)
+        return ARCADE_BERRY_GROUP_3;
+    else
+        return ARCADE_BERRY_GROUP_2;
+}
+
+static u32 BattleArcade_GenerateBerry(void)
+{
+    u32 berry = ITEM_NONE;
+    u32 groupId = GetGroupIdFromWinStreak();
+
+    const u32 gameBerries[ARCADE_BERRY_GROUP_COUNT][ARCADE_BERRY_GROUP_SIZE] = {
+        [ARCADE_BERRY_GROUP_1] =
+        {
+            ITEM_CHERI_BERRY,
+            ITEM_CHESTO_BERRY,
+            ITEM_PECHA_BERRY,
+            ITEM_RAWST_BERRY,
+            ITEM_ASPEAR_BERRY,
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+        },
+        [ARCADE_BERRY_GROUP_2] =
+        {
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+        },
+        [ARCADE_BERRY_GROUP_3] =
+        {
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+            ITEM_LIECHI_BERRY,
+            ITEM_GANLON_BERRY,
+            ITEM_SALAC_BERRY,
+            ITEM_PETAYA_BERRY,
+            ITEM_APICOT_BERRY,
+            ITEM_LANSAT_BERRY,
+            ITEM_STARF_BERRY,
+        },
+    };
+
+    do
+    {
+        berry = gameBerries[groupId][Random() % ARCADE_BERRY_GROUP_COUNT];
+    } while (berry == ITEM_NONE);
+
+    return berry;
+}
+
+static u32 BattleArcade_GenerateItem(void)
+{
+    return ITEM_LEFTOVERS;
+}
+
+static u32 BattleArcade_GenerateGive(u32 type)
+{
+    if (type == ARCADE_EVENT_GIVE_ITEM)
+        return BattleArcade_GenerateItem();
+    else
+        return BattleArcade_GenerateBerry();
+}
+
+static bool32 BattleArcade_DoGive(u32 impact, u32 type)
+{
+    u32 i;
+    u32 item = BattleArcade_GenerateGive(type);
+    struct Pokemon *party = LoadSideParty(impact);
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+            break;
+
+        SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
+    }
+
+    BufferGiveString(type,item);
+    return TRUE;
+}
+
 static bool32 BattleArcade_DoLevelUp(u32 impact)
 {
     // ARCADE TOOD this should not appear if at level 100
 
 }
+
 static bool32 BattleArcade_DoSun(void)
 {
 	return TRUE;

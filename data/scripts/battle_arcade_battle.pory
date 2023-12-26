@@ -8,7 +8,6 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
     setvar(VAR_TEMP_0, 2)
     call(BattleArcade_BattleRoom_EventScript_MCFaceCrowd)
     msgbox(BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade,MSGBOX_DEFAULT)
-    arcade_takeplayerhelditems
     msgbox(BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
     goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
 }
@@ -39,6 +38,7 @@ script BattleArcade_RouletteRoom_EventScript_PlayGameBoard
 
 script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
+    arcade_takeplayerhelditems
     arcade_takeenemyhelditems
     arcade_handlegameresult
     //bufferspeciesname(STR_VAR_1,SPECIES_PIKACHU)

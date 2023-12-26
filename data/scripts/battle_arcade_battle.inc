@@ -6,51 +6,51 @@ BattleFrontier_RouletteRoom_EventScript_BeginChallenge::
 # 10 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade, MSGBOX_DEFAULT
 # 11 "data/scripts/battle_arcade_battle.pory"
-	arcade_takeplayerhelditems
-# 12 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn, MSGBOX_DEFAULT
-# 13 "data/scripts/battle_arcade_battle.pory"
+# 12 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber::
-# 18 "data/scripts/battle_arcade_battle.pory"
+# 17 "data/scripts/battle_arcade_battle.pory"
 	frontier_get FRONTIER_DATA_BATTLE_NUM
-# 19 "data/scripts/battle_arcade_battle.pory"
+# 18 "data/scripts/battle_arcade_battle.pory"
 	addvar VAR_RESULT, 1
-# 20 "data/scripts/battle_arcade_battle.pory"
+# 19 "data/scripts/battle_arcade_battle.pory"
 	buffernumberstring STR_VAR_1, VAR_RESULT
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber::
-# 25 "data/scripts/battle_arcade_battle.pory"
+# 24 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber
-# 26 "data/scripts/battle_arcade_battle.pory"
+# 25 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_GameNoComeOn, MSGBOX_DEFAULT
-# 27 "data/scripts/battle_arcade_battle.pory"
+# 26 "data/scripts/battle_arcade_battle.pory"
 	closemessage
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_PlayGameBoard::
-# 32 "data/scripts/battle_arcade_battle.pory"
+# 31 "data/scripts/battle_arcade_battle.pory"
 	additem ITEM_COIN_CASE, 1
-# 33 "data/scripts/battle_arcade_battle.pory"
+# 32 "data/scripts/battle_arcade_battle.pory"
 	addcoins 50
-# 34 "data/scripts/battle_arcade_battle.pory"
+# 33 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_WithoutFurtherAdo, MSGBOX_DEFAULT
-# 35 "data/scripts/battle_arcade_battle.pory"
+# 34 "data/scripts/battle_arcade_battle.pory"
 	closemessage
-# 36 "data/scripts/battle_arcade_battle.pory"
+# 35 "data/scripts/battle_arcade_battle.pory"
 	specialvar VAR_RESULT, GetSlotMachineId
-# 37 "data/scripts/battle_arcade_battle.pory"
+# 36 "data/scripts/battle_arcade_battle.pory"
 	playslotmachine VAR_RESULT
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_HandleGameResults::
+# 41 "data/scripts/battle_arcade_battle.pory"
+	arcade_takeplayerhelditems
 # 42 "data/scripts/battle_arcade_battle.pory"
 	arcade_takeenemyhelditems
 # 43 "data/scripts/battle_arcade_battle.pory"
