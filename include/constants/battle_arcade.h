@@ -82,5 +82,6 @@
 #define ARCADE_ITEM_GROUP_2                    1
 #define ARCADE_ITEM_GROUP_3                    2
 #define ARCADE_ITEM_GROUP_COUNT                3
+#define ARCADE_ITEM_GROUP_SIZE                10
 
 #endif //GUARD_CONSTANTS_ARCADE_H

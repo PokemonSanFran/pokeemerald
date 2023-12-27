@@ -568,12 +568,18 @@ static u32 GetGroupIdFromWinStreak(void)
         return ARCADE_BERRY_GROUP_2;
 }
 
-static u32 BattleArcade_GenerateBerry(void)
+static u32 GetCategorySize(u32 type)
 {
-    u32 berry = ITEM_NONE;
-    u32 groupId = GetGroupIdFromWinStreak();
+    if (type == ARCADE_EVENT_GIVE_ITEM)
+        return ARCADE_ITEM_GROUP_SIZE;
+    else
+        return ARCADE_BERRY_GROUP_SIZE;
+}
 
-    const u32 gameBerries[ARCADE_BERRY_GROUP_COUNT][ARCADE_BERRY_GROUP_SIZE] = {
+static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
+{
+    static const u32 gameBerries[ARCADE_BERRY_GROUP_COUNT][ARCADE_BERRY_GROUP_SIZE] =
+    {
         [ARCADE_BERRY_GROUP_1] =
         {
             ITEM_CHERI_BERRY,
@@ -606,25 +612,56 @@ static u32 BattleArcade_GenerateBerry(void)
         },
     };
 
-    do
+    static const u32 gameItems[ARCADE_ITEM_GROUP_COUNT][ARCADE_ITEM_GROUP_SIZE] =
     {
-        berry = gameBerries[groupId][Random() % ARCADE_BERRY_GROUP_COUNT];
-    } while (berry == ITEM_NONE);
+        [ARCADE_ITEM_GROUP_1] =
+        {
+            ITEM_CHERI_BERRY,
+            ITEM_CHESTO_BERRY,
+            ITEM_PECHA_BERRY,
+            ITEM_RAWST_BERRY,
+            ITEM_ASPEAR_BERRY,
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+        },
+        [ARCADE_ITEM_GROUP_2] =
+        {
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+        },
+        [ARCADE_ITEM_GROUP_3] =
+        {
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+            ITEM_LIECHI_BERRY,
+            ITEM_GANLON_BERRY,
+            ITEM_SALAC_BERRY,
+            ITEM_PETAYA_BERRY,
+            ITEM_APICOT_BERRY,
+            ITEM_LANSAT_BERRY,
+            ITEM_STARF_BERRY,
+        },
+    };
 
-    return berry;
-}
-
-static u32 BattleArcade_GenerateItem(void)
-{
-    return ITEM_LEFTOVERS;
+    return (type == ARCADE_EVENT_GIVE_ITEM) ? gameItems : gameBerries;
 }
 
 static u32 BattleArcade_GenerateGive(u32 type)
 {
-    if (type == ARCADE_EVENT_GIVE_ITEM)
-        return BattleArcade_GenerateItem();
-    else
-        return BattleArcade_GenerateBerry();
+    u32 heldItem = ITEM_NONE;
+    u32 maxGroupSize = GetCategorySize(type);
+    u32 groupId = GetGroupIdFromWinStreak();
+    const u32 (*itemGroups)[ARCADE_BERRY_GROUP_SIZE] = GetCategoryGroups(type);
+
+    do
+    {
+        heldItem = itemGroups[groupId][Random() % maxGroupSize];
+    } while (heldItem == ITEM_NONE);
+
+    return heldItem;
 }
 
 static bool32 BattleArcade_DoGive(u32 impact, u32 type)
