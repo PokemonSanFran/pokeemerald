@@ -378,7 +378,7 @@ u32 GetSetImpactSide(u32 event)
 
 static u32 GetImpactSide(u32 event)
 {
-    return ARCADE_IMPACT_OPPONENT; // Debug
+    return ARCADE_IMPACT_PLAYER; // Debug
 
     if (event >= ARCADE_EVENT_FIELD_START)
         return ARCADE_IMPACT_ALL;
@@ -389,11 +389,7 @@ static u32 GetImpactSide(u32 event)
 static u32 GenerateSetEvent(void)
 {
     u32 event = Random() % ARCADE_EVENT_COUNT;
-    //event = ARCADE_EVENT_GIVE_BERRY; //Debug
-    if (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_GIVE_BERRY) // debug
-        event = ARCADE_EVENT_SUN; // debug
-    else
-        event = ARCADE_EVENT_GIVE_BERRY; // Debug
+    event = ARCADE_EVENT_LEVEL_UP; //Debug
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
 }
@@ -730,7 +726,6 @@ static void ResetGiveItemVar(void)
 
 static void BattleArcade_GiveEnemyItems(void)
 {
-    DebugPrintf("ping");
     BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, VarGet(VAR_ARCADE_GIVE_HOLD_ITEM));
 }
 
@@ -754,8 +749,24 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 type)
 
 static bool32 BattleArcade_DoLevelUp(u32 impact)
 {
-    // ARCADE TOOD this should not appear if at level 100
+    u32 i, newLevel;
+    struct Pokemon *party = LoadSideParty(impact);
 
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
+            break;
+
+        newLevel = (GetMonData(&party[i], MON_DATA_LEVEL)) + ARCADE_EVENT_LEVEL_INCREASE;
+
+        if (newLevel >= MAX_LEVEL)
+            newLevel = MAX_LEVEL;
+
+        SetMonData(&party[i], MON_DATA_LEVEL, &newLevel);
+        CalculateMonStats(&party[i]);
+    }
+    return TRUE;
+    // ARCADE TODO this should not appear if at level 100
 }
 
 static bool32 BattleArcade_DoSun(void)
