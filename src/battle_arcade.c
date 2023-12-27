@@ -49,6 +49,7 @@ static void GetOpponentIntroSpeech(void);
 static bool32 BattleArcade_DoGive(u32 impact, u32 type);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
+static void ResetGiveItemVar(void);
 static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
@@ -56,6 +57,7 @@ static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
 static void CalculateGiveChallengeBattlePoints(void);
 static u32 CountNumberTypeWin(u8);
+static void BattleArcade_GiveEnemyItems(void);
 static void CheckArcadeSymbol(void);
 static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
@@ -65,6 +67,7 @@ static void HandleGameBoardResult(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
 static void BufferImpactedName(u32 impact);
+static void HandleGiveItemVar(u32 impact, u32 type);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
 static void ShowBattleArcadeTypeMonsWindow(void);
@@ -74,10 +77,11 @@ static void ArcadePrintTypesMastered(u8, u8, u8);
 static u32 GetBestTypeWinAmount(u8);
 static const u8 *GetBestTypeWinType(u8);
 static void ArcadePrintBestStreak(u8, u8, u8);
+static bool32 IsGiveItemVarSet(void);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
 static void SaveCurrentWinStreak(void);
 u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode);
-static void BufferGiveString(u32, u32);
+static void BufferGiveString(u32);
 static bool32 DoGameBoardResult(u32, u32);
 static bool32 BattleArcade_DoLowerHP(u32);
 static bool32 BattleArcade_DoPoison(u32);
@@ -160,6 +164,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
+    ResetGiveItemVar();
     ResetFrontierTrainerIds();
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
@@ -373,7 +378,7 @@ u32 GetSetImpactSide(u32 event)
 
 static u32 GetImpactSide(u32 event)
 {
-    return ARCADE_IMPACT_PLAYER; // Debug
+    return ARCADE_IMPACT_OPPONENT; // Debug
 
     if (event >= ARCADE_EVENT_FIELD_START)
         return ARCADE_IMPACT_ALL;
@@ -384,9 +389,40 @@ static u32 GetImpactSide(u32 event)
 static u32 GenerateSetEvent(void)
 {
     u32 event = Random() % ARCADE_EVENT_COUNT;
-    event = ARCADE_EVENT_GIVE_BERRY; //Debug
+    //event = ARCADE_EVENT_GIVE_BERRY; //Debug
+    if (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_GIVE_BERRY) // debug
+        event = ARCADE_EVENT_SUN; // debug
+    else
+        event = ARCADE_EVENT_GIVE_BERRY; // Debug
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
+}
+
+static bool32 IsEventBattle(u32 event)
+{
+    return (event != ARCADE_EVENT_NO_BATTLE);
+}
+
+static bool32 DoesEventGiveItems(u32 event)
+{
+    if (!IsEventBattle(event))
+        return FALSE;
+
+    if ((event != ARCADE_EVENT_GIVE_BERRY) && (event != ARCADE_EVENT_GIVE_ITEM))
+        return FALSE;
+
+    return TRUE;
+}
+
+static bool32 ShouldEnemyGetItemBeforeBattle(u32 event)
+{
+    if (!IsGiveItemVarSet())
+        return FALSE;
+
+    if (DoesEventGiveItems(event))
+        return FALSE;
+
+    return TRUE;
 }
 
 static void HandleGameBoardResult(void)
@@ -395,6 +431,9 @@ static void HandleGameBoardResult(void)
     u32 impact = GetSetImpactSide(event);
 
     FillFrontierTrainerParties();
+    if (ShouldEnemyGetItemBeforeBattle(event))
+        BattleArcade_GiveEnemyItems();
+
     gSpecialVar_Result = DoGameBoardResult(event, impact);
 }
 
@@ -541,18 +580,20 @@ static bool32 BattleArcade_DoStatusAilment(u32 impact, u32 status)
     return (impactedCount > 0);
 }
 
-static void BufferGiveString(u32 event, u32 item)
+static void BufferGiveString(u32 item)
 {
     CopyItemName(item,gStringVar3);
 }
 
 static bool32 BattleArcade_DoGiveBerry(u32 impact)
 {
+    HandleGiveItemVar(impact, ARCADE_EVENT_GIVE_BERRY);
     return BattleArcade_DoGive(impact, ARCADE_EVENT_GIVE_BERRY);
 }
 
 static bool32 BattleArcade_DoGiveItem(u32 impact)
 {
+    HandleGiveItemVar(impact, ARCADE_EVENT_GIVE_ITEM);
     return BattleArcade_DoGive(impact, ARCADE_EVENT_GIVE_ITEM);
 }
 
@@ -664,6 +705,35 @@ static u32 BattleArcade_GenerateGive(u32 type)
     return heldItem;
 }
 
+static bool32 IsGiveItemVarSet(void)
+{
+    return (VarGet(VAR_ARCADE_GIVE_HOLD_ITEM));
+}
+
+static bool32 IsImpactedSideOpponent(u32 impact)
+{
+    return (impact == ARCADE_IMPACT_OPPONENT);
+}
+
+static void HandleGiveItemVar(u32 impact, u32 type)
+{
+    if (!IsImpactedSideOpponent(impact))
+        return;
+
+    VarSet(VAR_ARCADE_GIVE_HOLD_ITEM,type);
+}
+
+static void ResetGiveItemVar(void)
+{
+    VarSet(VAR_ARCADE_GIVE_HOLD_ITEM,ARCADE_ENEMY_HOLD_NOTHING);
+}
+
+static void BattleArcade_GiveEnemyItems(void)
+{
+    DebugPrintf("ping");
+    BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, VarGet(VAR_ARCADE_GIVE_HOLD_ITEM));
+}
+
 static bool32 BattleArcade_DoGive(u32 impact, u32 type)
 {
     u32 i;
@@ -678,7 +748,7 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 type)
         SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
     }
 
-    BufferGiveString(type,item);
+    BufferGiveString(item);
     return TRUE;
 }
 

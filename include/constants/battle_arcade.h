@@ -84,4 +84,8 @@
 #define ARCADE_ITEM_GROUP_COUNT                3
 #define ARCADE_ITEM_GROUP_SIZE                10
 
+#define ARCADE_ENEMY_HOLD_NOTHING              0
+#define ARCADE_ENEMY_HOLD_BERRY                ARCADE_EVENT_GIVE_BERRY
+#define ARCADE_ENEMY_HOLD_ITEM                 ARCADE_EVENT_GIVE_ITEM
+
 #endif //GUARD_CONSTANTS_ARCADE_H
