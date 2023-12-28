@@ -51,7 +51,7 @@ static void GetOpponentIntroSpeech(void);
 static bool32 BattleArcade_DoGive(u32 impact, u32 type);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
-static void ResetGiveItemVar(void);
+static void ResetGiveItemVars(void);
 static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
@@ -171,7 +171,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
-    ResetGiveItemVar();
+    ResetGiveItemVars();
     ResetRouletteSpeed();
     ResetFrontierTrainerIds();
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
@@ -738,9 +738,10 @@ static void HandleGiveItemVar(u32 impact, u32 type)
     VarSet(VAR_ARCADE_GIVE_HOLD_ITEM,type);
 }
 
-static void ResetGiveItemVar(void)
+static void ResetGiveItemVars(void)
 {
-    VarSet(VAR_ARCADE_GIVE_HOLD_ITEM,ARCADE_ENEMY_HOLD_NOTHING);
+    VarSet(VAR_ARCADE_GIVE_ENEMY_HOLD_ITEM,ITEM_NONE);
+    VarSet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM,ITEM_NONE);
 }
 
 static void BattleArcade_GiveEnemyItems(void)
@@ -1024,6 +1025,7 @@ static void ResetWeatherPostBattle(void)
 
 void BattleArcade_PostBattleEventCleanup(void)
 {
+    RefreshPlayerItems():
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
