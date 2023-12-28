@@ -71,11 +71,18 @@
 #define ARCADE_IMPACT_OPPONENT                 1
 #define ARCADE_IMPACT_ALL                      2
 
-#define ARCADE_SPEED_DEFAULT                   10
-#define ARCADE_SPEED_INCREMENT                 1
-#define ARCADE_SPEED_DECREMENT                 2
-#define ARCADE_SPEED_MIN                       1
-#define ARCADE_SPEED_MAX                       20
+#define ARCADE_SPEED_LEVEL_0                   0
+#define ARCADE_SPEED_LEVEL_1                   1
+#define ARCADE_SPEED_LEVEL_2                   2
+#define ARCADE_SPEED_LEVEL_3                   3
+#define ARCADE_SPEED_LEVEL_4                   4
+#define ARCADE_SPEED_LEVEL_5                   5
+#define ARCADE_SPEED_LEVEL_6                   6
+#define ARCADE_SPEED_LEVEL_7                   7
+
+#define ARCADE_SPEED_DEFAULT                   ARCADE_SPEED_LEVEL_3
+#define ARCADE_SPEED_LEVEL_MIN                 ARCADE_SPEED_LEVEL_0
+#define ARCADE_SPEED_LEVEL_MAX                 ARCADE_SPEED_LEVEL_7
 
 #define ARCADE_BERRY_GROUP_1                   0
 #define ARCADE_BERRY_GROUP_2                   1

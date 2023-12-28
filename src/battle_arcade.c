@@ -111,6 +111,7 @@ static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 static void FillFrontierTrainerParties(void);
 static void ResetLevelsToOriginal(void);
+void ResetRouletteSpeed(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -857,16 +858,17 @@ static bool32 BattleArcade_DoSwap(void)
     return TRUE;
 }
 
+/*
 static bool32 BattleArcade_ChangeSpeed(u32 mode)
 {
-    u32 currentSpeed = VarGet(VAR_ARCADE_SPEED_CURRENT);
+    u32 currentSpeed = VarGet(VAR_ARCADE_CURSOR_SPEED);
 
     if (mode == ARCADE_EVENT_SPEED_DOWN)
     {
         if (ARCADE_SPEED_DECREMENT > currentSpeed)
         {
-            VarSet(VAR_ARCADE_SPEED_CURRENT,ARCADE_SPEED_MIN);
-    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_SPEED_CURRENT));
+            VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_MIN);
+    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_CURSOR_SPEED));
             return TRUE;
         }
     }
@@ -874,19 +876,40 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
     {
         if ((ARCADE_SPEED_INCREMENT + currentSpeed) > ARCADE_SPEED_MAX)
         {
-            VarSet(VAR_ARCADE_SPEED_CURRENT,ARCADE_SPEED_MAX);
-    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_SPEED_CURRENT));
+            VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_MAX);
+    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_CURSOR_SPEED));
             return TRUE;
         }
     }
 
     if (mode == ARCADE_EVENT_SPEED_UP)
-        VarSet(VAR_ARCADE_SPEED_CURRENT,currentSpeed + ARCADE_SPEED_INCREMENT);
+        VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed + ARCADE_SPEED_INCREMENT);
     else
-        VarSet(VAR_ARCADE_SPEED_CURRENT,currentSpeed + ARCADE_SPEED_DECREMENT);
+        VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed + ARCADE_SPEED_DECREMENT);
 
 
-    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_SPEED_CURRENT));
+    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_CURSOR_SPEED));
+    return TRUE;
+}
+*/
+
+static bool32 BattleArcade_ChangeSpeed(u32 mode)
+{
+    u32 currentSpeed = VarGet(VAR_ARCADE_CURSOR_SPEED);
+    DebugPrintf("speed at beginning: %d",currentSpeed);
+
+    if ((mode == ARCADE_EVENT_SPEED_UP) && (currentSpeed == ARCADE_SPEED_LEVEL_7))
+        return TRUE;
+
+    if ((mode == ARCADE_EVENT_SPEED_DOWN) && (currentSpeed == ARCADE_SPEED_LEVEL_0))
+        return TRUE;
+
+    if (mode == ARCADE_EVENT_SPEED_UP)
+        VarSet(VAR_ARCADE_CURSOR_SPEED,++currentSpeed);
+    else
+        VarSet(VAR_ARCADE_CURSOR_SPEED,--currentSpeed);
+
+    DebugPrintf("speed at end: %d",currentSpeed);
     return TRUE;
 }
 
@@ -1039,7 +1062,7 @@ void BattleArcade_PostBattleEventCleanup(void)
 
 void ResetRouletteSpeed(void)
 {
-    VarSet(VAR_ARCADE_SPEED_CURRENT,ARCADE_SPEED_DEFAULT);
+    VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_DEFAULT);
 }
 
 // graphical set up off board
