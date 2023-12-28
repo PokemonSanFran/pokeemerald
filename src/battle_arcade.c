@@ -106,7 +106,8 @@ static bool32 BattleArcade_DoSwap(void);
 static bool32 BattleArcade_DoSpeedUp(void);
 static bool32 BattleArcade_DoSpeedDown(void);
 static bool32 BattleArcade_DoRandom(void);
-static bool32 BattleArcade_DoGiveBP(void);
+static bool32 BattleArcade_DoGiveBPSmall(void);
+static bool32 BattleArcade_DoGiveBPBig(void);
 static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 static void FillFrontierTrainerParties(void);
@@ -406,7 +407,7 @@ static u32 GenerateSetEvent(void)
         event = ARCADE_EVENT_SLEEP;
     else
     */
-        event = ARCADE_EVENT_SPEED_UP; //Debug
+        event = ARCADE_EVENT_NO_BATTLE; //Debug
 
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
@@ -474,8 +475,8 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
         case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
         case ARCADE_EVENT_RANDOM: return BattleArcade_DoRandom();
-        case ARCADE_EVENT_GIVE_BP_SMALL: return BattleArcade_DoGiveBP();
-        case ARCADE_EVENT_GIVE_BP_BIG: return BattleArcade_DoGiveBP();
+        case ARCADE_EVENT_GIVE_BP_SMALL: return BattleArcade_DoGiveBPSmall();
+        case ARCADE_EVENT_GIVE_BP_BIG: return BattleArcade_DoGiveBPBig();
         case ARCADE_EVENT_NO_BATTLE: return BattleArcade_DoNoBattle();
         default:
         case ARCADE_EVENT_NO_EVENT: return BattleArcade_DoNoEvent();
@@ -858,50 +859,12 @@ static bool32 BattleArcade_DoSwap(void)
     return TRUE;
 }
 
-/*
 static bool32 BattleArcade_ChangeSpeed(u32 mode)
 {
     u32 currentSpeed = VarGet(VAR_ARCADE_CURSOR_SPEED);
+    u32 boundarySpeed = (mode == ARCADE_EVENT_SPEED_UP) ? ARCADE_SPEED_LEVEL_7 : ARCADE_SPEED_LEVEL_0;
 
-    if (mode == ARCADE_EVENT_SPEED_DOWN)
-    {
-        if (ARCADE_SPEED_DECREMENT > currentSpeed)
-        {
-            VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_MIN);
-    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_CURSOR_SPEED));
-            return TRUE;
-        }
-    }
-    else
-    {
-        if ((ARCADE_SPEED_INCREMENT + currentSpeed) > ARCADE_SPEED_MAX)
-        {
-            VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_MAX);
-    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_CURSOR_SPEED));
-            return TRUE;
-        }
-    }
-
-    if (mode == ARCADE_EVENT_SPEED_UP)
-        VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed + ARCADE_SPEED_INCREMENT);
-    else
-        VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed + ARCADE_SPEED_DECREMENT);
-
-
-    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_CURSOR_SPEED));
-    return TRUE;
-}
-*/
-
-static bool32 BattleArcade_ChangeSpeed(u32 mode)
-{
-    u32 currentSpeed = VarGet(VAR_ARCADE_CURSOR_SPEED);
-    DebugPrintf("speed at beginning: %d",currentSpeed);
-
-    if ((mode == ARCADE_EVENT_SPEED_UP) && (currentSpeed == ARCADE_SPEED_LEVEL_7))
-        return TRUE;
-
-    if ((mode == ARCADE_EVENT_SPEED_DOWN) && (currentSpeed == ARCADE_SPEED_LEVEL_0))
+    if (currentSpeed == boundarySpeed)
         return TRUE;
 
     if (mode == ARCADE_EVENT_SPEED_UP)
@@ -909,7 +872,6 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
     else
         VarSet(VAR_ARCADE_CURSOR_SPEED,--currentSpeed);
 
-    DebugPrintf("speed at end: %d",currentSpeed);
     return TRUE;
 }
 
@@ -925,10 +887,17 @@ static bool32 BattleArcade_DoSpeedDown(void)
 }
 static bool32 BattleArcade_DoRandom(void)
 {
+    //ARCADE TODO can't exist until panel code exists, but should just randomly pick an effect for any that are actually possible in this round
 	return TRUE;
 }
-static bool32 BattleArcade_DoGiveBP(void)
+static bool32 BattleArcade_DoGiveBPSmall(void)
 {
+    GiveBattlePoints(ARCADE_BP_SMALL);
+	return TRUE;
+}
+static bool32 BattleArcade_DoGiveBPBig(void)
+{
+    GiveBattlePoints(ARCADE_BP_BIG);
 	return TRUE;
 }
 static bool32 BattleArcade_DoNoBattle(void)

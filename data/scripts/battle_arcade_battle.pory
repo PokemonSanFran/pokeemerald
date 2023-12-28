@@ -46,6 +46,7 @@ script BattleArcade_RouletteRoom_EventScript_HandleGameResults
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)
     call(BattleArcade_BattleRoom_EventScript_MoveMCBack)
+    call(BattleArcade_RouletteRoom_SkipBattle_Script)
 }
 
 script BattleArcade_RouletteRoom_AnnounceImpactString
@@ -58,6 +59,12 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
     {
         call(BattleArcade_RouletteRoom_AnnounceImpactString_Failure)
     }
+}
+
+script BattleArcade_RouletteRoom_SkipBattle_Script
+{
+    call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
+    goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
 }
 
 script BattleArcade_RouletteRoom_AnnounceImpactString_Success
