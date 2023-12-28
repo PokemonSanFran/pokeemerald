@@ -404,7 +404,7 @@ static u32 GenerateSetEvent(void)
         event = ARCADE_EVENT_SLEEP;
     else
     */
-        event = ARCADE_EVENT_LEVEL_UP; //Debug
+        event = ARCADE_EVENT_SWAP; //Debug
 
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
@@ -841,8 +841,21 @@ static bool32 BattleArcade_DoTrickRoom(void)
 }
 static bool32 BattleArcade_DoSwap(void)
 {
-	return TRUE;
+    u32 i;
+    struct Pokemon tempParty[MAX_FRONTIER_PARTY_SIZE];
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+            break;
+
+        CopyMon(&tempParty[i],&gPlayerParty[i],sizeof(gPlayerParty[i]));
+        CopyMon(&gPlayerParty[i],&gEnemyParty[i],sizeof(gEnemyParty[i]));
+        CopyMon(&gEnemyParty[i],&tempParty[i],sizeof(tempParty[i]));
+    }
+    return TRUE;
 }
+
 static bool32 BattleArcade_DoSpeedUp(void)
 {
 	return TRUE;
@@ -935,6 +948,11 @@ static bool32 IsEventLevelUp(void)
      return (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_LEVEL_UP);
 }
 
+static bool32 IsEventSwap(void)
+{
+     return (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_SWAP);
+}
+
 static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)
 {
     u32 i, newLevel;
@@ -963,22 +981,24 @@ static void ResetLevelsToOriginal(void)
     BattleArcade_ReturnPlayerPartyOriginalLevel();
 }
 
-void ReturnPartyToOwner(void)
+static void ReturnPartyToOwner(void)
 {
-    return;
+    if (!IsEventSwap())
+        return;
+    BattleArcade_DoSwap();
 }
 
 static void ResetWeatherPostBattle(void)
 {
     DoCurrentWeather();
-    ResetLevelsToOriginal();
+    SetSavedWeatherFromCurrMapHeader();
 }
 
 void BattleArcade_PostBattleEventCleanup(void)
 {
-    ResetWeatherPostBattle();
-    SetSavedWeatherFromCurrMapHeader();
+    ResetLevelsToOriginal();
     ReturnPartyToOwner();
+    ResetWeatherPostBattle();
 }
 
 // graphical set up off board
