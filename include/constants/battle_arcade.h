@@ -15,6 +15,7 @@
 #define ARCADE_FUNC_HANDLE_GAME_RESULT         11
 #define ARCADE_FUNC_CHECK_BRAIN_STATUS         12
 #define ARCADE_FUNC_GET_BRAIN_INTRO            13
+#define ARCADE_FUNC_EVENT_CLEAN_UP             14
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2
@@ -49,11 +50,13 @@
 #define ARCADE_EVENT_LEVEL_UP                  8
 #define ARCADE_EVENT_SUN                       9
 #define ARCADE_EVENT_FIELD_START               ARCADE_EVENT_SUN
+#define ARCADE_EVENT_WEATHER_START             ARCADE_EVENT_FIELD_START
 #define ARCADE_EVENT_RAIN                      10
 #define ARCADE_EVENT_SAND                      11
 #define ARCADE_EVENT_HAIL                      12
 #define ARCADE_EVENT_FOG                       13
 #define ARCADE_EVENT_TRICK_ROOM                14
+#define ARCADE_EVENT_WEATHER_END               ARCADE_EVENT_TRICK_ROOM
 #define ARCADE_EVENT_SWAP                      15
 #define ARCADE_EVENT_SPEED_UP                  16
 #define ARCADE_EVENT_SPEED_DOWN                17

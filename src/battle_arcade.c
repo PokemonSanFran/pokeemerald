@@ -28,6 +28,8 @@
 #include "random.h"
 #include "battle_transition.h"
 #include "battle_pike.h"
+#include "constants/weather.h"
+#include "field_weather.h"
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -66,6 +68,7 @@ static void TakeHeldItems(struct Pokemon *party);
 static void HandleGameBoardResult(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
+static void BattleArcade_PostBattleEventCleanup(void);
 static void BufferImpactedName(u32 impact);
 static void HandleGiveItemVar(u32 impact, u32 type);
 static void ShowBattleArcadeTypeWinsWindow(void);
@@ -107,6 +110,7 @@ static bool32 BattleArcade_DoGiveBP(void);
 static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 static void FillFrontierTrainerParties(void);
+static void ResetLevelsToOriginal(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -134,6 +138,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
     [ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
     [ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
+    [ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -378,7 +383,7 @@ u32 GetSetImpactSide(u32 event)
 
 static u32 GetImpactSide(u32 event)
 {
-    return ARCADE_IMPACT_PLAYER; // Debug
+    //return ARCADE_IMPACT_PLAYER; // Debug
 
     if (event >= ARCADE_EVENT_FIELD_START)
         return ARCADE_IMPACT_ALL;
@@ -388,8 +393,19 @@ static u32 GetImpactSide(u32 event)
 
 static u32 GenerateSetEvent(void)
 {
-    u32 event = Random() % ARCADE_EVENT_COUNT;
-    event = ARCADE_EVENT_LEVEL_UP; //Debug
+    u32 event;
+    do
+    {
+        event = Random() % ARCADE_EVENT_COUNT;
+    } while ((event == ARCADE_EVENT_TRICK_ROOM)||(event == ARCADE_EVENT_FOG));
+
+    /*
+    if (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_RAIN)
+        event = ARCADE_EVENT_SLEEP;
+    else
+    */
+        event = ARCADE_EVENT_LEVEL_UP; //Debug
+
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
 }
@@ -747,9 +763,31 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 type)
     return TRUE;
 }
 
+static u32 CalculateNewLevel(u32 origLevel)
+{
+    u32 newLevel = (origLevel + ARCADE_EVENT_LEVEL_INCREASE);
+    return (newLevel >= MAX_LEVEL) ? MAX_LEVEL : newLevel;
+}
+
+static void SaveLevelDifferentToSaveblock(u32 index, u32 origLevel, u32 newLevel)
+{
+    FRONTIER_SAVEDATA.arcadeLvlDiff[index] = (newLevel - origLevel);
+}
+
+static u32 GetLevelDifferentFromSaveblock(u32 index)
+{
+    return FRONTIER_SAVEDATA.arcadeLvlDiff[index];
+}
+
+static u32 CalculateAndSaveNewLevel(u32 index, u32 origLevel)
+{
+    SaveLevelDifferentToSaveblock(index,origLevel,CalculateNewLevel(origLevel));
+    return (origLevel + GetLevelDifferentFromSaveblock(index));
+}
+
 static bool32 BattleArcade_DoLevelUp(u32 impact)
 {
-    u32 i, newLevel;
+    u32 i, newLevel, oldLevel;
     struct Pokemon *party = LoadSideParty(impact);
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
@@ -757,36 +795,44 @@ static bool32 BattleArcade_DoLevelUp(u32 impact)
         if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
             break;
 
-        newLevel = (GetMonData(&party[i], MON_DATA_LEVEL)) + ARCADE_EVENT_LEVEL_INCREASE;
-
-        if (newLevel >= MAX_LEVEL)
-            newLevel = MAX_LEVEL;
-
+        newLevel = CalculateAndSaveNewLevel(i,(GetMonData(&party[i], MON_DATA_LEVEL)));
         SetMonData(&party[i], MON_DATA_LEVEL, &newLevel);
-        CalculateMonStats(&party[i]);
     }
     return TRUE;
     // ARCADE TODO this should not appear if at level 100
 }
 
+static void BattleArcade_DoWeather(u32 weather)
+{
+    SetSavedWeather(weather);
+    DoCurrentWeather();
+}
+
 static bool32 BattleArcade_DoSun(void)
 {
+    BattleArcade_DoWeather(WEATHER_DROUGHT);
 	return TRUE;
 }
 static bool32 BattleArcade_DoRain(void)
 {
+    BattleArcade_DoWeather(WEATHER_DOWNPOUR);
 	return TRUE;
 }
 static bool32 BattleArcade_DoSand(void)
 {
+    BattleArcade_DoWeather(WEATHER_SANDSTORM);
 	return TRUE;
 }
 static bool32 BattleArcade_DoHail(void)
 {
+    BattleArcade_DoWeather(WEATHER_SNOW);
+    //ARCADE TODO snow needs to keep going _AND summon infinite hail
 	return TRUE;
 }
 static bool32 BattleArcade_DoFog(void)
 {
+    BattleArcade_DoWeather(WEATHER_FOG_HORIZONTAL);
+    //ARCADE TODO if Fog is not around at all in gen 3, disable this effect
 	return TRUE;
 }
 static bool32 BattleArcade_DoTrickRoom(void)
@@ -882,6 +928,57 @@ void DoSpecialRouletteTrainerBattle(void)
     CreateTask(Task_StartBattleAfterTransition, 1);
     PlayMapChosenOrBattleBGM(0);
     BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
+}
+
+static bool32 IsEventLevelUp(void)
+{
+     return (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_LEVEL_UP);
+}
+
+static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)
+{
+    u32 i, newLevel;
+    struct Pokemon *party = LoadSideParty(ARCADE_IMPACT_PLAYER);
+
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
+            break;
+
+        newLevel = (GetMonData(&party[i], MON_DATA_LEVEL) - FRONTIER_SAVEDATA.arcadeLvlDiff[i]);
+
+        if (newLevel <= 0)
+            newLevel = MIN_LEVEL;
+
+        SetMonData(&party[i], MON_DATA_LEVEL, &newLevel);
+        CalculateMonStats(&party[i]);
+    }
+}
+
+static void ResetLevelsToOriginal(void)
+{
+    if (!IsEventLevelUp())
+        return;
+
+    BattleArcade_ReturnPlayerPartyOriginalLevel();
+}
+
+void ReturnPartyToOwner(void)
+{
+    return;
+}
+
+static void ResetWeatherPostBattle(void)
+{
+    DoCurrentWeather();
+    ResetLevelsToOriginal();
+}
+
+void BattleArcade_PostBattleEventCleanup(void)
+{
+    ResetWeatherPostBattle();
+    SetSavedWeatherFromCurrMapHeader();
+    ReturnPartyToOwner();
 }
 
 // graphical set up off board

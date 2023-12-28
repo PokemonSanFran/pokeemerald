@@ -346,6 +346,8 @@ BattleArcade_RouletteRoom_EventScript_DoRouletteBattle::
 	goto_if_ne BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_2
 BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_1:
 # 184 "data/scripts/battle_arcade_battle.pory"
+	arcade_eventcleanup
+# 185 "data/scripts/battle_arcade_battle.pory"
 	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
 	return
 
@@ -356,969 +358,969 @@ BattleArcade_RouletteRoom_EventScript_DoRouletteBattle_2:
 
 
 BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost::
-# 190 "data/scripts/battle_arcade_battle.pory"
-	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
 # 191 "data/scripts/battle_arcade_battle.pory"
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
+# 192 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon::
-# 196 "data/scripts/battle_arcade_battle.pory"
-	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
 # 197 "data/scripts/battle_arcade_battle.pory"
+	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
+# 198 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_DefeatedOpponent::
-# 202 "data/scripts/battle_arcade_battle.pory"
-	call BattleFrontier_EventScript_IncrementWinStreak
 # 203 "data/scripts/battle_arcade_battle.pory"
-	arcade_setbattlewon
+	call BattleFrontier_EventScript_IncrementWinStreak
 # 204 "data/scripts/battle_arcade_battle.pory"
+	arcade_setbattlewon
+# 205 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, FRONTIER_STAGES_PER_CHALLENGE
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_2
 BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_1:
-# 208 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
 # 209 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement
+	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
 # 210 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement
+# 211 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_HealPlayer
 	return
 
 BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_2:
-# 206 "data/scripts/battle_arcade_battle.pory"
+# 207 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
 	goto BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_1
 
 
 BattleArcade_RouletteRoom_EventScript_HealPlayer::
-# 215 "data/scripts/battle_arcade_battle.pory"
-	msgbox BattleArcade_RouletteRoom_Text_GoodGoingWellHeal
 # 216 "data/scripts/battle_arcade_battle.pory"
-	playfanfare MUS_HEAL
+	msgbox BattleArcade_RouletteRoom_Text_GoodGoingWellHeal
 # 217 "data/scripts/battle_arcade_battle.pory"
-	waitfanfare
+	playfanfare MUS_HEAL
 # 218 "data/scripts/battle_arcade_battle.pory"
-	special HealPlayerParty
+	waitfanfare
 # 219 "data/scripts/battle_arcade_battle.pory"
-	closemessage
+	special HealPlayerParty
 # 220 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_AttendantLeave
+	closemessage
 # 221 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_BattleRoom_EventScript_AttendantLeave
+# 222 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent::
-# 226 "data/scripts/battle_arcade_battle.pory"
-	arcade_getbrainstatus
 # 227 "data/scripts/battle_arcade_battle.pory"
+	arcade_getbrainstatus
+# 228 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_TEMP_F, FRONTIER_BRAIN_NOT_READY
 	goto_if_ne BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_2
 BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_1:
-# 232 "data/scripts/battle_arcade_battle.pory"
-	frontier_get FRONTIER_DATA_BATTLE_NUM
 # 233 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_ReadyForOpponent
+	frontier_get FRONTIER_DATA_BATTLE_NUM
 # 234 "data/scripts/battle_arcade_battle.pory"
-	call BattleFrontier_EventScript_GetCantRecordBattle
+	call BattleArcade_RouletteRoom_EventScript_ReadyForOpponent
 # 235 "data/scripts/battle_arcade_battle.pory"
+	call BattleFrontier_EventScript_GetCantRecordBattle
+# 236 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_5
 BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_4:
-# 239 "data/scripts/battle_arcade_battle.pory"
+# 240 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_ReadyMenu
 	return
 
 BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_2:
-# 229 "data/scripts/battle_arcade_battle.pory"
+# 230 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_BrainUpNext
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_1
 
 BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_5:
-# 237 "data/scripts/battle_arcade_battle.pory"
+# 238 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent_4
 
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenu::
-# 245 "data/scripts/battle_arcade_battle.pory"
-	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
 # 246 "data/scripts/battle_arcade_battle.pory"
+	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+# 247 "data/scripts/battle_arcade_battle.pory"
 	switch VAR_RESULT
-# 248 "data/scripts/battle_arcade_battle.pory"
-	case 0, BattleArcade_RouletteRoom_EventScript_ReadyMenu_2
 # 249 "data/scripts/battle_arcade_battle.pory"
-	case 1, BattleArcade_RouletteRoom_EventScript_ReadyMenu_3
+	case 0, BattleArcade_RouletteRoom_EventScript_ReadyMenu_2
 # 250 "data/scripts/battle_arcade_battle.pory"
-	case 2, BattleArcade_RouletteRoom_EventScript_ReadyMenu_4
+	case 1, BattleArcade_RouletteRoom_EventScript_ReadyMenu_3
 # 251 "data/scripts/battle_arcade_battle.pory"
-	case 3, BattleArcade_RouletteRoom_EventScript_ReadyMenu_5
+	case 2, BattleArcade_RouletteRoom_EventScript_ReadyMenu_4
 # 252 "data/scripts/battle_arcade_battle.pory"
+	case 3, BattleArcade_RouletteRoom_EventScript_ReadyMenu_5
+# 253 "data/scripts/battle_arcade_battle.pory"
 	case MULTI_B_PRESSED, BattleArcade_RouletteRoom_EventScript_ReadyMenu_6
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenu_2:
-# 248 "data/scripts/battle_arcade_battle.pory"
+# 249 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_ContinueChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenu_3:
-# 249 "data/scripts/battle_arcade_battle.pory"
+# 250 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskRecordBattleNextBattle
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenu_4:
-# 250 "data/scripts/battle_arcade_battle.pory"
+# 251 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskPauseChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenu_5:
-# 251 "data/scripts/battle_arcade_battle.pory"
+# 252 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskRetireChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenu_6:
-# 252 "data/scripts/battle_arcade_battle.pory"
+# 253 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord::
-# 258 "data/scripts/battle_arcade_battle.pory"
-	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
 # 259 "data/scripts/battle_arcade_battle.pory"
-	switch VAR_RESULT
+	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
 # 260 "data/scripts/battle_arcade_battle.pory"
-	case 0, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_2
+	switch VAR_RESULT
 # 261 "data/scripts/battle_arcade_battle.pory"
-	case 1, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_3
+	case 0, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_2
 # 262 "data/scripts/battle_arcade_battle.pory"
-	case 2, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_4
+	case 1, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_3
 # 263 "data/scripts/battle_arcade_battle.pory"
+	case 2, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_4
+# 264 "data/scripts/battle_arcade_battle.pory"
 	case MULTI_B_PRESSED, BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_5
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_2:
-# 260 "data/scripts/battle_arcade_battle.pory"
+# 261 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_ContinueChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_3:
-# 261 "data/scripts/battle_arcade_battle.pory"
+# 262 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskPauseChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_4:
-# 262 "data/scripts/battle_arcade_battle.pory"
+# 263 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskRetireChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_ReadyMenuNoRecord_5:
-# 263 "data/scripts/battle_arcade_battle.pory"
+# 264 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_AskRecordBattle::
-# 269 "data/scripts/battle_arcade_battle.pory"
-	message BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle
 # 270 "data/scripts/battle_arcade_battle.pory"
-	waitmessage
+	message BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle
 # 271 "data/scripts/battle_arcade_battle.pory"
-	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+	waitmessage
 # 272 "data/scripts/battle_arcade_battle.pory"
+	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+# 273 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_AskRecordBattle_1
 	return
 
 BattleArcade_RouletteRoom_EventScript_AskRecordBattle_1:
-# 274 "data/scripts/battle_arcade_battle.pory"
+# 275 "data/scripts/battle_arcade_battle.pory"
 	call BattleFrontier_EventScript_SaveBattle
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_AskRecordBattleNextBattle::
-# 280 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_AskRecordBattle
 # 281 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_RouletteRoom_EventScript_AskRecordBattle
+# 282 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_ReadyForOpponent::
-# 286 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber
 # 287 "data/scripts/battle_arcade_battle.pory"
-	message BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady
+	call BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber
 # 288 "data/scripts/battle_arcade_battle.pory"
+	message BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady
+# 289 "data/scripts/battle_arcade_battle.pory"
 	waitmessage
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_AskPauseChallenge::
-# 294 "data/scripts/battle_arcade_battle.pory"
-	msgbox BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveAndTakeABreak, MSGBOX_YESNO
 # 295 "data/scripts/battle_arcade_battle.pory"
+	msgbox BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveAndTakeABreak, MSGBOX_YESNO
+# 296 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_AskPauseChallenge_2
 BattleArcade_RouletteRoom_EventScript_AskPauseChallenge_1:
-# 299 "data/scripts/battle_arcade_battle.pory"
+# 300 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleArcade_RouletteRoom_EventScript_AskPauseChallenge_2:
-# 297 "data/scripts/battle_arcade_battle.pory"
+# 298 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_PauseChallenge
 	goto BattleArcade_RouletteRoom_EventScript_AskPauseChallenge_1
 
 
 BattleArcade_RouletteRoom_EventScript_PauseChallenge::
-# 304 "data/scripts/battle_arcade_battle.pory"
-	message BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower
 # 305 "data/scripts/battle_arcade_battle.pory"
+	message BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower
+# 306 "data/scripts/battle_arcade_battle.pory"
 	waitmessage
-# 307 "data/scripts/battle_arcade_battle.pory"
-	tower_save CHALLENGE_STATUS_PAUSED
 # 308 "data/scripts/battle_arcade_battle.pory"
-	playse SE_SAVE
+	tower_save CHALLENGE_STATUS_PAUSED
 # 309 "data/scripts/battle_arcade_battle.pory"
+	playse SE_SAVE
+# 310 "data/scripts/battle_arcade_battle.pory"
 	waitse
-# 311 "data/scripts/battle_arcade_battle.pory"
-	fadescreen FADE_TO_BLACK
 # 312 "data/scripts/battle_arcade_battle.pory"
+	fadescreen FADE_TO_BLACK
+# 313 "data/scripts/battle_arcade_battle.pory"
 	frontier_reset
 	end
 
 
 BattleArcade_RouletteRoom_EventScript_AskRetireChallenge::
-# 318 "data/scripts/battle_arcade_battle.pory"
-	message BattleArcade_RouletteRoom_Text_WouldYouLikeToRetire
 # 319 "data/scripts/battle_arcade_battle.pory"
-	waitmessage
+	message BattleArcade_RouletteRoom_Text_WouldYouLikeToRetire
 # 320 "data/scripts/battle_arcade_battle.pory"
-	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+	waitmessage
 # 321 "data/scripts/battle_arcade_battle.pory"
+	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
+# 322 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_AskRetireChallenge_2
 BattleArcade_RouletteRoom_EventScript_AskRetireChallenge_1:
-# 325 "data/scripts/battle_arcade_battle.pory"
+# 326 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 BattleArcade_RouletteRoom_EventScript_AskRetireChallenge_2:
-# 323 "data/scripts/battle_arcade_battle.pory"
+# 324 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_RetireChallenge
 	goto BattleArcade_RouletteRoom_EventScript_AskRetireChallenge_1
 
 
 BattleArcade_RouletteRoom_EventScript_RetireChallenge::
-# 330 "data/scripts/battle_arcade_battle.pory"
-	setflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
 # 331 "data/scripts/battle_arcade_battle.pory"
+	setflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
+# 332 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_ContinueChallenge::
-# 336 "data/scripts/battle_arcade_battle.pory"
-	closemessage
 # 337 "data/scripts/battle_arcade_battle.pory"
+	closemessage
+# 338 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp::
-# 342 "data/scripts/battle_arcade_battle.pory"
-	arcade_set ARCADE_DATA_LVL_MODE
 # 343 "data/scripts/battle_arcade_battle.pory"
+	arcade_set ARCADE_DATA_LVL_MODE
+# 344 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_WarpToLobby
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_WarpToLobby::
-# 348 "data/scripts/battle_arcade_battle.pory"
-	copyvar VAR_RESULT, VAR_FRONTIER_BATTLE_MODE
 # 349 "data/scripts/battle_arcade_battle.pory"
+	copyvar VAR_RESULT, VAR_FRONTIER_BATTLE_MODE
+# 350 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, FRONTIER_MODE_MULTIS
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_WarpToLobby_2
-# 355 "data/scripts/battle_arcade_battle.pory"
+# 356 "data/scripts/battle_arcade_battle.pory"
 	warpsilent MAP_BATTLE_ARCADE_LOBBY, 5, 6
 BattleArcade_RouletteRoom_EventScript_WarpToLobby_1:
-# 357 "data/scripts/battle_arcade_battle.pory"
+# 358 "data/scripts/battle_arcade_battle.pory"
 	waitstate
 	end
 
 BattleArcade_RouletteRoom_EventScript_WarpToLobby_2:
-# 351 "data/scripts/battle_arcade_battle.pory"
+# 352 "data/scripts/battle_arcade_battle.pory"
 	warpsilent MAP_BATTLE_ARCADE_LOBBY, 6, 6
 	goto BattleArcade_RouletteRoom_EventScript_WarpToLobby_1
 
 
 BattleArcade_RouletteRoom_EventScript_BrainUpNext::
-# 363 "data/scripts/battle_arcade_battle.pory"
+# 364 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_TEMP_2, 1
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_BrainUpNext_2
 BattleArcade_RouletteRoom_EventScript_BrainUpNext_1:
-# 368 "data/scripts/battle_arcade_battle.pory"
-	msgbox BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition, MSGBOX_DEFAULT
 # 369 "data/scripts/battle_arcade_battle.pory"
+	msgbox BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition, MSGBOX_DEFAULT
+# 370 "data/scripts/battle_arcade_battle.pory"
 	setvar VAR_TEMP_2, 1
-# 371 "data/scripts/battle_arcade_battle.pory"
+# 372 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForBrain
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainUpNext_2:
-# 365 "data/scripts/battle_arcade_battle.pory"
+# 366 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForBrain
 	goto BattleArcade_RouletteRoom_EventScript_BrainUpNext_1
 
 
 BattleArcade_RouletteRoom_EventScript_AskReadyForBrain::
-# 376 "data/scripts/battle_arcade_battle.pory"
-	call BattleFrontier_EventScript_GetCantRecordBattle
 # 377 "data/scripts/battle_arcade_battle.pory"
+	call BattleFrontier_EventScript_GetCantRecordBattle
+# 378 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_AskReadyForBrain_1
-# 383 "data/scripts/battle_arcade_battle.pory"
+# 384 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord
 	return
 
 BattleArcade_RouletteRoom_EventScript_AskReadyForBrain_1:
-# 379 "data/scripts/battle_arcade_battle.pory"
+# 380 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_BrainReadyMenu
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenu::
-# 389 "data/scripts/battle_arcade_battle.pory"
-	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
 # 390 "data/scripts/battle_arcade_battle.pory"
+	multichoice 19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
+# 391 "data/scripts/battle_arcade_battle.pory"
 	switch VAR_RESULT
-# 392 "data/scripts/battle_arcade_battle.pory"
-	case 0, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_2
 # 393 "data/scripts/battle_arcade_battle.pory"
-	case 1, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_3
+	case 0, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_2
 # 394 "data/scripts/battle_arcade_battle.pory"
-	case 2, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_4
+	case 1, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_3
 # 395 "data/scripts/battle_arcade_battle.pory"
-	case 3, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_5
+	case 2, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_4
 # 396 "data/scripts/battle_arcade_battle.pory"
+	case 3, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_5
+# 397 "data/scripts/battle_arcade_battle.pory"
 	case MULTI_B_PRESSED, BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_6
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_2:
-# 392 "data/scripts/battle_arcade_battle.pory"
+# 393 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_BattleBrain
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_3:
-# 393 "data/scripts/battle_arcade_battle.pory"
+# 394 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskRecordBattleNextBattle
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_4:
-# 394 "data/scripts/battle_arcade_battle.pory"
+# 395 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskPauseChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_5:
-# 395 "data/scripts/battle_arcade_battle.pory"
+# 396 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskRetireChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenu_6:
-# 396 "data/scripts/battle_arcade_battle.pory"
+# 397 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord::
-# 402 "data/scripts/battle_arcade_battle.pory"
-	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
 # 403 "data/scripts/battle_arcade_battle.pory"
+	multichoice 20, 6, MULTI_GO_ON_REST_RETIRE, TRUE
+# 404 "data/scripts/battle_arcade_battle.pory"
 	switch VAR_RESULT
-# 405 "data/scripts/battle_arcade_battle.pory"
-	case 0, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_2
 # 406 "data/scripts/battle_arcade_battle.pory"
-	case 1, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_3
+	case 0, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_2
 # 407 "data/scripts/battle_arcade_battle.pory"
-	case 2, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_4
+	case 1, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_3
 # 408 "data/scripts/battle_arcade_battle.pory"
+	case 2, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_4
+# 409 "data/scripts/battle_arcade_battle.pory"
 	case MULTI_B_PRESSED, BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_5
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_2:
-# 405 "data/scripts/battle_arcade_battle.pory"
+# 406 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_BattleBrain
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_3:
-# 406 "data/scripts/battle_arcade_battle.pory"
+# 407 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskPauseChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_4:
-# 407 "data/scripts/battle_arcade_battle.pory"
+# 408 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskRetireChallenge
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord_5:
-# 408 "data/scripts/battle_arcade_battle.pory"
+# 409 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_LoadBrainText::
-# 414 "data/scripts/battle_arcade_battle.pory"
-	bufferstring STR_VAR_3, BattleArcade_RouletteRoom_EventScript_LoadBrainText_Text_0
 # 415 "data/scripts/battle_arcade_battle.pory"
-	arcade_getbrainintro
+	bufferstring STR_VAR_3, BattleArcade_RouletteRoom_EventScript_LoadBrainText_Text_0
 # 416 "data/scripts/battle_arcade_battle.pory"
-	msgbox gStringVar4, MSGBOX_DEFAULT
+	arcade_getbrainintro
 # 417 "data/scripts/battle_arcade_battle.pory"
-	waitmessage
+	msgbox gStringVar4, MSGBOX_DEFAULT
 # 418 "data/scripts/battle_arcade_battle.pory"
+	waitmessage
+# 419 "data/scripts/battle_arcade_battle.pory"
 	closemessage
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_BattleBrain::
-# 423 "data/scripts/battle_arcade_battle.pory"
-	closemessage
 # 424 "data/scripts/battle_arcade_battle.pory"
-	call BattleFrontier_EventScript_SetBrainObjectGfx
+	closemessage
 # 425 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_BrainIntro
+	call BattleFrontier_EventScript_SetBrainObjectGfx
 # 426 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_StartGameBoard
+	call BattleArcade_RouletteRoom_EventScript_BrainIntro
 # 427 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
+	call BattleArcade_RouletteRoom_EventScript_StartGameBoard
 # 428 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_LoadBrainText
+	call BattleArcade_BattleRoom_EventScript_OpponentBattleMovement
 # 429 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_StartBattle
+	call BattleArcade_RouletteRoom_EventScript_LoadBrainText
 # 430 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_RouletteRoom_EventScript_StartBattle
+# 431 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_HandleBattleResult::
-# 436 "data/scripts/battle_arcade_battle.pory"
+# 437 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_HandleBattleResult_2
 BattleArcade_RouletteRoom_EventScript_HandleBattleResult_1:
-# 440 "data/scripts/battle_arcade_battle.pory"
+# 441 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
 	return
 
 BattleArcade_RouletteRoom_EventScript_HandleBattleResult_2:
-# 438 "data/scripts/battle_arcade_battle.pory"
+# 439 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
 	goto BattleArcade_RouletteRoom_EventScript_HandleBattleResult_1
 
 
 BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult::
-# 445 "data/scripts/battle_arcade_battle.pory"
+# 446 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult_2
 BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult_1:
-# 449 "data/scripts/battle_arcade_battle.pory"
+# 450 "data/scripts/battle_arcade_battle.pory"
 	goto BattleFrontier_BattleTower_EventScript_WarpToLobbyLost
 	return
 
 BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult_2:
-# 447 "data/scripts/battle_arcade_battle.pory"
+# 448 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_DefeatedBrain
 	goto BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult_1
 
 
 BattleArcade_RouletteRoom_EventScript_DefeatedBrain::
-# 454 "data/scripts/battle_arcade_battle.pory"
-	call BattleFrontier_EventScript_IncrementWinStreak
 # 455 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_BrainCongratsText
+	call BattleFrontier_EventScript_IncrementWinStreak
 # 456 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
+	call BattleArcade_RouletteRoom_EventScript_BrainCongratsText
 # 457 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
+# 458 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
 	return
 
 
 BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge::
-# 462 "data/scripts/battle_arcade_battle.pory"
-	call BattleFrontier_EventScript_GetCantRecordBattle
 # 463 "data/scripts/battle_arcade_battle.pory"
+	call BattleFrontier_EventScript_GetCantRecordBattle
+# 464 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, FALSE
 	goto_if_eq BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge_2
 BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge_1:
-# 467 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_GiveBP
 # 468 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_RestoreItems
+	call BattleArcade_RouletteRoom_EventScript_GiveBP
 # 469 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_RouletteRoom_EventScript_Save
+	call BattleArcade_RouletteRoom_EventScript_RestoreItems
 # 470 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_RouletteRoom_EventScript_Save
+# 471 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon
 	return
 
 BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge_2:
-# 465 "data/scripts/battle_arcade_battle.pory"
+# 466 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_RouletteRoom_EventScript_AskRecordBattle
 	goto BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge_1
 
 
 BattleArcade_RouletteRoom_EventScript_Save::
-# 475 "data/scripts/battle_arcade_battle.pory"
-	msgbox gText_SavingDontTurnOff2
 # 476 "data/scripts/battle_arcade_battle.pory"
-	tower_save CHALLENGE_STATUS_SAVING
+	msgbox gText_SavingDontTurnOff2
 # 477 "data/scripts/battle_arcade_battle.pory"
-	waitstate
+	tower_save CHALLENGE_STATUS_SAVING
 # 478 "data/scripts/battle_arcade_battle.pory"
-	playse SE_SAVE
+	waitstate
 # 479 "data/scripts/battle_arcade_battle.pory"
-	waitse
+	playse SE_SAVE
 # 480 "data/scripts/battle_arcade_battle.pory"
+	waitse
+# 481 "data/scripts/battle_arcade_battle.pory"
 	closemessage
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_GiveBP::
-# 485 "data/scripts/battle_arcade_battle.pory"
-	arcade_givepoints
 # 486 "data/scripts/battle_arcade_battle.pory"
+	arcade_givepoints
+# 487 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_YouHaveClearedYourSeventh
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_RestoreItems::
-# 491 "data/scripts/battle_arcade_battle.pory"
+# 492 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_WeWillReturnAnyItems
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_BrainCongratsText::
-# 496 "data/scripts/battle_arcade_battle.pory"
-	frontier_get FRONTIER_DATA_BATTLE_NUM
 # 497 "data/scripts/battle_arcade_battle.pory"
+	frontier_get FRONTIER_DATA_BATTLE_NUM
+# 498 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, 35
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_BrainCongratsText_1
-# 503 "data/scripts/battle_arcade_battle.pory"
+# 504 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_TrulyItWasSoVery, MSGBOX_DEFAULT
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainCongratsText_1:
-# 499 "data/scripts/battle_arcade_battle.pory"
+# 500 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_HowFabulousOfYouYour, MSGBOX_DEFAULT
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_BrainIntro::
-# 509 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_BrainEntranceMovement
 # 510 "data/scripts/battle_arcade_battle.pory"
-	arcade_checksymbol
+	call BattleArcade_BattleRoom_EventScript_BrainEntranceMovement
 # 511 "data/scripts/battle_arcade_battle.pory"
-	msgbox BattleArcade_RouletteRoom_Text_NoNeedToWorry, MSGBOX_DEFAULT
+	arcade_checksymbol
 # 512 "data/scripts/battle_arcade_battle.pory"
+	msgbox BattleArcade_RouletteRoom_Text_NoNeedToWorry, MSGBOX_DEFAULT
+# 513 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, ARCADE_SYMBOL_GOLD
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_BrainIntro_1
-# 518 "data/scripts/battle_arcade_battle.pory"
+# 519 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_YouAreProving, MSGBOX_DEFAULT
 	return
 
 BattleArcade_RouletteRoom_EventScript_BrainIntro_1:
-# 514 "data/scripts/battle_arcade_battle.pory"
+# 515 "data/scripts/battle_arcade_battle.pory"
 	msgbox BattleArcade_RouletteRoom_Text_IKnowOneThing, MSGBOX_DEFAULT
 	return
 
 
 BattleArcade_RouletteRoom_EventScript_LoadBrainText_Text_0:
-# 414 "data/scripts/battle_arcade_battle.pory"
+# 415 "data/scripts/battle_arcade_battle.pory"
 	.string "hello$"
 
 BattleArcade_RouletteRoom_Text_WellDone::
-# 522 "data/scripts/battle_arcade_battle.pory"
+# 523 "data/scripts/battle_arcade_battle.pory"
 	.string "Well done!$"
 
 BattleArcade_RouletteRoom_Text_LetTheBattle::
-# 527 "data/scripts/battle_arcade_battle.pory"
+# 528 "data/scripts/battle_arcade_battle.pory"
 	.string "Let the battles begin! Battle No. 1!\n"
 	.string "Ready...$"
 
 BattleArcade_RouletteRoom_Text_Next::
-# 532 "data/scripts/battle_arcade_battle.pory"
+# 533 "data/scripts/battle_arcade_battle.pory"
 	.string "Next. Battle No. {STR_VAR_1}!\n"
 	.string "Ready...$"
 
 BattleArcade_RouletteRoom_Text_Go::
-# 537 "data/scripts/battle_arcade_battle.pory"
+# 538 "data/scripts/battle_arcade_battle.pory"
 	.string "Go!$"
 
 BattleArcade_RouletteRoom_Text_DoYouWantToContinue::
-# 542 "data/scripts/battle_arcade_battle.pory"
+# 543 "data/scripts/battle_arcade_battle.pory"
 	.string "Do you want to continue arcade?$"
 
 BattleArcade_RouletteRoom_Text_DoYouWantToRestore::
-# 547 "data/scripts/battle_arcade_battle.pory"
+# 548 "data/scripts/battle_arcade_battle.pory"
 	.string "Do you want to restore your POKéMON?\n"
 	.string "(You can restore them {STR_VAR_1}\l"
 	.string "more time(s).)$"
 
 BattleArcade_Entrance_MaxedOutStreak::
-# 552 "data/scripts/battle_arcade_battle.pory"
+# 553 "data/scripts/battle_arcade_battle.pory"
 	.string "Wow, {PLAYER}, {STR_VAR_1} win(s)\n"
 	.string "in a row... I think we all need a break!$"
 
 BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn::
-# 557 "data/scripts/battle_arcade_battle.pory"
+# 558 "data/scripts/battle_arcade_battle.pory"
 	.string "First, I’ll need to hold on to any items\n"
 	.string "held by your Pokémon.$"
 
 BattleArcade_RouletteRoom_Text_PleaseWaitAMoment::
-# 561 "data/scripts/battle_arcade_battle.pory"
+# 562 "data/scripts/battle_arcade_battle.pory"
 	.string "Please wait a moment.$"
 
 BattleArcade_RouletteRoom_Text_GoodGoingWellHeal::
-# 565 "data/scripts/battle_arcade_battle.pory"
+# 566 "data/scripts/battle_arcade_battle.pory"
 	.string "Good going! We’ll heal your Pokémon now.$"
 
 BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady::
-# 569 "data/scripts/battle_arcade_battle.pory"
+# 570 "data/scripts/battle_arcade_battle.pory"
 	.string "Next up, game no. {STR_VAR_1}! Are\n"
 	.string "you ready?$"
 
 BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveTheLastBattle::
-# 573 "data/scripts/battle_arcade_battle.pory"
+# 574 "data/scripts/battle_arcade_battle.pory"
 	.string "Would you like to save the last battle\n"
 	.string "as your Battle Video?$"
 
 BattleArcade_RouletteRoom_Text_BattleHasBeenSaved::
-# 577 "data/scripts/battle_arcade_battle.pory"
+# 578 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s battle has been saved\n"
 	.string "as a Battle Video.$"
 
 BattleArcade_RouletteRoom_Text_ThereWasAnError::
-# 581 "data/scripts/battle_arcade_battle.pory"
+# 582 "data/scripts/battle_arcade_battle.pory"
 	.string "There was an error. The Battle Video\n"
 	.string "couldn’t be saved.$"
 
 BattleArcade_RouletteRoom_Text_DeleteYourExistingBattleVideo::
-# 585 "data/scripts/battle_arcade_battle.pory"
+# 586 "data/scripts/battle_arcade_battle.pory"
 	.string "Delete your existing Battle Video and\n"
 	.string "save the last battle?$"
 
 BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower::
-# 589 "data/scripts/battle_arcade_battle.pory"
+# 590 "data/scripts/battle_arcade_battle.pory"
 	.string "Saving... Don’t turn off the power.$"
 
 BattleArcade_RouletteRoom_Text_WouldYouLikeToSaveAndTakeABreak::
-# 593 "data/scripts/battle_arcade_battle.pory"
+# 594 "data/scripts/battle_arcade_battle.pory"
 	.string "Would you like to save and take a break\n"
 	.string "from playing?$"
 
 BattleArcade_RouletteRoom_Text_WouldYouLikeToRetire::
-# 597 "data/scripts/battle_arcade_battle.pory"
+# 598 "data/scripts/battle_arcade_battle.pory"
 	.string "Would you like to retire from this\n"
 	.string "challenge?$"
 
 BattleArcade_RouletteRoom_Text_IsChoosingPleaseWait::
-# 601 "data/scripts/battle_arcade_battle.pory"
+# 602 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1} is choosing. Please\n"
 	.string "wait.$"
 
 BattleArcade_RouletteRoom_Text_ChoseToRetire::
-# 605 "data/scripts/battle_arcade_battle.pory"
+# 606 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1} chose to retire.$"
 
 BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade::
-# 609 "data/scripts/battle_arcade_battle.pory"
+# 610 "data/scripts/battle_arcade_battle.pory"
 	.string "Welcome to the Battle Arcade!$"
 
 BattleArcade_RouletteRoom_Text_GameNoComeOn::
-# 613 "data/scripts/battle_arcade_battle.pory"
+# 614 "data/scripts/battle_arcade_battle.pory"
 	.string "Game no. {STR_VAR_1}! Come on!$"
 
 BattleArcade_RouletteRoom_Text_WithoutFurtherAdo::
-# 617 "data/scripts/battle_arcade_battle.pory"
+# 618 "data/scripts/battle_arcade_battle.pory"
 	.string "Without further ado... Let’s activate\n"
 	.string "the game board!$"
 
 BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent::
-# 621 "data/scripts/battle_arcade_battle.pory"
+# 622 "data/scripts/battle_arcade_battle.pory"
 	.string "This is our current event!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp::
-# 625 "data/scripts/battle_arcade_battle.pory"
+# 626 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon without full\l"
 	.string "HP!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothWithoutFullHp::
-# 629 "data/scripts/battle_arcade_battle.pory"
+# 630 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\l"
 	.string "Pokémon without full HP!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceLeveledUp::
-# 633 "data/scripts/battle_arcade_battle.pory"
+# 634 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon leveled up!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothLeveledUp::
-# 637 "data/scripts/battle_arcade_battle.pory"
+# 638 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\l"
 	.string "Pokémon leveled up!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommencePoisoned::
-# 641 "data/scripts/battle_arcade_battle.pory"
+# 642 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon poisoned!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothPoisoned::
-# 645 "data/scripts/battle_arcade_battle.pory"
+# 646 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1} and {STR_VAR_2}’s\l"
 	.string "Pokémon poisoned!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceParalyzed::
-# 649 "data/scripts/battle_arcade_battle.pory"
+# 650 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon paralyzed!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothParalyzed::
-# 653 "data/scripts/battle_arcade_battle.pory"
+# 654 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1} and {STR_VAR_2}’s\l"
 	.string "Pokémon paralyzed!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBurned::
-# 657 "data/scripts/battle_arcade_battle.pory"
+# 658 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon burned!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothBurned::
-# 661 "data/scripts/battle_arcade_battle.pory"
+# 662 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1} and {STR_VAR_2}’s\l"
 	.string "Pokémon burned!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceAsleep::
-# 665 "data/scripts/battle_arcade_battle.pory"
+# 666 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon asleep!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothAsleep::
-# 669 "data/scripts/battle_arcade_battle.pory"
+# 670 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1} and {STR_VAR_2}’s\l"
 	.string "Pokémon asleep!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceFrozen::
-# 673 "data/scripts/battle_arcade_battle.pory"
+# 674 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1}’s Pokémon frozen!$"
 
 BattleArcade_RouletteRoom_Text_MatchCommenceBothFrozen::
-# 677 "data/scripts/battle_arcade_battle.pory"
+# 678 "data/scripts/battle_arcade_battle.pory"
 	.string "The match will commence with\n"
 	.string "{STR_VAR_1} and {STR_VAR_2}’s\l"
 	.string "Pokémon frozen!$"
 
 BattleArcade_RouletteRoom_Text_PokemonWillBeLoanedThe::
-# 681 "data/scripts/battle_arcade_battle.pory"
+# 682 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s Pokémon will be loaned\n"
 	.string "the {STR_VAR_3}.$"
 
 BattleArcade_RouletteRoom_Text_BothPokemonWillBeLoanedThe::
-# 685 "data/scripts/battle_arcade_battle.pory"
+# 686 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1} and {STR_VAR_2}’s\n"
 	.string "Pokémon will be loaned the\l"
 	.string "{STR_VAR_3}.$"
 
 BattleArcade_RouletteRoom_Text_HereYouGo::
-# 689 "data/scripts/battle_arcade_battle.pory"
+# 690 "data/scripts/battle_arcade_battle.pory"
 	.string "Here you go!$"
 
 BattleArcade_RouletteRoom_Text_MatchConductedHarshSunlight::
-# 693 "data/scripts/battle_arcade_battle.pory"
+# 694 "data/scripts/battle_arcade_battle.pory"
 	.string "This match will be conducted under\n"
 	.string "harsh sunlight.$"
 
 BattleArcade_RouletteRoom_Text_MatchConductedSteadyRainfall::
-# 697 "data/scripts/battle_arcade_battle.pory"
+# 698 "data/scripts/battle_arcade_battle.pory"
 	.string "This match will be conducted under a\n"
 	.string "steady rainfall.$"
 
 BattleArcade_RouletteRoom_Text_MatchConductedRagingSandstorm::
-# 701 "data/scripts/battle_arcade_battle.pory"
+# 702 "data/scripts/battle_arcade_battle.pory"
 	.string "This match will be conducted under a\n"
 	.string "raging sandstorm.$"
 
 BattleArcade_RouletteRoom_Text_MatchConductedPeltingHail::
-# 705 "data/scripts/battle_arcade_battle.pory"
+# 706 "data/scripts/battle_arcade_battle.pory"
 	.string "This match will be conducted under\n"
 	.string "pelting hail.$"
 
 BattleArcade_RouletteRoom_Text_MatchConductedDenseFog::
-# 709 "data/scripts/battle_arcade_battle.pory"
+# 710 "data/scripts/battle_arcade_battle.pory"
 	.string "This match will be conducted in a dense\n"
 	.string "fog.$"
 
 BattleArcade_RouletteRoom_Text_MatchConductedTimeAndSpaceAreDistorted::
-# 713 "data/scripts/battle_arcade_battle.pory"
+# 714 "data/scripts/battle_arcade_battle.pory"
 	.string "This match will be conducted on a floor\n"
 	.string "where time and space are distorted.$"
 
 BattleArcade_RouletteRoom_Text_YourPokemonWillBeSwitched::
-# 717 "data/scripts/battle_arcade_battle.pory"
+# 718 "data/scripts/battle_arcade_battle.pory"
 	.string "Your Pokémon will be switched with the\n"
 	.string "other Trainer’s for this match.$"
 
 BattleArcade_RouletteRoom_Text_BoardspeedIncreased::
-# 721 "data/scripts/battle_arcade_battle.pory"
+# 722 "data/scripts/battle_arcade_battle.pory"
 	.string "From the next game on, the game board’s\n"
 	.string "speed will be increased.$"
 
 BattleArcade_RouletteRoom_Text_BoardspeedDecreased::
-# 725 "data/scripts/battle_arcade_battle.pory"
+# 726 "data/scripts/battle_arcade_battle.pory"
 	.string "From the next game on, the game board’s\n"
 	.string "speed will be decreased.$"
 
 BattleArcade_RouletteRoom_Text_BoardmotionRandom::
-# 729 "data/scripts/battle_arcade_battle.pory"
+# 730 "data/scripts/battle_arcade_battle.pory"
 	.string "For the next game, the game board’s\n"
 	.string "motion will become random.$"
 
 BattleArcade_RouletteRoom_Text_ReceivedBp::
-# 733 "data/scripts/battle_arcade_battle.pory"
+# 734 "data/scripts/battle_arcade_battle.pory"
 	.string "{PLAYER} received {STR_VAR_3} BP!$"
 
 BattleArcade_RouletteRoom_Text_AndReceivedBp::
-# 737 "data/scripts/battle_arcade_battle.pory"
+# 738 "data/scripts/battle_arcade_battle.pory"
 	.string "{PLAYER} and {STR_VAR_2} received\n"
 	.string "{STR_VAR_3} BP!$"
 
 BattleArcade_RouletteRoom_Text_AreYouReady::
-# 741 "data/scripts/battle_arcade_battle.pory"
+# 742 "data/scripts/battle_arcade_battle.pory"
 	.string "Are you ready?$"
 
 BattleArcade_RouletteRoom_Text_OhLuckyYouCanSkip::
-# 745 "data/scripts/battle_arcade_battle.pory"
+# 746 "data/scripts/battle_arcade_battle.pory"
 	.string "Oh! Lucky! You can skip the battle!$"
 
 BattleArcade_RouletteRoom_Text_TooBadThereIsNo::
-# 749 "data/scripts/battle_arcade_battle.pory"
+# 750 "data/scripts/battle_arcade_battle.pory"
 	.string "Too bad! There is no event this time!$"
 
 BattleArcade_RouletteRoom_Text_OkLetTheBattleCommence::
-# 753 "data/scripts/battle_arcade_battle.pory"
+# 754 "data/scripts/battle_arcade_battle.pory"
 	.string "OK! Let the battle commence!$"
 
 BattleArcade_RouletteRoom_Text_MatchPoisonedLuckyBreak::
-# 757 "data/scripts/battle_arcade_battle.pory"
+# 758 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s Pokémon will enter the\n"
 	.string "match poisoned... Oh! A lucky break!\l"
 	.string "{STR_VAR_1} has no Pokémon that\l"
 	.string "can be poisoned!$"
 
 BattleArcade_RouletteRoom_Text_MatchBothPoisonedLuckyBreak::
-# 761 "data/scripts/battle_arcade_battle.pory"
+# 762 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
 	.string "Pokémon will begin poisoned... Oh! A\l"
 	.string "lucky break! Neither of them has a\l"
 	.string "Pokémon that can be poisoned!$"
 
 BattleArcade_RouletteRoom_Text_MatchParalyzedLuckyBreak::
-# 765 "data/scripts/battle_arcade_battle.pory"
+# 766 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s Pokémon will enter the\n"
 	.string "match paralyzed... Oh! A lucky break!\l"
 	.string "{STR_VAR_1} has no Pokémon that\l"
 	.string "can be paralyzed!$"
 
 BattleArcade_RouletteRoom_Text_MatchBothParalyzedLuckyBreak::
-# 769 "data/scripts/battle_arcade_battle.pory"
+# 770 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
 	.string "Pokémon will begin paralyzed... Oh! A\l"
 	.string "lucky break! Neither of them has a\l"
 	.string "Pokémon that can be paralyzed!$"
 
 BattleArcade_RouletteRoom_Text_MatchBurnedLuckyBreak::
-# 773 "data/scripts/battle_arcade_battle.pory"
+# 774 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s Pokémon will enter the\n"
 	.string "match burned... Oh! A lucky break!\l"
 	.string "{STR_VAR_1} has no Pokémon that\l"
 	.string "can be burned!$"
 
 BattleArcade_RouletteRoom_Text_MatchBothBurnedLuckyBreak::
-# 777 "data/scripts/battle_arcade_battle.pory"
+# 778 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
 	.string "Pokémon will begin burned... Oh! A lucky\l"
 	.string "break! Neither of them has a Pokémon\l"
 	.string "that can be burned!$"
 
 BattleArcade_RouletteRoom_Text_MatchAsleepLuckyBreak::
-# 781 "data/scripts/battle_arcade_battle.pory"
+# 782 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s Pokémon will enter the\n"
 	.string "match asleep... Oh! A lucky break!\l"
 	.string "{STR_VAR_1} has no Pokémon that\l"
 	.string "can be made to sleep!$"
 
 BattleArcade_RouletteRoom_Text_MatchBothAsleepLuckyBreak::
-# 785 "data/scripts/battle_arcade_battle.pory"
+# 786 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
 	.string "Pokémon will begin asleep... Oh! A lucky\l"
 	.string "break! Neither of them has a Pokémon\l"
 	.string "that can be made to sleep!$"
 
 BattleArcade_RouletteRoom_Text_MatchFrozenLuckyBreak::
-# 789 "data/scripts/battle_arcade_battle.pory"
+# 790 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s Pokémon will enter the\n"
 	.string "match frozen... Oh! A lucky break!\l"
 	.string "{STR_VAR_1} has no Pokémon that\l"
 	.string "can be frozen!$"
 
 BattleArcade_RouletteRoom_Text_MatchBothFrozenLuckyBreak::
-# 793 "data/scripts/battle_arcade_battle.pory"
+# 794 "data/scripts/battle_arcade_battle.pory"
 	.string "{STR_VAR_1}’s and {STR_VAR_2}’s\n"
 	.string "Pokémon will begin frozen... Oh! A lucky\l"
 	.string "break! Neither of them has a Pokémon\l"
 	.string "that can be frozen!$"
 
 BattleArcade_RouletteRoom_Text_YouHaveClearedYourSeventh::
-# 797 "data/scripts/battle_arcade_battle.pory"
+# 798 "data/scripts/battle_arcade_battle.pory"
 	.string "You have cleared your seventh battle!\n"
 	.string "Congratulations! You have earned BP as\l"
 	.string "your prize!$"
 
 BattleArcade_RouletteRoom_Text_WeWillReturnAnyItems::
-# 801 "data/scripts/battle_arcade_battle.pory"
+# 802 "data/scripts/battle_arcade_battle.pory"
 	.string "We will return any items we were holding\n"
 	.string "for you.$"
 
 BattleArcade_RouletteRoom_Text_Continue::
-# 805 "data/scripts/battle_arcade_battle.pory"
+# 806 "data/scripts/battle_arcade_battle.pory"
 	.string "CONTINUE$"
 
 BattleArcade_RouletteRoom_Text_Record::
-# 809 "data/scripts/battle_arcade_battle.pory"
+# 810 "data/scripts/battle_arcade_battle.pory"
 	.string "RECORD$"
 
 BattleArcade_RouletteRoom_Text_Rest::
-# 813 "data/scripts/battle_arcade_battle.pory"
+# 814 "data/scripts/battle_arcade_battle.pory"
 	.string "REST$"
 
 BattleArcade_RouletteRoom_Text_Retire::
-# 817 "data/scripts/battle_arcade_battle.pory"
+# 818 "data/scripts/battle_arcade_battle.pory"
 	.string "RETIRE$"
 
 BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition::
-# 821 "data/scripts/battle_arcade_battle.pory"
+# 822 "data/scripts/battle_arcade_battle.pory"
 	.string "Congratulations, Trainer! In\n"
 	.string "recognition of your outstanding skill,\l"
 	.string "our Frontier Brain is demanding a match\l"
@@ -1327,7 +1329,7 @@ BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition::
 	.string "ready?$"
 
 BattleArcade_RouletteRoom_Text_NoNeedToWorry::
-# 826 "data/scripts/battle_arcade_battle.pory"
+# 827 "data/scripts/battle_arcade_battle.pory"
 	.string "Dahlia: No need to worry. {EMOJI_NOTE} Let chance do\n"
 	.string "what it does. Like surprises from the\l"
 	.string "game board, life goes through twists\l"
@@ -1335,14 +1337,14 @@ BattleArcade_RouletteRoom_Text_NoNeedToWorry::
 	.string "go as they will. But, enough of that.$"
 
 BattleArcade_RouletteRoom_Text_IKnowOneThing::
-# 831 "data/scripts/battle_arcade_battle.pory"
+# 832 "data/scripts/battle_arcade_battle.pory"
 	.string "I know one thing for certain. You have\n"
 	.string "arrived here not merely because you\l"
 	.string "were lucky. Let us not waste any time. I\l"
 	.string "wish to test your skills myself!$"
 
 BattleArcade_RouletteRoom_Text_YouAreProving::
-# 835 "data/scripts/battle_arcade_battle.pory"
+# 836 "data/scripts/battle_arcade_battle.pory"
 	.string "You are proving yourself incredible. Are\n"
 	.string "you incredible because you are so lucky\l"
 	.string "you shrug off bad luck entirely? Or, are\l"
@@ -1352,7 +1354,7 @@ BattleArcade_RouletteRoom_Text_YouAreProving::
 	.string "today!$"
 
 BattleArcade_RouletteRoom_Text_HowFabulousOfYouYour::
-# 839 "data/scripts/battle_arcade_battle.pory"
+# 840 "data/scripts/battle_arcade_battle.pory"
 	.string "Dahlia: How fabulous of you! Your love\n"
 	.string "of Pokémon shone through, and, in turn,\l"
 	.string "your Pokémon believed in you. That is\l"
@@ -1361,7 +1363,7 @@ BattleArcade_RouletteRoom_Text_HowFabulousOfYouYour::
 	.string "victory it was!$"
 
 BattleArcade_RouletteRoom_Text_TrulyItWasSoVery::
-# 843 "data/scripts/battle_arcade_battle.pory"
+# 844 "data/scripts/battle_arcade_battle.pory"
 	.string "Dahlia: Truly, it was so very fabulous\n"
 	.string "of all of you! Bad luck, you cast aside,\l"
 	.string "and good luck, you netted. That you did\l"

@@ -81,3 +81,9 @@
     setvar VAR_0x8004, ARCADE_FUNC_GET_BRAIN_INTRO
     special CallBattleArcadeFunc
     .endm
+
+    @ Clean up all the leftover remanents from the previous event
+    .macro arcade_eventcleanup
+    setvar VAR_0x8004, ARCADE_FUNC_EVENT_CLEAN_UP
+    special CallBattleArcadeFunc
+    .endm

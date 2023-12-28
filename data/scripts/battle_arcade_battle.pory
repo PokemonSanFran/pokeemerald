@@ -181,6 +181,7 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
         frontier_resetsketch
     }
 
+    arcade_eventcleanup
     frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
     return
 }
