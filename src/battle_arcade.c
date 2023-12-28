@@ -170,6 +170,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
     ResetGiveItemVar();
+    ResetRouletteSpeed();
     ResetFrontierTrainerIds();
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
@@ -404,7 +405,7 @@ static u32 GenerateSetEvent(void)
         event = ARCADE_EVENT_SLEEP;
     else
     */
-        event = ARCADE_EVENT_SWAP; //Debug
+        event = ARCADE_EVENT_SPEED_UP; //Debug
 
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
@@ -856,12 +857,47 @@ static bool32 BattleArcade_DoSwap(void)
     return TRUE;
 }
 
+static bool32 BattleArcade_ChangeSpeed(u32 mode)
+{
+    u32 currentSpeed = VarGet(VAR_ARCADE_SPEED_CURRENT);
+
+    if (mode == ARCADE_EVENT_SPEED_DOWN)
+    {
+        if (ARCADE_SPEED_DECREMENT > currentSpeed)
+        {
+            VarSet(VAR_ARCADE_SPEED_CURRENT,ARCADE_SPEED_MIN);
+    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_SPEED_CURRENT));
+            return TRUE;
+        }
+    }
+    else
+    {
+        if ((ARCADE_SPEED_INCREMENT + currentSpeed) > ARCADE_SPEED_MAX)
+        {
+            VarSet(VAR_ARCADE_SPEED_CURRENT,ARCADE_SPEED_MAX);
+    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_SPEED_CURRENT));
+            return TRUE;
+        }
+    }
+
+    if (mode == ARCADE_EVENT_SPEED_UP)
+        VarSet(VAR_ARCADE_SPEED_CURRENT,currentSpeed + ARCADE_SPEED_INCREMENT);
+    else
+        VarSet(VAR_ARCADE_SPEED_CURRENT,currentSpeed + ARCADE_SPEED_DECREMENT);
+
+
+    DebugPrintf("speed: %d, now: %d",currentSpeed,VarGet(VAR_ARCADE_SPEED_CURRENT));
+    return TRUE;
+}
+
 static bool32 BattleArcade_DoSpeedUp(void)
 {
+    BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_UP);
 	return TRUE;
 }
 static bool32 BattleArcade_DoSpeedDown(void)
 {
+    BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_DOWN);
 	return TRUE;
 }
 static bool32 BattleArcade_DoRandom(void)
@@ -999,6 +1035,11 @@ void BattleArcade_PostBattleEventCleanup(void)
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
+}
+
+void ResetRouletteSpeed(void)
+{
+    VarSet(VAR_ARCADE_SPEED_CURRENT,ARCADE_SPEED_DEFAULT);
 }
 
 // graphical set up off board

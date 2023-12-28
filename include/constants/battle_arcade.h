@@ -74,6 +74,8 @@
 #define ARCADE_SPEED_DEFAULT                   10
 #define ARCADE_SPEED_INCREMENT                 1
 #define ARCADE_SPEED_DECREMENT                 2
+#define ARCADE_SPEED_MIN                       1
+#define ARCADE_SPEED_MAX                       20
 
 #define ARCADE_BERRY_GROUP_1                   0
 #define ARCADE_BERRY_GROUP_2                   1
