@@ -58,6 +58,7 @@ static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
+static void StoreImpactedSideToVar(void);
 static void RefreshPlayerItems(void);
 static void ResetRouletteRandomFlag(void);
 static void CalculateGiveChallengeBattlePoints(void);
@@ -75,6 +76,7 @@ static void BufferImpactedName(u32 impact);
 static void HandleGiveItemVar(u32, u32, u32);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
+u32 GetImpactFromEvent(void);
 static void ShowBattleArcadeTypeMonsWindow(void);
 static void CloseBattleArcadeTypeMonsWindow(void);
 static void InitBattleArcadeMons(void);
@@ -144,6 +146,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
     [ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
     [ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
+    [ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -366,9 +369,32 @@ static void TakePlayerHeldItems(void)
     RefreshPlayerItems();
 }
 
+static void StoreImpactInEvent(u32 impact)
+{
+    u32 event = VarGet(VAR_ARCADE_GAME_BOARD_RESULT);
+    event = ((event) << ARCADE_IMPACT_BITS) | impact;
+    VarSet(VAR_ARCADE_GAME_BOARD_RESULT,event);
+}
+
+u32 GetImpactFromEvent(void)
+{
+    u32 event = VarGet(VAR_ARCADE_GAME_BOARD_RESULT);
+    DebugPrintf("impact from var %d",(event & ARCADE_IMPACT_MASK));
+    DebugPrintf("event from var %d",event);
+    return (event & ARCADE_IMPACT_MASK);
+}
+
+static void StoreImpactedSideToVar(void)
+{
+    gSpecialVar_Result = GetImpactFromEvent();
+}
+
 u32 GetSetImpactSide(u32 event)
 {
     u32 impact = GetImpactSide(event);
+    DebugPrintf("impact from function %d",(impact));
+    DebugPrintf("event from function %d",event);
+    StoreImpactInEvent(impact);
     BufferImpactedName(impact);
     return impact;
 }
@@ -401,13 +427,13 @@ static u32 GenerateSetEvent(void)
     } while (IsEventBanned(event));
 
     /*
-    if (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_RAIN)
+    if (VarGet(VAR_ARCADE_GAME_BOARD_RESULT) == ARCADE_EVENT_RAIN)
         event = ARCADE_EVENT_SLEEP;
     else
     */
         //event = ARCADE_EVENT_NO_BATTLE; //Debug
 
-    VarSet(VAR_ARCADE_EVENT,event);
+    VarSet(VAR_ARCADE_GAME_BOARD_RESULT,event);
     return event;
 }
 
@@ -982,12 +1008,12 @@ void DoSpecialRouletteTrainerBattle(void)
 
 static bool32 IsCurrentEventLevelUp(void)
 {
-     return (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_LEVEL_UP);
+     return (VarGet(VAR_ARCADE_GAME_BOARD_RESULT) == ARCADE_EVENT_LEVEL_UP);
 }
 
 static bool32 IsEventSwap(void)
 {
-     return (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_SWAP);
+     return (VarGet(VAR_ARCADE_GAME_BOARD_RESULT) == ARCADE_EVENT_SWAP);
 }
 
 static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)

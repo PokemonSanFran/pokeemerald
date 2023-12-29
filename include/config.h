@@ -64,7 +64,7 @@
 #define VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM   VAR_UNUSED_0x409D
 
 //should be replaced with a u8 on the saveblock bitshifted to hold ARCADE_EVENT_COUNT
-#define VAR_ARCADE_EVENT                   VAR_UNUSED_0x4083
+#define VAR_ARCADE_GAME_BOARD_RESULT                   VAR_UNUSED_0x4083
 
 // replace with a u8, bitshifted to hold ARCADE_EVENT_GIVE_BERRY or ARCADE_EVENT_GIVE_ITEM
 #define VAR_ARCADE_GIVE_ENEMY_TYPE         VAR_UNUSED_0x408B

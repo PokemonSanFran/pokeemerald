@@ -87,3 +87,9 @@
     setvar VAR_0x8004, ARCADE_FUNC_EVENT_CLEAN_UP
     special CallBattleArcadeFunc
     .endm
+
+    @ Return the side that is being impacted to VAR_RESULT
+    .macro arcade_getimpactedside
+    setvar VAR_0x8004, ARCADE_FUNC_GET_IMPACT_SIDE
+    special CallBattleArcadeFunc
+    .endm

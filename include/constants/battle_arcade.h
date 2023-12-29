@@ -16,6 +16,7 @@
 #define ARCADE_FUNC_CHECK_BRAIN_STATUS         12
 #define ARCADE_FUNC_GET_BRAIN_INTRO            13
 #define ARCADE_FUNC_EVENT_CLEAN_UP             14
+#define ARCADE_FUNC_GET_IMPACT_SIDE            15
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2
@@ -79,7 +80,7 @@
 #define ARCADE_IMPACT_OPPONENT                 1
 #define ARCADE_IMPACT_ALL                      2
 #define ARCADE_IMPACT_BITS                     5
-#define ARCADE_IMPACT_MASK                     01xF
+#define ARCADE_IMPACT_MASK                     0x1F
 
 #define ARCADE_SPEED_LEVEL_0                   0
 #define ARCADE_SPEED_LEVEL_1                   1

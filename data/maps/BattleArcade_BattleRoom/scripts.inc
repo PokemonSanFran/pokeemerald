@@ -111,8 +111,10 @@ BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition::
 
 
 BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact::
+# 88 "data/maps/BattleArcade_BattleRoom/scripts.pory"
+	arcade_getimpactedside
 # 89 "data/maps/BattleArcade_BattleRoom/scripts.pory"
-	switch VAR_UNUSED_0x404E
+	switch VAR_RESULT
 # 91 "data/maps/BattleArcade_BattleRoom/scripts.pory"
 	case ARCADE_IMPACT_PLAYER, BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact_3
 # 93 "data/maps/BattleArcade_BattleRoom/scripts.pory"
