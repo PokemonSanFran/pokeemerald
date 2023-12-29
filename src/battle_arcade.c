@@ -118,7 +118,6 @@ static bool32 BattleArcade_DoTrickRoom(void);
 static bool32 BattleArcade_DoSwap(void);
 static bool32 BattleArcade_DoSpeedUp(void);
 static bool32 BattleArcade_DoSpeedDown(void);
-static bool32 BattleArcade_DoRandom(void);
 static bool32 BattleArcade_DoGiveBPSmall(void);
 static bool32 BattleArcade_DoGiveBPBig(void);
 static bool32 BattleArcade_DoNoBattle(void);
@@ -701,7 +700,6 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         case ARCADE_EVENT_SWAP: return BattleArcade_DoSwap();
         case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
         case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
-        case ARCADE_EVENT_RANDOM: return BattleArcade_DoRandom();
         case ARCADE_EVENT_GIVE_BP_SMALL: return BattleArcade_DoGiveBPSmall();
         case ARCADE_EVENT_GIVE_BP_BIG: return BattleArcade_DoGiveBPBig();
         case ARCADE_EVENT_NO_BATTLE: return BattleArcade_DoNoBattle();
@@ -1124,10 +1122,11 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
         return TRUE;
 
     if (mode == ARCADE_EVENT_SPEED_UP)
-        VarSet(VAR_ARCADE_CURSOR_SPEED,++currentSpeed);
+        ++currentSpeed;
     else
-        VarSet(VAR_ARCADE_CURSOR_SPEED,--currentSpeed);
+        --currentSpeed;
 
+    VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed);
     return TRUE;
 }
 
@@ -1139,11 +1138,6 @@ static bool32 BattleArcade_DoSpeedUp(void)
 static bool32 BattleArcade_DoSpeedDown(void)
 {
     BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_DOWN);
-	return TRUE;
-}
-static bool32 BattleArcade_DoRandom(void)
-{
-    //ARCADE TODO can't exist until panel code exists, but should just randomly pick an effect for any that are actually possible in this round
 	return TRUE;
 }
 static bool32 BattleArcade_DoGiveBPSmall(void)
