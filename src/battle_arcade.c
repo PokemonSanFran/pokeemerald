@@ -48,7 +48,8 @@ static void SaveCurrentStreak(void);
 static void SaveCurrentParty(u32, u8);
 static void SaveArcadeChallenge(void);
 static void GetOpponentIntroSpeech(void);
-static bool32 BattleArcade_DoGive(u32 impact, u32 type);
+static bool32 BattleArcade_DoGive(u32, u32);
+static u32 GetEnemyGiveType(void);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
 static void ResetGiveItemVars(void);
@@ -57,6 +58,7 @@ static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
+static void RefreshPlayerItems(void);
 static void CalculateGiveChallengeBattlePoints(void);
 static u32 CountNumberTypeWin(u8);
 static void BattleArcade_GiveEnemyItems(void);
@@ -64,13 +66,12 @@ static void CheckArcadeSymbol(void);
 static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
 static struct Pokemon *LoadSideParty(u32);
-static void TakeHeldItems(struct Pokemon *party);
 static void HandleGameBoardResult(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
 static void BattleArcade_PostBattleEventCleanup(void);
 static void BufferImpactedName(u32 impact);
-static void HandleGiveItemVar(u32 impact, u32 type);
+static void HandleGiveItemVar(u32, u32, u32);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
 static void ShowBattleArcadeTypeMonsWindow(void);
@@ -84,6 +85,7 @@ static bool32 IsGiveItemVarSet(void);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
 static void SaveCurrentWinStreak(void);
 u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode);
+static u32 BattleArcade_GenerateGive(u32 type);
 static void BufferGiveString(u32);
 static bool32 DoGameBoardResult(u32, u32);
 static bool32 BattleArcade_DoLowerHP(u32);
@@ -354,33 +356,18 @@ u32 Arcade_SetChallengeNumToMax(u8 challengeNum)
 
 static void TakeEnemyHeldItems(void)
 {
-    TakeHeldItems(LoadSideParty(ARCADE_IMPACT_OPPONENT));
+    BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, ITEM_NONE);
 }
 
 static void TakePlayerHeldItems(void)
 {
-    TakeHeldItems(LoadSideParty(ARCADE_IMPACT_PLAYER));
-}
-
-static void TakeHeldItems(struct Pokemon *party)
-{
-    u32 i;
-    u16 item = ITEM_NONE;
-
-    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-    {
-        if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
-            break;
-
-        SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
-    }
+    RefreshPlayerItems();
 }
 
 u32 GetSetImpactSide(u32 event)
 {
     u32 impact = GetImpactSide(event);
     BufferImpactedName(impact);
-    VarSet(VAR_ARCADE_IMPACT_SIDE,impact);
     return impact;
 }
 
@@ -602,14 +589,16 @@ static void BufferGiveString(u32 item)
 
 static bool32 BattleArcade_DoGiveBerry(u32 impact)
 {
-    HandleGiveItemVar(impact, ARCADE_EVENT_GIVE_BERRY);
-    return BattleArcade_DoGive(impact, ARCADE_EVENT_GIVE_BERRY);
+    u32 item = BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_BERRY);
+    HandleGiveItemVar(impact, item, ARCADE_EVENT_GIVE_BERRY);
+    return BattleArcade_DoGive(impact, item);
 }
 
 static bool32 BattleArcade_DoGiveItem(u32 impact)
 {
-    HandleGiveItemVar(impact, ARCADE_EVENT_GIVE_ITEM);
-    return BattleArcade_DoGive(impact, ARCADE_EVENT_GIVE_ITEM);
+    u32 item = BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_ITEM);
+    HandleGiveItemVar(impact, item, ARCADE_EVENT_GIVE_ITEM);
+    return BattleArcade_DoGive(impact, item);
 }
 
 static u32 GetGroupIdFromWinStreak(void)
@@ -722,7 +711,7 @@ static u32 BattleArcade_GenerateGive(u32 type)
 
 static bool32 IsGiveItemVarSet(void)
 {
-    return (VarGet(VAR_ARCADE_GIVE_HOLD_ITEM));
+    return (GetEnemyGiveType() != 0);
 }
 
 static bool32 IsImpactedSideOpponent(u32 impact)
@@ -730,29 +719,40 @@ static bool32 IsImpactedSideOpponent(u32 impact)
     return (impact == ARCADE_IMPACT_OPPONENT);
 }
 
-static void HandleGiveItemVar(u32 impact, u32 type)
+static void SetEnemyGiveType(u32 type)
 {
-    if (!IsImpactedSideOpponent(impact))
-        return;
+    VarSet(VAR_ARCADE_GIVE_ENEMY_TYPE,type);
+}
 
-    VarSet(VAR_ARCADE_GIVE_HOLD_ITEM,type);
+static u32 GetEnemyGiveType(void)
+{
+    return VarGet(VAR_ARCADE_GIVE_ENEMY_TYPE);
+}
+
+static void HandleGiveItemVar(u32 impact, u32 item, u32 type)
+{
+    if (IsImpactedSideOpponent(impact))
+        SetEnemyGiveType(type);
+    else
+        VarSet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM,item);
 }
 
 static void ResetGiveItemVars(void)
 {
-    VarSet(VAR_ARCADE_GIVE_ENEMY_HOLD_ITEM,ITEM_NONE);
+    SetEnemyGiveType(ITEM_NONE);
     VarSet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM,ITEM_NONE);
 }
 
 static void BattleArcade_GiveEnemyItems(void)
 {
-    BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, VarGet(VAR_ARCADE_GIVE_HOLD_ITEM));
+    u32 type = GetEnemyGiveType();
+    u32 item = BattleArcade_GenerateGive(type);
+    BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, item);
 }
 
-static bool32 BattleArcade_DoGive(u32 impact, u32 type)
+static bool32 BattleArcade_DoGive(u32 impact, u32 item)
 {
     u32 i;
-    u32 item = BattleArcade_GenerateGive(type);
     struct Pokemon *party = LoadSideParty(impact);
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
@@ -919,11 +919,6 @@ static void GetBrainStatus(void)
     return;
 }
 
-static bool32 IsOpponentImpacted(void)
-{
-    return (VarGet(VAR_ARCADE_IMPACT_SIDE) == ARCADE_IMPACT_OPPONENT);
-}
-
 static void GetBrainIntroSpeech(void)
 {
     //return one string for silver fight and otherwise the gold string
@@ -972,7 +967,7 @@ void DoSpecialRouletteTrainerBattle(void)
     BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
 }
 
-static bool32 IsEventLevelUp(void)
+static bool32 IsCurrentEventLevelUp(void)
 {
      return (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_LEVEL_UP);
 }
@@ -1004,7 +999,7 @@ static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)
 
 static void ResetLevelsToOriginal(void)
 {
-    if (!IsEventLevelUp())
+    if (!IsCurrentEventLevelUp())
         return;
 
     BattleArcade_ReturnPlayerPartyOriginalLevel();
@@ -1023,9 +1018,15 @@ static void ResetWeatherPostBattle(void)
     SetSavedWeatherFromCurrMapHeader();
 }
 
+static void RefreshPlayerItems(void)
+{
+    u32 item = VarGet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM);
+    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, item);
+}
+
 void BattleArcade_PostBattleEventCleanup(void)
 {
-    RefreshPlayerItems():
+    RefreshPlayerItems();
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
