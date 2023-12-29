@@ -1,6 +1,10 @@
 const VAR_BRAIN_STATUS = VAR_TEMP_F
 const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
 
+const GAME_BOARD_EVENT =  VAR_0x8007
+const GAME_BOARD_IMPACT = VAR_0x8008
+const GAME_BOARD_SUCCESS = VAR_0x8009
+
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
     setvar(VAR_TEMP_0, 2)
@@ -39,7 +43,11 @@ script BattleArcade_RouletteRoom_EventScript_HandleGameResults
     arcade_takeplayerhelditems
     arcade_takeenemyhelditems
     arcade_playgameboard
+
     arcade_handlegameresult
+    arcade_getimpactedside
+    arcade_getevent
+
     msgbox(BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent,MSGBOX_DEFAULT)
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)
@@ -49,7 +57,7 @@ script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 
 script BattleArcade_RouletteRoom_AnnounceImpactString
 {
-    if (var(VAR_RESULT))
+    if (var(GAME_BOARD_SUCCESS))
     {
         call(BattleArcade_RouletteRoom_AnnounceImpactString_Success)
     }
@@ -61,8 +69,7 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
 
 script BattleArcade_RouletteRoom_SkipBattle_Script
 {
-    arcade_getevent
-    if (var(VAR_RESULT) != ARCADE_EVENT_NO_BATTLE)
+    if (var(GAME_BOARD_EVENT) != ARCADE_EVENT_NO_BATTLE)
     {
         return
     }
@@ -73,8 +80,7 @@ script BattleArcade_RouletteRoom_SkipBattle_Script
 
 script BattleArcade_RouletteRoom_AnnounceImpactString_Success
 {
-    arcade_getevent
-    switch(var(VAR_RESULT))
+    switch(var(GAME_BOARD_EVENT))
     {
         case ARCADE_EVENT_LOWER_HP:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp,MSGBOX_DEFAULT)
@@ -126,8 +132,7 @@ script BattleArcade_RouletteRoom_AnnounceImpactString_Success
 
 script BattleArcade_RouletteRoom_AnnounceImpactString_Failure
 {
-    arcade_getevent
-    switch(var(VAR_RESULT))
+    switch(var(GAME_BOARD_EVENT))
     {
         case ARCADE_EVENT_POISON:
             msgbox(BattleArcade_RouletteRoom_Text_MatchBurnedLuckyBreak,MSGBOX_DEFAULT)

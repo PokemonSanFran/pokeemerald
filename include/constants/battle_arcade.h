@@ -54,8 +54,8 @@
 #define ARCADE_RECORD_OPEN_LEVEL_Y_POS         97
 #define ARCADE_RECORD_OPEN_LEVEL_BEST_Y_POS    113
 
+#define ARCADE_EVENT_INDIVIDUAL_START          0
 #define ARCADE_EVENT_LOWER_HP                  0
-#define ARCADE_EVENT_INDIVIDUAL_START          ARCADE_EVENT_LOWER_HP
 #define ARCADE_EVENT_POISON                    1
 #define ARCADE_EVENT_PARALYZE                  2
 #define ARCADE_EVENT_BURN                      3
@@ -64,21 +64,15 @@
 #define ARCADE_EVENT_GIVE_BERRY                6
 #define ARCADE_EVENT_GIVE_ITEM                 7
 #define ARCADE_EVENT_LEVEL_UP                  8
+#define ARCADE_EVENT_WEATHER_START             ARCADE_EVENT_LEVEL_UP + 1
 #define ARCADE_EVENT_SUN                       9
-#define ARCADE_EVENT_FIELD_START               ARCADE_EVENT_SUN
-#define ARCADE_EVENT_WEATHER_START             ARCADE_EVENT_FIELD_START
 #define ARCADE_EVENT_RAIN                      10
 #define ARCADE_EVENT_SAND                      11
 #define ARCADE_EVENT_HAIL                      12
 #define ARCADE_EVENT_FOG                       13
 #define ARCADE_EVENT_TRICK_ROOM                14
-#ifdef ARCADE_GEN4_EFFECTS_UNBANNED
-#define ARCADE_EVENT_WEATHER_END               ARCADE_EVENT_TRICK_ROOM
-#else
-#define ARCADE_EVENT_WEATHER_END               ARCADE_EVENT_HAIL
-#endif
+#define ARCADE_EVENT_SPECIAL_START             ARCADE_EVENT_TRICK_ROOM + 1
 #define ARCADE_EVENT_SWAP                      15
-#define ARCADE_EVENT_SPECIAL_START             ARCADE_EVENT_SWAP
 #define ARCADE_EVENT_SPEED_UP                  16
 #define ARCADE_EVENT_SPEED_DOWN                17
 #define ARCADE_EVENT_RANDOM                    18
@@ -138,5 +132,9 @@
 #define ARCADE_EVENT_LEVEL_INCREASE            3
 
 #define ARCADE_GAME_BOARD_SPACES               16
+
+#define GAME_BOARD_EVENT gSpecialVar_0x8007
+#define GAME_BOARD_IMPACT gSpecialVar_0x8008
+#define GAME_BOARD_SUCCESS gSpecialVar_0x8009
 
 #endif //GUARD_CONSTANTS_ARCADE_H
