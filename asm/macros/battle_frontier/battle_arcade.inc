@@ -64,7 +64,13 @@
     special CallBattleArcadeFunc
     .endm
 
-    @ Loads the result of the game to VAR_0x8005, the name of the impacted person to STR_VAR_1
+    @ Starts the actual game board
+    .macro arcade_playgameboard
+    setvar VAR_0x8004, ARCADE_FUNC_PLAY_GAME_BOARD
+    special CallBattleArcadeFunc
+    .endm
+
+    @ Loads the result of the game to VAR_RESULT, the name of the impacted person to STR_VAR_1
     .macro arcade_handlegameresult
     setvar VAR_0x8004, ARCADE_FUNC_HANDLE_GAME_RESULT
     special CallBattleArcadeFunc
@@ -91,5 +97,11 @@
     @ Return the side that is being impacted to VAR_RESULT
     .macro arcade_getimpactedside
     setvar VAR_0x8004, ARCADE_FUNC_GET_IMPACT_SIDE
+    special CallBattleArcadeFunc
+    .endm
+
+    @ Return the event to VAR_RESULT
+    .macro arcade_getevent
+    setvar VAR_0x8004, ARCADE_FUNC_GET_EVENT
     special CallBattleArcadeFunc
     .endm

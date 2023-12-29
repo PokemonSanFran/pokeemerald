@@ -1,6 +1,5 @@
 const VAR_BRAIN_STATUS = VAR_TEMP_F
 const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
-const VAR_ARCADE_GAME_BOARD_RESULT = VAR_UNUSED_0x4083
 
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
@@ -39,8 +38,8 @@ script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
     arcade_takeplayerhelditems
     arcade_takeenemyhelditems
+    arcade_playgameboard
     arcade_handlegameresult
-    //bufferspeciesname(STR_VAR_1,SPECIES_PIKACHU)
     msgbox(BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent,MSGBOX_DEFAULT)
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)
@@ -62,7 +61,8 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
 
 script BattleArcade_RouletteRoom_SkipBattle_Script
 {
-    if (var(VAR_ARCADE_GAME_BOARD_RESULT) != ARCADE_EVENT_NO_BATTLE)
+    arcade_getevent
+    if (var(VAR_RESULT) != ARCADE_EVENT_NO_BATTLE)
     {
         return
     }
@@ -73,7 +73,8 @@ script BattleArcade_RouletteRoom_SkipBattle_Script
 
 script BattleArcade_RouletteRoom_AnnounceImpactString_Success
 {
-    switch(var(VAR_ARCADE_GAME_BOARD_RESULT))
+    arcade_getevent
+    switch(var(VAR_RESULT))
     {
         case ARCADE_EVENT_LOWER_HP:
             msgbox(BattleArcade_RouletteRoom_Text_MatchCommenceWithoutFullHp,MSGBOX_DEFAULT)
@@ -125,7 +126,8 @@ script BattleArcade_RouletteRoom_AnnounceImpactString_Success
 
 script BattleArcade_RouletteRoom_AnnounceImpactString_Failure
 {
-    switch(var(VAR_ARCADE_GAME_BOARD_RESULT))
+    arcade_getevent
+    switch(var(VAR_RESULT))
     {
         case ARCADE_EVENT_POISON:
             msgbox(BattleArcade_RouletteRoom_Text_MatchBurnedLuckyBreak,MSGBOX_DEFAULT)

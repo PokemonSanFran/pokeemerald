@@ -76,7 +76,7 @@ static void BufferImpactedName(u32 impact);
 static void HandleGiveItemVar(u32, u32, u32);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
-u32 GetImpactFromEvent(void);
+u32 GetImpactFromVar(void);
 static void ShowBattleArcadeTypeMonsWindow(void);
 static void CloseBattleArcadeTypeMonsWindow(void);
 static void InitBattleArcadeMons(void);
@@ -87,7 +87,10 @@ static void ArcadePrintBestStreak(u8, u8, u8);
 static bool32 IsGiveItemVarSet(void);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
 static void SaveCurrentWinStreak(void);
-u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode);
+static u32 GetChallengeNumIndex(void);
+static void StoreEventToVar(void);
+static void PlayGameBoard(void);
+u16 GetCurrentBattleArcadeWinStreak(void);
 static u32 BattleArcade_GenerateGive(u32 type);
 static void BufferGiveString(u32);
 static bool32 DoGameBoardResult(u32, u32);
@@ -142,11 +145,13 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
     [ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
     [ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
+    [ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
     [ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
     [ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
     [ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
     [ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
     [ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
+    [ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -198,7 +203,7 @@ static void GetArcadeData(void)
     case 0:
         break;
     case ARCADE_DATA_WIN_STREAK:
-        gSpecialVar_Result = GetCurrentBattleArcadeWinStreak(lvlMode, battleMode);
+        gSpecialVar_Result = GetCurrentBattleArcadeWinStreak();
         break;
     case ARCADE_DATA_WIN_STREAK_ACTIVE:
         gSpecialVar_Result = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]) != 0);
@@ -241,14 +246,17 @@ static void SaveCurrentWinStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-    u16 winStreak = GetCurrentBattleArcadeWinStreak(lvlMode, battleMode);
+    u16 winStreak = GetCurrentBattleArcadeWinStreak();
 
     if (FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] < winStreak)
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = winStreak;
 }
 
-u16 GetCurrentBattleArcadeWinStreak(u8 lvlMode, u8 battleMode)
+u16 GetCurrentBattleArcadeWinStreak(void)
 {
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE) / FRONTIER_STAGES_PER_CHALLENGE);
+
     u16 winStreak = gSaveBlock2Ptr->frontier.arcadeWinStreaks[battleMode][lvlMode];
 
     if (winStreak > MAX_STREAK)
@@ -369,44 +377,192 @@ static void TakePlayerHeldItems(void)
     RefreshPlayerItems();
 }
 
-static void StoreImpactInEvent(u32 impact)
+static u32 ConvertBattlesToImpactIndex(void)
 {
-    u32 event = VarGet(VAR_ARCADE_GAME_BOARD_RESULT);
-    event = ((event) << ARCADE_IMPACT_BITS) | impact;
-    VarSet(VAR_ARCADE_GAME_BOARD_RESULT,event);
+    u16 numBattle = GetCurrentBattleArcadeWinStreak();
+
+    if (numBattle <= 4)
+        return ARCADE_BATTLE_NUM_0_4;
+    else if (numBattle <= 10)
+        return ARCADE_BATTLE_NUM_5_10;
+    else if (numBattle <= 15)
+        return ARCADE_BATTLE_NUM_11_15;
+    else if (numBattle <= 20)
+        return ARCADE_BATTLE_NUM_16_20;
+    else
+        return ARCADE_BATTLE_NUM_21_PLUS;
 }
 
-u32 GetImpactFromEvent(void)
+static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
 {
-    u32 event = VarGet(VAR_ARCADE_GAME_BOARD_RESULT);
-    DebugPrintf("impact from var %d",(event & ARCADE_IMPACT_MASK));
-    DebugPrintf("event from var %d",event);
-    return (event & ARCADE_IMPACT_MASK);
+    //red、black、white、yellow    //Battles
+    { 10, 75, 10,  5 },        //0-4
+    { 25, 40, 30,  5 },        //5-10
+    { 30, 30, 35,  5 },        //11-15
+    { 35, 20, 30, 15 },        //16-20
+    { 15, 15, 40, 30 },        //21-
+};
+
+static u32 GenerateImpact(void)
+{
+    u32 impactRoll = Random() % 100;
+    u32 impactIndex = ConvertBattlesToImpactIndex();
+    u32 impactLine = 0;
+    u32 i = 0;
+
+    //DebugPrintf("impact roll %d",impactRoll);
+    //DebugPrintf("impact index %d",impactIndex);
+
+    for (i = 0; i < ARCADE_IMPACT_COUNT;i++)
+    {
+        //impactRoll = 99; //Debug
+        impactLine += ImpactTable[impactIndex][i];
+        //DebugPrintf("impact line for %d is %d",i,impactLine);
+
+        if (impactRoll < impactLine)
+            return i;
+    }
+    return ARCADE_IMPACT_COUNT;
+}
+
+static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
+{
+    { 0, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_LOWER_HP
+    { 1, 0, 1, 0, 0, 0, 1},      // ARCADE_EVENT_POISON
+    { 1, 0, 1, 0, 0, 0, 1},      // ARCADE_EVENT_PARALYZE
+    { 1, 0, 1, 0, 0, 0, 1},      // ARCADE_EVENT_BURN
+    { 0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_SLEEP
+    { 0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_FREEZE
+    { 1, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_GIVE_BERRY
+    { 0, 0, 0, 1, 1, 1, 1},      // ARCADE_EVENT_GIVE_ITEM
+    { 0, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_LEVEL_UP
+    { 0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_SUN
+    { 0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_RAIN
+    { 0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_SAND
+    { 0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_HAIL
+    { 0, 0, 0, 1, 0, 1, 1},      // ARCADE_EVENT_FOG
+    { 0, 0, 0, 1, 0, 1, 1},      // ARCADE_EVENT_TRICK_ROOM
+    { 1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_SWAP
+    { 1, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_SPEED_UP
+    { 1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_SPEED_DOWN
+    { 0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_RANDOM
+    { 0, 0, 0, 1, 1, 1, 1},      // ARCADE_EVENT_GIVE_BP_SMALL
+    { 0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_NO_BATTLE
+    { 0, 0, 0, 0, 0, 0, 1},      // ARCADE_EVENT_GIVE_BP_BIG
+    { 1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_NO_EVENT
+};
+
+
+static const u32 SpecialPanelTable[][ARCADE_EVENT_SPECIAL_COUNT] =
+{
+    //Battle 1  2  3  4  5  6  7  dummy        //Event panels
+    //-------------------------------------------------------
+    { 1, 1, 1, 1, 1, 1, 0, 0 },        //Pokemon Change
+    { 1, 1, 1, 1, 1, 1, 0, 0 },        //Speed Up
+    { 1, 1, 1, 1, 1, 1, 0, 0 },        //Speed Down
+    { 1, 1, 1, 1, 1, 1, 0, 0 },        //Random
+    { 1, 0, 1, 0, 1, 0, 0, 0 },        //Get BP
+    { 0, 1, 0, 1, 0, 1, 0, 0 },        //Ignore Battle
+    { 0, 1, 0, 1, 0, 1, 0, 0 },        //Get BP (Big)
+    { 1, 1, 1, 1, 1, 1, 1, 1 },        //No Event
+};
+
+static s32 GetPanelUpperBound(u32 impact)
+{
+    switch (impact)
+    {
+        case ARCADE_IMPACT_PLAYER:
+        case ARCADE_IMPACT_OPPONENT: return ARCADE_EVENT_WEATHER_START;
+        case ARCADE_IMPACT_ALL: return ARCADE_EVENT_SPECIAL_START;
+        default:
+        case ARCADE_IMPACT_SPECIAL: return ARCADE_EVENT_COUNT;
+
+    }
+}
+
+static s32 GetPanelLowerBound(u32 impact)
+{
+    switch (impact)
+    {
+        case ARCADE_IMPACT_PLAYER:
+        case ARCADE_IMPACT_OPPONENT: return ARCADE_EVENT_INDIVIDUAL_START;
+        case ARCADE_IMPACT_ALL: return ARCADE_EVENT_WEATHER_START;
+        default:
+        case ARCADE_IMPACT_SPECIAL: return ARCADE_EVENT_SPECIAL_START;
+
+    }
+}
+
+static bool32 IsEventValidDuringCurrentStreak(u32 event)
+{
+    if (event < ARCADE_EVENT_SPECIAL_START)
+        return TRUE;
+
+    if (PanelStreakTable[event][GetChallengeNumIndex()] == FALSE)
+        return FALSE;
+
+    return TRUE;
+}
+
+static bool32 IsEventValidDuringCurrentBattle(u32 event)
+{
+    if (SpecialPanelTable[event - ARCADE_EVENT_SPECIAL_START][FRONTIER_SAVEDATA.curChallengeBattleNum] == FALSE)
+        return FALSE;
+
+    return TRUE;
+}
+
+static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
+{
+    if (!IsEventValidDuringCurrentStreak(event))
+        return FALSE;
+    if (!IsEventValidDuringCurrentBattle(event))
+        return FALSE;
+
+    return TRUE;
+}
+
+static u32 GenerateRandomBetweenBounds(u32 impact)
+{
+    u32 upper = GetPanelUpperBound(impact);
+    u32 lower = GetPanelLowerBound(impact);
+
+    return (lower + Random() % (upper - lower + 1));
+}
+
+static u32 GenerateEvent(u32 impact)
+{
+    u32 event = GenerateRandomBetweenBounds(impact);
+
+    do
+    {
+        event = GenerateRandomBetweenBounds(impact);
+    } while (!IsEventValidDuringBattleOrStreak(event,impact));
+
+    //DebugPrintf("event original roll is %d",event);
+    return event;
+}
+
+u32 GetImpactFromVar(void)
+{
+    return FRONTIER_SAVEDATA.arcadeGameResult.impact;
+}
+
+u32 GetEventFromVar(void)
+{
+    return FRONTIER_SAVEDATA.arcadeGameResult.event;
+}
+
+static void StoreEventToVar(void)
+{
+    gSpecialVar_Result = GetEventFromVar();
+    DebugPrintf("event from function %d",gSpecialVar_Result);
 }
 
 static void StoreImpactedSideToVar(void)
 {
-    gSpecialVar_Result = GetImpactFromEvent();
-}
-
-u32 GetSetImpactSide(u32 event)
-{
-    u32 impact = GetImpactSide(event);
-    DebugPrintf("impact from function %d",(impact));
-    DebugPrintf("event from function %d",event);
-    StoreImpactInEvent(impact);
-    BufferImpactedName(impact);
-    return impact;
-}
-
-static u32 GetImpactSide(u32 event)
-{
-    //return ARCADE_IMPACT_PLAYER; // Debug
-
-    if (event >= ARCADE_EVENT_FIELD_START)
-        return ARCADE_IMPACT_ALL;
-    else
-        return Random() % ARCADE_IMPACT_ALL;
+    gSpecialVar_Result = GetImpactFromVar();
+    DebugPrintf("impact from function %d",(gSpecialVar_Result));
 }
 
 static bool32 IsEventBanned(u32 event)
@@ -416,25 +572,6 @@ static bool32 IsEventBanned(u32 event)
         return TRUE;
 #endif
     return FALSE;
-}
-
-static u32 GenerateSetEvent(void)
-{
-    u32 event = Random() % ARCADE_EVENT_COUNT;
-    do
-    {
-        event = Random() % ARCADE_EVENT_COUNT;
-    } while (IsEventBanned(event));
-
-    /*
-    if (VarGet(VAR_ARCADE_GAME_BOARD_RESULT) == ARCADE_EVENT_RAIN)
-        event = ARCADE_EVENT_SLEEP;
-    else
-    */
-        //event = ARCADE_EVENT_NO_BATTLE; //Debug
-
-    VarSet(VAR_ARCADE_GAME_BOARD_RESULT,event);
-    return event;
 }
 
 static bool32 IsEventBattle(u32 event)
@@ -464,10 +601,45 @@ static bool32 ShouldEnemyGetItemBeforeBattle(u32 event)
     return TRUE;
 }
 
+static void StoreImpactToSaveblock(u32 impact)
+{
+    FRONTIER_SAVEDATA.arcadeGameResult.impact = impact;
+}
+
+static void StoreEventToSaveblock(u32 event)
+{
+    FRONTIER_SAVEDATA.arcadeGameResult.event = event;
+}
+
+static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
+
+static void GenerateGameBoard(void)
+{
+    u32 i, impact;
+
+    for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
+    {
+        sGameBoard[i].impact = GenerateImpact();
+        sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
+        DebugPrintf("spot %d has event %d and impact %d",i,sGameBoard[i].event,sGameBoard[i].impact);
+    }
+}
+
+static void PlayGameBoard(void)
+{
+    u32 space = Random() % ARCADE_GAME_BOARD_SPACES;
+    GenerateGameBoard();
+
+    StoreImpactToSaveblock(sGameBoard[space].impact);
+    StoreEventToSaveblock(sGameBoard[space].event);
+    DebugPrintf("-----------------------");
+        DebugPrintf("Chosen panel %d has event %d and impact %d",space,sGameBoard[space].event,sGameBoard[space].impact);
+}
+
 static void HandleGameBoardResult(void)
 {
-    u32 event = GenerateSetEvent();
-    u32 impact = GetSetImpactSide(event);
+    u32 event = GetEventFromVar();
+    u32 impact = GetImpactFromVar();
 
     FillFrontierTrainerParties();
     if (ShouldEnemyGetItemBeforeBattle(event))
@@ -640,9 +812,24 @@ static bool32 BattleArcade_DoGiveItem(u32 impact)
     return BattleArcade_DoGive(impact, item);
 }
 
+static u32 GetChallengeNum(void)
+{
+    return (GetCurrentBattleArcadeWinStreak() / FRONTIER_STAGES_PER_CHALLENGE);
+}
+
+static u32 GetChallengeNumIndex(void)
+{
+    u32 challengeNum = GetChallengeNum();
+
+    if (challengeNum > ARCADE_STREAK_NUM_7)
+        return ARCADE_STREAK_NUM_7;
+    else
+        return challengeNum;
+}
+
 static u32 GetGroupIdFromWinStreak(void)
 {
-    u32 challengeNum = GetCurrentBattleArcadeWinStreak(FRONTIER_SAVEDATA.lvlMode, VarGet(VAR_FRONTIER_BATTLE_MODE)) / FRONTIER_STAGES_PER_CHALLENGE;
+    u32 challengeNum = GetChallengeNum();
 
     if (challengeNum < 3)
         return ARCADE_BERRY_GROUP_1;
@@ -1008,12 +1195,12 @@ void DoSpecialRouletteTrainerBattle(void)
 
 static bool32 IsCurrentEventLevelUp(void)
 {
-     return (VarGet(VAR_ARCADE_GAME_BOARD_RESULT) == ARCADE_EVENT_LEVEL_UP);
+     return (GetEventFromVar() == ARCADE_EVENT_LEVEL_UP);
 }
 
 static bool32 IsEventSwap(void)
 {
-     return (VarGet(VAR_ARCADE_GAME_BOARD_RESULT) == ARCADE_EVENT_SWAP);
+     return (GetEventFromVar() == ARCADE_EVENT_SWAP);
 }
 
 static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)

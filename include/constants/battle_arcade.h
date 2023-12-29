@@ -17,10 +17,24 @@
 #define ARCADE_FUNC_GET_BRAIN_INTRO            13
 #define ARCADE_FUNC_EVENT_CLEAN_UP             14
 #define ARCADE_FUNC_GET_IMPACT_SIDE            15
+#define ARCADE_FUNC_GET_EVENT                  16
+#define ARCADE_FUNC_PLAY_GAME_BOARD            17
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2
 #define ARCADE_DATA_LVL_MODE                   3
+
+#define ARCADE_STREAK_NUM_0                    0
+#define ARCADE_STREAK_NUM_1                    1
+#define ARCADE_STREAK_NUM_2                    2
+#define ARCADE_STREAK_NUM_3                    3
+#define ARCADE_STREAK_NUM_4                    4
+#define ARCADE_STREAK_NUM_5                    5
+#define ARCADE_STREAK_NUM_6                    6
+#define ARCADE_STREAK_NUM_7                    7
+#define ARCADE_STREAK_NUM_COUNT                ARCADE_STREAK_NUM_7 + 1
+
+#define ARCADE_PANEL_PROPERTIES                0
 
 #define ARCADE_BP_SMALL                        1
 #define ARCADE_BP_BASE                         2
@@ -41,6 +55,7 @@
 #define ARCADE_RECORD_OPEN_LEVEL_BEST_Y_POS    113
 
 #define ARCADE_EVENT_LOWER_HP                  0
+#define ARCADE_EVENT_INDIVIDUAL_START          ARCADE_EVENT_LOWER_HP
 #define ARCADE_EVENT_POISON                    1
 #define ARCADE_EVENT_PARALYZE                  2
 #define ARCADE_EVENT_BURN                      3
@@ -63,12 +78,13 @@
 #define ARCADE_EVENT_WEATHER_END               ARCADE_EVENT_HAIL
 #endif
 #define ARCADE_EVENT_SWAP                      15
+#define ARCADE_EVENT_SPECIAL_START             ARCADE_EVENT_SWAP
 #define ARCADE_EVENT_SPEED_UP                  16
 #define ARCADE_EVENT_SPEED_DOWN                17
 #define ARCADE_EVENT_RANDOM                    18
 #define ARCADE_EVENT_GIVE_BP_SMALL             19
-#define ARCADE_EVENT_GIVE_BP_BIG               20
-#define ARCADE_EVENT_NO_BATTLE                 21
+#define ARCADE_EVENT_NO_BATTLE                 20
+#define ARCADE_EVENT_GIVE_BP_BIG               21
 #define ARCADE_EVENT_NO_EVENT                  22
 #ifdef ARCADE_GEN4_EFFECTS_UNBANNED
 #define ARCADE_EVENT_COUNT                     23
@@ -76,11 +92,20 @@
 #define ARCADE_EVENT_COUNT                     23
 #endif
 
-#define ARCADE_IMPACT_PLAYER                   0
-#define ARCADE_IMPACT_OPPONENT                 1
+#define ARCADE_EVENT_SPECIAL_COUNT             ARCADE_EVENT_COUNT - ARCADE_EVENT_SPECIAL_START
+
+#define ARCADE_IMPACT_OPPONENT                 0
+#define ARCADE_IMPACT_PLAYER                   1
 #define ARCADE_IMPACT_ALL                      2
-#define ARCADE_IMPACT_BITS                     5
-#define ARCADE_IMPACT_MASK                     0x1F
+#define ARCADE_IMPACT_SPECIAL                  3
+#define ARCADE_IMPACT_COUNT                    4
+
+#define ARCADE_BATTLE_NUM_0_4                  0
+#define ARCADE_BATTLE_NUM_5_10                 1
+#define ARCADE_BATTLE_NUM_11_15                2
+#define ARCADE_BATTLE_NUM_16_20                3
+#define ARCADE_BATTLE_NUM_21_PLUS              4
+#define ARCADE_BATTLE_NUM_INDEX_COUNT          5
 
 #define ARCADE_SPEED_LEVEL_0                   0
 #define ARCADE_SPEED_LEVEL_1                   1
@@ -111,5 +136,7 @@
 #define ARCADE_HOLD_ITEM                       ARCADE_EVENT_GIVE_ITEM
 
 #define ARCADE_EVENT_LEVEL_INCREASE            3
+
+#define ARCADE_GAME_BOARD_SPACES               16
 
 #endif //GUARD_CONSTANTS_ARCADE_H
