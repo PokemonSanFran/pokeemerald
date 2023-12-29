@@ -114,7 +114,7 @@ static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 static void FillFrontierTrainerParties(void);
 static void ResetLevelsToOriginal(void);
-void ResetRouletteSpeed(void);
+static void ResetRouletteSpeed(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -175,6 +175,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
     ResetGiveItemVars();
     ResetRouletteSpeed();
+    ResetRouletteRandomFlag():
     ResetFrontierTrainerIds();
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
@@ -381,20 +382,29 @@ static u32 GetImpactSide(u32 event)
         return Random() % ARCADE_IMPACT_ALL;
 }
 
+static bool32 IsEventBanned(u32 event)
+{
+#ifndef ARCADE_GEN4_EFFECTS_UNBANNED
+    if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
+        return TRUE;
+#endif
+    return FALSE;
+}
+
 static u32 GenerateSetEvent(void)
 {
-    u32 event;
+    u32 event -
     do
     {
         event = Random() % ARCADE_EVENT_COUNT;
-    } while ((event == ARCADE_EVENT_TRICK_ROOM)||(event == ARCADE_EVENT_FOG));
+    } while (IsEventBanned(event));
 
     /*
     if (VarGet(VAR_ARCADE_EVENT) == ARCADE_EVENT_RAIN)
         event = ARCADE_EVENT_SLEEP;
     else
     */
-        event = ARCADE_EVENT_NO_BATTLE; //Debug
+        //event = ARCADE_EVENT_NO_BATTLE; //Debug
 
     VarSet(VAR_ARCADE_EVENT,event);
     return event;
@@ -456,8 +466,10 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         case ARCADE_EVENT_RAIN: return BattleArcade_DoRain();
         case ARCADE_EVENT_SAND: return BattleArcade_DoSand();
         case ARCADE_EVENT_HAIL: return BattleArcade_DoHail();
+#ifdef ARCADE_GEN4_EFFECTS_UNBANNED
         case ARCADE_EVENT_FOG: return BattleArcade_DoFog();
         case ARCADE_EVENT_TRICK_ROOM: return BattleArcade_DoTrickRoom();
+#endif
         case ARCADE_EVENT_SWAP: return BattleArcade_DoSwap();
         case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
         case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
@@ -1032,9 +1044,14 @@ void BattleArcade_PostBattleEventCleanup(void)
     ResetWeatherPostBattle();
 }
 
-void ResetRouletteSpeed(void)
+static void ResetRouletteSpeed(void)
 {
     VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_DEFAULT);
+}
+
+static void ResetRouletteRandomFlag(void)
+{
+    FlagClear(FLAG_ARCADE_RANDOM_CURSOR);
 }
 
 // graphical set up off board

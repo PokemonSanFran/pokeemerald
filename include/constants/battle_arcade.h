@@ -56,7 +56,11 @@
 #define ARCADE_EVENT_HAIL                      12
 #define ARCADE_EVENT_FOG                       13
 #define ARCADE_EVENT_TRICK_ROOM                14
+#ifdef ARCADE_GEN4_EFFECTS_UNBANNED
 #define ARCADE_EVENT_WEATHER_END               ARCADE_EVENT_TRICK_ROOM
+#else
+#define ARCADE_EVENT_WEATHER_END               ARCADE_EVENT_HAIL
+#endif
 #define ARCADE_EVENT_SWAP                      15
 #define ARCADE_EVENT_SPEED_UP                  16
 #define ARCADE_EVENT_SPEED_DOWN                17
@@ -65,7 +69,11 @@
 #define ARCADE_EVENT_GIVE_BP_BIG               20
 #define ARCADE_EVENT_NO_BATTLE                 21
 #define ARCADE_EVENT_NO_EVENT                  22
+#ifdef ARCADE_GEN4_EFFECTS_UNBANNED
 #define ARCADE_EVENT_COUNT                     23
+#else
+#define ARCADE_EVENT_COUNT                     23
+#endif
 
 #define ARCADE_IMPACT_PLAYER                   0
 #define ARCADE_IMPACT_OPPONENT                 1
@@ -96,8 +104,8 @@
 #define ARCADE_ITEM_GROUP_COUNT                3
 #define ARCADE_ITEM_GROUP_SIZE                10
 
-#define ARCADE_HOLD_BERRY                ARCADE_EVENT_GIVE_BERRY
-#define ARCADE_HOLD_ITEM                 ARCADE_EVENT_GIVE_ITEM
+#define ARCADE_HOLD_BERRY                      ARCADE_EVENT_GIVE_BERRY
+#define ARCADE_HOLD_ITEM                       ARCADE_EVENT_GIVE_ITEM
 
 #define ARCADE_EVENT_LEVEL_INCREASE            3
 
