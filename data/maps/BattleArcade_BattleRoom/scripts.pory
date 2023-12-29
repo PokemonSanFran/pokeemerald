@@ -5,7 +5,6 @@ const OPPONENT = 2
 const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
 
 const VAR_ARCADE_IMPACT_SIDE = VAR_UNUSED_0x404E
-const VAR_ARCADE_EVENT = VAR_UNUSED_0x4083
 
 mapscripts BattleArcade_BattleRoom_MapScripts
 {

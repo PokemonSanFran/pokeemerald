@@ -78,6 +78,8 @@
 #define ARCADE_IMPACT_PLAYER                   0
 #define ARCADE_IMPACT_OPPONENT                 1
 #define ARCADE_IMPACT_ALL                      2
+#define ARCADE_IMPACT_BITS                     5
+#define ARCADE_IMPACT_MASK                     01xF
 
 #define ARCADE_SPEED_LEVEL_0                   0
 #define ARCADE_SPEED_LEVEL_1                   1

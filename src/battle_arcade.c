@@ -59,6 +59,7 @@ static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
 static void RefreshPlayerItems(void);
+static void ResetRouletteRandomFlag(void);
 static void CalculateGiveChallengeBattlePoints(void);
 static u32 CountNumberTypeWin(u8);
 static void BattleArcade_GiveEnemyItems(void);
@@ -175,7 +176,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
     ResetGiveItemVars();
     ResetRouletteSpeed();
-    ResetRouletteRandomFlag():
+    ResetRouletteRandomFlag();
     ResetFrontierTrainerIds();
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
@@ -325,7 +326,7 @@ static void CalculateGiveChallengeBattlePoints(void)
 static void GiveBattlePoints(u32 points)
 {
     IncrementDailyBattlePoints(points);
-    ConvertIntToDecimalStringN(gStringVar2, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
+    ConvertIntToDecimalStringN(gStringVar3, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
@@ -393,7 +394,7 @@ static bool32 IsEventBanned(u32 event)
 
 static u32 GenerateSetEvent(void)
 {
-    u32 event -
+    u32 event = Random() % ARCADE_EVENT_COUNT;
     do
     {
         event = Random() % ARCADE_EVENT_COUNT;

@@ -1,7 +1,5 @@
 const VAR_BRAIN_STATUS = VAR_TEMP_F
 const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
-const VAR_ARCADE_IMPACT_SIDE = VAR_UNUSED_0x404E
-const VAR_ARCADE_EVENT = VAR_UNUSED_0x4083
 
 script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 {
@@ -63,6 +61,11 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
 
 script BattleArcade_RouletteRoom_SkipBattle_Script
 {
+    if (var(VAR_ARCADE_EVENT) != ARCADE_EVENT_NO_BATTLE)
+    {
+        return
+    }
+
     call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
     goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
 }
