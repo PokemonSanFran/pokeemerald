@@ -120,10 +120,10 @@
 #define ARCADE_BERRY_GROUP_COUNT               3
 #define ARCADE_BERRY_GROUP_SIZE                10
 
-#define ARCADE_ITEM_GROUP_1                    0
-#define ARCADE_ITEM_GROUP_2                    1
-#define ARCADE_ITEM_GROUP_3                    2
-#define ARCADE_ITEM_GROUP_COUNT                3
+#define ARCADE_ITEM_GROUP_1                    ARCADE_BERRY_GROUP_1
+#define ARCADE_ITEM_GROUP_2                    ARCADE_BERRY_GROUP_2
+#define ARCADE_ITEM_GROUP_3                    ARCADE_BERRY_GROUP_3
+#define ARCADE_ITEM_GROUP_COUNT                ARCADE_BERRY_GROUP_COUNT
 #define ARCADE_ITEM_GROUP_SIZE                10
 
 #define ARCADE_HOLD_BERRY                      ARCADE_EVENT_GIVE_BERRY

@@ -549,6 +549,7 @@ static u32 GenerateEvent(u32 impact)
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
     //DebugPrintf("event original roll is %d",event);
+    return ARCADE_EVENT_HAIL; // Debug
     return event;
 }
 
@@ -917,7 +918,7 @@ static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
         {
             ITEM_KINGS_ROCK,
             ITEM_QUICK_CLAW,
-            ITEM_BRIGHTPOWDER,
+            ITEM_BRIGHT_POWDER,
             ///////////////////////////////////
             ITEM_FOCUS_BAND,
             ITEM_LEFTOVERS,
@@ -1052,7 +1053,6 @@ static bool32 BattleArcade_DoLevelUp(u32 impact)
         SetMonData(&party[i], MON_DATA_LEVEL, &newLevel);
     }
     return TRUE;
-    // ARCADE TODO this should not appear if at level 100
 }
 
 static void BattleArcade_DoWeather(u32 weather)
