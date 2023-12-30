@@ -506,7 +506,7 @@ static bool32 IsEventValidDuringCurrentStreak(u32 event)
     if (event < ARCADE_EVENT_SPECIAL_START)
         return TRUE;
 
-    if (PanelStreakTable[event][GetChallengeNumIndex()] == FALSE)
+    if (!PanelStreakTable[event][GetChallengeNumIndex()])
         return FALSE;
 
     return TRUE;
@@ -514,7 +514,7 @@ static bool32 IsEventValidDuringCurrentStreak(u32 event)
 
 static bool32 IsEventValidDuringCurrentBattle(u32 event)
 {
-    if (SpecialPanelTable[event - ARCADE_EVENT_SPECIAL_START][FRONTIER_SAVEDATA.curChallengeBattleNum] == FALSE)
+    if (!SpecialPanelTable[event - ARCADE_EVENT_SPECIAL_START][FRONTIER_SAVEDATA.curChallengeBattleNum])
         return FALSE;
 
     return TRUE;
@@ -528,7 +528,6 @@ static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
         return FALSE;
     if (!IsEventValidDuringCurrentBattle(event))
         return FALSE;
-
     return TRUE;
 }
 
@@ -885,6 +884,7 @@ static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
             ITEM_PECHA_BERRY,
             ITEM_RAWST_BERRY,
             ITEM_ASPEAR_BERRY,
+            ///////////////////////////////////
             ITEM_PERSIM_BERRY,
             ITEM_SITRUS_BERRY,
             ITEM_LUM_BERRY,
@@ -900,6 +900,7 @@ static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
             ITEM_PERSIM_BERRY,
             ITEM_SITRUS_BERRY,
             ITEM_LUM_BERRY,
+            ///////////////////////////////////
             ITEM_LIECHI_BERRY,
             ITEM_GANLON_BERRY,
             ITEM_SALAC_BERRY,
@@ -914,33 +915,28 @@ static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
     {
         [ARCADE_ITEM_GROUP_1] =
         {
-            ITEM_CHERI_BERRY,
-            ITEM_CHESTO_BERRY,
-            ITEM_PECHA_BERRY,
-            ITEM_RAWST_BERRY,
-            ITEM_ASPEAR_BERRY,
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
+            ITEM_KINGS_ROCK,
+            ITEM_QUICK_CLAW,
+            ITEM_BRIGHTPOWDER,
+            ///////////////////////////////////
+            ITEM_FOCUS_BAND,
+            ITEM_LEFTOVERS,
         },
         [ARCADE_ITEM_GROUP_2] =
         {
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
+            ITEM_WHITE_HERB,
+            ITEM_SHELL_BELL,
+            ///////////////////////////////////
+            ITEM_SCOPE_LENS,
         },
         [ARCADE_ITEM_GROUP_3] =
         {
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-            ITEM_LIECHI_BERRY,
-            ITEM_GANLON_BERRY,
-            ITEM_SALAC_BERRY,
-            ITEM_PETAYA_BERRY,
-            ITEM_APICOT_BERRY,
-            ITEM_LANSAT_BERRY,
-            ITEM_STARF_BERRY,
+            ITEM_FOCUS_BAND,
+            ITEM_LEFTOVERS,
+            ///////////////////////////////////
+            ITEM_SCOPE_LENS,
+            ///////////////////////////////////
+            ITEM_CHOICE_BAND
         },
     };
 

@@ -133,8 +133,4 @@
 
 #define ARCADE_GAME_BOARD_SPACES               16
 
-#define GAME_BOARD_EVENT gSpecialVar_0x8007
-#define GAME_BOARD_IMPACT gSpecialVar_0x8008
-#define GAME_BOARD_SUCCESS gSpecialVar_0x8009
-
 #endif //GUARD_CONSTANTS_ARCADE_H
