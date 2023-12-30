@@ -1079,13 +1079,11 @@ static bool32 BattleArcade_DoSand(void)
 static bool32 BattleArcade_DoHail(void)
 {
     BattleArcade_DoWeather(WEATHER_SNOW);
-    //ARCADE TODO snow needs to keep going _AND summon infinite hail
 	return TRUE;
 }
 static bool32 BattleArcade_DoFog(void)
 {
     BattleArcade_DoWeather(WEATHER_FOG_HORIZONTAL);
-    //ARCADE TODO if Fog is not around at all in gen 3, disable this effect
 	return TRUE;
 }
 static bool32 BattleArcade_DoTrickRoom(void)
