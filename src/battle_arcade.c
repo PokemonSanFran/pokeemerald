@@ -64,6 +64,7 @@ static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
 static void StoreImpactedSideToVar(void);
 static void RefreshPlayerItems(void);
+static void ResetEnemyHeldItem(void);
 static void ResetRouletteRandomFlag(void);
 static void CalculateGiveChallengeBattlePoints(void);
 static u32 CountNumberTypeWin(u8);
@@ -73,6 +74,7 @@ static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
 static struct Pokemon *LoadSideParty(u32);
 static void HandleGameBoardResult(void);
+static void GenerateOpponentParty(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
 static void BattleArcade_PostBattleEventCleanup(void);
@@ -156,6 +158,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
     [ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
     [ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
+    [ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -190,6 +193,8 @@ static void InitArcadeChallenge(void)
     ResetRouletteSpeed();
     ResetRouletteRandomFlag();
     ResetFrontierTrainerIds();
+    ResetEnemyHeldItem();
+
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
 
@@ -376,6 +381,11 @@ static void TakeEnemyHeldItems(void)
     BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, ITEM_NONE);
 }
 
+static void ResetEnemyHeldItem(void)
+{
+    VarSet(VAR_ARCADE_GIVE_ENEMY_TYPE,ITEM_NONE);
+}
+
 static void TakePlayerHeldItems(void)
 {
     RefreshPlayerItems();
@@ -549,7 +559,7 @@ static u32 GenerateEvent(u32 impact)
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
     //DebugPrintf("event original roll is %d",event);
-    return ARCADE_EVENT_HAIL; // Debug
+    return ARCADE_EVENT_SWAP; // Debug
     return event;
 }
 
@@ -601,9 +611,6 @@ static bool32 IsEventBattle(u32 event)
 
 static bool32 DoesEventGiveItems(u32 event)
 {
-    if (!IsEventBattle(event))
-        return FALSE;
-
     if ((event != ARCADE_EVENT_GIVE_BERRY) && (event != ARCADE_EVENT_GIVE_ITEM))
         return FALSE;
 
@@ -663,12 +670,16 @@ static void PlayGameBoard(void)
     SelectGameBoardSpace();
 }
 
+static void GenerateOpponentParty(void)
+{
+    FillFrontierTrainerParties();
+}
+
 static void HandleGameBoardResult(void)
 {
     u32 event = GetEventFromSaveblock();
     u32 impact = GetImpactFromSaveblock();
 
-    FillFrontierTrainerParties();
     if (ShouldEnemyGetItemBeforeBattle(event))
         BattleArcade_GiveEnemyItems();
 
@@ -1011,6 +1022,7 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 item)
             break;
 
         SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
+        DebugPrintf("slot %d has item %d",i,GetMonData(&party[i],MON_DATA_HELD_ITEM,NULL));
     }
 
     BufferGiveString(item);

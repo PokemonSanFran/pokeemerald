@@ -52,10 +52,9 @@ script BattleArcade_BattleRoom_EventScript_EnterRoom
 
 script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 {
+    removeobject(OPPONENT)
     addobject(OPPONENT) // ARCADE TODO opponent is always invisible here
     setobjectxy(OPPONENT,7,11)
-    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_SetVisible)
-    waitmovement(OPPONENT)
     applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
     waitmovement(OPPONENT)
 }
@@ -180,6 +179,7 @@ movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
 
 movement BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter
 {
+    set_visible
     walk_up * 2
     walk_right * 4
     walk_up * 3
@@ -237,9 +237,4 @@ movement BattleArcade_BattleRoom_Movement_FaceAttendant
 movement BattleArcade_BattleRoom_Movement_SetInvisible
 {
     set_invisible
-}
-
-movement BattleArcade_BattleRoom_Movement_SetVisible
-{
-    set_visible
 }

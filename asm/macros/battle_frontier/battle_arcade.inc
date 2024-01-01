@@ -105,3 +105,9 @@
     setvar VAR_0x8004, ARCADE_FUNC_GET_EVENT
     special CallBattleArcadeFunc
     .endm
+
+    @ Loads the opponent's party
+    .macro arcade_generateopponentparty
+    setvar VAR_0x8004, ARCADE_FUNC_GENERATE_OPPONENT
+    special CallBattleArcadeFunc
+    .endm

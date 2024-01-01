@@ -40,10 +40,11 @@ script BattleArcade_RouletteRoom_EventScript_PlayGameBoard
 
 script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
+    arcade_generateopponentparty
     arcade_takeplayerhelditems
     arcade_takeenemyhelditems
-    arcade_playgameboard
 
+    arcade_playgameboard
     arcade_handlegameresult
     arcade_getimpactedside
     arcade_getevent
@@ -150,8 +151,10 @@ script BattleArcade_RouletteRoom_AnnounceImpactString_Failure
 
 script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 {
-    call(BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber)
+    frontier_set(FRONTIER_DATA_LVL_MODE, 1) // Debug
+    frontier_set(FRONTIER_MODE_SINGLES,1) // Debug
     tower_setopponent
+    call(BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber)
     call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)

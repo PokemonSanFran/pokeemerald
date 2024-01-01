@@ -19,6 +19,7 @@
 #define ARCADE_FUNC_GET_IMPACT_SIDE            15
 #define ARCADE_FUNC_GET_EVENT                  16
 #define ARCADE_FUNC_PLAY_GAME_BOARD            17
+#define ARCADE_FUNC_GENERATE_OPPONENT          18
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2
