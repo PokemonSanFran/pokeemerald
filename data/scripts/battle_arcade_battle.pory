@@ -153,8 +153,8 @@ script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 {
     frontier_set(FRONTIER_DATA_LVL_MODE, 1) // Debug
     frontier_set(FRONTIER_MODE_SINGLES,1) // Debug
-    tower_setopponent
     call(BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber)
+    tower_setopponent
     call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)

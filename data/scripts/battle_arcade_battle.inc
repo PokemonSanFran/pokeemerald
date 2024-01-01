@@ -304,9 +304,9 @@ BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard::
 # 155 "data/scripts/battle_arcade_battle.pory"
 	frontier_set FRONTIER_MODE_SINGLES, 1
 # 156 "data/scripts/battle_arcade_battle.pory"
-	tower_setopponent
-# 157 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber
+# 157 "data/scripts/battle_arcade_battle.pory"
+	tower_setopponent
 # 158 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 # 159 "data/scripts/battle_arcade_battle.pory"

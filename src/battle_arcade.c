@@ -194,6 +194,7 @@ static void InitArcadeChallenge(void)
     ResetRouletteRandomFlag();
     ResetFrontierTrainerIds();
     ResetEnemyHeldItem();
+    FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
@@ -559,7 +560,7 @@ static u32 GenerateEvent(u32 impact)
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
     //DebugPrintf("event original roll is %d",event);
-    return ARCADE_EVENT_SWAP; // Debug
+    //return ARCADE_EVENT_SWAP; // Debug
     return event;
 }
 
