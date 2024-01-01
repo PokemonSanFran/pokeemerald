@@ -49,9 +49,8 @@ script BattleArcade_BattleRoom_EventScript_EnterRoom
 
 script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 {
-    addobject(OPPONENT) // ARCADE TODO opponent is always invisible here
+    addobject(OPPONENT)
     setobjectxy(OPPONENT,7,11)
-    //setobjectxy(OPPONENT,7,6)
     applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
     waitmovement(OPPONENT)
 }
@@ -81,6 +80,7 @@ script BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition
     applymovement(OPPONENT,BattleArcade_BattleRoom_EventScript_WalkToLeft)
     applymovement(PLAYER,BattleArcade_BattleRoom_EventScript_WalkToRight)
     waitmovement(PLAYER)
+    special(RemoveCameraObject)
 }
 
 script BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact
@@ -107,14 +107,14 @@ script BattleArcade_BattleRoom_EventScript_MoveMCBack
 
 script BattleArcade_BattleRoom_EventScript_MoveBattlersBack
 {
-    special(SpawnCameraObject) //ARCADE TODO Why does the camera move here?
-    applymovement(CAMERA,BattleArcade_BattleRoom_EventScript_WalkToRight)
+    special(SpawnCameraObject)
     applymovement(PLAYER,BattleArcade_BattleRoom_EventScript_ReturnPosition)
     applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_OpponentReturnPosition)
     waitmovement(OPPONENT)
     applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_LeaveRoom)
     waitmovement(OPPONENT)
     removeobject(OPPONENT)
+    special(RemoveCameraObject)
 }
 
 script BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement

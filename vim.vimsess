@@ -110,14 +110,18 @@ else
   set shortmess=aoO
 endif
 badd +0 data/maps/BattleArcade_BattleRoom/scripts.pory
-badd +0 data/maps/BattleArcade_Lobby/scripts.pory
-badd +133 ~/.zshrc
+badd +33 data/maps/BattleArcade_Lobby/scripts.pory
+badd +129 ~/.zshrc
 badd +1 data/scripts/battle_arcade_battle.pory
-badd +0 data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory
+badd +57 data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory
 badd +1061 src/battle_tower.c
-badd +0 data/scripts/battle_arcade_registration.pory
+badd +257 data/scripts/battle_arcade_registration.pory
 badd +79 include/constants/global.h
-badd +0 src/battle_arcade.c
+badd +143 src/battle_arcade.c
+badd +2 asm/macros/battle_frontier/battle_arcade.inc
+badd +65 include/constants/battle_arcade.h
+badd +74 include/config.h
+badd +1 new
 argglobal
 %argdel
 edit data/scripts/battle_arcade_battle.pory
@@ -137,17 +141,7 @@ wincmd w
 wincmd w
 wincmd _ | wincmd |
 split
-wincmd _ | wincmd |
-split
-wincmd _ | wincmd |
-split
-3wincmd k
-wincmd w
-wincmd w
-wincmd w
-wincmd _ | wincmd |
-vsplit
-1wincmd h
+1wincmd k
 wincmd w
 let &splitbelow = s:save_splitbelow
 let &splitright = s:save_splitright
@@ -158,23 +152,17 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 50 + 101) / 203)
+exe 'vert 1resize ' . ((&columns * 67 + 101) / 203)
 exe '2resize ' . ((&lines * 28 + 29) / 59)
-exe 'vert 2resize ' . ((&columns * 51 + 101) / 203)
+exe 'vert 2resize ' . ((&columns * 67 + 101) / 203)
 exe '3resize ' . ((&lines * 28 + 29) / 59)
-exe 'vert 3resize ' . ((&columns * 51 + 101) / 203)
-exe '4resize ' . ((&lines * 14 + 29) / 59)
-exe 'vert 4resize ' . ((&columns * 100 + 101) / 203)
-exe '5resize ' . ((&lines * 13 + 29) / 59)
-exe 'vert 5resize ' . ((&columns * 100 + 101) / 203)
-exe '6resize ' . ((&lines * 14 + 29) / 59)
-exe 'vert 6resize ' . ((&columns * 100 + 101) / 203)
-exe '7resize ' . ((&lines * 13 + 29) / 59)
-exe 'vert 7resize ' . ((&columns * 50 + 101) / 203)
-exe '8resize ' . ((&lines * 13 + 29) / 59)
-exe 'vert 8resize ' . ((&columns * 49 + 101) / 203)
+exe 'vert 3resize ' . ((&columns * 67 + 101) / 203)
+exe '4resize ' . ((&lines * 28 + 29) / 59)
+exe 'vert 4resize ' . ((&columns * 67 + 101) / 203)
+exe '5resize ' . ((&lines * 28 + 29) / 59)
+exe 'vert 5resize ' . ((&columns * 67 + 101) / 203)
 argglobal
-terminal ++curwin ++cols=50 ++rows=57 
+terminal ++curwin ++cols=67 ++rows=57 
 let s:term_buf_2 = bufnr()
 balt data/maps/BattleArcade_BattleRoom/scripts.pory
 setlocal keymap=
@@ -308,15 +296,15 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 913 - ((27 * winheight(0) + 28) / 57)
+let s:l = 2664 - ((30 * winheight(0) + 28) / 57)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 913
+keepjumps 2664
 normal! 0
 wincmd w
 argglobal
-balt data/maps/BattleArcade_BattleRoom/scripts.pory
+balt ~/.zshrc
 setlocal keymap=
 setlocal noarabic
 setlocal noautoindent
@@ -450,12 +438,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 154 - ((12 * winheight(0) + 14) / 28)
+let s:l = 155 - ((9 * winheight(0) + 14) / 28)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 154
-normal! 050|
+keepjumps 155
+normal! 010|
 wincmd w
 argglobal
 if bufexists(fnamemodify("data/maps/BattleArcade_BattleRoom/scripts.pory", ":p")) | buffer data/maps/BattleArcade_BattleRoom/scripts.pory | else | edit data/maps/BattleArcade_BattleRoom/scripts.pory | endif
@@ -593,445 +581,16 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 54 - ((6 * winheight(0) + 14) / 28)
+let s:l = 109 - ((12 * winheight(0) + 14) / 28)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 54
-normal! 0
-wincmd w
-argglobal
-if bufexists(fnamemodify("src/battle_tower.c", ":p")) | buffer src/battle_tower.c | else | edit src/battle_tower.c | endif
-balt data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal completefunc=
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-set cursorline
-setlocal cursorline
-setlocal cursorlineopt=both
-setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal expandtab
-if &filetype != 'c'
-setlocal filetype=c
-endif
-setlocal fillchars=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=croql
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal formatprg=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=bin,hex
-set number
-setlocal number
-setlocal numberwidth=4
-setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal shiftwidth=4
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=4
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'c'
-setlocal syntax=c
-endif
-setlocal tabstop=4
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 51 - ((6 * winheight(0) + 7) / 14)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 51
-normal! 0
-wincmd w
-argglobal
-if bufexists(fnamemodify("src/battle_arcade.c", ":p")) | buffer src/battle_arcade.c | else | edit src/battle_arcade.c | endif
-balt src/battle_tower.c
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal completefunc=
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-set cursorline
-setlocal cursorline
-setlocal cursorlineopt=both
-setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal expandtab
-if &filetype != 'c'
-setlocal filetype=c
-endif
-setlocal fillchars=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=croql
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal formatprg=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=bin,hex
-set number
-setlocal number
-setlocal numberwidth=4
-setlocal omnifunc=ccomplete#Complete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal shiftwidth=4
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=4
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'c'
-setlocal syntax=c
-endif
-setlocal tabstop=4
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 374 - ((5 * winheight(0) + 6) / 13)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 374
-normal! 013|
-wincmd w
-argglobal
-if bufexists(fnamemodify("data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory", ":p")) | buffer data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory | else | edit data/maps/BattleFrontier_BattleTowerBattleRoom/scripts.pory | endif
-balt include/constants/global.h
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal balloonexpr=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal nocindent
-setlocal cinkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinscopedecls=public,protected,private
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal completefunc=
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-set cursorline
-setlocal cursorline
-setlocal cursorlineopt=both
-setlocal define=^\\s*#\\s*define
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal expandtab
-if &filetype != 'poryscript'
-setlocal filetype=poryscript
-endif
-setlocal fillchars=
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=tcq
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal formatprg=
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=-1
-setlocal include=^\\s*#\\s*include
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispoptions=
-setlocal lispwords=
-setlocal nolist
-setlocal listchars=
-setlocal makeencoding=
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=bin,hex
-set number
-setlocal number
-setlocal numberwidth=4
-setlocal omnifunc=
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal scrolloff=-1
-setlocal shiftwidth=4
-setlocal noshortname
-setlocal showbreak=
-setlocal sidescrolloff=-1
-setlocal signcolumn=auto
-setlocal nosmartindent
-setlocal nosmoothscroll
-setlocal softtabstop=4
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal spelloptions=
-setlocal statusline=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'poryscript'
-setlocal syntax=poryscript
-endif
-setlocal tabstop=4
-setlocal tagcase=
-setlocal tagfunc=
-setlocal tags=
-setlocal termwinkey=
-setlocal termwinscroll=10000
-setlocal termwinsize=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal thesaurusfunc=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal varsofttabstop=
-setlocal vartabstop=
-setlocal virtualedit=
-setlocal wincolor=
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 40 - ((4 * winheight(0) + 7) / 14)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 40
-normal! 014|
+keepjumps 109
+normal! 041|
 wincmd w
 argglobal
 if bufexists(fnamemodify("data/scripts/battle_arcade_registration.pory", ":p")) | buffer data/scripts/battle_arcade_registration.pory | else | edit data/scripts/battle_arcade_registration.pory | endif
-balt data/maps/BattleArcade_Lobby/scripts.pory
+balt new
 setlocal keymap=
 setlocal noarabic
 setlocal noautoindent
@@ -1165,12 +724,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 38 - ((4 * winheight(0) + 6) / 13)
+let s:l = 2 - ((1 * winheight(0) + 14) / 28)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 38
-normal! 05|
+keepjumps 2
+normal! 07|
 wincmd w
 argglobal
 if bufexists(fnamemodify("data/maps/BattleArcade_Lobby/scripts.pory", ":p")) | buffer data/maps/BattleArcade_Lobby/scripts.pory | else | edit data/maps/BattleArcade_Lobby/scripts.pory | endif
@@ -1308,29 +867,23 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 33 - ((4 * winheight(0) + 6) / 13)
+let s:l = 1 - ((0 * winheight(0) + 14) / 28)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 33
+keepjumps 1
 normal! 0
 wincmd w
-5wincmd w
-exe 'vert 1resize ' . ((&columns * 50 + 101) / 203)
+4wincmd w
+exe 'vert 1resize ' . ((&columns * 67 + 101) / 203)
 exe '2resize ' . ((&lines * 28 + 29) / 59)
-exe 'vert 2resize ' . ((&columns * 51 + 101) / 203)
+exe 'vert 2resize ' . ((&columns * 67 + 101) / 203)
 exe '3resize ' . ((&lines * 28 + 29) / 59)
-exe 'vert 3resize ' . ((&columns * 51 + 101) / 203)
-exe '4resize ' . ((&lines * 14 + 29) / 59)
-exe 'vert 4resize ' . ((&columns * 100 + 101) / 203)
-exe '5resize ' . ((&lines * 13 + 29) / 59)
-exe 'vert 5resize ' . ((&columns * 100 + 101) / 203)
-exe '6resize ' . ((&lines * 14 + 29) / 59)
-exe 'vert 6resize ' . ((&columns * 100 + 101) / 203)
-exe '7resize ' . ((&lines * 13 + 29) / 59)
-exe 'vert 7resize ' . ((&columns * 50 + 101) / 203)
-exe '8resize ' . ((&lines * 13 + 29) / 59)
-exe 'vert 8resize ' . ((&columns * 49 + 101) / 203)
+exe 'vert 3resize ' . ((&columns * 67 + 101) / 203)
+exe '4resize ' . ((&lines * 28 + 29) / 59)
+exe 'vert 4resize ' . ((&columns * 67 + 101) / 203)
+exe '5resize ' . ((&lines * 28 + 29) / 59)
+exe 'vert 5resize ' . ((&columns * 67 + 101) / 203)
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
