@@ -57,6 +57,7 @@ static u32 GetEnemyGiveType(void);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
 static void ResetGiveItemVars(void);
+void SetFrontierFacilityToPike(void);
 static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
@@ -67,6 +68,7 @@ static void RefreshPlayerItems(void);
 static void ResetEnemyHeldItem(void);
 static void ResetRouletteRandomFlag(void);
 static void CalculateGiveChallengeBattlePoints(void);
+static void SetArcadeBrainObjectEvent(void);
 static u32 CountNumberTypeWin(u8);
 static void BattleArcade_GiveEnemyItems(void);
 static void CheckArcadeSymbol(void);
@@ -159,6 +161,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
     [ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
     [ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
+    [ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -1199,6 +1202,7 @@ void SetBattleTypeFlags(void)
 
 void FillFrontierTrainerParties(void)
 {
+    SetFrontierFacilityToPike();
     switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
     {
         case FRONTIER_MODE_SINGLES:
@@ -1280,12 +1284,23 @@ static void RefreshPlayerItems(void)
     BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, item);
 }
 
+void ResetFrontierFacilityToArcade(void)
+{
+    VarSet(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE);
+}
+
+void SetFrontierFacilityToPike(void)
+{
+    VarSet(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_PIKE);
+}
+
 void BattleArcade_PostBattleEventCleanup(void)
 {
     RefreshPlayerItems();
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
+    ResetFrontierFacilityToArcade();
 }
 
 static void ResetRouletteSpeed(void)
@@ -1301,5 +1316,10 @@ static void ResetRouletteRandomFlag(void)
 // graphical set up off board
 // populate array with effects
 // iterate again over each spot and pick a side
+
+static void SetArcadeBrainObjectEvent(void)
+{
+    SetFrontierBrainObjEventGfx(FRONTIER_FACILITY_PIKE);
+}
 
 #endif

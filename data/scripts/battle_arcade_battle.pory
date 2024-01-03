@@ -195,6 +195,7 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
 
     special(DoSpecialRouletteTrainerBattle)
     waitstate
+    arcade_eventcleanup
 
     copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)
     if(var(VAR_0x8004) != FRONTIER_MODE_LINK_MULTIS)
@@ -202,7 +203,6 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
         frontier_resetsketch
     }
 
-    arcade_eventcleanup
     frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
     return
 }
@@ -246,7 +246,8 @@ script BattleArcade_RouletteRoom_EventScript_HealPlayer
 script BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 {
     arcade_getbrainstatus
-    if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
+    //if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
+    if(var(VAR_BRAIN_STATUS) == FRONTIER_BRAIN_NOT_READY) // Debug
     {
         goto(BattleArcade_RouletteRoom_EventScript_BrainUpNext)
     }
@@ -431,9 +432,8 @@ script BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord
     }
 }
 
-script BattleArcade_RouletteRoom_EventScript_LoadBrainText
+script BattleArcade_RouletteRoom_EventScript_PlayBrainText
 {
-    bufferstring(STR_VAR_3,"hello")
     arcade_getbrainintro
     msgbox(gStringVar4, MSGBOX_DEFAULT)
     waitmessage
@@ -443,14 +443,15 @@ script BattleArcade_RouletteRoom_EventScript_LoadBrainText
 script BattleArcade_RouletteRoom_EventScript_BattleBrain
 {
     closemessage
-    call(BattleFrontier_EventScript_SetBrainObjectGfx)
+    frontier_set(FRONTIER_DATA_LVL_MODE, 1) // Debug
+    frontier_set(FRONTIER_MODE_SINGLES,1) // Debug
+    arcade_setbrainobj
     call(BattleArcade_RouletteRoom_EventScript_BrainIntro)
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
-    call(BattleArcade_RouletteRoom_EventScript_LoadBrainText)
+    call(BattleArcade_RouletteRoom_EventScript_PlayBrainText)
     call(BattleArcade_RouletteRoom_EventScript_StartBattle)
-    goto(BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult)
-    //goto(BattleArcade_RouletteRoom_EventScript_HandleBattleResult)
+    oto(BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult)
 }
 
 script BattleArcade_RouletteRoom_EventScript_HandleBattleResult

@@ -49,8 +49,7 @@ script BattleArcade_BattleRoom_EventScript_EnterRoom
 
 script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 {
-    addobject(OPPONENT)
-    setobjectxy(OPPONENT,7,11)
+    call(BattleArcade_BattleRoom_EventScript_AddSetOpponentObject)
     applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
     waitmovement(OPPONENT)
 }
@@ -137,6 +136,138 @@ script BattleArcade_BattleRoom_EventScript_AttendantLeave
 
 script BattleArcade_BattleRoom_EventScript_BrainEntranceMovement
 {
+    special(SpawnCameraObject)
+    call(BattleArcade_BattleRoom_EventScript_AddSetOpponentObject)
+    applymovement(OPPONENT,Common_Movement_FaceDown)
+    applymovement(PLAYER,Common_Movement_FaceDown)
+    applymovement(CAMERA,BattleArcade_BattleRoom_Movement_PanCameraToBrain)
+    waitmovement(CAMERA)
+    call(BattleArcade_BattleRoom_EventScript_BrainEntrance)
+}
+
+script BattleArcade_BattleRoom_EventScript_BrainEntrance
+{
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainSpinDown360)
+    waitmovement(OPPONENT)
+
+    playse(SE_APPLAUSE)
+    waitse
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainSpinDownToUp)
+    waitmovement(OPPONENT)
+
+    applymovement(CAMERA,BattleArcade_BattleRoom_Movement_BrainPanCameraToBattlefield)
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainWalkUp)
+    waitmovement(OPPONENT)
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainSpinUpToRight)
+    waitmovement(OPPONENT)
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainWalkRight)
+    waitmovement(OPPONENT)
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainSpinRightToUp)
+    waitmovement(OPPONENT)
+
+    applymovement(PLAYER,Common_Movement_FaceRight)
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainWalkUp2)
+    waitmovement(OPPONENT)
+
+    applymovement(OPPONENT,BattleArcade_BattleRoom_Movement_BrainSpinUpToLeft)
+    waitmovement(OPPONENT)
+
+    waitmovement(OPPONENT)
+    waitmovement(PLAYER)
+    waitmovement(CAMERA)
+}
+
+script BattleArcade_BattleRoom_EventScript_AddSetOpponentObject
+{
+    addobject(OPPONENT)
+    setobjectxy(OPPONENT,7,11)
+}
+
+movement BattleArcade_BattleRoom_Movement_PanCameraToBrain
+{
+    walk_down * 4
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainPanCameraToBattlefield
+{
+    walk_up * 4
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainSpinDown360
+{
+    walk_in_place_right
+    walk_in_place_up
+    walk_in_place_left
+    walk_in_place_down
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainSpinDownToUp
+{
+    walk_in_place_right
+    walk_in_place_up
+    walk_in_place_left
+    walk_in_place_down
+    walk_in_place_right
+    walk_in_place_up
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainSpinUpToRight
+{
+    walk_in_place_left
+    walk_in_place_down
+    walk_in_place_right
+    walk_in_place_up
+    walk_in_place_left
+    walk_in_place_down
+    walk_in_place_right
+    walk_in_place_up
+    walk_in_place_left
+    walk_in_place_down
+    walk_in_place_right
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainSpinRightToUp
+{
+    walk_in_place_up
+    walk_in_place_left
+    walk_in_place_down
+    walk_in_place_right
+    walk_in_place_up
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainSpinUpToLeft
+{
+    walk_in_place_left
+    walk_in_place_down
+    walk_in_place_right
+    walk_in_place_up
+    walk_in_place_left
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainWalkUp
+{
+    walk_up * 2
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainWalkRight
+{
+    walk_right * 4
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainWalkUp2
+{
+    walk_up * 3
+}
+
+movement BattleArcade_BattleRoom_Movement_BrainWalkFasterLeft
+{
+    walk_in_place_faster_left
 }
 
 movement BattleArcade_BattleRoom_Movement_RunOffBattlefield
@@ -177,7 +308,6 @@ movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkDown
 
 movement BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter
 {
-    set_visible
     walk_up * 2
     walk_right * 4
     walk_up * 3

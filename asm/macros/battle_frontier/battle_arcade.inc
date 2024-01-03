@@ -111,3 +111,9 @@
     setvar VAR_0x8004, ARCADE_FUNC_GENERATE_OPPONENT
     special CallBattleArcadeFunc
     .endm
+
+    @ Passes Battle Pike to SetFacilityBrainObjectEvent
+    .macro arcade_setbrainobj
+    setvar VAR_0x8004, ARCADE_FUNC_SET_BRAIN_OBJECT
+    special CallBattleArcadeFunc
+    .endm

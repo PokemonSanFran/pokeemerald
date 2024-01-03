@@ -2015,11 +2015,6 @@ void DoSpecialTrainerBattle(void)
     gBattleScripting.specialTrainerBattleType = gSpecialVar_0x8004;
     switch (gSpecialVar_0x8004)
     {
-#ifdef BATTLE_ARCADE
-    case SPECIAL_BATTLE_ARCADE:
-        DoSpecialRouletteTrainerBattle();
-        break;
-#endif
     case SPECIAL_BATTLE_TOWER:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
@@ -3269,6 +3264,7 @@ u8 GetFrontierEnemyMonLevel(u8 lvlMode)
             level = FRONTIER_MIN_LEVEL_OPEN;
         break;
     }
+    level = 1;
 
     return level;
 }
