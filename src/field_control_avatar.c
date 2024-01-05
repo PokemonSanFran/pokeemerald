@@ -547,12 +547,7 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
 
     if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_FORCED_MOVE) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
     {
-        if (UpdateVsSeekerStepCounter() == TRUE)
-        {
-            ScriptContext_SetupScript(EventScript_VsSeekerChargingDone);
-            return TRUE;
-        }
-        else if (UpdatePoisonStepCounter() == TRUE)
+        if (UpdatePoisonStepCounter() == TRUE)
         {
             ScriptContext_SetupScript(EventScript_FieldPoison);
             return TRUE;
@@ -596,6 +591,11 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
         if (ShouldDoRivalRayquazaCall() == TRUE)
         {
             ScriptContext_SetupScript(MossdeepCity_SpaceCenter_2F_EventScript_RivalRayquazaCall);
+            return TRUE;
+        }
+        if (UpdateVsSeekerStepCounter() == TRUE)
+        {
+            ScriptContext_SetupScript(EventScript_VsSeekerChargingDone);
             return TRUE;
         }
     }

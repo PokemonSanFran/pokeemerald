@@ -38,8 +38,3 @@ prefabs.json
 *.diff
 *.sym
 *.js
-# delete everything below this line
-meta/
-*.sw*
-.gitignore
-*vimsess
