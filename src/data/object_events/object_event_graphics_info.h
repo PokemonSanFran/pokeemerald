@@ -4653,6 +4653,7 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_HoOh = {
     .affineAnims = gDummySpriteAffineAnimTable,
 };
 /*
+// Start vs_seeker branch
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_BrendanVSSeeker = {
     .tileTag = TAG_NONE,
     .paletteTag = OBJ_EVENT_PAL_TAG_BRENDAN,
@@ -4690,6 +4691,6 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_MayVSSeeker = {
     .images = sPicTable_MayVSSeeker,
     .affineAnims = gDummySpriteAffineAnimTable,
 };
-
-BRANCH_NOTE: These lines are from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+// These lines are from Jaizu's original implementation, but has been commented as this branch just uses the Field Move animation and there is no VS_Seeker animation.
+// End vs_seeker branch
 */

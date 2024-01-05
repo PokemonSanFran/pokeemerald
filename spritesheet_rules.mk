@@ -10,8 +10,10 @@ $(OBJEVENTGFXDIR)/people/brendan/running.4bpp: %.4bpp: %.png
 $(OBJEVENTGFXDIR)/people/brendan/field_move.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -mwidth 4 -mheight 4
 
+# Start vs_seeker branch
 $(OBJEVENTGFXDIR)/people/brendan/vs_seeker.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -mwidth 4 -mheight 4
+# End vs_seeker branch
 
 $(OBJEVENTGFXDIR)/people/brendan/surfing.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -mwidth 4 -mheight 4

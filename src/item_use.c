@@ -36,13 +36,13 @@
 #include "string_util.h"
 #include "task.h"
 #include "text.h"
-#include "vs_seeker.h"
+#include "vs_seeker.h" // vs_seeker branch
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
 #include "constants/item_effects.h"
 #include "constants/items.h"
 #include "constants/songs.h"
-#include "constants/map_types.h"
+#include "constants/map_types.h" // vs_seeker branch
 
 static void SetUpItemUseCallback(u8);
 static void FieldCB_UseItemOnField(void);
@@ -1129,6 +1129,7 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
     DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
 }
 
+// Start vs_seeker branch
 static bool32 IsValidLocationForVsSeeker(void)
 {
     u16 mapGroup = gSaveBlock1Ptr->location.mapGroup;
@@ -1192,5 +1193,6 @@ void Task_ItemUse_CloseMessageBoxAndReturnToField_VsSeeker(u8 taskId)
 {
     Task_CloseCantUseKeyItemMessage(taskId);
 }
+// End vs_seeker branch
 
 #undef tUsingRegisteredKeyItem

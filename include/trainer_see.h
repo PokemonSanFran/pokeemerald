@@ -26,7 +26,9 @@ u8 FldEff_HeartIcon(void);
 u8 GetCurrentApproachingTrainerObjectEventId(void);
 u8 GetChosenApproachingTrainerObjectEventId(u8 arrayId);
 void PlayerFaceTrainerAfterBattle(void);
+// Start vs_seeker branch
 u8 FldEff_DoubleExclMarkIcon(void);
 u8 FldEff_XIcon(void);
+// End vs_seeker branch
 
 #endif // GUARD_TRAINER_SEE_H

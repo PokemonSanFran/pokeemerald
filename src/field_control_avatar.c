@@ -593,11 +593,13 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
             ScriptContext_SetupScript(MossdeepCity_SpaceCenter_2F_EventScript_RivalRayquazaCall);
             return TRUE;
         }
+        // Start vs_seeker branch
         if (UpdateVsSeekerStepCounter() == TRUE)
         {
             ScriptContext_SetupScript(EventScript_VsSeekerChargingDone);
             return TRUE;
         }
+        // End vs_seeker branch
     }
 
     if (SafariZoneTakeStep() == TRUE)

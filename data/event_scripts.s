@@ -1001,12 +1001,14 @@ Common_EventScript_LegendaryFlewAway::
 	release
 	end
 
+@ Start vs_seeker branch
 EventScript_VsSeekerChargingDone::
 	special VsSeekerFreezeObjectsAfterChargeComplete
 	waitstate
 	special VsSeekerResetObjectMovementAfterChargeComplete
 	releaseall
 	end
+@ End vs_seeker branch
 
 	.include "data/scripts/pc_transfer.inc"
 	.include "data/scripts/questionnaire.inc"

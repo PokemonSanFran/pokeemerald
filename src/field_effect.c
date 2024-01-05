@@ -31,7 +31,7 @@
 #include "constants/metatile_behaviors.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
-#include "constants/map_types.h"
+#include "constants/map_types.h" // vs_seeker branch
 
 #define subsprite_table(ptr) {.subsprites = ptr, .subspriteCount = (sizeof ptr) / (sizeof(struct Subsprite))}
 
@@ -232,11 +232,13 @@ static void SpriteCB_DeoxysRockFragment(struct Sprite *sprite);
 
 static void Task_MoveDeoxysRock(u8 taskId);
 
+// Start vs_seeker branch
 static void Task_FldEffUseVsSeeker(u8 taskId);
 static void UseVsSeeker_StopPlayerMovement(struct Task *task);
 static void UseVsSeeker_DoPlayerAnimation(struct Task *task);
 static void UseVsSeeker_ResetPlayerGraphics(struct Task *task);
 static void UseVsSeeker_CleanUpFieldEffect(struct Task *task);
+// End vs_seeker branch
 
 // Static RAM declarations
 
@@ -3919,6 +3921,7 @@ static void Task_MoveDeoxysRock(u8 taskId)
 #undef tMoveSteps
 #undef tObjEventId
 
+// Start vs_seeker branch
 static void (*const sUseVsSeekerEffectFuncs[])(struct Task *task) = {
     UseVsSeeker_StopPlayerMovement,
     UseVsSeeker_DoPlayerAnimation,
@@ -3983,3 +3986,4 @@ static void UseVsSeeker_CleanUpFieldEffect(struct Task *task)
     FieldEffectActiveListRemove(FLDEFF_USE_VS_SEEKER);
     DestroyTask(FindTaskIdByFunc(Task_FldEffUseVsSeeker));
 }
+// End vs_seeker branch

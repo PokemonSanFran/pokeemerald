@@ -4351,7 +4351,7 @@ const struct Item gItems[] =
         .registrability = TRUE,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_FIELD,
-        .fieldUseFunc = FieldUseFunc_VsSeeker,
+        .fieldUseFunc = FieldUseFunc_VsSeeker, // vs_seeker branch
     },
 
     [ITEM_FAME_CHECKER] =
