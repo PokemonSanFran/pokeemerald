@@ -662,10 +662,17 @@ static bool32 IsRegularWaterTrainer(u8 graphicsId)
 
 static u8 GetResponseMovementTypeFromTrainerGraphicsId(u8 graphicsId)
 {
-    if (IsRegularLandTrainer(graphicsId) || IsRegularWaterTrainer(graphicsId))
+    if (IsRegularLandTrainer(graphicsId))
+        //return MOVEMENT_TYPE_RAISE_HAND_AND_JUMP;
         return MOVEMENT_TYPE_ROTATE_CLOCKWISE;
 
+    if (IsRegularWaterTrainer(graphicsId))
+        //return MOVEMENT_TYPE_RAISE_HAND_AND_SWIM;
+        return MOVEMENT_TYPE_ROTATE_CLOCKWISE;
+
+    //return MOVEMENT_TYPE_RAISE_HAND_AND_STOP;
     return MOVEMENT_TYPE_FACE_DOWN;
+    // These lines are in Jaizu's original implementation, but have been commented out as this branch uses the behavior from Pokemon DPPt, where Trainers will spin clockwise when they can be rebattled.
 }
 
 static u16 GetTrainerFlagFromScript(const u8 *script)
