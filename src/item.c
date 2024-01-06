@@ -95,12 +95,9 @@ void CopyItemNameHandlePlural(u16 itemId, u8 *dst, u32 quantity)
     }
 
     if (ItemId_GetPocket(itemId) == POCKET_TM_HM)
-    {
         StringAppend(end, gText_s);
-        return;
-    }
-
-    StringAppend(end, gText_S);
+    else
+        StringAppend(end, gText_S);
 }
 
 void GetBerryCountString(u8 *dst, const u8 *berryName, u32 quantity)
