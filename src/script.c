@@ -5,6 +5,7 @@
 #include "util.h"
 #include "constants/event_objects.h"
 #include "constants/map_scripts.h"
+#include "constants/items.h"
 
 #define RAM_SCRIPT_MAGIC 51
 
@@ -469,7 +470,25 @@ void InitRamScript_NoObjectEvent(u8 *script, u16 scriptSize)
     InitRamScript(script, scriptSize, MAP_GROUP(UNDEFINED), MAP_NUM(UNDEFINED), NO_OBJECT);
 }
 
-void GetObjectEventTrainerRangeFromTemplate(void)
+static u32 GetItemBallAmountFromTemplate(u32 itemBallId)
 {
-    gSpecialVar_Result = gMapHeader.events->objectEvents[gSpecialVar_LastTalked - 1].trainerRange_berryTreeId;
+    u32 x = gMapHeader.events->objectEvents[itemBallId].movementRangeX;
+    u32 y = gMapHeader.events->objectEvents[itemBallId].movementRangeY;
+
+    u32 amount = (x > y) ? x : y;
+    amount = (amount > MAX_BAG_ITEM_CAPACITY) ? MAX_BAG_ITEM_CAPACITY : amount;
+    amount = 1; // Once we decide on how to handle multiple items, this should be removed.
+    return (amount == 0) ? 1 : amount;
+}
+
+static u32 GetItemBallIdFromTemplate(u32 itemBallId)
+{
+    return gMapHeader.events->objectEvents[itemBallId].trainerRange_berryTreeId;
+}
+
+void GetItemBallIdAndAmountFromTemplate(void)
+{
+    u32 itemBallId = (gSpecialVar_LastTalked - 1);
+    gSpecialVar_Result = GetItemBallIdFromTemplate(itemBallId);
+    gSpecialVar_0x8009 = GetItemBallAmountFromTemplate(itemBallId);
 }
