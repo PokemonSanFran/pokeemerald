@@ -135,7 +135,14 @@ EventScript_PutBattlePyramidItemInBag::
 	return
 
 EventScript_FoundTMHM::
+    compare VAR_0x8001, TRUE
+    goto_if_eq EventScript_FoundTMHMMessage
 	bufferitemnameplural STR_VAR_1, VAR_0x8004, VAR_0x8005
+    buffernumberstring STR_VAR_3, VAR_0x8005
+    message gText_PlayerFoundTMHMs
+    goto EventScript_BufferTMHMsPocket
+    return
+EventScript_FoundTMHMMessage::
 	message gText_PlayerFoundOneTMHM
 	return
 
