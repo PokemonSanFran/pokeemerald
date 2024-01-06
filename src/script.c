@@ -5,7 +5,7 @@
 #include "util.h"
 #include "constants/event_objects.h"
 #include "constants/map_scripts.h"
-#include "constants/items.h"
+#include "constants/items.h" // item_ball_refactor
 
 #define RAM_SCRIPT_MAGIC 51
 
@@ -470,6 +470,7 @@ void InitRamScript_NoObjectEvent(u8 *script, u16 scriptSize)
     InitRamScript(script, scriptSize, MAP_GROUP(UNDEFINED), MAP_NUM(UNDEFINED), NO_OBJECT);
 }
 
+// Start item_ball_refactor
 static u32 GetItemBallAmountFromTemplate(u32 itemBallId)
 {
     u32 amount = gMapHeader.events->objectEvents[itemBallId].movementRangeX;
@@ -494,3 +495,4 @@ void GetItemBallIdAndAmountFromTemplate(void)
     gSpecialVar_Result = GetItemBallIdFromTemplate(itemBallId);
     gSpecialVar_0x8009 = GetItemBallAmountFromTemplate(itemBallId);
 }
+// End item_ball_refactor

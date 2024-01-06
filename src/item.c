@@ -83,6 +83,7 @@ void CopyItemName(u16 itemId, u8 *dst)
 
 void CopyItemNameHandlePlural(u16 itemId, u8 *dst, u32 quantity)
 {
+    // Start item_ball_refactor
     u8 *end = StringCopy(dst, ItemId_GetName(itemId)) - 1;
 
     if (quantity < 2)
@@ -98,6 +99,7 @@ void CopyItemNameHandlePlural(u16 itemId, u8 *dst, u32 quantity)
         StringAppend(end, gText_s);
     else
         StringAppend(end, gText_S);
+    // End item_ball_refactor
 }
 
 void GetBerryCountString(u8 *dst, const u8 *berryName, u32 quantity)

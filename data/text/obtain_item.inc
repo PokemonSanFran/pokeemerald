@@ -30,8 +30,10 @@ gText_TheDecorWasTransferredToThePC::
 	.string "The {STR_VAR_2} was transferred\n"
 	.string "to the PC.$"
 
+// Start item_ball_refactor
 gText_ObtainedTheItems::
     .string "Obtained {STR_VAR_1} {STR_VAR_2}!$"
 
 gText_PlayerFoundItems::
     .string "{PLAYER} found {STR_VAR_1} {STR_VAR_2}!$"
+// End item_ball_refactor

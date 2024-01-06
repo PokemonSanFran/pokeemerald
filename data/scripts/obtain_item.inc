@@ -50,12 +50,14 @@ EventScript_BufferBerriesPocket::
 	return
 
 EventScript_ObtainedItem::
+// Start item_ball_refactor
 	compare VAR_0x8001, TRUE
 	goto_if_eq EventScript_ObtainedItemMessage
 	buffernumberstring 0, VAR_0x8001
 	message gText_ObtainedTheItems
 	goto EventScript_ContinueObtainedItem
 EventScript_ObtainedItemMessage:
+// End item_ball_refactor
 	message gText_ObtainedTheItem
 EventScript_ContinueObtainedItem:
 	waitfanfare
@@ -135,6 +137,7 @@ EventScript_PutBattlePyramidItemInBag::
 	return
 
 EventScript_FoundTMHM::
+// Start item_ball_refactor
 	bufferitemnameplural STR_VAR_1, VAR_0x8004, VAR_0x8005
     compare VAR_0x8005, 2
     goto_if_lt EventScript_FoundTMHMMessage
@@ -143,18 +146,21 @@ EventScript_FoundTMHM::
     goto EventScript_BufferTMHMsPocket
     return
 EventScript_FoundTMHMMessage::
+// End item_ball_refactor
 	message gText_PlayerFoundOneTMHM
 	return
 
 EventScript_FoundItem::
+// Start item_ball_refactor
     compare VAR_0x8001, TRUE
     goto_if_eq EventScript_FoundItemMessage
     buffernumberstring 0, VAR_0x8001
     message gText_PlayerFoundItems
     return
 EventScript_FoundItemMessage::
-    message gText_PlayerFoundOneItem
-    return
+// End item_ball_refactor
+	message gText_PlayerFoundOneItem
+	return
 
 EventScript_NoRoomToPickUpItem::
 	msgbox gText_ObtainedTheItem, MSGBOX_DEFAULT

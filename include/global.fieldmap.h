@@ -73,8 +73,9 @@ struct ObjectEventTemplate
     /*0x06*/ s16 y;
     /*0x08*/ u8 elevation;
     /*0x09*/ u8 movementType;
-    /*0x0A*/ u16 movementRangeX:8;
+    /*0x0A*/ u16 movementRangeX:8; // item_ball_refactor
              u16 movementRangeY:4;
+             //u16 padding2:4; // item_ball_refactor
     /*0x0C*/ u16 trainerType;
     /*0x0E*/ u16 trainerRange_berryTreeId;
     /*0x10*/ const u8 *script;

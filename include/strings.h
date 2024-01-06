@@ -3026,9 +3026,9 @@ extern const u8 gText_BoxName[];
 extern const u8 gText_PkmnsNickname[];
 extern const u8 gText_TellHimTheWords[];
 
+// Start item_ball_refactor
 extern const u8 gText_IES[];
 extern const u8 gText_S[];
 extern const u8 gText_s[];
-
-
+// End item_ball_refactor
 #endif // GUARD_STRINGS_H

@@ -943,9 +943,11 @@ gText_PlayerFoundOneTMHM::
 	.string "{PLAYER} found one {STR_VAR_1}\n"
 	.string "{STR_VAR_2}!$"
 
+@ Start item_ball_refactor
 gText_PlayerFoundTMHMs::
 	.string "{PLAYER} found {STR_VAR_3} {STR_VAR_1}\n"
 	.string "{STR_VAR_2}!$"
+@ End item_ball_refactor
 
 gText_Sudowoodo_Attacked::
 	.string "The weird tree doesn't like the\n"
