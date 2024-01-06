@@ -472,12 +472,12 @@ void InitRamScript_NoObjectEvent(u8 *script, u16 scriptSize)
 
 static u32 GetItemBallAmountFromTemplate(u32 itemBallId)
 {
-    u32 x = gMapHeader.events->objectEvents[itemBallId].movementRangeX;
-    u32 y = gMapHeader.events->objectEvents[itemBallId].movementRangeY;
-
-    u32 amount = (x > y) ? x : y;
-    amount = (amount > MAX_BAG_ITEM_CAPACITY) ? MAX_BAG_ITEM_CAPACITY : amount;
+    u32 amount = gMapHeader.events->objectEvents[itemBallId].movementRangeX;
     amount = 1; // Once we decide on how to handle multiple items, this should be removed.
+
+    if (amount > MAX_BAG_ITEM_CAPACITY)
+        return MAX_BAG_ITEM_CAPACITY;
+
     return (amount == 0) ? 1 : amount;
 }
 
