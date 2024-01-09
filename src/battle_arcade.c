@@ -297,8 +297,6 @@ static void SaveArcadeChallenge(void)
     u16 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     s32 challengeNum = (signed)(FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE);
 
-    if (gSpecialVar_0x8005 == 0 && (challengeNum > 1 || FRONTIER_SAVEDATA.curChallengeBattleNum != 0))
-
     FRONTIER_SAVEDATA.challengeStatus = gSpecialVar_0x8005;
     VarSet(VAR_TEMP_0, 0);
     FRONTIER_SAVEDATA.challengePaused = TRUE;
