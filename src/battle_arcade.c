@@ -1118,9 +1118,21 @@ static bool32 BattleArcade_DoNoEvent(void)
 
 static void GetBrainStatus(void)
 {
-    VarSet(VAR_BRAIN_STATUS,0); //Debug
-    // return true if the brain should be fought here
-    return;
+	u32 winStreak = GetCurrentBattleArcadeWinStreak();
+
+	switch(winStreak)
+	{
+		case ARCADE_SILVER_THRESHOLD:
+			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER);
+			break;
+		case ARCADE_GOLD_THRESHOLD:
+			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_GOLD);
+			break;
+		default:
+			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_NOT_READY);
+			break;
+	}
+	VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
 }
 
 static void GetBrainIntroSpeech(void)
