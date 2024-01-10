@@ -61,13 +61,9 @@
 #define FLAG_ARCADE_SILVER_PRINT           FLAG_UNUSED_0x020
 #define FLAG_ARCADE_GOLD_PRINT             FLAG_UNUSED_0x021
 #define FLAG_ARCADE_RANDOM_CURSOR          FLAG_UNUSED_0x022
-#define VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM   VAR_UNUSED_0x409D
 
-//should be replaced with a u8 on the saveblock bitshifted to hold ARCADE_EVENT_COUNT
-#define VAR_ARCADE_GAME_BOARD_RESULT                   VAR_UNUSED_0x4083
-
-// replace with a u8, bitshifted to hold ARCADE_EVENT_GIVE_BERRY or ARCADE_EVENT_GIVE_ITEM
-#define VAR_ARCADE_GIVE_ENEMY_TYPE         VAR_UNUSED_0x408B
+#define VAR_ARCADE_BERRY                   VAR_UNUSED_0x40FA
+#define VAR_ARCADE_ITEM                    VAR_UNUSED_0x409D
 
 //replace with a u8, bitshifted to hold up to ARCADE_SPEED_LEVEL_MAX
 #define VAR_ARCADE_CURSOR_SPEED            VAR_UNUSED_0x4091

@@ -54,10 +54,8 @@ static void SaveCurrentParty(u32, u8);
 static void SaveArcadeChallenge(void);
 static void GetOpponentIntroSpeech(void);
 static bool32 BattleArcade_DoGive(u32, u32);
-static u32 GetEnemyGiveType(void);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
-static void ResetGiveItemVars(void);
 void SetFrontierFacilityToPike(void);
 static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
@@ -65,13 +63,11 @@ static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
 static void StoreImpactedSideToVar(void);
-static void RefreshPlayerItems(void);
-static void ResetEnemyHeldItem(void);
 static void ResetRouletteRandomFlag(void);
+static void GenerateItemsToBeGiven(void);
 static void CalculateGiveChallengeBattlePoints(void);
 static void SetArcadeBrainObjectEvent(void);
 static u32 CountNumberTypeWin(u8);
-static void BattleArcade_GiveEnemyItems(void);
 static void CheckArcadeSymbol(void);
 static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
@@ -82,7 +78,6 @@ static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
 static void BattleArcade_PostBattleEventCleanup(void);
 static void BufferImpactedName(u32 impact);
-static void HandleGiveItemVar(u32, u32, u32);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
 u32 GetImpactFromSaveblock(void);
@@ -193,11 +188,10 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
-    ResetGiveItemVars();
     ResetRouletteSpeed();
     ResetRouletteRandomFlag();
     ResetFrontierTrainerIds();
-    ResetEnemyHeldItem();
+	GenerateItemsToBeGiven();
     FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
@@ -205,6 +199,12 @@ static void InitArcadeChallenge(void)
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     gTrainerBattleOpponent_A = 0;
+}
+
+static void GenerateItemsToBeGiven(void)
+{
+    VarSet(VAR_ARCADE_BERRY,BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_BERRY));
+    VarSet(VAR_ARCADE_ITEM,BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_ITEM));
 }
 
 static void GetArcadeData(void)
@@ -384,14 +384,9 @@ static void TakeEnemyHeldItems(void)
     BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, ITEM_NONE);
 }
 
-static void ResetEnemyHeldItem(void)
-{
-    VarSet(VAR_ARCADE_GIVE_ENEMY_TYPE,ITEM_NONE);
-}
-
 static void TakePlayerHeldItems(void)
 {
-    RefreshPlayerItems();
+    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, ITEM_NONE);
 }
 
 static u32 ConvertBattlesToImpactIndex(void)
@@ -562,7 +557,7 @@ static u32 GenerateEvent(u32 impact)
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
     //DebugPrintf("event original roll is %d",event);
-    //return ARCADE_EVENT_GIVE_ITEM; // Debug
+    return ARCADE_EVENT_GIVE_ITEM; // Debug
     return event;
 }
 
@@ -620,17 +615,6 @@ static bool32 DoesEventGiveItems(u32 event)
     return TRUE;
 }
 
-static bool32 ShouldEnemyGetItemBeforeBattle(u32 event)
-{
-    if (!IsGiveItemVarSet())
-        return FALSE;
-
-    if (DoesEventGiveItems(event))
-        return FALSE;
-
-    return TRUE;
-}
-
 static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
 
 static void GenerateGameBoard(void)
@@ -682,9 +666,6 @@ static void HandleGameBoardResult(void)
 {
     u32 event = GetEventFromSaveblock();
     u32 impact = GetImpactFromSaveblock();
-
-    if (ShouldEnemyGetItemBeforeBattle(event))
-        BattleArcade_GiveEnemyItems();
 
     GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(impact);
@@ -841,15 +822,13 @@ static void BufferGiveString(u32 item)
 
 static bool32 BattleArcade_DoGiveBerry(u32 impact)
 {
-    u32 item = BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_BERRY);
-    HandleGiveItemVar(impact, item, ARCADE_EVENT_GIVE_BERRY);
+    u32 item = VarGet(VAR_ARCADE_BERRY);
     return BattleArcade_DoGive(impact, item);
 }
 
 static bool32 BattleArcade_DoGiveItem(u32 impact)
 {
-    u32 item = BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_ITEM);
-    HandleGiveItemVar(impact, item, ARCADE_EVENT_GIVE_ITEM);
+    u32 item = VarGet(VAR_ARCADE_ITEM);
     return BattleArcade_DoGive(impact, item);
 }
 
@@ -973,45 +952,9 @@ static u32 BattleArcade_GenerateGive(u32 type)
     return heldItem;
 }
 
-static bool32 IsGiveItemVarSet(void)
-{
-    return (GetEnemyGiveType() != 0);
-}
-
 static bool32 IsImpactedSideOpponent(u32 impact)
 {
     return (impact == ARCADE_IMPACT_OPPONENT);
-}
-
-static void SetEnemyGiveType(u32 type)
-{
-    VarSet(VAR_ARCADE_GIVE_ENEMY_TYPE,type);
-}
-
-static u32 GetEnemyGiveType(void)
-{
-    return VarGet(VAR_ARCADE_GIVE_ENEMY_TYPE);
-}
-
-static void HandleGiveItemVar(u32 impact, u32 item, u32 type)
-{
-    if (IsImpactedSideOpponent(impact))
-        SetEnemyGiveType(type);
-    else
-        VarSet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM,item);
-}
-
-static void ResetGiveItemVars(void)
-{
-    SetEnemyGiveType(ITEM_NONE);
-    VarSet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM,ITEM_NONE);
-}
-
-static void BattleArcade_GiveEnemyItems(void)
-{
-    u32 type = GetEnemyGiveType();
-    u32 item = BattleArcade_GenerateGive(type);
-    BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, item);
 }
 
 static bool32 BattleArcade_DoGive(u32 impact, u32 item)
@@ -1280,12 +1223,6 @@ static void ResetWeatherPostBattle(void)
     SetSavedWeatherFromCurrMapHeader();
 }
 
-static void RefreshPlayerItems(void)
-{
-    u32 item = VarGet(VAR_ARCADE_GIVE_PLAYER_HOLD_ITEM);
-    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, item);
-}
-
 void ResetFrontierFacilityToArcade(void)
 {
     VarSet(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE);
@@ -1298,7 +1235,6 @@ void SetFrontierFacilityToPike(void)
 
 void BattleArcade_PostBattleEventCleanup(void)
 {
-    RefreshPlayerItems();
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
