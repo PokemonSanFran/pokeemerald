@@ -14,6 +14,7 @@
 #include "overworld.h"
 #include "battle_arcade.h"
 #include "battle_records.h"
+#include "script_pokemon_util.h"
 #include "constants/battle_frontier.h"
 #include "constants/frontier_util.h"
 #include "constants/item.h"
@@ -561,7 +562,7 @@ static u32 GenerateEvent(u32 impact)
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
     //DebugPrintf("event original roll is %d",event);
-    //return ARCADE_EVENT_NO_BATTLE; // Debug
+    //return ARCADE_EVENT_GIVE_ITEM; // Debug
     return event;
 }
 
@@ -588,13 +589,13 @@ u32 GetEventFromSaveblock(void)
 static void StoreEventToVar(void)
 {
     GAME_BOARD_EVENT = GetEventFromSaveblock();
-    DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
+    //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
 }
 
 static void StoreImpactedSideToVar(void)
 {
     GAME_BOARD_IMPACT = GetImpactFromSaveblock();
-    DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
+    //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
 }
 
 static bool32 IsEventBanned(u32 event)
@@ -640,7 +641,7 @@ static void GenerateGameBoard(void)
     {
         sGameBoard[i].impact = GenerateImpact();
         sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
-        DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
+        //DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
     }
 }
 
@@ -662,8 +663,8 @@ static void SelectGameBoardSpace(void)
     StoreImpactToSaveblock(impact);
     StoreEventToSaveblock(event);
 
-    DebugPrintf("-----------------------");
-    DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
+    //DebugPrintf("-----------------------");
+    //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
 
 static void PlayGameBoard(void)
@@ -1018,14 +1019,17 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 item)
     u32 i;
     struct Pokemon *party = LoadSideParty(impact);
 
+    //DebugPrintf("dogive");
+
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
         if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
             break;
 
         SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
-        DebugPrintf("slot %d has item %d",i,GetMonData(&party[i],MON_DATA_HELD_ITEM,NULL));
+        //DebugPrintf("slot %d has item %d",i,GetMonData(&party[i],MON_DATA_HELD_ITEM,NULL));
     }
+    //DebugPrintf("-----------");
 
     BufferGiveString(item);
     return TRUE;
@@ -1299,6 +1303,7 @@ void BattleArcade_PostBattleEventCleanup(void)
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
     ResetFrontierFacilityToArcade();
+    HealPlayerParty();
 }
 
 static void ResetRouletteSpeed(void)
