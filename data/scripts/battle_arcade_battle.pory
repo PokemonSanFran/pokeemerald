@@ -10,8 +10,14 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
     setvar(VAR_TEMP_0, 2)
     call(BattleArcade_BattleRoom_EventScript_MCFaceCrowd)
     msgbox(BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade,MSGBOX_DEFAULT)
-    msgbox(BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
+	call(BattleFrontier_RouletteRoom_EventScript_TakePlayerItems)
     goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
+}
+
+script BattleFrontier_RouletteRoom_EventScript_TakePlayerItems
+{
+    msgbox(BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
+    arcade_takeplayerhelditems
 }
 
 script BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber
@@ -41,7 +47,6 @@ script BattleArcade_RouletteRoom_EventScript_PlayGameBoard
 script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
     arcade_generateopponentparty
-    arcade_takeplayerhelditems
     arcade_takeenemyhelditems
 
     arcade_playgameboard

@@ -557,7 +557,7 @@ static u32 GenerateEvent(u32 impact)
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
     //DebugPrintf("event original roll is %d",event);
-    return ARCADE_EVENT_GIVE_ITEM; // Debug
+    //return ARCADE_EVENT_GIVE_ITEM; // Debug
     return event;
 }
 
