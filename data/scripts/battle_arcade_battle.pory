@@ -17,7 +17,7 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 script BattleFrontier_RouletteRoom_EventScript_TakePlayerItems
 {
     msgbox(BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
-    arcade_takeplayerhelditems
+	arcade_takeplayerhelditems
 }
 
 script BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber
@@ -164,6 +164,11 @@ script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
     call(BattleArcade_RouletteRoom_EventScript_LoadOpponentText)
+	call(BattleArcade_RouletteRoom_EventScript_DoBattleAndResult)
+}
+
+script BattleArcade_RouletteRoom_EventScript_DoBattleAndResult
+{
     call(BattleArcade_RouletteRoom_EventScript_StartBattle)
     goto(BattleArcade_RouletteRoom_EventScript_HandleBattleResult)
 }
@@ -248,7 +253,6 @@ script BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 {
     arcade_getbrainstatus
     if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
-    //if(var(VAR_BRAIN_STATUS) == FRONTIER_BRAIN_NOT_READY) // Debug
     {
         goto(BattleArcade_RouletteRoom_EventScript_BrainUpNext)
     }
@@ -450,31 +454,33 @@ script BattleArcade_RouletteRoom_EventScript_BattleBrain
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
     call(BattleArcade_RouletteRoom_EventScript_PlayBrainText)
-    call(BattleArcade_RouletteRoom_EventScript_StartBattle)
-    goto(BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult)
+	call(BattleArcade_RouletteRoom_EventScript_DoBattleAndResult)
 }
 
 script BattleArcade_RouletteRoom_EventScript_HandleBattleResult
 {
     if (var(VAR_RESULT) == B_OUTCOME_WON)
     {
-        goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
+        goto(BattleArcade_RouletteRoom_EventScript_CheckDefeatedOpponent)
     }
     goto(BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost)
 }
 
-script BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult
+script BattleArcade_RouletteRoom_EventScript_CheckDefeatedOpponent
 {
-    if(var(VAR_RESULT) == B_OUTCOME_WON)
-    {
+	frontier_isbrain
+    if(var(VAR_RESULT))
+	{
         goto(BattleArcade_RouletteRoom_EventScript_DefeatedBrain)
-    }
-    goto(BattleFrontier_BattleTower_EventScript_WarpToLobbyLost)
+	}
+	goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
+
 }
 
 script BattleArcade_RouletteRoom_EventScript_DefeatedBrain
 {
     call(BattleFrontier_EventScript_IncrementWinStreak)
+    arcade_setbattlewon
     call(BattleArcade_RouletteRoom_EventScript_BrainCongratsText)
     call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
     goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
