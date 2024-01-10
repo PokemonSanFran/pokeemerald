@@ -201,7 +201,6 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
     // TODO figure out how to reset sketches between battles
 
     frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
-    return
 }
 
 script BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
@@ -306,7 +305,6 @@ script BattleArcade_RouletteRoom_EventScript_ReadyForOpponent
     call(BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber)
     message(BattleArcade_RouletteRoom_Text_NextUpGameNoAreYouReady)
     waitmessage
-    return
 }
 
 script BattleArcade_RouletteRoom_EventScript_AskPauseChallenge
@@ -492,11 +490,11 @@ script BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
 
 script BattleArcade_RouletteRoom_EventScript_Save
 {
-    msgbox(gText_SavingDontTurnOff2)
+    message(gText_SavingDontTurnOff2)
+	waitmessage
     arcade_save(CHALLENGE_STATUS_WON)
     playse(SE_SAVE)
     waitse
-    closemessage
 }
 
 script BattleArcade_RouletteRoom_EventScript_GiveBP
