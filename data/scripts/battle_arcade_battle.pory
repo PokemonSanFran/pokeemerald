@@ -205,13 +205,13 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
 
 script BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
 {
-    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST)
+	call(BattleArcade_RouletteRoom_EventScript_SaveLost)
     goto(BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp)
 }
 
 script BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon
 {
-    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON)
+	call(BattleArcade_RouletteRoom_EventScript_SaveWon)
     goto(BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp)
 }
 
@@ -483,16 +483,29 @@ script BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
         call(BattleArcade_RouletteRoom_EventScript_AskRecordBattle)
     }
     call(BattleArcade_RouletteRoom_EventScript_GiveBP)
-    call(BattleArcade_RouletteRoom_EventScript_RestoreItems)
-    call(BattleArcade_RouletteRoom_EventScript_Save)
+    call(BattleArcade_RouletteRoom_EventScript_RestoreItemsMessage)
+    call(BattleArcade_RouletteRoom_EventScript_SaveWon)
     goto(BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon)
+}
+
+script BattleArcade_RouletteRoom_EventScript_SaveWon
+{
+    special(LoadPlayerParty)
+    arcade_save(CHALLENGE_STATUS_WON)
+	call(BattleArcade_RouletteRoom_EventScript_Save)
+}
+
+script BattleArcade_RouletteRoom_EventScript_SaveLost
+{
+    special(LoadPlayerParty)
+    arcade_save(CHALLENGE_STATUS_LOST)
+	call(BattleArcade_RouletteRoom_EventScript_Save)
 }
 
 script BattleArcade_RouletteRoom_EventScript_Save
 {
     message(gText_SavingDontTurnOff2)
 	waitmessage
-    arcade_save(CHALLENGE_STATUS_WON)
     playse(SE_SAVE)
     waitse
 }
@@ -503,7 +516,7 @@ script BattleArcade_RouletteRoom_EventScript_GiveBP
     msgbox(BattleArcade_RouletteRoom_Text_YouHaveClearedYourSeventh)
 }
 
-script BattleArcade_RouletteRoom_EventScript_RestoreItems
+script BattleArcade_RouletteRoom_EventScript_RestoreItemsMessage
 {
     msgbox(BattleArcade_RouletteRoom_Text_WeWillReturnAnyItems)
 }

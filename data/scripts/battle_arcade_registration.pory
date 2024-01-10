@@ -57,7 +57,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WonChallenge
 
 script BattleFrontier_BattleArcadeLobby_ResetChallengeStatus
 {
-    special(LoadPlayerParty)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     return
 }
