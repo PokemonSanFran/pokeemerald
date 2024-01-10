@@ -181,6 +181,7 @@ script BattleArcade_BattleRoom_EventScript_BrainEntrance
     waitmovement(OPPONENT)
     waitmovement(PLAYER)
     waitmovement(CAMERA)
+	special(RemoveCameraObject)
 }
 
 script BattleArcade_BattleRoom_EventScript_AddSetOpponentObject
