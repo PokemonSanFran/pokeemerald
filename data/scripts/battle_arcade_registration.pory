@@ -51,8 +51,15 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WonChallenge
     {
         call(BattleFrontier_BattleArcadeLobby_EventScript_CheckStreakAndSymbols)
     }
-
+    call(BattleFrontier_BattleArcadeLobby_ResetChallengeStatus)
     goto(BattleFrontier_BattleArcadeLobby_EventScript_LookForwardToChallenge)
+}
+
+script BattleFrontier_BattleArcadeLobby_ResetChallengeStatus
+{
+    special(LoadPlayerParty)
+    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+    return
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_CheckStreakAndSymbols
@@ -111,7 +118,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_LookForwardToChallenge
 {
     msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou, MSGBOX_DEFAULT)
     closemessage
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     release
     end
 }
@@ -123,7 +129,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_LostChallenge
     {
         arcade_set(ARCADE_DATA_WIN_STREAK_ACTIVE, FALSE)
     }
-
+    call(BattleFrontier_BattleArcadeLobby_ResetChallengeStatus)
     goto(BattleFrontier_BattleArcadeLobby_EventScript_LostThanksForPlaying)
 }
 
@@ -179,6 +185,14 @@ script BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge
     end
 }
 
+script GiveMonDebugScript
+{
+    givemon(SPECIES_SALAMENCE, 50, ITEM_LEFTOVERS)
+    givemon(SPECIES_METAGROSS, 50, ITEM_CHOICE_BAND)
+    givemon(SPECIES_LATIOS, 50, ITEM_LUM_BERRY)
+    return
+}
+
 script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
 {
     lock
@@ -188,7 +202,8 @@ script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
     special(SavePlayerParty)
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
     {
-        warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
+        //warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
+        //call(GiveMonDebugScript)
         msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
     }
     else
