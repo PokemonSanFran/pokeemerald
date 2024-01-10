@@ -198,10 +198,7 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
     arcade_eventcleanup
 
     copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)
-    if(var(VAR_0x8004) != FRONTIER_MODE_LINK_MULTIS)
-    {
-        frontier_resetsketch
-    }
+    // TODO figure out how to reset sketches between battles
 
     frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
     return
@@ -246,8 +243,8 @@ script BattleArcade_RouletteRoom_EventScript_HealPlayer
 script BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent
 {
     arcade_getbrainstatus
-    //if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
-    if(var(VAR_BRAIN_STATUS) == FRONTIER_BRAIN_NOT_READY) // Debug
+    if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
+    //if(var(VAR_BRAIN_STATUS) == FRONTIER_BRAIN_NOT_READY) // Debug
     {
         goto(BattleArcade_RouletteRoom_EventScript_BrainUpNext)
     }
@@ -327,7 +324,7 @@ script BattleArcade_RouletteRoom_EventScript_PauseChallenge
     message(BattleArcade_RouletteRoom_Text_SavingDontTurnOffThePower)
     waitmessage
 
-    tower_save(CHALLENGE_STATUS_PAUSED)
+    arcade_save(CHALLENGE_STATUS_PAUSED)
     playse(SE_SAVE)
     waitse
 
@@ -451,7 +448,7 @@ script BattleArcade_RouletteRoom_EventScript_BattleBrain
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
     call(BattleArcade_RouletteRoom_EventScript_PlayBrainText)
     call(BattleArcade_RouletteRoom_EventScript_StartBattle)
-    oto(BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult)
+    goto(BattleArcade_RouletteRoom_EventScript_HandleBrainBattleResult)
 }
 
 script BattleArcade_RouletteRoom_EventScript_HandleBattleResult
@@ -496,8 +493,7 @@ script BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
 script BattleArcade_RouletteRoom_EventScript_Save
 {
     msgbox(gText_SavingDontTurnOff2)
-    tower_save(CHALLENGE_STATUS_SAVING)
-    waitstate
+    arcade_save(CHALLENGE_STATUS_WON)
     playse(SE_SAVE)
     waitse
     closemessage
