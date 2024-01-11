@@ -229,11 +229,11 @@ script BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
 {
     call(BattleFrontier_EventScript_IncrementWinStreak)
     arcade_setbattlewon
+    call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
     if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
     {
         goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
     }
-    call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
     call(BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement)
     goto(BattleArcade_RouletteRoom_EventScript_HealPlayer)
 }

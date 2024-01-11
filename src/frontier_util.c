@@ -2232,7 +2232,9 @@ static void ResetSketchedMoves(void)
 
 static void SetFacilityBrainObjectEvent(void)
 {
-    SetFrontierBrainObjEventGfx(VarGet(VAR_FRONTIER_FACILITY));
+    s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+	ConvertFacilityFromArcadeToPike(&facility);
+    SetFrontierBrainObjEventGfx(facility);
 }
 
 // Battle Frontier Ranking Hall records.
@@ -2465,6 +2467,8 @@ u8 GetFrontierBrainTrainerPicIndex(void)
     else
         facility = VarGet(VAR_FRONTIER_FACILITY);
 
+	ConvertFacilityFromArcadeToPike(&facility);
+
     return gTrainers[sFrontierBrainTrainerIds[facility]].trainerPic;
 }
 
@@ -2476,6 +2480,8 @@ u8 GetFrontierBrainTrainerClass(void)
         facility = GetRecordedBattleFrontierFacility();
     else
         facility = VarGet(VAR_FRONTIER_FACILITY);
+
+	ConvertFacilityFromArcadeToPike(&facility);
 
     return gTrainers[sFrontierBrainTrainerIds[facility]].trainerClass;
 }
@@ -2490,6 +2496,8 @@ void CopyFrontierBrainTrainerName(u8 *dst)
     else
         facility = VarGet(VAR_FRONTIER_FACILITY);
 
+	ConvertFacilityFromArcadeToPike(&facility);
+
     for (i = 0; i < PLAYER_NAME_LENGTH; i++)
         dst[i] = gTrainers[sFrontierBrainTrainerIds[facility]].trainerName[i];
 
@@ -2499,12 +2507,16 @@ void CopyFrontierBrainTrainerName(u8 *dst)
 bool8 IsFrontierBrainFemale(void)
 {
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+
+	ConvertFacilityFromArcadeToPike(&facility);
     return sFrontierBrainObjEventGfx[facility][1];
 }
 
 void SetFrontierBrainObjEventGfx_2(void)
 {
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
+
+	ConvertFacilityFromArcadeToPike(&facility);
     VarSet(VAR_OBJ_GFX_ID_0, sFrontierBrainObjEventGfx[facility][0]);
 }
 
@@ -2519,6 +2531,8 @@ void CreateFrontierBrainPokemon(void)
     u8 friendship;
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetFronterBrainSymbol();
+
+	ConvertFacilityFromArcadeToPike(&facility);
 
     if (facility == FRONTIER_FACILITY_DOME)
         selectedMonBits = GetDomeTrainerSelectedMons(TrainerIdToDomeTournamentId(TRAINER_FRONTIER_BRAIN));
@@ -2567,6 +2581,8 @@ u16 GetFrontierBrainMonSpecies(u8 monId)
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetFronterBrainSymbol();
 
+	ConvertFacilityFromArcadeToPike(&facility);
+
     return sFrontierBrainsMons[facility][symbol][monId].species;
 }
 
@@ -2581,6 +2597,8 @@ u16 GetFrontierBrainMonMove(u8 monId, u8 moveSlotId)
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetFronterBrainSymbol();
 
+	ConvertFacilityFromArcadeToPike(&facility);
+
     return sFrontierBrainsMons[facility][symbol][monId].moves[moveSlotId];
 }
 
@@ -2588,6 +2606,8 @@ u8 GetFrontierBrainMonNature(u8 monId)
 {
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetFronterBrainSymbol();
+
+	ConvertFacilityFromArcadeToPike(&facility);
 
     return sFrontierBrainsMons[facility][symbol][monId].nature;
 }
@@ -2597,6 +2617,8 @@ u8 GetFrontierBrainMonEvs(u8 monId, u8 evStatId)
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetFronterBrainSymbol();
 
+	ConvertFacilityFromArcadeToPike(&facility);
+
     return sFrontierBrainsMons[facility][symbol][monId].evs[evStatId];
 }
 
@@ -2604,6 +2626,11 @@ s32 GetFronterBrainSymbol(void)
 {
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetPlayerSymbolCountForFacility(facility);
+
+	if (facility == FRONTIER_FACILITY_ARCADE)
+		return GetPlayerSymbolCountForArcade();
+
+	ConvertFacilityFromArcadeToPike(&facility);
 
     if (symbol == 2)
     {
@@ -2635,6 +2662,8 @@ static void CopyFrontierBrainText(bool8 playerWonText)
         facility = VarGet(VAR_FRONTIER_FACILITY);
         symbol = GetFronterBrainSymbol();
     }
+
+	ConvertFacilityFromArcadeToPike(&facility);
 
     switch (playerWonText)
     {

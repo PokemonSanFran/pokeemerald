@@ -46,6 +46,9 @@
 #define ARCADE_SYMBOL_SILVER                   1
 #define ARCADE_SYMBOL_GOLD                     2
 
+#define ARCADE_SILVER_BATTLE_NUMBER            35
+#define ARCADE_GOLD_BATTLE_NUMBER              70
+
 #define ARCADE_RECORD_LEVEL_HEADER_X_POS       8
 #define ARCADE_RECORD_DATA_X_POS               80
 

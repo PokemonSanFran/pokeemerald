@@ -425,6 +425,7 @@ static u32 GenerateImpact(void)
     //DebugPrintf("impact roll %d",impactRoll);
     //DebugPrintf("impact index %d",impactIndex);
 
+	//return ARCADE_IMPACT_OPPONENT; // Debug
     for (i = 0; i < ARCADE_IMPACT_COUNT;i++)
     {
         //impactRoll = 99; //Debug
@@ -711,7 +712,7 @@ static u32 GetImpactedTrainerId(u32 impact)
 
 static void BufferImpactedName(u32 impact)
 {
-    CopyDomeTrainerName(gStringVar1, GetImpactedTrainerId(impact));
+    GetFrontierTrainerName(gStringVar1, GetImpactedTrainerId(impact));
 }
 
 static struct Pokemon *LoadSideParty(u32 impact)
@@ -1118,14 +1119,14 @@ static bool32 BattleArcade_DoNoEvent(void)
 
 static void GetBrainStatus(void)
 {
-	u32 winStreak = GetCurrentBattleArcadeWinStreak();
+	u32 winStreak = (GetCurrentBattleArcadeWinStreak());
 
-	switch(winStreak)
+	switch(++winStreak)
 	{
-		case ARCADE_SILVER_THRESHOLD:
+		case ARCADE_SILVER_BATTLE_NUMBER:
 			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER);
 			break;
-		case ARCADE_GOLD_THRESHOLD:
+		case ARCADE_GOLD_BATTLE_NUMBER:
 			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_GOLD);
 			break;
 		default:
@@ -1159,7 +1160,6 @@ void SetBattleTypeFlags(void)
 
 void FillFrontierTrainerParties(void)
 {
-    SetFrontierFacilityToPike();
     switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
     {
         case FRONTIER_MODE_SINGLES:
@@ -1235,14 +1235,15 @@ static void ResetWeatherPostBattle(void)
     SetSavedWeatherFromCurrMapHeader();
 }
 
-void ResetFrontierFacilityToArcade(void)
+u32 GetPlayerSymbolCountForArcade(void)
 {
-    VarSet(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE);
+    return (FlagGet(FLAG_ARCADE_SILVER_PRINT) + FlagGet(FLAG_ARCADE_GOLD_PRINT));
 }
 
-void SetFrontierFacilityToPike(void)
+void ConvertFacilityFromArcadeToPike(u32* facility)
 {
-    VarSet(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_PIKE);
+	if (*facility == FRONTIER_FACILITY_ARCADE)
+		*facility = FRONTIER_FACILITY_PIKE;
 }
 
 void BattleArcade_PostBattleEventCleanup(void)
@@ -1250,7 +1251,7 @@ void BattleArcade_PostBattleEventCleanup(void)
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
-    ResetFrontierFacilityToArcade();
+    //ResetFrontierFacilityToArcade();
     HealPlayerParty();
 }
 

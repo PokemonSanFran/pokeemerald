@@ -7,5 +7,7 @@ void Arcade_ShowResultsWindow(void);
 void Arcade_CloseWinsWindow(void);
 void Arcade_ShowWinsWindow(void);
 void DoSpecialRouletteTrainerBattle(void);
+u32 GetPlayerSymbolCountForArcade(void);
+void ConvertFacilityFromArcadeToPike(u32*);
 
 #endif
