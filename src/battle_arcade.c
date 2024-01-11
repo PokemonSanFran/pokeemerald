@@ -712,7 +712,10 @@ static u32 GetImpactedTrainerId(u32 impact)
 
 static void BufferImpactedName(u32 impact)
 {
-    GetFrontierTrainerName(gStringVar1, GetImpactedTrainerId(impact));
+	if (impact == ARCADE_IMPACT_PLAYER)
+		StringCopy_PlayerName(gStringVar1, gSaveBlock2Ptr->playerName);
+	else
+		GetFrontierTrainerName(gStringVar1, GetImpactedTrainerId(impact));
 }
 
 static struct Pokemon *LoadSideParty(u32 impact)
@@ -1251,7 +1254,6 @@ void BattleArcade_PostBattleEventCleanup(void)
     ResetLevelsToOriginal();
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
-    //ResetFrontierFacilityToArcade();
     HealPlayerParty();
 }
 
