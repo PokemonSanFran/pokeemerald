@@ -49,9 +49,16 @@ script BattleArcade_BattleRoom_EventScript_EnterRoom
 
 script BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance
 {
-    call(BattleArcade_BattleRoom_EventScript_AddSetOpponentObject)
-    applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
-    waitmovement(OPPONENT)
+	call(BattleArcade_BattleRoom_EventScript_AddSetOpponent)
+	frontier_isbrain
+	if (var(VAR_RESULT) == TRUE)
+	{
+		call(BattleArcade_BattleRoom_EventScript_BrainEntranceMovement)
+	}
+	else
+	{
+		call(BattleArcade_BattleRoom_EventScript_OpponentIntro)
+	}
 }
 
 script BattleArcade_BattleRoom_EventScript_MCFaceCrowd
@@ -137,7 +144,6 @@ script BattleArcade_BattleRoom_EventScript_AttendantLeave
 script BattleArcade_BattleRoom_EventScript_BrainEntranceMovement
 {
     special(SpawnCameraObject)
-    call(BattleArcade_BattleRoom_EventScript_AddSetOpponentObject)
     applymovement(OPPONENT,Common_Movement_FaceDown)
     applymovement(PLAYER,Common_Movement_FaceDown)
     applymovement(CAMERA,BattleArcade_BattleRoom_Movement_PanCameraToBrain)
@@ -184,10 +190,16 @@ script BattleArcade_BattleRoom_EventScript_BrainEntrance
 	special(RemoveCameraObject)
 }
 
-script BattleArcade_BattleRoom_EventScript_AddSetOpponentObject
+script BattleArcade_BattleRoom_EventScript_AddSetOpponent
 {
     addobject(OPPONENT)
     setobjectxy(OPPONENT,7,11)
+}
+
+script BattleArcade_BattleRoom_EventScript_OpponentIntro
+{
+	applymovement(OPPONENT,BattleFrontier_BattleArcadeBattleRoom_Movement_OpponentEnter)
+	waitmovement(OPPONENT)
 }
 
 movement BattleArcade_BattleRoom_Movement_PanCameraToBrain

@@ -11,7 +11,7 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
     call(BattleArcade_BattleRoom_EventScript_MCFaceCrowd)
     msgbox(BattleArcade_RouletteRoom_Text_WelcomeToTheBattleArcade,MSGBOX_DEFAULT)
 	call(BattleFrontier_RouletteRoom_EventScript_TakePlayerItems)
-    goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
+    goto(BattleArcade_RouletteRoom_EventScript_BattleOpponent)
 }
 
 script BattleFrontier_RouletteRoom_EventScript_TakePlayerItems
@@ -154,24 +154,28 @@ script BattleArcade_RouletteRoom_AnnounceImpactString_Failure
     }
 }
 
+script BattleArcade_RouletteRoom_EventScript_BattleOpponent
+{
+    tower_setopponent
+	goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
+}
+
+script BattleArcade_RouletteRoom_EventScript_BattleBrain
+{
+    arcade_setbrainobj
+	goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
+}
+
 script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
 {
-    frontier_set(FRONTIER_DATA_LVL_MODE, 1) // Debug
-    frontier_set(FRONTIER_MODE_SINGLES,1) // Debug
     call(BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber)
-    tower_setopponent
     call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
+	call(BattleArcade_RouletteRoom_EventScript_BrainIntro)
     call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
     call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
     call(BattleArcade_RouletteRoom_EventScript_LoadOpponentText)
-	call(BattleArcade_RouletteRoom_EventScript_DoBattleAndResult)
-}
-
-script BattleArcade_RouletteRoom_EventScript_DoBattleAndResult
-{
     call(BattleArcade_RouletteRoom_EventScript_StartBattle)
     goto(BattleArcade_RouletteRoom_EventScript_HandleBattleResult)
-}
 
 script BattleArcade_RouletteRoom_EventScript_StartGameBoard
 {
@@ -182,10 +186,18 @@ script BattleArcade_RouletteRoom_EventScript_StartGameBoard
 
 script BattleArcade_RouletteRoom_EventScript_LoadOpponentText
 {
-    tower_getopponentintro(0)
-    msgbox(gStringVar4, MSGBOX_DEFAULT)
-    waitmessage
-    closemessage
+	frontier_isbrain
+	if (var(VAR_RESULT) == TRUE)
+	{
+		arcade_getbrainintro
+	}
+	else
+	{
+		tower_getopponentintro(0)
+	}
+	msgbox(gStringVar4, MSGBOX_DEFAULT)
+		waitmessage
+		closemessage
 }
 
 script BattleArcade_RouletteRoom_EventScript_StartBattle
@@ -368,7 +380,7 @@ script BattleArcade_RouletteRoom_EventScript_RetireChallenge
 script BattleArcade_RouletteRoom_EventScript_ContinueChallenge
 {
     closemessage
-    goto(BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard)
+    goto(BattleArcade_RouletteRoom_EventScript_BattleOpponent)
 }
 
 script BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp
@@ -427,7 +439,7 @@ script BattleArcade_RouletteRoom_EventScript_BrainReadyMenu
         case 1:goto(BattleArcade_RouletteRoom_EventScript_AskRecordBattleNextBattle)
         case 2:goto(BattleArcade_RouletteRoom_EventScript_AskPauseChallenge)
         case 3:goto(BattleArcade_RouletteRoom_EventScript_AskRetireChallenge)
-        case MULTI_B_PRESSED:goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+        case MULTI_B_PRESSED:goto(BattleArcade_RouletteRoom_EventScript_AskReadyForBrain)
     }
 }
 
@@ -439,7 +451,7 @@ script BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord
         case 0:goto(BattleArcade_RouletteRoom_EventScript_BattleBrain)
         case 1:goto(BattleArcade_RouletteRoom_EventScript_AskPauseChallenge)
         case 2:goto(BattleArcade_RouletteRoom_EventScript_AskRetireChallenge)
-        case MULTI_B_PRESSED:goto(BattleArcade_RouletteRoom_EventScript_AskReadyForOpponent)
+        case MULTI_B_PRESSED:goto(BattleArcade_RouletteRoom_EventScript_AskReadyForBrain)
     }
 }
 
@@ -449,19 +461,6 @@ script BattleArcade_RouletteRoom_EventScript_PlayBrainText
     msgbox(gStringVar4, MSGBOX_DEFAULT)
     waitmessage
     closemessage
-}
-
-script BattleArcade_RouletteRoom_EventScript_BattleBrain
-{
-    closemessage
-    frontier_set(FRONTIER_DATA_LVL_MODE, 1) // Debug
-    frontier_set(FRONTIER_MODE_SINGLES,1) // Debug
-    arcade_setbrainobj
-    call(BattleArcade_RouletteRoom_EventScript_BrainIntro)
-    call(BattleArcade_RouletteRoom_EventScript_StartGameBoard)
-    call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
-    call(BattleArcade_RouletteRoom_EventScript_PlayBrainText)
-	call(BattleArcade_RouletteRoom_EventScript_DoBattleAndResult)
 }
 
 script BattleArcade_RouletteRoom_EventScript_HandleBattleResult
@@ -534,7 +533,12 @@ script BattleArcade_RouletteRoom_EventScript_BrainCongratsText
 
 script BattleArcade_RouletteRoom_EventScript_BrainIntro
 {
-    call(BattleArcade_BattleRoom_EventScript_BrainEntranceMovement)
+	frontier_isbrain
+    if (var(VAR_RESULT) == FALSE)
+{
+return
+}
+
     arcade_checksymbol
     msgbox(BattleArcade_RouletteRoom_Text_NoNeedToWorry,MSGBOX_DEFAULT)
     if (var(VAR_RESULT) == ARCADE_SYMBOL_GOLD)
