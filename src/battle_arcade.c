@@ -125,6 +125,7 @@ static bool32 BattleArcade_DoNoEvent(void);
 static void FillFrontierTrainerParties(void);
 static void ResetLevelsToOriginal(void);
 static void ResetRouletteSpeed(void);
+static void ResetSketchedMoves(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -1255,6 +1256,7 @@ void BattleArcade_PostBattleEventCleanup(void)
     ReturnPartyToOwner();
     ResetWeatherPostBattle();
     HealPlayerParty();
+	ResetSketchedMoves();
 }
 
 static void ResetRouletteSpeed(void)
@@ -1274,6 +1276,45 @@ static void ResetRouletteRandomFlag(void)
 static void SetArcadeBrainObjectEvent(void)
 {
     SetFrontierBrainObjEventGfx(FRONTIER_FACILITY_PIKE);
+}
+
+// NEW
+bool32 HasMove(struct Pokemon *pokemon, u16 move)
+{
+	u8 i;
+
+	for (i = 0; i < MAX_MON_MOVES; i++)
+		if (GetMonData(pokemon, MON_DATA_MOVE1 + i, NULL) == move)
+			return TRUE;
+
+	return FALSE;
+}
+
+static void ResetSketchedMoves(void)
+{
+	u8 i, j;
+	struct Pokemon *frontierMon;
+	struct Pokemon *playerMon;
+
+	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+	{
+		u32 monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+
+		if (monId >= PARTY_SIZE)
+			continue;
+
+		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+		playerMon = &gPlayerParty[i];
+
+		for (j = 0; j < MAX_MON_MOVES; j++)
+		{
+			if (HasMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
+				continue;
+
+			SetMonMoveSlot(playerMon, MOVE_SKETCH, j);
+			break;
+		}
+	}
 }
 
 #endif

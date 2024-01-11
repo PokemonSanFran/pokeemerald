@@ -176,6 +176,7 @@ script BattleArcade_RouletteRoom_EventScript_SpawnOpponentStartGameBoard
     call(BattleArcade_RouletteRoom_EventScript_LoadOpponentText)
     call(BattleArcade_RouletteRoom_EventScript_StartBattle)
     goto(BattleArcade_RouletteRoom_EventScript_HandleBattleResult)
+}
 
 script BattleArcade_RouletteRoom_EventScript_StartGameBoard
 {
@@ -196,8 +197,8 @@ script BattleArcade_RouletteRoom_EventScript_LoadOpponentText
 		tower_getopponentintro(0)
 	}
 	msgbox(gStringVar4, MSGBOX_DEFAULT)
-		waitmessage
-		closemessage
+	waitmessage
+	closemessage
 }
 
 script BattleArcade_RouletteRoom_EventScript_StartBattle
@@ -220,8 +221,6 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
     arcade_eventcleanup
 
     copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)
-    // TODO figure out how to reset sketches between battles
-
     frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
 }
 
