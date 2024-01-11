@@ -410,11 +410,11 @@ BattleArcade_RouletteRoom_EventScript_DefeatedOpponent::
 # 231 "data/scripts/battle_arcade_battle.pory"
 	arcade_setbattlewon
 # 232 "data/scripts/battle_arcade_battle.pory"
+	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
+# 233 "data/scripts/battle_arcade_battle.pory"
 	compare VAR_RESULT, FRONTIER_STAGES_PER_CHALLENGE
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_2
 BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_1:
-# 236 "data/scripts/battle_arcade_battle.pory"
-	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
 # 237 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement
 # 238 "data/scripts/battle_arcade_battle.pory"
@@ -422,7 +422,7 @@ BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_1:
 	return
 
 BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_2:
-# 234 "data/scripts/battle_arcade_battle.pory"
+# 235 "data/scripts/battle_arcade_battle.pory"
 	goto BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
 	goto BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_1
 
@@ -1377,11 +1377,13 @@ BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition::
 
 BattleArcade_RouletteRoom_Text_NoNeedToWorry::
 # 867 "data/scripts/battle_arcade_battle.pory"
-	.string "Dahlia: No need to worry. {EMOJI_NOTE} Let chance do\n"
-	.string "what it does. Like surprises from the\l"
-	.string "game board, life goes through twists\l"
-	.string "and turns. No need to worry. {EMOJI_NOTE} Things will\l"
-	.string "go as they will. But, enough of that.$"
+	.string "Dahlia: No need to worry. {EMOJI_NOTE}\n"
+	.string "Let chance do what it does. Like\l"
+	.string "surprises from the game board, life\l"
+	.string "goes through twists and turns. No need\l"
+	.string "to worry. {EMOJI_NOTE}\l"
+	.string "Things will go as they will. But, enough\l"
+	.string "of that.$"
 
 BattleArcade_RouletteRoom_Text_IKnowOneThing::
 # 872 "data/scripts/battle_arcade_battle.pory"

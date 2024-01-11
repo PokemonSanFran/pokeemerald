@@ -85,11 +85,7 @@
 #define ARCADE_EVENT_NO_BATTLE                 20
 #define ARCADE_EVENT_GIVE_BP_BIG               21
 #define ARCADE_EVENT_NO_EVENT                  22
-#ifdef ARCADE_GEN4_EFFECTS_UNBANNED
 #define ARCADE_EVENT_COUNT                     23
-#else
-#define ARCADE_EVENT_COUNT                     23
-#endif
 
 #define ARCADE_EVENT_SPECIAL_COUNT             ARCADE_EVENT_COUNT - ARCADE_EVENT_SPECIAL_START
 

@@ -866,7 +866,7 @@ text BattleArcade_RouletteRoom_Text_CongratulationsTrainerInRecognition
 
 text BattleArcade_RouletteRoom_Text_NoNeedToWorry
 {
-	format("Dahlia: No need to worry. {EMOJI_NOTE} Let chance do what it does. Like surprises from the game board, life goes through twists and turns. No need to worry. {EMOJI_NOTE} Things will go as they will. But, enough of that.")
+	format("Dahlia: No need to worry. {EMOJI_NOTE}\NLet chance do what it does. Like surprises from the game board, life goes through twists and turns. No need to worry. {EMOJI_NOTE}\NThings will go as they will. But, enough of that.")
 }
 
 text BattleArcade_RouletteRoom_Text_IKnowOneThing

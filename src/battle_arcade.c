@@ -77,7 +77,7 @@ static void GenerateOpponentParty(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
 static void BattleArcade_PostBattleEventCleanup(void);
-static void BufferImpactedName(u32 impact);
+static void BufferImpactedName(u8*, u32);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
 u32 GetImpactFromSaveblock(void);
@@ -669,7 +669,7 @@ static void HandleGameBoardResult(void)
     u32 impact = GetImpactFromSaveblock();
 
     GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
-    BufferImpactedName(impact);
+    BufferImpactedName(gStringVar1,impact);
 }
 
 static bool32 DoGameBoardResult(u32 event, u32 impact)
@@ -710,12 +710,12 @@ static u32 GetImpactedTrainerId(u32 impact)
     return (impact == ARCADE_IMPACT_PLAYER) ? TRAINER_PLAYER : gTrainerBattleOpponent_A;
 }
 
-static void BufferImpactedName(u32 impact)
+static void BufferImpactedName(u8 *dest, u32 impact)
 {
 	if (impact == ARCADE_IMPACT_PLAYER)
-		StringCopy_PlayerName(gStringVar1, gSaveBlock2Ptr->playerName);
+		StringCopy_PlayerName(dest, gSaveBlock2Ptr->playerName);
 	else
-		GetFrontierTrainerName(gStringVar1, GetImpactedTrainerId(impact));
+		GetFrontierTrainerName(dest, GetImpactedTrainerId(impact));
 }
 
 static struct Pokemon *LoadSideParty(u32 impact)
