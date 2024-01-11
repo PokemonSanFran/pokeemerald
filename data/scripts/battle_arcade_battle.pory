@@ -227,15 +227,22 @@ script BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon
 
 script BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
 {
-    call(BattleFrontier_EventScript_IncrementWinStreak)
-    arcade_setbattlewon
-    call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
-    if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
-    {
-        goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
-    }
-    call(BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement)
-    goto(BattleArcade_RouletteRoom_EventScript_HealPlayer)
+	frontier_isbrain
+	if(var(VAR_RESULT))
+	{
+		call(BattleArcade_RouletteRoom_EventScript_BrainCongratsText)
+	}
+
+	call(BattleFrontier_EventScript_IncrementWinStreak)
+	arcade_setbattlewon
+
+	call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
+	if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
+	{
+		goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
+	}
+	call(BattleArcade_BattleRoom_EventScript_HandleHealAttendantMovement)
+	goto(BattleArcade_RouletteRoom_EventScript_HealPlayer)
 }
 
 script BattleArcade_RouletteRoom_EventScript_HealPlayer
@@ -461,29 +468,9 @@ script BattleArcade_RouletteRoom_EventScript_HandleBattleResult
 {
     if (var(VAR_RESULT) == B_OUTCOME_WON)
     {
-        goto(BattleArcade_RouletteRoom_EventScript_CheckDefeatedOpponent)
+		goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
     }
     goto(BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost)
-}
-
-script BattleArcade_RouletteRoom_EventScript_CheckDefeatedOpponent
-{
-	frontier_isbrain
-    if(var(VAR_RESULT))
-	{
-        goto(BattleArcade_RouletteRoom_EventScript_DefeatedBrain)
-	}
-	goto(BattleArcade_RouletteRoom_EventScript_DefeatedOpponent)
-
-}
-
-script BattleArcade_RouletteRoom_EventScript_DefeatedBrain
-{
-    call(BattleFrontier_EventScript_IncrementWinStreak)
-    arcade_setbattlewon
-    call(BattleArcade_RouletteRoom_EventScript_BrainCongratsText)
-    call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
-    goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
 }
 
 script BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
