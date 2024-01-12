@@ -315,44 +315,32 @@ script BattleFrontier_BattleArcadeLobby_EventScript_MultisAttendant
     goto(BattleFrontier_BattleArcadeLobby_EventScript_Attendant)
 }
 
-script BattleFrontier_BattleArcadeLobby_EventScript_ShowResults
+script BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard
 {
     lockall
+    message(BattleFrontier_BattleArcadeLobby_Text_ReadWhichRecord)
+    waitmessage
+    multichoice(17, 2, MULTI_BATTLE_ARCADE_RECORDS, FALSE)
     switch(var(VAR_RESULT))
-    {
-        case FRONTIER_MODE_SINGLES: frontier_results(FRONTIER_FACILITY_ARCADE,FRONTIER_MODE_SINGLES)
-        case FRONTIER_MODE_DOUBLES: frontier_results(FRONTIER_FACILITY_ARCADE,FRONTIER_MODE_DOUBLES)
-        case FRONTIER_MODE_MULTIS: frontier_results(FRONTIER_FACILITY_ARCADE,FRONTIER_MODE_MULTIS)
-        case FRONTIER_MODE_LINK_MULTIS: frontier_results(FRONTIER_FACILITY_ARCADE,FRONTIER_MODE_LINK_MULTIS)
-    }
+	{
+		case MULTI_B_PRESSED:
+		case 3:
+			closemessage
+			releaseall
+			end
+		default:
+				goto(BattleFrontier_BattleArcadeLobby_EventScript_ShowResults)
+	}
+}
+
+script BattleFrontier_BattleArcadeLobby_EventScript_ShowResults
+{
+	closemessage
+	copyvar(VAR_0x8006,VAR_RESULT)
+	arcade_results(VAR_0x8006)
     waitbuttonpress
     special(RemoveRecordsWindow)
-    releaseall
-    end
-}
-
-script BattleFrontier_BattleArcadeLobby_EventScript_ShowSinglesResults
-{
-    setvar(VAR_RESULT,FRONTIER_MODE_SINGLES)
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_ShowResults)
-}
-
-script BattleFrontier_BattleArcadeLobby_EventScript_ShowDoublesResults
-{
-    setvar(VAR_RESULT,FRONTIER_MODE_DOUBLES)
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_ShowResults)
-}
-
-script BattleFrontier_BattleArcadeLobby_EventScript_ShowMultisResults
-{
-    setvar(VAR_RESULT,FRONTIER_MODE_MULTIS)
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_ShowResults)
-}
-
-script BattleFrontier_BattleArcadeLobby_EventScript_ShowLinkMultisResults
-{
-    setvar(VAR_RESULT,FRONTIER_MODE_LINK_MULTIS)
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_ShowResults)
+	goto(BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard)
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons
@@ -732,6 +720,11 @@ text BattleFrontier_BattleArcadeLobby_Text_RulesAreListed
 text BattleFrontier_BattleArcadeLobby_Text_ReadWhichHeading
 {
     format("Which heading do you want to read?")
+}
+
+text BattleFrontier_BattleArcadeLobby_Text_ReadWhichRecord
+{
+    format("Which record would you like to see?")
 }
 
 text BattleFrontier_BattleArcadeLobby_Text_ExplainArcadeRules

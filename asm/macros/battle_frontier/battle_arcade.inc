@@ -123,3 +123,10 @@
 	setvar VAR_0x8004, ARCADE_FUNC_GET_PRINT_FROM_STREAK
 	special CallBattleArcadeFunc
 	.endm
+
+	@ Shows the results window for the Arcade's chosen mode.
+	.macro arcade_results mode:req
+	setvar VAR_0x8004, ARCADE_FUNC_RECORDS
+	setvar VAR_0x8005, \mode
+	special CallBattleArcadeFunc
+	.endm

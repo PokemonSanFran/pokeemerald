@@ -22,6 +22,7 @@
 #define ARCADE_FUNC_GENERATE_OPPONENT          18
 #define ARCADE_FUNC_SET_BRAIN_OBJECT           19
 #define ARCADE_FUNC_GET_PRINT_FROM_STREAK      20
+#define ARCADE_FUNC_RECORDS                    21
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2

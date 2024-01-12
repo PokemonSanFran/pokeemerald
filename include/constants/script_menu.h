@@ -124,6 +124,7 @@
 #define MULTI_TAG_MATCH_TYPE               113
 #define MULTI_CHALLENGE_TYPES_INFO         114
 #define MULTI_BATTLE_ARCADE_RULES          115
+#define MULTI_BATTLE_ARCADE_RECORDS        116
 
 // Lilycove SS Tidal Multichoice Selections
 #define SSTIDAL_SELECTION_SLATEPORT        0

@@ -126,6 +126,7 @@ static void ResetLevelsToOriginal(void);
 static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
+static void BattleArcade_DisplayRecords(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -140,26 +141,27 @@ static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 
 static void (* const sBattleArcadeFuncs[])(void) =
 {
-    [ARCADE_FUNC_INIT]                   = InitArcadeChallenge,
-    [ARCADE_FUNC_GET_DATA]               = GetArcadeData,
-    [ARCADE_FUNC_SET_DATA]               = SetArcadeData,
-    [ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
-    [ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
-    [ARCADE_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
-    [ARCADE_FUNC_GIVE_BATTLE_POINTS]     = CalculateGiveChallengeBattlePoints,
-    [ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
-    [ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
-    [ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-    [ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
-    [ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
-    [ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
-    [ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
-    [ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
-    [ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
-    [ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
-    [ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
-    [ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
+	[ARCADE_FUNC_INIT]                   = InitArcadeChallenge,
+	[ARCADE_FUNC_GET_DATA]               = GetArcadeData,
+	[ARCADE_FUNC_SET_DATA]               = SetArcadeData,
+	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
+	[ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
+	[ARCADE_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
+	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = CalculateGiveChallengeBattlePoints,
+	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
+	[ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
+	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
+	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
+	[ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
+	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
+	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
+	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
+	[ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
+	[ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
+	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
+	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetNextPrint,
+	[ARCADE_FUNC_RECORDS]                = BattleArcade_DisplayRecords
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -1314,5 +1316,80 @@ static void ResetSketchedMoves(void)
 		}
 	}
 }
+
+static u32 GenerateRecordsWindow(void)
+{
+    static const struct WindowTemplate sFrontierResultsWindowTemplate = {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 1,
+        .width = 28,
+        .height = 18,
+        .paletteNum = 15,
+        .baseBlock = 1,
+    };
+
+    gRecordsWindowId = AddWindow(&sFrontierResultsWindowTemplate);
+    DrawStdWindowFrame(gRecordsWindowId, FALSE);
+	return gRecordsWindowId;
+}
+
+static void DisplayRecordsWindow(u32 windowId)
+{
+    PutWindowTilemap(windowId);
+    CopyWindowToVram(windowId, COPYWIN_FULL);
+}
+
+static void BattleArcade_DisplayRecords(void)
+{
+	u32 windowId = GenerateRecordsWindow();
+	u32 mode = VarGet(gSpecialVar_0x8006);
+	/*
+	HandleRecordsHeader();
+	HandleRecords(mode,FRONTIER_LVL_50);
+	HandleRecords(mode,FRONTIER_LVL_OPEN);
+	*/
+	DisplayRecordsWindow(windowId);
+}
+
+/*
+static void SparringPrintTypesMastered(u8 lvlMode, u8 x, u8 y)
+{
+    PrintSparringStreak(gText_TypesMastered, CountNumberTypeWin(lvlMode), x, y);
+}
+static void SparringPrintBestStreak(u8 lvlMode, u8 x, u8 y)
+{
+    StringCopy(gStringVar2,GetBestTypeWinType(lvlMode));
+    PrintSparringStreak(gText_BestStreak,GetBestTypeWinAmount(lvlMode),x,y);
+}
+
+static void PrintSparringStreak(const u8 *str, u16 num, u8 x, u8 y)
+{
+    if (num > SPARRING_MAX_STREAK)
+        num = SPARRING_MAX_STREAK;
+
+    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, CountDigits(SPARRING_MAX_STREAK));
+    StringExpandPlaceholders(gStringVar4, str);
+    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, NULL);
+}
+
+void Sparring_ShowResultsWindow(void)
+{
+
+    StringExpandPlaceholders(gStringVar4, gText_RestrictedSparringResults);
+    PrintAligned(gStringVar4, SPARRING_RECORD_HEADER_Y_POS);
+    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_Lv502, SPARRING_RECORD_LEVEL_HEADER_X_POS, SPARRING_RECORD_50_LEVEL_Y_POS, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_OpenLv, SPARRING_RECORD_LEVEL_HEADER_X_POS, SPARRING_RECORD_OPEN_LEVEL_Y_POS, TEXT_SKIP_DRAW, NULL);
+
+    PrintHyphens(10);
+
+    SparringPrintBestStreak(FRONTIER_LVL_50,SPARRING_RECORD_DATA_X_POS,SPARRING_RECORD_50_LEVEL_Y_POS);
+    SparringPrintTypesMastered(FRONTIER_LVL_50,SPARRING_RECORD_DATA_X_POS,SPARRING_RECORD_50_LEVEL_BEST_Y_POS);
+    SparringPrintBestStreak(FRONTIER_LVL_OPEN, SPARRING_RECORD_DATA_X_POS, SPARRING_RECORD_OPEN_LEVEL_Y_POS);
+    SparringPrintTypesMastered(FRONTIER_LVL_OPEN, SPARRING_RECORD_DATA_X_POS, SPARRING_RECORD_OPEN_LEVEL_BEST_Y_POS);
+
+}
+
+*/
 
 #endif
