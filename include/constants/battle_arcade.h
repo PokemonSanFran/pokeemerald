@@ -47,13 +47,13 @@
 #define ARCADE_SYMBOL_SILVER                   1
 #define ARCADE_SYMBOL_GOLD                     2
 
-/*
 #define ARCADE_SILVER_BATTLE_NUMBER            35
 #define ARCADE_GOLD_BATTLE_NUMBER              70
-*/
 
+/*
 #define ARCADE_SILVER_BATTLE_NUMBER            2 // Debug
 #define ARCADE_GOLD_BATTLE_NUMBER              4 // Debug
+*/
 
 #define ARCADE_RECORD_LEVEL_HEADER_X_POS       8
 #define ARCADE_RECORD_DATA_X_POS               80
@@ -116,6 +116,7 @@
 #define ARCADE_SPEED_LEVEL_5                   5
 #define ARCADE_SPEED_LEVEL_6                   6
 #define ARCADE_SPEED_LEVEL_7                   7
+#define ARCADE_SPEED_COUNT                     ARCADE_SPEED_LEVEL_7 + 1
 
 #define ARCADE_SPEED_DEFAULT                   ARCADE_SPEED_LEVEL_3
 #define ARCADE_SPEED_LEVEL_MIN                 ARCADE_SPEED_LEVEL_0
@@ -133,16 +134,16 @@
 #define ARCADE_ITEM_GROUP_COUNT                ARCADE_BERRY_GROUP_COUNT
 #define ARCADE_ITEM_GROUP_SIZE                10
 
+#define ARCADE_MAX_GROUP_SIZE (max(ARCADE_ITEM_GROUP_SIZE,ARCADE_BERRY_GROUP_SIZE)+1)
+
 #define ARCADE_HOLD_BERRY                      ARCADE_EVENT_GIVE_BERRY
 #define ARCADE_HOLD_ITEM                       ARCADE_EVENT_GIVE_ITEM
 
 #define ARCADE_EVENT_LEVEL_INCREASE            3
-
 #define ARCADE_GAME_BOARD_SPACES               16
 
-#define FLAG_ARCADE_SILVER_PRINT           FLAG_UNUSED_0x020
-#define FLAG_ARCADE_GOLD_PRINT             FLAG_UNUSED_0x021
-
-#define ARCADE_BRAIN_DEFEAT_POINTS         20
+#define FLAG_ARCADE_SILVER_PRINT               FLAG_UNUSED_0x020
+#define FLAG_ARCADE_GOLD_PRINT                 FLAG_UNUSED_0x021
+#define ARCADE_BRAIN_DEFEAT_POINTS             20
 
 #endif //GUARD_CONSTANTS_ARCADE_H

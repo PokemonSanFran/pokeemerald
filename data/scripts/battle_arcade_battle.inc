@@ -434,8 +434,8 @@ BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_1:
 	arcade_setbattlewon
 # 250 "data/scripts/battle_arcade_battle.pory"
 	call BattleArcade_BattleRoom_EventScript_MoveBattlersBack
-# 252 "data/scripts/battle_arcade_battle.pory"
-	compare VAR_RESULT, 2
+# 251 "data/scripts/battle_arcade_battle.pory"
+	compare VAR_RESULT, FRONTIER_STAGES_PER_CHALLENGE
 	goto_if_eq BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_5
 BattleArcade_RouletteRoom_EventScript_DefeatedOpponent_4:
 # 256 "data/scripts/battle_arcade_battle.pory"
