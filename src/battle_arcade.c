@@ -342,7 +342,6 @@ static void GiveBattlePoints(u32 points)
 
 static void BattleArcade_GetNextPrint(void)
 {
-		DebugPrintf("current streak is %d",GetCurrentBattleArcadeWinStreak());
 	switch(GetCurrentBattleArcadeWinStreak())
 	{
 		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
@@ -1239,7 +1238,8 @@ static void ResetWeatherPostBattle(void)
 
 u32 GetPlayerSymbolCountForArcade(void)
 {
-    return (FlagGet(FLAG_ARCADE_SILVER_PRINT) + FlagGet(FLAG_ARCADE_GOLD_PRINT));
+	BattleArcade_GetNextPrint();
+	return --gSpecialVar_Result;
 }
 
 void ConvertFacilityFromArcadeToPike(u32* facility)
