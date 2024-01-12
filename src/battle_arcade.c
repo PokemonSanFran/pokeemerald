@@ -31,6 +31,8 @@
 #include "battle_pike.h"
 #include "constants/weather.h"
 #include "field_weather.h"
+#include "script.h"
+#include "diploma.h" // Debug
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -127,6 +129,7 @@ static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
 static void BattleArcade_DisplayRecords(void);
+static void FieldShowBattleArcadeRecords(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -161,7 +164,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetNextPrint,
-	[ARCADE_FUNC_RECORDS]                = BattleArcade_DisplayRecords
+	[ARCADE_FUNC_RECORDS]                = FieldShowBattleArcadeRecords
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -1336,8 +1339,10 @@ static u32 GenerateRecordsWindow(void)
 
 static void DisplayRecordsWindow(u32 windowId)
 {
+	/*
     PutWindowTilemap(windowId);
     CopyWindowToVram(windowId, COPYWIN_FULL);
+	*/
 }
 
 static void BattleArcade_DisplayRecords(void)
@@ -1391,5 +1396,12 @@ void Sparring_ShowResultsWindow(void)
 }
 
 */
+
+void FieldShowBattleArcadeRecords(void)
+{
+    SetMainCallback2(CB2_ShowRecords);
+    //SetMainCallback2(CB2_ShowDiploma);
+    LockPlayerFieldControls();
+}
 
 #endif

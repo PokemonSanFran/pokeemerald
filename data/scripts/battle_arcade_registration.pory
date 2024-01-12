@@ -338,8 +338,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_ShowResults
 	closemessage
 	copyvar(VAR_0x8006,VAR_RESULT)
 	arcade_results(VAR_0x8006)
-    waitbuttonpress
-    special(RemoveRecordsWindow)
 	goto(BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard)
 }
 
