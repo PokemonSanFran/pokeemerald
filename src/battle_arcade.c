@@ -34,8 +34,8 @@
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
-#define ARCADE_SAVE_WINS FRONTIER_SAVEDATA.arcadeWinStreaks
-#define ARCADE_SAVE_STREAKS FRONTIER_SAVEDATA.arcadeRecordWinStreaks
+#define ARCADE_CURRENT_STREAK_WINS FRONTIER_SAVEDATA.arcadeWinStreaks
+#define ARCADE_RECORDED_WINS FRONTIER_SAVEDATA.arcadeRecordWinStreaks
 
 #define GAME_BOARD_EVENT gSpecialVar_0x8007
 #define GAME_BOARD_IMPACT gSpecialVar_0x8008
@@ -90,7 +90,6 @@ static const u8 *GetBestTypeWinType(u8);
 static void ArcadePrintBestStreak(u8, u8, u8);
 static bool32 IsGiveItemVarSet(void);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
-static void SaveCurrentWinStreak(void);
 static bool32 IsEventBanned(u32 event);
 static u32 GetChallengeNumIndex(void);
 static void StoreEventToVar(void);
@@ -126,6 +125,7 @@ static void FillFrontierTrainerParties(void);
 static void ResetLevelsToOriginal(void);
 static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
+static void BattleArcade_GetNextPrint(void);
 
 static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
 {
@@ -159,6 +159,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
     [ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
     [ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
     [ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
+	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetNextPrint,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -196,7 +197,7 @@ static void InitArcadeChallenge(void)
     FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
-        FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = 0;
+        ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode] = 0;
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     gTrainerBattleOpponent_A = 0;
@@ -253,26 +254,15 @@ static void SetArcadeData(void)
 static void SetArcadeBattleWon(void)
 {
     FRONTIER_SAVEDATA.curChallengeBattleNum++;
-    SaveCurrentWinStreak();
+    SaveCurrentStreak();
     gSpecialVar_Result = FRONTIER_SAVEDATA.curChallengeBattleNum;
-}
-
-static void SaveCurrentWinStreak(void)
-{
-    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
-    u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-    u16 winStreak = GetCurrentBattleArcadeWinStreak();
-
-    if (FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] < winStreak)
-        FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] = winStreak;
 }
 
 u16 GetCurrentBattleArcadeWinStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
-    u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE) / FRONTIER_STAGES_PER_CHALLENGE);
-
-    u16 winStreak = gSaveBlock2Ptr->frontier.arcadeWinStreaks[battleMode][lvlMode];
+    u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
+    u32 winStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode];
 
     if (winStreak > MAX_STREAK)
         return MAX_STREAK;
@@ -280,24 +270,25 @@ u16 GetCurrentBattleArcadeWinStreak(void)
         return winStreak;
 }
 
+
 static void SaveCurrentStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-    u32 oldStreak = ARCADE_SAVE_STREAKS[battleMode][lvlMode];
-    u32 currentStreak = ARCADE_SAVE_WINS[battleMode][lvlMode];
+    u32 oldStreak = ARCADE_RECORDED_WINS[battleMode][lvlMode];
+    u32 currentStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode]++;
 
     if (oldStreak >= currentStreak)
         return;
 
-    ARCADE_SAVE_STREAKS[battleMode][lvlMode] = currentStreak;
+	ARCADE_RECORDED_WINS[battleMode][lvlMode] = currentStreak;
 }
 
 static void SaveArcadeChallenge(void)
 {
     u16 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u16 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-    s32 challengeNum = (signed)(FRONTIER_SAVEDATA.arcadeWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE);
+	s32 challengeNum = (signed)(ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE);
 
     FRONTIER_SAVEDATA.challengeStatus = gSpecialVar_0x8005;
     VarSet(VAR_TEMP_0, 0);
@@ -343,7 +334,7 @@ static u32 CalculateBattlePoints(u32 challengeNum)
 
 static void CalculateGiveChallengeBattlePoints(void)
 {
-    u32 points = CalculateBattlePoints(((gSaveBlock2Ptr->frontier.arcadeWinStreaks[VarGet(VAR_FRONTIER_BATTLE_MODE)][gSaveBlock2Ptr->frontier.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
+	u32 points = CalculateBattlePoints(((ARCADE_CURRENT_STREAK_WINS[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
     GiveBattlePoints(points);
 }
 
@@ -356,16 +347,30 @@ static void GiveBattlePoints(u32 points)
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 }
 
+static void BattleArcade_GetNextPrint(void)
+{
+		DebugPrintf("current streak is %d",GetCurrentBattleArcadeWinStreak());
+	switch(GetCurrentBattleArcadeWinStreak())
+	{
+		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
+			gSpecialVar_Result = ARCADE_SYMBOL_SILVER;
+			break;
+		case (ARCADE_GOLD_BATTLE_NUMBER - 1):
+			gSpecialVar_Result = ARCADE_SYMBOL_GOLD;
+			break;
+		default:
+			gSpecialVar_Result = ARCADE_SYMBOL_NONE;
+			break;
+	}
+}
+
 static void CheckArcadeSymbol(void)
 {
-    u32 numWins = 0;
-    u8 numDigits = CountDigits(numWins);
-    u32 hasSilver = FlagGet(FLAG_SYS_ARENA_SILVER);
-    u32 hasGold = FlagGet(FLAG_SYS_ARENA_GOLD);
-    bool32 shouldGetGold = (numWins == (NUMBER_OF_MON_TYPES - 1));
-    bool32 shouldGetSilver = (numWins == ((NUMBER_OF_MON_TYPES - 1) /2));
-
-    ConvertIntToDecimalStringN(gStringVar1, numWins, STR_CONV_MODE_LEFT_ALIGN, numDigits);
+    u32 numWins = (GetCurrentBattleArcadeWinStreak());
+    u32 hasSilver = FlagGet(FLAG_ARCADE_SILVER_PRINT);
+    u32 hasGold = FlagGet(FLAG_ARCADE_GOLD_PRINT);
+    bool32 shouldGetGold = (numWins == ARCADE_GOLD_BATTLE_NUMBER);
+    bool32 shouldGetSilver = (numWins == ARCADE_SILVER_BATTLE_NUMBER);
 
     if (shouldGetGold && !hasGold)
         gSpecialVar_Result = ARCADE_SYMBOL_GOLD;

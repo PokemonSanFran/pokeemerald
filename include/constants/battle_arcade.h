@@ -21,6 +21,7 @@
 #define ARCADE_FUNC_PLAY_GAME_BOARD            17
 #define ARCADE_FUNC_GENERATE_OPPONENT          18
 #define ARCADE_FUNC_SET_BRAIN_OBJECT           19
+#define ARCADE_FUNC_GET_PRINT_FROM_STREAK      20
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2
@@ -46,8 +47,13 @@
 #define ARCADE_SYMBOL_SILVER                   1
 #define ARCADE_SYMBOL_GOLD                     2
 
+/*
 #define ARCADE_SILVER_BATTLE_NUMBER            35
 #define ARCADE_GOLD_BATTLE_NUMBER              70
+*/
+
+#define ARCADE_SILVER_BATTLE_NUMBER            2 // Debug
+#define ARCADE_GOLD_BATTLE_NUMBER              4 // Debug
 
 #define ARCADE_RECORD_LEVEL_HEADER_X_POS       8
 #define ARCADE_RECORD_DATA_X_POS               80
@@ -133,5 +139,8 @@
 #define ARCADE_EVENT_LEVEL_INCREASE            3
 
 #define ARCADE_GAME_BOARD_SPACES               16
+
+#define FLAG_ARCADE_SILVER_PRINT           FLAG_UNUSED_0x020
+#define FLAG_ARCADE_GOLD_PRINT             FLAG_UNUSED_0x021
 
 #endif //GUARD_CONSTANTS_ARCADE_H

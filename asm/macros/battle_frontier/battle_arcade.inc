@@ -117,3 +117,9 @@
     setvar VAR_0x8004, ARCADE_FUNC_SET_BRAIN_OBJECT
     special CallBattleArcadeFunc
     .endm
+
+	@ Looks at the player's streak and returns the print for that battle
+	.macro arcade_getprintfromstreak
+	setvar VAR_0x8004, ARCADE_FUNC_GET_PRINT_FROM_STREAK
+	special CallBattleArcadeFunc
+	.endm

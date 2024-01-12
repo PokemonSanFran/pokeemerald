@@ -63,30 +63,24 @@ script BattleFrontier_BattleArcadeLobby_ResetChallengeStatus
 
 script BattleFrontier_BattleArcadeLobby_EventScript_CheckStreakAndSymbols
 {
-    frontier_getsymbols
+    arcade_checksymbol
     switch(var(VAR_RESULT))
     {
-        case 0: call(BattleFrontier_BattleArcadeLobby_EventScript_GiveSilverPrint)
-        case 1: call(BattleFrontier_BattleArcadeLobby_EventScript_CheckGoldPrint)
-        default: return
-    }
-}
-
-script BattleFrontier_BattleArcadeLobby_EventScript_CheckGoldPrint
-{
-    arcade_get(ARCADE_DATA_WIN_STREAK)
-    if (var(VAR_RESULT) == 49)
-    {
-        call(BattleFrontier_BattleArcadeLobby_EventScript_GiveGoldPrint)
+        case ARCADE_SYMBOL_SILVER:
+			call(BattleFrontier_BattleArcadeLobby_EventScript_GiveSilverPrint)
+        case ARCADE_SYMBOL_GOLD:
+			call(BattleFrontier_BattleArcadeLobby_EventScript_GiveGoldPrint)
+		case ARCADE_SYMBOL_NONE:
+        default:
+			return
     }
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_GiveGoldPrint
 {
     msgbox(BattleArcade_Entrance_Text_CongratulationsInHonorOf,MSGBOX_DEFAULT)
-    msgbox(BattleArcade_Entrance_Text_TheGoldPrintWasAdded,MSGBOX_DEFAULT)
-    call(BattleFrontier_BattleArcadeLobby_EventScript_GivePrint)
-    return
+	msgbox(BattleArcade_Entrance_Text_TheGoldPrintWasAdded,MSGBOX_DEFAULT)
+		call(BattleFrontier_BattleArcadeLobby_EventScript_GivePrint)
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_GiveSilverPrint
@@ -94,15 +88,31 @@ script BattleFrontier_BattleArcadeLobby_EventScript_GiveSilverPrint
     msgbox(BattleArcade_Entrance_Text_CongratulationsInHonorOf,MSGBOX_DEFAULT)
     msgbox(BattleArcade_Entrance_Text_TheSilverPrintWasAdded,MSGBOX_DEFAULT)
     call(BattleFrontier_BattleArcadeLobby_EventScript_GivePrint)
-    return
 }
 
-script BattleFrontier_BattleArcadeLobby_EventScript_GivePrint
+script BattleFrontier_BattleArcadeLobby_EventScript_CheckandGivePrint
+{
+	if (flag(FLAG_ARCADE_SILVER_PRINT))
+	{
+		setflag(FLAG_ARCADE_GOLD_PRINT)
+	}
+	else
+	{
+		setflag(FLAG_ARCADE_SILVER_PRINT)
+	}
+}
+
+script BattleFrontier_BattleArcadeLobby_EventScript_PlayFanfareMessage
 {
     playfanfare(MUS_OBTAIN_SYMBOL)
     waitmessage
     waitfanfare
-    return
+}
+
+script BattleFrontier_BattleArcadeLobby_EventScript_GivePrint
+{
+	call(BattleFrontier_BattleArcadeLobby_EventScript_CheckandGivePrint)
+	call(BattleFrontier_BattleArcadeLobby_EventScript_PlayFanfareMessage)
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_GiveBattlePoints

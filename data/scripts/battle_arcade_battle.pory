@@ -248,7 +248,8 @@ script BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
 	arcade_setbattlewon
 
 	call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
-	if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
+	//if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
+	if (var(VAR_RESULT) == 2) // Debug
 	{
 		goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
 	}
@@ -534,13 +535,13 @@ script BattleArcade_RouletteRoom_EventScript_BrainIntro
 {
 	frontier_isbrain
     if (var(VAR_RESULT) == FALSE)
-{
-return
-}
+	{
+		return
+	}
 
-    arcade_checksymbol
     msgbox(BattleArcade_RouletteRoom_Text_NoNeedToWorry,MSGBOX_DEFAULT)
-    if (var(VAR_RESULT) == ARCADE_SYMBOL_GOLD)
+	arcade_getprintfromstreak
+    if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
     {
         msgbox(BattleArcade_RouletteRoom_Text_IKnowOneThing, MSGBOX_DEFAULT)
     }
