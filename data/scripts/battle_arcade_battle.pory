@@ -511,6 +511,7 @@ script BattleArcade_RouletteRoom_EventScript_GiveBP
 {
     arcade_givepoints
     msgbox(BattleArcade_RouletteRoom_Text_YouHaveClearedYourSeventh)
+    msgbox(BattleFrontier_Text_ObtainedXBattlePoints, MSGBOX_GETPOINTS)
 }
 
 script BattleArcade_RouletteRoom_EventScript_RestoreItemsMessage
@@ -529,6 +530,7 @@ script BattleArcade_RouletteRoom_EventScript_BrainCongratsText
     {
         msgbox(BattleArcade_RouletteRoom_Text_TrulyItWasSoVery,MSGBOX_DEFAULT)
     }
+	closemessage
 }
 
 script BattleArcade_RouletteRoom_EventScript_BrainIntro
@@ -547,7 +549,7 @@ script BattleArcade_RouletteRoom_EventScript_BrainIntro
     }
     else
     {
-        msgbox(BattleArcade_RouletteRoom_Text_YouAreProving,MSGBOX_DEFAULT)
+		msgbox(BattleArcade_RouletteRoom_Text_YouAreProving,MSGBOX_DEFAULT)
     }
 }
 

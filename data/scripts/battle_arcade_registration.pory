@@ -115,14 +115,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_GivePrint
 	call(BattleFrontier_BattleArcadeLobby_EventScript_PlayFanfareMessage)
 }
 
-script BattleFrontier_BattleArcadeLobby_EventScript_GiveBattlePoints
-{
-    msgbox(BattleFrontier_BattleArcadeLobby_Text_AwardYouTheseBattlePoints, MSGBOX_DEFAULT)
-    arcade_givepoints
-    msgbox(BattleFrontier_Text_ObtainedXBattlePoints, MSGBOX_GETPOINTS)
-    return
-}
-
 script BattleFrontier_BattleArcadeLobby_EventScript_LookForwardToChallenge
 {
     msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou, MSGBOX_DEFAULT)

@@ -316,20 +316,13 @@ static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =
 static u32 CalculateBattlePoints(u32 challengeNum)
 {
     u32 maxChallengeNum = ARRAY_COUNT(sArcadeBattlePointAwards);
-    u32 points;
-
     if (challengeNum != 0)
         challengeNum--;
 
     if (challengeNum >= maxChallengeNum)
         challengeNum = (maxChallengeNum - 1);
 
-    points = sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
-
-    if (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN)
-        points = 20;
-
-    return points;
+	return (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN) ? ARCADE_BRAIN_DEFEAT_POINTS : sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
 }
 
 static void CalculateGiveChallengeBattlePoints(void)
@@ -341,7 +334,7 @@ static void CalculateGiveChallengeBattlePoints(void)
 static void GiveBattlePoints(u32 points)
 {
     IncrementDailyBattlePoints(points);
-    ConvertIntToDecimalStringN(gStringVar3, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
+    ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
