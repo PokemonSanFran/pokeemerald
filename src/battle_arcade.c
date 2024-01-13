@@ -33,6 +33,21 @@
 #include "field_weather.h"
 #include "script.h"
 #include "diploma.h" // Debug
+
+//Records Window
+#include "diploma.h"
+#include "palette.h"
+#include "gpu_regs.h"
+#include "scanline_effect.h"
+#include "task.h"
+#include "malloc.h"
+#include "decompress.h"
+#include "bg.h"
+#include "window.h"
+#include "menu.h"
+#include "pokedex.h"
+#include "constants/rgb.h"
+
 #ifdef BATTLE_ARCADE
 
 #define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
@@ -130,17 +145,6 @@ static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
 static void BattleArcade_DisplayRecords(void);
 static void FieldShowBattleArcadeRecords(void);
-
-static const struct WindowTemplate sBattleArcade_TypeWinsWindowTemplate =
-{
-    .bg = 0,
-    .tilemapLeft = 1,
-    .tilemapTop = 1,
-    .width = 10,
-    .height = 2,
-    .paletteNum = 15,
-    .baseBlock = 20,
-};
 
 static void (* const sBattleArcadeFuncs[])(void) =
 {
@@ -1396,6 +1400,191 @@ void Sparring_ShowResultsWindow(void)
 }
 
 */
+
+static void MainCB2(void);
+static void Task_RecordsFadeIn(u8);
+static void Task_RecordsWaitForKeyPress(u8);
+static void Task_RecordsFadeOut(u8);
+static void DisplayRecordsText(void);
+static void InitRecordsBg(void);
+static void InitRecordsWindow(void);
+static void PrintRecordsText(u8 *, u8, u8);
+
+EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;
+
+static void VBlankCB(void)
+{
+    LoadOam();
+    ProcessSpriteCopyRequests();
+    TransferPlttBuffer();
+}
+
+static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.bin.lz");
+static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.4bpp.lz");
+
+static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/arcade_records/arcade_records.gbapal");
+
+/*
+static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/diploma/tilemap.bin.lz");
+static const u32 sRecordsTiles[] = INCBIN_U32("graphics/diploma/tiles.4bpp.lz");
+*/
+
+void CB2_ShowRecords(void)
+{
+    SetVBlankCallback(NULL);
+    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0);
+    SetGpuReg(REG_OFFSET_BG3CNT, 0);
+    SetGpuReg(REG_OFFSET_BG2CNT, 0);
+    SetGpuReg(REG_OFFSET_BG1CNT, 0);
+    SetGpuReg(REG_OFFSET_BG0CNT, 0);
+    SetGpuReg(REG_OFFSET_BG3HOFS, 0);
+    SetGpuReg(REG_OFFSET_BG3VOFS, 0);
+    SetGpuReg(REG_OFFSET_BG2HOFS, 0);
+    SetGpuReg(REG_OFFSET_BG2VOFS, 0);
+    SetGpuReg(REG_OFFSET_BG1HOFS, 0);
+    SetGpuReg(REG_OFFSET_BG1VOFS, 0);
+    SetGpuReg(REG_OFFSET_BG0HOFS, 0);
+    SetGpuReg(REG_OFFSET_BG0VOFS, 0);
+    // why doesn't this one use the dma manager either?
+    DmaFill16(3, 0, VRAM, VRAM_SIZE);
+    DmaFill32(3, 0, OAM, OAM_SIZE);
+    DmaFill16(3, 0, PLTT, PLTT_SIZE);
+    ScanlineEffect_Stop();
+    ResetTasks();
+    ResetSpriteData();
+    ResetPaletteFade();
+    FreeAllSpritePalettes();
+    LoadPalette(sRecordsPalettes, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+    sRecordsTilemapPtr = Alloc(0x1000);
+    InitRecordsBg();
+    InitRecordsWindow();
+    ResetTempTileDataBuffers();
+    DecompressAndCopyTileDataToVram(1, &sRecordsTiles, 0, 0, 0);
+    while (FreeTempTileDataBuffersIfPossible())
+        ;
+    LZDecompressWram(sRecordsTilemap, sRecordsTilemapPtr);
+    CopyBgTilemapBufferToVram(1);
+    DisplayRecordsText();
+    BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+    EnableInterrupts(1);
+    SetVBlankCallback(VBlankCB);
+    SetMainCallback2(MainCB2);
+    CreateTask(Task_RecordsFadeIn, 0);
+}
+
+static void MainCB2(void)
+{
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+    UpdatePaletteFade();
+}
+
+static void Task_RecordsFadeIn(u8 taskId)
+{
+    if (!gPaletteFade.active)
+        gTasks[taskId].func = Task_RecordsWaitForKeyPress;
+}
+
+static void Task_RecordsWaitForKeyPress(u8 taskId)
+{
+    if (JOY_NEW(A_BUTTON | B_BUTTON))
+    {
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+        gTasks[taskId].func = Task_RecordsFadeOut;
+    }
+}
+
+static void Task_RecordsFadeOut(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        Free(sRecordsTilemapPtr);
+        FreeAllWindowBuffers();
+        DestroyTask(taskId);
+        SetMainCallback2(CB2_ReturnToFieldFadeFromBlack);
+    }
+}
+
+static void HandleHeader(void)
+{
+}
+
+static void DisplayRecordsText(void)
+{
+	SetGpuReg(REG_OFFSET_BG1HOFS, 0);
+	StringCopy(gStringVar1, gText_OpenLv);
+    StringExpandPlaceholders(gStringVar4, gText_OpenLv);
+    PrintRecordsText(gStringVar4, 0, 1);
+    PutWindowTilemap(0);
+    CopyWindowToVram(0, COPYWIN_FULL);
+}
+
+static const struct BgTemplate sRecordsBgTemplates[2] =
+{
+    {
+        .bg = 0,
+        .charBaseIndex = 1,
+        .mapBaseIndex = 31,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 0,
+        .baseTile = 0,
+    },
+    {
+        .bg = 1,
+        .charBaseIndex = 0,
+        .mapBaseIndex = 6,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 1,
+        .baseTile = 0,
+    },
+};
+
+static void InitRecordsBg(void)
+{
+    ResetBgsAndClearDma3BusyFlags(0);
+    InitBgsFromTemplates(0, sRecordsBgTemplates, ARRAY_COUNT(sRecordsBgTemplates));
+    SetBgTilemapBuffer(1, sRecordsTilemapPtr);
+    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP);
+    ShowBg(0);
+    ShowBg(1);
+    SetGpuReg(REG_OFFSET_BLDCNT, 0);
+    SetGpuReg(REG_OFFSET_BLDALPHA, 0);
+    SetGpuReg(REG_OFFSET_BLDY, 0);
+}
+
+static const struct WindowTemplate sRecordsWinTemplates[2] =
+{
+    {
+        .bg = 0,
+        .tilemapLeft = 5,
+        .tilemapTop = 2,
+        .width = 20,
+        .height = 16,
+        .paletteNum = 15,
+        .baseBlock = 1,
+    },
+    DUMMY_WIN_TEMPLATE,
+};
+
+static void InitRecordsWindow(void)
+{
+    InitWindows(sRecordsWinTemplates);
+    DeactivateAllTextPrinters();
+    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    FillWindowPixelBuffer(0, PIXEL_FILL(0));
+    PutWindowTilemap(0);
+}
+
+static void PrintRecordsText(u8 *text, u8 var1, u8 var2)
+{
+    u8 color[3] = {0, 2, 3};
+
+    AddTextPrinterParameterized4(0, FONT_NORMAL, var1, var2, 0, 0, color, TEXT_SKIP_DRAW, text);
+}
 
 void FieldShowBattleArcadeRecords(void)
 {
