@@ -143,7 +143,6 @@ static void ResetLevelsToOriginal(void);
 static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
-static void BattleArcade_DisplayRecords(void);
 static void FieldShowBattleArcadeRecords(void);
 
 static void (* const sBattleArcadeFuncs[])(void) =
@@ -1324,43 +1323,6 @@ static void ResetSketchedMoves(void)
 	}
 }
 
-static u32 GenerateRecordsWindow(void)
-{
-    static const struct WindowTemplate sFrontierResultsWindowTemplate = {
-        .bg = 0,
-        .tilemapLeft = 1,
-        .tilemapTop = 1,
-        .width = 28,
-        .height = 18,
-        .paletteNum = 15,
-        .baseBlock = 1,
-    };
-
-    gRecordsWindowId = AddWindow(&sFrontierResultsWindowTemplate);
-    DrawStdWindowFrame(gRecordsWindowId, FALSE);
-	return gRecordsWindowId;
-}
-
-static void DisplayRecordsWindow(u32 windowId)
-{
-	/*
-    PutWindowTilemap(windowId);
-    CopyWindowToVram(windowId, COPYWIN_FULL);
-	*/
-}
-
-static void BattleArcade_DisplayRecords(void)
-{
-	u32 windowId = GenerateRecordsWindow();
-	u32 mode = VarGet(gSpecialVar_0x8006);
-	/*
-	HandleRecordsHeader();
-	HandleRecords(mode,FRONTIER_LVL_50);
-	HandleRecords(mode,FRONTIER_LVL_OPEN);
-	*/
-	DisplayRecordsWindow(windowId);
-}
-
 /*
 static void SparringPrintTypesMastered(u8 lvlMode, u8 x, u8 y)
 {
@@ -1507,16 +1469,54 @@ static void Task_RecordsFadeOut(u8 taskId)
     }
 }
 
-static void HandleHeader(void)
+extern const u8 gText_BattleArcade[];
+
+static void HandleRecords(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u32 color, u32 speed)
 {
+/*
+ Battle Arcade | $MODE Record
+
+$ACTIVITY $LEVEL Games cleared: $NUM
+RECORD LVL 50 Games cleared: $NUM_RECORD
+
+$ACTIVITY OPEN LVL Games cleared: $NUM
+RECORD OPEN LVL Games cleared: $NUM_RECORD
+ */
+
+}
+
+static const u8 *BattleArcade_GenerateRecordName(void)
+{
+    StringCopy(gStringVar3,gText_Double);
+    StringAppend(gStringVar3,gText_Space);
+    StringAppend(gStringVar3,gText_Record);
+    return gStringVar3;
+}
+
+
+static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed)
+{
+    u8 monNames[20];
+
+	AddTextPrinterParameterized4(windowId, fontID, 0,4, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
+
+	AddTextPrinterParameterized4(windowId, fontID, 122,4, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
 }
 
 static void DisplayRecordsText(void)
 {
-	SetGpuReg(REG_OFFSET_BG1HOFS, 0);
-	StringCopy(gStringVar1, gText_OpenLv);
-    StringExpandPlaceholders(gStringVar4, gText_OpenLv);
-    PrintRecordsText(gStringVar4, 0, 1);
+	u32 windowId = 0;
+	u32 fontID = FONT_NORMAL;
+	u32 letterSpacing = GetFontAttribute(fontID,FONTATTR_LETTER_SPACING);
+	u32 lineSpacing = GetFontAttribute(fontID,FONTATTR_LINE_SPACING);
+	u8 color[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GRAY};
+	u32 speed = TEXT_SKIP_DRAW;
+
+	HandleHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed);
+
+	//StringCopy(gStringVar1, gText_OpenLv);
+    //StringExpandPlaceholders(gStringVar4, gText_OpenLv);
+    //PrintRecordsText(gStringVar4, 0, 1);
     PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_FULL);
 }
@@ -1560,9 +1560,9 @@ static const struct WindowTemplate sRecordsWinTemplates[2] =
 {
     {
         .bg = 0,
-        .tilemapLeft = 5,
-        .tilemapTop = 2,
-        .width = 20,
+        .tilemapLeft = 3,
+        .tilemapTop = 1,
+        .width = 26,
         .height = 16,
         .paletteNum = 15,
         .baseBlock = 1,
@@ -1581,9 +1581,7 @@ static void InitRecordsWindow(void)
 
 static void PrintRecordsText(u8 *text, u8 var1, u8 var2)
 {
-    u8 color[3] = {0, 2, 3};
-
-    AddTextPrinterParameterized4(0, FONT_NORMAL, var1, var2, 0, 0, color, TEXT_SKIP_DRAW, text);
+    //AddTextPrinterParameterized4(0, FONT_NORMAL, var1, var2, 0, 0, color, TEXT_SKIP_DRAW, text);
 }
 
 void FieldShowBattleArcadeRecords(void)
