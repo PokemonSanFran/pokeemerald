@@ -1493,14 +1493,46 @@ static const u8 *BattleArcade_GenerateRecordName(void)
     return gStringVar3;
 }
 
-
 static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed)
 {
-    u8 monNames[20];
-
 	AddTextPrinterParameterized4(windowId, fontID, 0,4, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
-
 	AddTextPrinterParameterized4(windowId, fontID, 122,4, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
+}
+
+static u32 CalculateVerticalPosition(u32 streakStatus, u32 level)
+{
+	u32 position = streakStatus + level;
+
+	switch(position)
+	{
+		case 0: return 10;
+		case 1: return 20;
+		case 2 return 30;
+		case 3 return 40;
+	}
+}
+
+static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level)
+{
+	u32 x = 10;
+	u32 y = CalculateVerticalPosition(streakStatus,level);
+	AddTextPrinterParameterized4(windowId, fontID, x,y, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
+}
+
+static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
+{
+	u8 streakStatus;
+	u32 streak;
+	u32 recordStreak;
+	u32 i, j;
+
+	for (i = 0; i < FRONTIER_LVL_MODE_COUNT ; i++)
+	{
+		for (j = 0; j < 2; j++)
+		{
+			PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,j,i);
+		}
+	}
 }
 
 static void DisplayRecordsText(void)
@@ -1512,7 +1544,8 @@ static void DisplayRecordsText(void)
 	u8 color[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GRAY};
 	u32 speed = TEXT_SKIP_DRAW;
 
-	HandleHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed);
+	HandleHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_OPEN);
+	HandleRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_50);
 
 	//StringCopy(gStringVar1, gText_OpenLv);
     //StringExpandPlaceholders(gStringVar4, gText_OpenLv);
