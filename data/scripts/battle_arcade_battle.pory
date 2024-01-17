@@ -244,7 +244,6 @@ script BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
 		call(BattleArcade_RouletteRoom_EventScript_BrainCongratsText)
 	}
 
-	call(BattleFrontier_EventScript_IncrementWinStreak)
 	arcade_setbattlewon
 
 	call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)

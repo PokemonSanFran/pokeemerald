@@ -263,405 +263,405 @@ BattleFrontier_BattleArcadeLobby_EventScript_Attendant::
 # 204 "data/scripts/battle_arcade_registration.pory"
 	compare VAR_TEMP_2, FRONTIER_MODE_SINGLES
 	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_Attendant_2
-# 212 "data/scripts/battle_arcade_registration.pory"
+# 211 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti, MSGBOX_DEFAULT
 BattleFrontier_BattleArcadeLobby_EventScript_Attendant_1:
-# 214 "data/scripts/battle_arcade_registration.pory"
+# 213 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_Attendant_2:
-# 208 "data/scripts/battle_arcade_registration.pory"
+# 207 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_WelcomeToTheBattleArcade
 	goto BattleFrontier_BattleArcadeLobby_EventScript_Attendant_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge::
-# 219 "data/scripts/battle_arcade_registration.pory"
+# 218 "data/scripts/battle_arcade_registration.pory"
 	message BattleArcade_Entrance_Text_WhichChallengeWouldYouLike
-# 220 "data/scripts/battle_arcade_registration.pory"
+# 219 "data/scripts/battle_arcade_registration.pory"
 	waitmessage
-# 221 "data/scripts/battle_arcade_registration.pory"
+# 220 "data/scripts/battle_arcade_registration.pory"
 	multichoice 17, 4, MULTI_CHALLENGE_TYPES_INFO, FALSE
-# 222 "data/scripts/battle_arcade_registration.pory"
+# 221 "data/scripts/battle_arcade_registration.pory"
 	switch VAR_RESULT
-# 224 "data/scripts/battle_arcade_registration.pory"
+# 223 "data/scripts/battle_arcade_registration.pory"
 	case 0, BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_2
-# 225 "data/scripts/battle_arcade_registration.pory"
+# 224 "data/scripts/battle_arcade_registration.pory"
 	case 1, BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_2
-# 228 "data/scripts/battle_arcade_registration.pory"
+# 227 "data/scripts/battle_arcade_registration.pory"
 	case 2, BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_3
-# 230 "data/scripts/battle_arcade_registration.pory"
+# 229 "data/scripts/battle_arcade_registration.pory"
 	case 3, BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_4
-# 231 "data/scripts/battle_arcade_registration.pory"
+# 230 "data/scripts/battle_arcade_registration.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_4
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_2:
-# 226 "data/scripts/battle_arcade_registration.pory"
+# 225 "data/scripts/battle_arcade_registration.pory"
 	copyvar VAR_FRONTIER_BATTLE_MODE, VAR_RESULT
-# 227 "data/scripts/battle_arcade_registration.pory"
+# 226 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_3:
-# 229 "data/scripts/battle_arcade_registration.pory"
+# 228 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge_4:
-# 232 "data/scripts/battle_arcade_registration.pory"
+# 231 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge::
-# 238 "data/scripts/battle_arcade_registration.pory"
+# 237 "data/scripts/battle_arcade_registration.pory"
 	message BattleFrontier_BattleArcadeLobby_Text_WhichLevelMode
-# 239 "data/scripts/battle_arcade_registration.pory"
+# 238 "data/scripts/battle_arcade_registration.pory"
 	waitmessage
-# 240 "data/scripts/battle_arcade_registration.pory"
+# 239 "data/scripts/battle_arcade_registration.pory"
 	multichoice 17, 4, MULTI_LEVEL_MODE, FALSE
-# 241 "data/scripts/battle_arcade_registration.pory"
+# 240 "data/scripts/battle_arcade_registration.pory"
 	switch VAR_RESULT
-# 243 "data/scripts/battle_arcade_registration.pory"
+# 242 "data/scripts/battle_arcade_registration.pory"
 	case FRONTIER_LVL_TENT, BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_3
-# 244 "data/scripts/battle_arcade_registration.pory"
+# 243 "data/scripts/battle_arcade_registration.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_4
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_1:
-# 246 "data/scripts/battle_arcade_registration.pory"
+# 245 "data/scripts/battle_arcade_registration.pory"
 	frontier_checkineligible
-# 247 "data/scripts/battle_arcade_registration.pory"
+# 246 "data/scripts/battle_arcade_registration.pory"
 	compare VAR_0x8004, 0
 	goto_if_ne BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_6
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_5:
-# 252 "data/scripts/battle_arcade_registration.pory"
+# 251 "data/scripts/battle_arcade_registration.pory"
 	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
-# 253 "data/scripts/battle_arcade_registration.pory"
+# 252 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_PleaseSelectThePokemonYou, MSGBOX_DEFAULT
-# 255 "data/scripts/battle_arcade_registration.pory"
+# 254 "data/scripts/battle_arcade_registration.pory"
 	fadescreen FADE_TO_BLACK
-# 256 "data/scripts/battle_arcade_registration.pory"
+# 255 "data/scripts/battle_arcade_registration.pory"
 	frontier_get FRONTIER_DATA_LVL_MODE
-# 257 "data/scripts/battle_arcade_registration.pory"
+# 256 "data/scripts/battle_arcade_registration.pory"
 	copyvar VAR_0x8004, VAR_RESULT
-# 258 "data/scripts/battle_arcade_registration.pory"
+# 257 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize
-# 260 "data/scripts/battle_arcade_registration.pory"
+# 259 "data/scripts/battle_arcade_registration.pory"
 	special ChoosePartyForBattleFrontier
-# 261 "data/scripts/battle_arcade_registration.pory"
+# 260 "data/scripts/battle_arcade_registration.pory"
 	waitstate
-# 262 "data/scripts/battle_arcade_registration.pory"
+# 261 "data/scripts/battle_arcade_registration.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_9
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_8:
-# 266 "data/scripts/battle_arcade_registration.pory"
+# 265 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_3:
-# 243 "data/scripts/battle_arcade_registration.pory"
+# 242 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge
 	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_4:
-# 244 "data/scripts/battle_arcade_registration.pory"
+# 243 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge
 	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_6:
-# 249 "data/scripts/battle_arcade_registration.pory"
+# 248 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize
-# 250 "data/scripts/battle_arcade_registration.pory"
+# 249 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons
 	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_5
 
 BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_9:
-# 264 "data/scripts/battle_arcade_registration.pory"
+# 263 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge
 	goto BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge_8
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge::
-# 271 "data/scripts/battle_arcade_registration.pory"
+# 270 "data/scripts/battle_arcade_registration.pory"
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-# 272 "data/scripts/battle_arcade_registration.pory"
+# 271 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_TEMP_0, 0
-# 273 "data/scripts/battle_arcade_registration.pory"
+# 272 "data/scripts/battle_arcade_registration.pory"
 	arcade_init
-# 274 "data/scripts/battle_arcade_registration.pory"
+# 273 "data/scripts/battle_arcade_registration.pory"
 	arcade_set ARCADE_DATA_WIN_STREAK_ACTIVE, TRUE
-# 275 "data/scripts/battle_arcade_registration.pory"
+# 274 "data/scripts/battle_arcade_registration.pory"
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
-# 276 "data/scripts/battle_arcade_registration.pory"
+# 275 "data/scripts/battle_arcade_registration.pory"
 	special LoadPlayerParty
-# 277 "data/scripts/battle_arcade_registration.pory"
+# 276 "data/scripts/battle_arcade_registration.pory"
 	closemessage
-# 278 "data/scripts/battle_arcade_registration.pory"
+# 277 "data/scripts/battle_arcade_registration.pory"
 	delay 2
-# 280 "data/scripts/battle_arcade_registration.pory"
+# 279 "data/scripts/battle_arcade_registration.pory"
 	call Common_EventScript_SaveGame
-# 281 "data/scripts/battle_arcade_registration.pory"
+# 280 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_TEMP_0, 255
-# 283 "data/scripts/battle_arcade_registration.pory"
+# 282 "data/scripts/battle_arcade_registration.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_2
 BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_1:
-# 289 "data/scripts/battle_arcade_registration.pory"
+# 288 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_2:
-# 285 "data/scripts/battle_arcade_registration.pory"
+# 284 "data/scripts/battle_arcade_registration.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS
-# 286 "data/scripts/battle_arcade_registration.pory"
+# 285 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge
 	goto BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge::
-# 294 "data/scripts/battle_arcade_registration.pory"
+# 293 "data/scripts/battle_arcade_registration.pory"
 	compare VAR_TEMP_2, FRONTIER_MODE_SINGLES
 	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge_2
-# 300 "data/scripts/battle_arcade_registration.pory"
+# 299 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_YouMayTeamUpWith, MSGBOX_DEFAULT
 BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge_1:
-# 302 "data/scripts/battle_arcade_registration.pory"
+# 301 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge
 	end
 
 BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge_2:
-# 296 "data/scripts/battle_arcade_registration.pory"
+# 295 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_AtTheBattleArcade, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_SinglesAttendant::
-# 308 "data/scripts/battle_arcade_registration.pory"
+# 307 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_TEMP_2, FRONTIER_MODE_SINGLES
-# 309 "data/scripts/battle_arcade_registration.pory"
+# 308 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_Attendant
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_MultisAttendant::
-# 314 "data/scripts/battle_arcade_registration.pory"
+# 313 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_TEMP_2, FRONTIER_MODE_MULTIS
-# 315 "data/scripts/battle_arcade_registration.pory"
+# 314 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_Attendant
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard::
-# 320 "data/scripts/battle_arcade_registration.pory"
+# 319 "data/scripts/battle_arcade_registration.pory"
 	lockall
-# 321 "data/scripts/battle_arcade_registration.pory"
+# 320 "data/scripts/battle_arcade_registration.pory"
 	message BattleFrontier_BattleArcadeLobby_Text_ReadWhichRecord
-# 322 "data/scripts/battle_arcade_registration.pory"
+# 321 "data/scripts/battle_arcade_registration.pory"
 	waitmessage
-# 323 "data/scripts/battle_arcade_registration.pory"
+# 322 "data/scripts/battle_arcade_registration.pory"
 	multichoice 17, 2, MULTI_BATTLE_ARCADE_RECORDS, FALSE
-# 324 "data/scripts/battle_arcade_registration.pory"
+# 323 "data/scripts/battle_arcade_registration.pory"
 	switch VAR_RESULT
-# 326 "data/scripts/battle_arcade_registration.pory"
+# 325 "data/scripts/battle_arcade_registration.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard_2
-# 327 "data/scripts/battle_arcade_registration.pory"
+# 326 "data/scripts/battle_arcade_registration.pory"
 	case 3, BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard_2
-# 332 "data/scripts/battle_arcade_registration.pory"
+# 331 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ShowResults
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard_2:
-# 328 "data/scripts/battle_arcade_registration.pory"
+# 327 "data/scripts/battle_arcade_registration.pory"
 	closemessage
-# 329 "data/scripts/battle_arcade_registration.pory"
+# 328 "data/scripts/battle_arcade_registration.pory"
 	releaseall
 	end
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_ShowResults::
-# 338 "data/scripts/battle_arcade_registration.pory"
+# 337 "data/scripts/battle_arcade_registration.pory"
 	closemessage
-# 339 "data/scripts/battle_arcade_registration.pory"
+# 338 "data/scripts/battle_arcade_registration.pory"
 	copyvar VAR_0x8006, VAR_RESULT
-# 340 "data/scripts/battle_arcade_registration.pory"
+# 339 "data/scripts/battle_arcade_registration.pory"
 	arcade_results VAR_0x8006
-# 341 "data/scripts/battle_arcade_registration.pory"
+# 340 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_AskModeResultsBoard
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons::
-# 346 "data/scripts/battle_arcade_registration.pory"
+# 345 "data/scripts/battle_arcade_registration.pory"
 	buffernumberstring STR_VAR_2, VAR_0x8005
-# 347 "data/scripts/battle_arcade_registration.pory"
+# 346 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_ExcuseMeYouDont, MSGBOX_DEFAULT
-# 349 "data/scripts/battle_arcade_registration.pory"
+# 348 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_EventScript_GetLvlMode
-# 350 "data/scripts/battle_arcade_registration.pory"
+# 349 "data/scripts/battle_arcade_registration.pory"
 	compare VAR_RESULT, FRONTIER_LVL_50
 	goto_if_eq BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons_2
 BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons_1:
-# 354 "data/scripts/battle_arcade_registration.pory"
+# 353 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_EggsAndAre, MSGBOX_DEFAULT
-# 355 "data/scripts/battle_arcade_registration.pory"
+# 354 "data/scripts/battle_arcade_registration.pory"
 	closemessage
 	end
 
 BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons_2:
-# 352 "data/scripts/battle_arcade_registration.pory"
+# 351 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_UnderLevel50, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleArcadeLobby_EventScript_NotEnoughValidMons_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_LoadPartyCancelChallenge::
-# 361 "data/scripts/battle_arcade_registration.pory"
+# 360 "data/scripts/battle_arcade_registration.pory"
 	special LoadPlayerParty
-# 362 "data/scripts/battle_arcade_registration.pory"
+# 361 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge::
-# 367 "data/scripts/battle_arcade_registration.pory"
+# 366 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_WeHopeToSeeYou, MSGBOX_DEFAULT
-# 368 "data/scripts/battle_arcade_registration.pory"
+# 367 "data/scripts/battle_arcade_registration.pory"
 	release
 	end
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator::
-# 374 "data/scripts/battle_arcade_registration.pory"
+# 373 "data/scripts/battle_arcade_registration.pory"
 	special SavePlayerParty
-# 375 "data/scripts/battle_arcade_registration.pory"
+# 374 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
-# 376 "data/scripts/battle_arcade_registration.pory"
+# 375 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize
-# 377 "data/scripts/battle_arcade_registration.pory"
+# 376 "data/scripts/battle_arcade_registration.pory"
 	special CallFrontierUtilFunc
-# 378 "data/scripts/battle_arcade_registration.pory"
+# 377 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_RESULT, 0
-# 379 "data/scripts/battle_arcade_registration.pory"
+# 378 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_WaitForLinkOpponentLoad::
-# 384 "data/scripts/battle_arcade_registration.pory"
+# 383 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom
-# 385 "data/scripts/battle_arcade_registration.pory"
+# 384 "data/scripts/battle_arcade_registration.pory"
 	special HealPlayerParty
-# 386 "data/scripts/battle_arcade_registration.pory"
+# 385 "data/scripts/battle_arcade_registration.pory"
 	clearflag FLAG_CANCEL_BATTLE_ROOM_CHALLENGE
-# 387 "data/scripts/battle_arcade_registration.pory"
+# 386 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_BattleArcadeLobby_EventScript_WarpToHallway
-# 388 "data/scripts/battle_arcade_registration.pory"
+# 387 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_TEMP_0, 0
-# 389 "data/scripts/battle_arcade_registration.pory"
+# 388 "data/scripts/battle_arcade_registration.pory"
 	waitstate
 	end
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_ShowYouToBattleRoom::
-# 395 "data/scripts/battle_arcade_registration.pory"
+# 394 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleArcade_Entrance_Text_RightThisWayPlease, MSGBOX_DEFAULT
-# 396 "data/scripts/battle_arcade_registration.pory"
+# 395 "data/scripts/battle_arcade_registration.pory"
 	call BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator
 	return
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize::
-# 402 "data/scripts/battle_arcade_registration.pory"
+# 401 "data/scripts/battle_arcade_registration.pory"
 	switch VAR_FRONTIER_BATTLE_MODE
-# 404 "data/scripts/battle_arcade_registration.pory"
+# 403 "data/scripts/battle_arcade_registration.pory"
 	case FRONTIER_MODE_SINGLES, BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_3
-# 405 "data/scripts/battle_arcade_registration.pory"
+# 404 "data/scripts/battle_arcade_registration.pory"
 	case FRONTIER_MODE_DOUBLES, BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_4
-# 406 "data/scripts/battle_arcade_registration.pory"
+# 405 "data/scripts/battle_arcade_registration.pory"
 	case FRONTIER_MODE_MULTIS, BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_5
 BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_1:
 	return
 
 BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_3:
-# 404 "data/scripts/battle_arcade_registration.pory"
+# 403 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
 	goto BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_4:
-# 405 "data/scripts/battle_arcade_registration.pory"
+# 404 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_0x8005, FRONTIER_DOUBLES_PARTY_SIZE
 	goto BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_5:
-# 406 "data/scripts/battle_arcade_registration.pory"
+# 405 "data/scripts/battle_arcade_registration.pory"
 	setvar VAR_0x8005, FRONTIER_MULTI_PARTY_SIZE
 	goto BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize_1
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_RulesBoard::
-# 413 "data/scripts/battle_arcade_registration.pory"
+# 412 "data/scripts/battle_arcade_registration.pory"
 	lockall
-# 414 "data/scripts/battle_arcade_registration.pory"
+# 413 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleFrontier_BattleArcadeLobby_Text_RulesAreListed, MSGBOX_DEFAULT
-# 415 "data/scripts/battle_arcade_registration.pory"
+# 414 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard
 	end
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard::
-# 421 "data/scripts/battle_arcade_registration.pory"
+# 420 "data/scripts/battle_arcade_registration.pory"
 	message BattleFrontier_BattleArcadeLobby_Text_ReadWhichHeading
-# 422 "data/scripts/battle_arcade_registration.pory"
+# 421 "data/scripts/battle_arcade_registration.pory"
 	waitmessage
-# 423 "data/scripts/battle_arcade_registration.pory"
+# 422 "data/scripts/battle_arcade_registration.pory"
 	multichoice 17, 2, MULTI_BATTLE_ARCADE_RULES, FALSE
-# 424 "data/scripts/battle_arcade_registration.pory"
+# 423 "data/scripts/battle_arcade_registration.pory"
 	switch VAR_RESULT
-# 426 "data/scripts/battle_arcade_registration.pory"
+# 425 "data/scripts/battle_arcade_registration.pory"
 	case 0, BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_3
-# 428 "data/scripts/battle_arcade_registration.pory"
+# 427 "data/scripts/battle_arcade_registration.pory"
 	case 1, BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_4
-# 430 "data/scripts/battle_arcade_registration.pory"
+# 429 "data/scripts/battle_arcade_registration.pory"
 	case 2, BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_5
-# 432 "data/scripts/battle_arcade_registration.pory"
+# 431 "data/scripts/battle_arcade_registration.pory"
 	case 3, BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_6
-# 434 "data/scripts/battle_arcade_registration.pory"
+# 433 "data/scripts/battle_arcade_registration.pory"
 	case 4, BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_7
-# 435 "data/scripts/battle_arcade_registration.pory"
+# 434 "data/scripts/battle_arcade_registration.pory"
 	case MULTI_B_PRESSED, BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_7
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_1:
-# 439 "data/scripts/battle_arcade_registration.pory"
+# 438 "data/scripts/battle_arcade_registration.pory"
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard
 	end
 
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_3:
-# 427 "data/scripts/battle_arcade_registration.pory"
+# 426 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleFrontier_BattleArcadeLobby_Text_ExplainArcadeRules, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_4:
-# 429 "data/scripts/battle_arcade_registration.pory"
+# 428 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleFrontier_BattleArcadeLobby_Text_ExplainMonRules, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_5:
-# 431 "data/scripts/battle_arcade_registration.pory"
+# 430 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleFrontier_BattleArcadeLobby_Text_ExplainSalonRules, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_6:
-# 433 "data/scripts/battle_arcade_registration.pory"
+# 432 "data/scripts/battle_arcade_registration.pory"
 	msgbox BattleFrontier_BattleArcadeLobby_Text_ExplainMultiLinkRules, MSGBOX_DEFAULT
 	goto BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_1
 
 BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard_7:
-# 436 "data/scripts/battle_arcade_registration.pory"
+# 435 "data/scripts/battle_arcade_registration.pory"
 	releaseall
 	end
 
 
 BattleFrontier_BattleArcadeLobby_Text_DidntSaveBeforeQuitting::
-# 443 "data/scripts/battle_arcade_registration.pory"
+# 442 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You didn't save before you quit your\n"
 	.string "challenge last time.\p"
@@ -669,38 +669,38 @@ BattleFrontier_BattleArcadeLobby_Text_DidntSaveBeforeQuitting::
 	.string "has been disqualified. Sorry!$"
 
 BattleFrontier_BattleArcadeLobby_Text_CongratsBeatenSeven::
-# 448 "data/scripts/battle_arcade_registration.pory"
+# 447 "data/scripts/battle_arcade_registration.pory"
 	.string "Congratulations!\n"
 	.string "You've beaten all seven TRAINERS!\p"
 	.string "$"
 
 BattleFrontier_BattleArcadeLobby_Text_ReceivedPrize::
-# 453 "data/scripts/battle_arcade_registration.pory"
+# 452 "data/scripts/battle_arcade_registration.pory"
 	.string "{PLAYER} received the prize\n"
 	.string "{STR_VAR_1}.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ThankYouForPlaying::
-# 458 "data/scripts/battle_arcade_registration.pory"
+# 457 "data/scripts/battle_arcade_registration.pory"
 	.string "Thank you for playing!\p"
 	.string "$"
 
 BattleFrontier_BattleArcadeLobby_Text_RecordWillBeSaved::
-# 463 "data/scripts/battle_arcade_registration.pory"
+# 462 "data/scripts/battle_arcade_registration.pory"
 	.string "Your record will be saved.\n"
 	.string "Please wait.$"
 
 BattleFrontier_BattleArcadeLobby_Text_WeveBeenWaitingForYou::
-# 468 "data/scripts/battle_arcade_registration.pory"
+# 467 "data/scripts/battle_arcade_registration.pory"
 	.string "We've been waiting for you!\p"
 	.string "$"
 
 BattleFrontier_BattleArcadeLobby_Text_ProgressWillBeSaved::
-# 473 "data/scripts/battle_arcade_registration.pory"
+# 472 "data/scripts/battle_arcade_registration.pory"
 	.string "Before entering a BATTLE ROOM, your\n"
 	.string "progress will be saved. Please wait.$"
 
 BattleFrontier_BattleArcadeLobby_Text_AboutToFace50thTrainer::
-# 478 "data/scripts/battle_arcade_registration.pory"
+# 477 "data/scripts/battle_arcade_registration.pory"
 	.string "You're finally about to face the\n"
 	.string "50th TRAINER.\p"
 	.string "From here on, every time you beat seven\n"
@@ -709,18 +709,18 @@ BattleFrontier_BattleArcadeLobby_Text_AboutToFace50thTrainer::
 	.string "Good luck!$"
 
 BattleFrontier_BattleArcadeLobby_Text_HereAreSomeRibbons::
-# 483 "data/scripts/battle_arcade_registration.pory"
+# 482 "data/scripts/battle_arcade_registration.pory"
 	.string "Here are some RIBBONS for beating\n"
 	.string "seven tough TRAINERS in a row.\p"
 	.string "{PLAYER} received some RIBBONS!$"
 
 BattleFrontier_BattleArcadeLobby_Text_PutRibbonOnMons::
-# 488 "data/scripts/battle_arcade_registration.pory"
+# 487 "data/scripts/battle_arcade_registration.pory"
 	.string "{PLAYER} put the RIBBONS on\n"
 	.string "the challenger POKéMON.$"
 
 BattleFrontier_BattleArcadeLobby_Text_DescribeFeelingsAboutBattleArcade::
-# 493 "data/scripts/battle_arcade_registration.pory"
+# 492 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me, do you have a moment?\p"
 	.string "Can you describe your feelings when\n"
 	.string "you're about to begin a BATTLE ARCADE\l"
@@ -728,45 +728,45 @@ BattleFrontier_BattleArcadeLobby_Text_DescribeFeelingsAboutBattleArcade::
 	.string "lost a match?$"
 
 BattleFrontier_BattleArcadeLobby_Text_FeelWhatWhenYouBegin::
-# 498 "data/scripts/battle_arcade_registration.pory"
+# 497 "data/scripts/battle_arcade_registration.pory"
 	.string "Okay, what are your feelings when\n"
 	.string "you're about to begin a match?$"
 
 BattleFrontier_BattleArcadeLobby_Text_FeelWhatWhenYouveWon::
-# 503 "data/scripts/battle_arcade_registration.pory"
+# 502 "data/scripts/battle_arcade_registration.pory"
 	.string "What do you feel when you've won\n"
 	.string "a match?$"
 
 BattleFrontier_BattleArcadeLobby_Text_FeelWhatWhenYouveLost::
-# 508 "data/scripts/battle_arcade_registration.pory"
+# 507 "data/scripts/battle_arcade_registration.pory"
 	.string "Can I hear about your feelings when\n"
 	.string "you have lost a match?$"
 
 BattleFrontier_BattleArcadeLobby_Text_DontThinkMuchAboutIt::
-# 513 "data/scripts/battle_arcade_registration.pory"
+# 512 "data/scripts/battle_arcade_registration.pory"
 	.string "Oh, so you don't think much about it?\n"
 	.string "You're one cool customer.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ChangedYourMind::
-# 518 "data/scripts/battle_arcade_registration.pory"
+# 517 "data/scripts/battle_arcade_registration.pory"
 	.string "Hunh? You changed your mind?\n"
 	.string "I guess you're fickle.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ThatsHowYouFeel::
-# 523 "data/scripts/battle_arcade_registration.pory"
+# 522 "data/scripts/battle_arcade_registration.pory"
 	.string "Okay, so that's how you feel?\n"
 	.string "That's quite original.\p"
 	.string "Thanks!$"
 
 BattleFrontier_BattleArcadeLobby_Text_WinsInRowRecorded::
-# 528 "data/scripts/battle_arcade_registration.pory"
+# 527 "data/scripts/battle_arcade_registration.pory"
 	.string "The number of matches you win in a row\n"
 	.string "is recorded.\p"
 	.string "I'd better not get beaten in\n"
 	.string "an embarrassing way!$"
 
 BattleFrontier_BattleArcadeLobby_Text_CanLeaveUntilLossOrSevenWins::
-# 533 "data/scripts/battle_arcade_registration.pory"
+# 532 "data/scripts/battle_arcade_registration.pory"
 	.string "Once you've entered the BATTLE ARCADE,\n"
 	.string "you can't leave until you either lose\l"
 	.string "or you beat seven TRAINERS in a row.\p"
@@ -774,33 +774,33 @@ BattleFrontier_BattleArcadeLobby_Text_CanLeaveUntilLossOrSevenWins::
 	.string "to the challenge.$"
 
 BattleFrontier_BattleArcadeLobby_Text_LookForwardToAnotherChallenge::
-# 538 "data/scripts/battle_arcade_registration.pory"
+# 537 "data/scripts/battle_arcade_registration.pory"
 	.string "We look forward to seeing you on\n"
 	.string "another challenge!$"
 
 BattleFrontier_BattleArcadeLobby_Text_WhichLevelMode::
-# 543 "data/scripts/battle_arcade_registration.pory"
+# 542 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ROOM offers two levels\n"
 	.string "of challenge, Level 50 and Open Level.\l"
 	.string "Which is your choice?$"
 
 BattleFrontier_BattleArcadeLobby_Text_OkayToSaveBeforeEntering::
-# 548 "data/scripts/battle_arcade_registration.pory"
+# 547 "data/scripts/battle_arcade_registration.pory"
 	.string "Before entering a BATTLE ROOM, your\n"
 	.string "progress must be saved. Is that okay?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ShowYouToBattleRoom::
-# 553 "data/scripts/battle_arcade_registration.pory"
+# 552 "data/scripts/battle_arcade_registration.pory"
 	.string "I will now show you to the\n"
 	.string "{STR_VAR_1} BATTLE ROOM.$"
 
 BattleFrontier_BattleArcadeLobby_Text_RecordLastMatch::
-# 558 "data/scripts/battle_arcade_registration.pory"
+# 557 "data/scripts/battle_arcade_registration.pory"
 	.string "Shall I record your last BATTLE ARCADE\n"
 	.string "match on your FRONTIER PASS?$"
 
 BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLv50Singles::
-# 563 "data/scripts/battle_arcade_registration.pory"
+# 562 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You don't have three eligible POKéMON.\p"
 	.string "You must have three different POKéMON\n"
@@ -811,7 +811,7 @@ BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLv50Singles::
 	.string "Please come see me when you are ready.$"
 
 BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLvOpenSingles::
-# 568 "data/scripts/battle_arcade_registration.pory"
+# 567 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You don't have three eligible POKéMON.\p"
 	.string "You must have three different POKéMON\n"
@@ -822,7 +822,7 @@ BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLvOpenSingles::
 	.string "Please come see me when you are ready.$"
 
 BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLv50Doubles::
-# 573 "data/scripts/battle_arcade_registration.pory"
+# 572 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You don't have four eligible POKéMON.\p"
 	.string "You must have four different POKéMON\n"
@@ -833,7 +833,7 @@ BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLv50Doubles::
 	.string "Please come see me when you are ready.$"
 
 BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLvOpenDoubles::
-# 578 "data/scripts/battle_arcade_registration.pory"
+# 577 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You don't have four eligible POKéMON.\p"
 	.string "You must have four different POKéMON\n"
@@ -844,7 +844,7 @@ BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLvOpenDoubles::
 	.string "Please come see me when you are ready.$"
 
 BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLv50Multis::
-# 583 "data/scripts/battle_arcade_registration.pory"
+# 582 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You don't have two eligible POKéMON.\p"
 	.string "You must have two different POKéMON\n"
@@ -855,7 +855,7 @@ BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLv50Multis::
 	.string "Please come see me when you are ready.$"
 
 BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLvOpenMultis::
-# 588 "data/scripts/battle_arcade_registration.pory"
+# 587 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me!\p"
 	.string "You don't have two eligible POKéMON.\p"
 	.string "You must have two different POKéMON\n"
@@ -866,7 +866,7 @@ BattleFrontier_BattleArcadeLobby_Text_NotEnoughValidMonsLvOpenMultis::
 	.string "Please come see me when you are ready.$"
 
 BattleFrontier_BattleArcadeLobby_Text_WelcomSingleBattle::
-# 593 "data/scripts/battle_arcade_registration.pory"
+# 592 "data/scripts/battle_arcade_registration.pory"
 	.string "Where the talents of TRAINERS\n"
 	.string "are put to the test!\p"
 	.string "Welcome to the BATTLE ARCADE!\p"
@@ -874,12 +874,12 @@ BattleFrontier_BattleArcadeLobby_Text_WelcomSingleBattle::
 	.string "BATTLE ROOMS.$"
 
 BattleFrontier_BattleArcadeLobby_Text_TakeSinglesChallenge::
-# 598 "data/scripts/battle_arcade_registration.pory"
+# 597 "data/scripts/battle_arcade_registration.pory"
 	.string "Would you like to take the SINGLE\n"
 	.string "BATTLE ROOM challenge?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainSinglesChallenge::
-# 603 "data/scripts/battle_arcade_registration.pory"
+# 602 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE's SINGLE BATTLE\n"
 	.string "ROOMS are facilities for conducting\l"
 	.string "SINGLE BATTLES with three POKéMON.\p"
@@ -895,12 +895,12 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainSinglesChallenge::
 	.string "you will be disqualified.$"
 
 BattleFrontier_BattleArcadeLobby_Text_SelectThreeMons::
-# 608 "data/scripts/battle_arcade_registration.pory"
+# 607 "data/scripts/battle_arcade_registration.pory"
 	.string "Now please select the three POKéMON\n"
 	.string "that are to be entered.$"
 
 BattleFrontier_BattleArcadeLobby_Text_WelcomeDoubleBattle::
-# 613 "data/scripts/battle_arcade_registration.pory"
+# 612 "data/scripts/battle_arcade_registration.pory"
 	.string "Where the talents of TRAINERS\n"
 	.string "are put to the test!\p"
 	.string "Welcome to the BATTLE ARCADE!\p"
@@ -908,12 +908,12 @@ BattleFrontier_BattleArcadeLobby_Text_WelcomeDoubleBattle::
 	.string "BATTLE ROOMS.$"
 
 BattleFrontier_BattleArcadeLobby_Text_TakeDoublesChallenge::
-# 618 "data/scripts/battle_arcade_registration.pory"
+# 617 "data/scripts/battle_arcade_registration.pory"
 	.string "Would you like to take the DOUBLE\n"
 	.string "BATTLE ROOM challenge?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainDoublesChallenge::
-# 623 "data/scripts/battle_arcade_registration.pory"
+# 622 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE's DOUBLE BATTLE\n"
 	.string "ROOMS are facilities for conducting\l"
 	.string "DOUBLE BATTLES with four POKéMON.\p"
@@ -929,12 +929,12 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainDoublesChallenge::
 	.string "you will be disqualified.$"
 
 BattleFrontier_BattleArcadeLobby_Text_PleaseSelectFourMons::
-# 628 "data/scripts/battle_arcade_registration.pory"
+# 627 "data/scripts/battle_arcade_registration.pory"
 	.string "Now please select the four POKéMON\n"
 	.string "that are to be entered.$"
 
 BattleFrontier_BattleArcadeLobby_Text_WelcomeMultiBattle::
-# 633 "data/scripts/battle_arcade_registration.pory"
+# 632 "data/scripts/battle_arcade_registration.pory"
 	.string "Where the talents of TRAINERS\n"
 	.string "are put to the test!\p"
 	.string "Welcome to the BATTLE ARCADE!\p"
@@ -942,12 +942,12 @@ BattleFrontier_BattleArcadeLobby_Text_WelcomeMultiBattle::
 	.string "BATTLE ROOMS.$"
 
 BattleFrontier_BattleArcadeLobby_Text_TakeMultisChallenge::
-# 638 "data/scripts/battle_arcade_registration.pory"
+# 637 "data/scripts/battle_arcade_registration.pory"
 	.string "Would you like to take the MULTI\n"
 	.string "BATTLE ROOM challenge?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainMultisChallenge::
-# 643 "data/scripts/battle_arcade_registration.pory"
+# 642 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE's MULTI BATTLE\n"
 	.string "ROOMS are facilities for conducting\l"
 	.string "MULTI BATTLES.\p"
@@ -971,12 +971,12 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainMultisChallenge::
 	.string "you will be disqualified.$"
 
 BattleFrontier_BattleArcadeLobby_Text_PleaseSelectTwoMons::
-# 648 "data/scripts/battle_arcade_registration.pory"
+# 647 "data/scripts/battle_arcade_registration.pory"
 	.string "Now please select the two POKéMON\n"
 	.string "that are to be entered.$"
 
 BattleFrontier_BattleArcadeLobby_Text_WelcomeLinkMultiBattle::
-# 653 "data/scripts/battle_arcade_registration.pory"
+# 652 "data/scripts/battle_arcade_registration.pory"
 	.string "Where the talents of TRAINERS\n"
 	.string "are put to the test!\p"
 	.string "Welcome to the BATTLE ARCADE!\p"
@@ -984,12 +984,12 @@ BattleFrontier_BattleArcadeLobby_Text_WelcomeLinkMultiBattle::
 	.string "BATTLE ROOMS.$"
 
 BattleFrontier_BattleArcadeLobby_Text_TakeLinkMultisChallenge::
-# 658 "data/scripts/battle_arcade_registration.pory"
+# 657 "data/scripts/battle_arcade_registration.pory"
 	.string "Would you like to take the LINK MULTI\n"
 	.string "BATTLE ROOM challenge?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainLinkMultisChallenge::
-# 663 "data/scripts/battle_arcade_registration.pory"
+# 662 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE's MULTI BATTLE\n"
 	.string "ROOMS are facilities for conducting\l"
 	.string "MULTI BATTLES with a friend.\p"
@@ -1011,67 +1011,67 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainLinkMultisChallenge::
 	.string "MULTI BATTLES in a row nonstop.$"
 
 BattleFrontier_BattleArcadeLobby_Text_PleaseSelectTwoMons2::
-# 668 "data/scripts/battle_arcade_registration.pory"
+# 667 "data/scripts/battle_arcade_registration.pory"
 	.string "Now please select the two POKéMON\n"
 	.string "that are to be entered.$"
 
 BattleFrontier_BattleArcadeLobby_Text_LinkMultiOnlyForTwoPlayers::
-# 673 "data/scripts/battle_arcade_registration.pory"
+# 672 "data/scripts/battle_arcade_registration.pory"
 	.string "The LINK MULTI BATTLE ROOM challenge\n"
 	.string "is only for two linked players.$"
 
 BattleFrontier_BattleArcadeLobby_Text_FriendAlsoSelectedMon::
-# 678 "data/scripts/battle_arcade_registration.pory"
+# 677 "data/scripts/battle_arcade_registration.pory"
 	.string "Your friend has also selected\n"
 	.string "the POKéMON {STR_VAR_1}.$"
 
 BattleFrontier_BattleArcadeLobby_Text_FriendAlsoSelectedMons::
-# 683 "data/scripts/battle_arcade_registration.pory"
+# 682 "data/scripts/battle_arcade_registration.pory"
 	.string "Your friend has also selected the\n"
 	.string "POKéMON {STR_VAR_1} and\l"
 	.string "{STR_VAR_2}.$"
 
 BattleFrontier_BattleArcadeLobby_Text_FriendChoseDifferentLvlMode::
-# 688 "data/scripts/battle_arcade_registration.pory"
+# 687 "data/scripts/battle_arcade_registration.pory"
 	.string "Your friend has chosen a different\n"
 	.string "battle level.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ChooseDifferentMonsMatchLvlMode::
-# 693 "data/scripts/battle_arcade_registration.pory"
+# 692 "data/scripts/battle_arcade_registration.pory"
 	.string "Please choose two POKéMON different\n"
 	.string "from your friend's, match the level\l"
 	.string "you wish to enter, and register again.$"
 
 BattleFrontier_BattleArcadeLobby_Text_SaveGameBeforeShowingIn::
-# 698 "data/scripts/battle_arcade_registration.pory"
+# 697 "data/scripts/battle_arcade_registration.pory"
 	.string "I will save the game before\n"
 	.string "showing you in. Please wait.$"
 
 BattleFrontier_BattleArcadeLobby_Text_CongratsDefeatedMaiden::
-# 703 "data/scripts/battle_arcade_registration.pory"
+# 702 "data/scripts/battle_arcade_registration.pory"
 	.string "Congratulations!\n"
 	.string "You have defeated the SALON MAIDEN\l"
 	.string "and swept seven TRAINERS!$"
 
 BattleFrontier_BattleArcadeLobby_Text_AwardYouTheseBattlePoints::
-# 708 "data/scripts/battle_arcade_registration.pory"
+# 707 "data/scripts/battle_arcade_registration.pory"
 	.string "In recognition of your infinite talent,\n"
 	.string "we award you these Battle Point(s).$"
 
 BattleFrontier_BattleArcadeLobby_Text_RulesAreListed::
-# 713 "data/scripts/battle_arcade_registration.pory"
+# 712 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE rules are listed.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ReadWhichHeading::
-# 718 "data/scripts/battle_arcade_registration.pory"
+# 717 "data/scripts/battle_arcade_registration.pory"
 	.string "Which heading do you want to read?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ReadWhichRecord::
-# 723 "data/scripts/battle_arcade_registration.pory"
+# 722 "data/scripts/battle_arcade_registration.pory"
 	.string "Which record would you like to see?$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainArcadeRules::
-# 728 "data/scripts/battle_arcade_registration.pory"
+# 727 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE is a facility where\n"
 	.string "four types of battles are waged--\l"
 	.string "SINGLE BATTLE, DOUBLE BATTLE, MULTI\l"
@@ -1082,7 +1082,7 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainArcadeRules::
 	.string "the type of battle you wish to enter.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainMonRules::
-# 733 "data/scripts/battle_arcade_registration.pory"
+# 732 "data/scripts/battle_arcade_registration.pory"
 	.string "Depending on the BATTLE ROOM you are\n"
 	.string "entering, you will be required to take\l"
 	.string "a certain number of POKéMON.\p"
@@ -1092,7 +1092,7 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainMonRules::
 	.string "and the MULTI modes both require two.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainSalonRules::
-# 738 "data/scripts/battle_arcade_registration.pory"
+# 737 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE SALON is where you must\n"
 	.string "find a partner to form a tag team for\l"
 	.string "the MULTI BATTLE ROOM challenge.\p"
@@ -1103,7 +1103,7 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainSalonRules::
 	.string "after winning seven straight matches.$"
 
 BattleFrontier_BattleArcadeLobby_Text_ExplainMultiLinkRules::
-# 743 "data/scripts/battle_arcade_registration.pory"
+# 742 "data/scripts/battle_arcade_registration.pory"
 	.string "The LINK MULTI BATTLE Mode is for two\n"
 	.string "friends to mount a challenge together.\p"
 	.string "You and your friend must be linked with\n"
@@ -1117,11 +1117,11 @@ BattleFrontier_BattleArcadeLobby_Text_ExplainMultiLinkRules::
 	.string "in the middle, unlike other modes.$"
 
 BattleArcade_Entrance_Text_RulesAreListed::
-# 748 "data/scripts/battle_arcade_registration.pory"
+# 747 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE rules are listed.$"
 
 BattleArcade_Entrance_Text_OverviewBoard::
-# 753 "data/scripts/battle_arcade_registration.pory"
+# 752 "data/scripts/battle_arcade_registration.pory"
 	.string "BATTLE ARCADE is challenges you to\n"
 	.string "battle using up to three POKéMON of a\l"
 	.string "single type. Select a level mode and a\l"
@@ -1129,14 +1129,14 @@ BattleArcade_Entrance_Text_OverviewBoard::
 	.string "consecutive battles.$"
 
 BattleArcade_Entrance_Text_RestrictionsBoard::
-# 758 "data/scripts/battle_arcade_registration.pory"
+# 757 "data/scripts/battle_arcade_registration.pory"
 	.string "No duplicate POKéMON or items are\n"
 	.string "allowed. You can only restore your\l"
 	.string "POKéMON twice in total, so use your\l"
 	.string "opportunities wisely.$"
 
 BattleArcade_Entrance_Text_RewardsBoard::
-# 763 "data/scripts/battle_arcade_registration.pory"
+# 762 "data/scripts/battle_arcade_registration.pory"
 	.string "If you can win five times in a row, you\n"
 	.string "will complete the training, but you can\l"
 	.string "continue to increase your streak. You'll\l"
@@ -1144,7 +1144,7 @@ BattleArcade_Entrance_Text_RewardsBoard::
 	.string "training for all types in a level mode.$"
 
 BattleArcade_Entrance_Text_WelcomeToTheBattleArcade::
-# 768 "data/scripts/battle_arcade_registration.pory"
+# 767 "data/scripts/battle_arcade_registration.pory"
 	.string "Welcome to the Battle Arcade! I am your\n"
 	.string "guide to the Single and Double Battle\l"
 	.string "challenges. Please be aware that these\l"
@@ -1152,11 +1152,11 @@ BattleArcade_Entrance_Text_WelcomeToTheBattleArcade::
 	.string "Trainer.$"
 
 BattleArcade_Entrance_Text_WhichChallengeWouldYouLike::
-# 773 "data/scripts/battle_arcade_registration.pory"
+# 772 "data/scripts/battle_arcade_registration.pory"
 	.string "Which challenge would you like to take?$"
 
 BattleArcade_Entrance_Text_AtTheBattleArcade::
-# 777 "data/scripts/battle_arcade_registration.pory"
+# 776 "data/scripts/battle_arcade_registration.pory"
 	.string "At the Battle Arcade, you may take a\n"
 	.string "Single or Double Battle challenge. Here,\l"
 	.string "a game board is activated before every\l"
@@ -1176,25 +1176,25 @@ BattleArcade_Entrance_Text_AtTheBattleArcade::
 	.string "challenge. Please be aware of that!$"
 
 BattleArcade_Entrance_Text_WhichLevelMode::
-# 781 "data/scripts/battle_arcade_registration.pory"
+# 780 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE offers two levels of\n"
 	.string "challenge, Level 50 and Open Level.\l"
 	.string "Which is your choice?$"
 
 BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti::
-# 785 "data/scripts/battle_arcade_registration.pory"
+# 784 "data/scripts/battle_arcade_registration.pory"
 	.string "Welcome to the Battle Arcade! I am your\n"
 	.string "guide to the Multi Battle challenge.\l"
 	.string "Please be aware that this challenge\l"
 	.string "requires two Trainers.$"
 
 BattleArcade_Entrance_Text_WouldYouLikeToTake::
-# 789 "data/scripts/battle_arcade_registration.pory"
+# 788 "data/scripts/battle_arcade_registration.pory"
 	.string "Would you like to take the Battle\n"
 	.string "Arcade Multi Battle challenge?$"
 
 BattleArcade_Entrance_Text_YouMayTeamUpWith::
-# 793 "data/scripts/battle_arcade_registration.pory"
+# 792 "data/scripts/battle_arcade_registration.pory"
 	.string "You may team up with a friend for a\n"
 	.string "Multi Battle challenge. Here, a game\l"
 	.string "board is activated before every match.\l"
@@ -1212,165 +1212,165 @@ BattleArcade_Entrance_Text_YouMayTeamUpWith::
 	.string "interrupted.$"
 
 BattleArcade_Entrance_Text_WeHopeToSeeYou::
-# 797 "data/scripts/battle_arcade_registration.pory"
+# 796 "data/scripts/battle_arcade_registration.pory"
 	.string "We hope to see you again!$"
 
 BattleArcade_Entrance_Text_PleaseSelectThePokemonYou::
-# 801 "data/scripts/battle_arcade_registration.pory"
+# 800 "data/scripts/battle_arcade_registration.pory"
 	.string "Please select the Pokémon you wish to\n"
 	.string "enter.$"
 
 BattleArcade_Entrance_Text_ExcuseMeYouDont::
-# 805 "data/scripts/battle_arcade_registration.pory"
+# 804 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me! You don't have\n"
 	.string "{STR_VAR_2} eligible Pokémon. You\l"
 	.string "must have {STR_VAR_2} different\l"
 	.string "Pokémon to enter.$"
 
 BattleArcade_Entrance_Text_UnderLevel50::
-# 809 "data/scripts/battle_arcade_registration.pory"
+# 808 "data/scripts/battle_arcade_registration.pory"
 	.string "The {STR_VAR_2} different Pokémon\n"
 	.string "must all be Level 50 or lower.$"
 
 BattleArcade_Entrance_Text_AlsoEggsAreIneligible::
-# 813 "data/scripts/battle_arcade_registration.pory"
+# 812 "data/scripts/battle_arcade_registration.pory"
 	.string "Also, Eggs are ineligible to enter.$"
 
 BattleArcade_Entrance_Text_EggsAndAre::
-# 817 "data/scripts/battle_arcade_registration.pory"
+# 816 "data/scripts/battle_arcade_registration.pory"
 	.string "Eggs{STR_VAR_1} are not allowed to\n"
 	.string "enter.$"
 
 BattleArcade_Entrance_Text_PleaseComeSeeMeWhen::
-# 821 "data/scripts/battle_arcade_registration.pory"
+# 820 "data/scripts/battle_arcade_registration.pory"
 	.string "Please come see me when you are ready.$"
 
 BattleArcade_Entrance_Text_RightThisWayPlease::
-# 825 "data/scripts/battle_arcade_registration.pory"
+# 824 "data/scripts/battle_arcade_registration.pory"
 	.string "Right this way, please!$"
 
 BattleArcade_Entrance_Text_WeveMissedYou::
-# 829 "data/scripts/battle_arcade_registration.pory"
+# 828 "data/scripts/battle_arcade_registration.pory"
 	.string "We've missed you! You must save the\n"
 	.string "game before you resume your challenge.\l"
 	.string "Please wait.$"
 
 BattleArcade_Entrance_Text_ExcuseMeYouDidnt::
-# 833 "data/scripts/battle_arcade_registration.pory"
+# 832 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me! You didn't save before you\n"
 	.string "quit your challenge last time. Because\l"
 	.string "of that, you have been disqualified\l"
 	.string "from your challenge!$"
 
 BattleArcade_Entrance_Text_ThereWasAn::
-# 838 "data/scripts/battle_arcade_registration.pory"
+# 837 "data/scripts/battle_arcade_registration.pory"
 	.string "There was an error, and we couldn't\n"
 	.string "save!$"
 
 BattleArcade_Entrance_Text_CongratulationsInHonorOf::
-# 843 "data/scripts/battle_arcade_registration.pory"
+# 842 "data/scripts/battle_arcade_registration.pory"
 	.string "Congratulations! In honor of your\n"
 	.string "victory, we present you with this\l"
 	.string "commemorative print!$"
 
 BattleArcade_Entrance_Text_TheGoldPrintWasAdded::
-# 847 "data/scripts/battle_arcade_registration.pory"
+# 846 "data/scripts/battle_arcade_registration.pory"
 	.string "The Gold Print was added to\n"
 	.string "{PLAYER}'s Vs. Recorder!$"
 
 BattleArcade_Entrance_Text_TheSilverPrintWasAdded::
-# 851 "data/scripts/battle_arcade_registration.pory"
+# 850 "data/scripts/battle_arcade_registration.pory"
 	.string "The Silver Print was added to\n"
 	.string "{PLAYER}'s Vs. Recorder!$"
 
 BattleArcade_Entrance_Text_SingleBattle::
-# 855 "data/scripts/battle_arcade_registration.pory"
+# 854 "data/scripts/battle_arcade_registration.pory"
 	.string "SINGLE BATTLE$"
 
 BattleArcade_Entrance_Text_DoubleBattle::
-# 859 "data/scripts/battle_arcade_registration.pory"
+# 858 "data/scripts/battle_arcade_registration.pory"
 	.string "DOUBLE BATTLE$"
 
 BattleArcade_Entrance_Text_TakeChallenge::
-# 863 "data/scripts/battle_arcade_registration.pory"
+# 862 "data/scripts/battle_arcade_registration.pory"
 	.string "TAKE CHALLENGE$"
 
 BattleArcade_Entrance_Text_Info::
-# 867 "data/scripts/battle_arcade_registration.pory"
+# 866 "data/scripts/battle_arcade_registration.pory"
 	.string "INFO$"
 
 BattleArcade_Entrance_Text_Cancel::
-# 871 "data/scripts/battle_arcade_registration.pory"
+# 870 "data/scripts/battle_arcade_registration.pory"
 	.string "CANCEL$"
 
 BattleArcade_Entrance_Text_OneTrainerShouldSelectBecome::
-# 875 "data/scripts/battle_arcade_registration.pory"
+# 874 "data/scripts/battle_arcade_registration.pory"
 	.string "One Trainer should select “BECOME\n"
 	.string "LEADER.” The other Trainer must select\l"
 	.string "“JOIN GROUP.”$"
 
 BattleArcade_Entrance_Text_WeNeedToLaunchDs::
-# 879 "data/scripts/battle_arcade_registration.pory"
+# 878 "data/scripts/battle_arcade_registration.pory"
 	.string "We need to launch DS Wireless\n"
 	.string "Communications.$"
 
 BattleArcade_Entrance_Text_YouMustSaveTheGame::
-# 883 "data/scripts/battle_arcade_registration.pory"
+# 882 "data/scripts/battle_arcade_registration.pory"
 	.string "You must save the game before I show\n"
 	.string "you in. Please wait.$"
 
 BattleArcade_Entrance_Text_ThoseWhoRuleTheGame::
-# 887 "data/scripts/battle_arcade_registration.pory"
+# 886 "data/scripts/battle_arcade_registration.pory"
 	.string "Those who rule the game board reign at\n"
 	.string "the Battle Arcade! It sounds sort of\l"
 	.string "profound, but it's actually no-kidding\l"
 	.string "obvious!$"
 
 BattleArcade_Entrance_Text_ItAllComesDownTo::
-# 891 "data/scripts/battle_arcade_registration.pory"
+# 890 "data/scripts/battle_arcade_registration.pory"
 	.string "It all comes down to luck here… My cute\n"
 	.string "Pokémon… They were helplessly frozen.$"
 
 BattleArcade_Entrance_Text_TheresNothingYouCan::
-# 895 "data/scripts/battle_arcade_registration.pory"
+# 894 "data/scripts/battle_arcade_registration.pory"
 	.string "There's nothing you can do about luck.\n"
 	.string "It's just there or not.$"
 
 BattleArcade_Entrance_Text_DontBeAwestruckWatching::
-# 899 "data/scripts/battle_arcade_registration.pory"
+# 898 "data/scripts/battle_arcade_registration.pory"
 	.string "Don't be awestruck watching the motion\n"
 	.string "of the game board. If you don't stop it\l"
 	.string "in 30 seconds, it will stop by itself.$"
 
 BattleArcade_Entrance_Text_TheBrainHasAPeculiar::
-# 903 "data/scripts/battle_arcade_registration.pory"
+# 902 "data/scripts/battle_arcade_registration.pory"
 	.string "The Brain has a peculiar fashion sense.\n"
 	.string "She flits around oddly, too. Kind of like\l"
 	.string "this. A little bump, a wiggle… …Please\l"
 	.string "don't look at me that way. It's not nice.$"
 
 BattleArcade_Entrance_Text_YikesTheyCanEven::
-# 907 "data/scripts/battle_arcade_registration.pory"
+# 906 "data/scripts/battle_arcade_registration.pory"
 	.string "Yikes, they can even start battles with\n"
 	.string "the move Trick Room in effect? A\l"
 	.string "strategy built around Speed could\l"
 	.string "backfire right in your face!$"
 
 BattleArcade_Entrance_Text_BeThrilledByTheUnknown::
-# 911 "data/scripts/battle_arcade_registration.pory"
+# 910 "data/scripts/battle_arcade_registration.pory"
 	.string "Be thrilled by the unknown hand of luck!\n"
 	.string "Leap into battles ruled by fickle fate!\l"
 	.string "That's how you enjoy the Battle Arcade!$"
 
 BattleArcade_Entrance_Text_BlamingTheGameBoardFor::
-# 915 "data/scripts/battle_arcade_registration.pory"
+# 914 "data/scripts/battle_arcade_registration.pory"
 	.string "Blaming the game board for losing is\n"
 	.string "pitiful. It's poor form. The game board\l"
 	.string "will show better choices the greater\l"
 	.string "the wins you achieve.$"
 
 BattleArcade_Entrance_Text_DidYouFigureThisOne::
-# 919 "data/scripts/battle_arcade_registration.pory"
+# 918 "data/scripts/battle_arcade_registration.pory"
 	.string "Did you figure this one out? Poisoning\n"
 	.string "or freezing events can be made\l"
 	.string "ineffective. …If the Pokémon's type or\l"
@@ -1378,12 +1378,12 @@ BattleArcade_Entrance_Text_DidYouFigureThisOne::
 	.string "problems.$"
 
 BattleArcade_Entrance_Text_IfTheGameBoardTriggers::
-# 923 "data/scripts/battle_arcade_registration.pory"
+# 922 "data/scripts/battle_arcade_registration.pory"
 	.string "If the game board triggers a paralyzing\n"
 	.string "event here, Ground types aren't\l"
 	.string "affected.$"
 
 BattleArcade_Entrance_Text_RecordLastMatch::
-# 927 "data/scripts/battle_arcade_registration.pory"
+# 926 "data/scripts/battle_arcade_registration.pory"
 	.string "Want me to record your last BATTLE\n"
 	.string "ARCADE match on your FRONTIER PASS?$"

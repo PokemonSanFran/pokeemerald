@@ -32,7 +32,6 @@
 #include "constants/weather.h"
 #include "field_weather.h"
 #include "script.h"
-#include "diploma.h" // Debug
 
 //Records Window
 #include "diploma.h"
@@ -57,6 +56,8 @@
 #define GAME_BOARD_EVENT gSpecialVar_0x8007
 #define GAME_BOARD_IMPACT gSpecialVar_0x8008
 #define GAME_BOARD_SUCCESS gSpecialVar_0x8009
+
+#define VAR_FACILITY_CHALLENGE_STATUS VAR_TEMP_0
 
 static EWRAM_DATA u8 sBattleArcade_TypeWinsWindowId = 0;
 
@@ -230,7 +231,7 @@ static void GetArcadeData(void)
         gSpecialVar_Result = GetCurrentBattleArcadeWinStreak();
         break;
     case ARCADE_DATA_WIN_STREAK_ACTIVE:
-        gSpecialVar_Result = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]) != 0);
+        gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]));
         break;
     case ARCADE_DATA_LVL_MODE:
         FRONTIER_SAVEDATA.arcadeLvlMode = FRONTIER_SAVEDATA.lvlMode;
@@ -242,6 +243,10 @@ static void SetArcadeData(void)
 {
     u32 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+
+	DebugPrintf("set data");
+	DebugPrintf("lvl 50 challenge status is %d",((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[lvlMode][FRONTIER_LVL_50])));
+	DebugPrintf("open level challenge status is %d",((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[lvlMode][FRONTIER_LVL_OPEN])));
 
     switch (gSpecialVar_0x8005)
     {
@@ -259,11 +264,21 @@ static void SetArcadeData(void)
     }
 }
 
+static void IncrementCurrentWinStreak(void)
+{
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
+	u32 currentWinStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode];
+
+	if (currentWinStreak < MAX_STREAK)
+		ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode]++;
+}
+
 static void SetArcadeBattleWon(void)
 {
-    FRONTIER_SAVEDATA.curChallengeBattleNum++;
+	IncrementCurrentWinStreak();
     SaveCurrentStreak();
-    gSpecialVar_Result = FRONTIER_SAVEDATA.curChallengeBattleNum;
+    gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
 }
 
 u16 GetCurrentBattleArcadeWinStreak(void)
@@ -284,7 +299,7 @@ static void SaveCurrentStreak(void)
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     u32 oldStreak = ARCADE_RECORDED_WINS[battleMode][lvlMode];
-    u32 currentStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode]++;
+    u32 currentStreak = GetCurrentBattleArcadeWinStreak();
 
     if (oldStreak >= currentStreak)
         return;
@@ -299,7 +314,7 @@ static void SaveArcadeChallenge(void)
 	s32 challengeNum = (signed)(ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE);
 
     FRONTIER_SAVEDATA.challengeStatus = gSpecialVar_0x8005;
-    VarSet(VAR_TEMP_0, 0);
+    VarSet(VAR_FACILITY_CHALLENGE_STATUS, 0);
     FRONTIER_SAVEDATA.challengePaused = TRUE;
     SaveGameFrontier();
 }
@@ -1142,7 +1157,7 @@ static void GetBrainStatus(void)
 			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_NOT_READY);
 			break;
 	}
-	VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
+	//VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
 }
 
 static void GetBrainIntroSpeech(void)
@@ -1482,8 +1497,14 @@ RECORD LVL 50 Games cleared: $NUM_RECORD
 $ACTIVITY OPEN LVL Games cleared: $NUM
 RECORD OPEN LVL Games cleared: $NUM_RECORD
  */
-
 }
+
+//gText_Prev
+//gText_Record
+//gText_Lv502
+//gText_OpenLv
+
+const u8 gText_GamesWinStreak[] = _("Games cleared: {STR_VAR_1}");
 
 static const u8 *BattleArcade_GenerateRecordName(void)
 {
@@ -1493,46 +1514,67 @@ static const u8 *BattleArcade_GenerateRecordName(void)
     return gStringVar3;
 }
 
-static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed)
+static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode)
 {
 	AddTextPrinterParameterized4(windowId, fontID, 0,4, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
 	AddTextPrinterParameterized4(windowId, fontID, 122,4, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
 }
 
-static u32 CalculateVerticalPosition(u32 streakStatus, u32 level)
+static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
-	u32 position = streakStatus + level;
+	u32 mode = gSpecialVar_0x8006;
 
-	switch(position)
-	{
-		case 0: return 10;
-		case 1: return 20;
-		case 2 return 30;
-		case 3 return 40;
-	}
+	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[mode][level]));
+
+	if (streakIndex == 0 && isStreakActive)
+		StringCopy(gStringVar4,gText_Current);
+	else if (streakIndex == 0)
+		StringCopy(gStringVar4,gText_Prev);
+	else
+		StringCopy(gStringVar4,gText_Record);
+
+	AddTextPrinterParameterized4(windowId, fontID, 0,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
-static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level)
+static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level, u32 y)
 {
-	u32 x = 10;
-	u32 y = CalculateVerticalPosition(streakStatus,level);
-	AddTextPrinterParameterized4(windowId, fontID, x,y, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
+	if (level == FRONTIER_LVL_50)
+		StringCopy(gStringVar4,gText_Lv502);
+	else
+		StringCopy(gStringVar4,gText_OpenLv);
+
+	AddTextPrinterParameterized4(windowId, fontID, 50,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
+}
+
+static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
+{
+	u32 record = 0;
+	u32 mode = gSpecialVar_0x8006;
+
+	if (streakIndex == 0)
+		record = ARCADE_CURRENT_STREAK_WINS[mode][level];
+	else
+		record = ARCADE_RECORDED_WINS[mode][level];
+
+	ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
+	StringExpandPlaceholders(gStringVar4,gText_GamesWinStreak);
+	AddTextPrinterParameterized4(windowId, fontID, 100,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
 static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
 {
 	u8 streakStatus;
-	u32 streak;
-	u32 recordStreak;
-	u32 i, j;
+	u32 streak, recordStreak, lvlMode, streakIndex;
+	u32 y = 10;
 
-	for (i = 0; i < FRONTIER_LVL_MODE_COUNT ; i++)
-	{
-		for (j = 0; j < 2; j++)
+	for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
+		for (streakIndex = 0; streakIndex < 2; streakIndex++)
 		{
-			PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,j,i);
+			y += 20;
+			PrintRecordHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+			PrintRecordLevelMode(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+			PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
 		}
-	}
 }
 
 static void DisplayRecordsText(void)

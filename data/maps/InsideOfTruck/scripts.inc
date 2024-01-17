@@ -48,6 +48,8 @@ InsideOfTruck_EventScript_SetIntroFlagsFemale::
 	end
 
 InsideOfTruck_EventScript_MovingBox::
+	call GiveMonDebugScript
+	warp MAP_BATTLE_ARCADE_LOBBY, 5,5
 	msgbox InsideOfTruck_Text_BoxPrintedWithMonLogo, MSGBOX_SIGN
 	end
 
