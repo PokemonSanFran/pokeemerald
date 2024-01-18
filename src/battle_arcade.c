@@ -1519,7 +1519,7 @@ static const u8 *BattleArcade_GenerateRecordName(void)
 static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode)
 {
 	AddTextPrinterParameterized4(windowId, fontID, 0,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
-	AddTextPrinterParameterized4(windowId, fontID, 122,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
+	AddTextPrinterParameterized4(windowId, fontID, 122, ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
 }
 
 static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
@@ -1529,7 +1529,7 @@ static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSp
 	u32 loopIterations = 0;
 
 	for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
-		for (streakIndex = 0; streakIndex < 2; streakIndex++)
+		for (streakIndex = 0; streakIndex < ARCADE_RECORD_STREAK_INDEX_COUNT; streakIndex++)
 			PrintRecordHeaderLevelRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed, streakIndex, lvlMode, loopIterations++);
 }
 
@@ -1544,49 +1544,56 @@ static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpa
 	u32 y = CalculateRecordRowYPosition(loopIterations);
 
 	PrintRecordHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-
 	PrintRecordLevelMode(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-
 	PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+}
+
+static const u8 *BattleArcade_GetRecordHeaderName(u32 level, u32 streakIndex)
+{
+	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[gSpecialVar_0x8006][level]));
+
+	if (streakIndex == 0 && isStreakActive)
+		//StringCopy(gStringVar4,gText_Current);
+		return gText_Current;
+	else if (streakIndex == 0)
+		return gText_Prev;
+		//StringCopy(gStringVar4,gText_Prev);
+	else
+		return gText_Record;
+		//StringCopy(gStringVar4,gText_Record);
 }
 
 static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
-	u32 mode = gSpecialVar_0x8006;
+	AddTextPrinterParameterized4(windowId, fontID, 0,y, letterSpacing, lineSpacing, color, speed, BattleArcade_GetRecordHeaderName(level, streakIndex));
+}
 
-	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[mode][level]));
-
-	if (streakIndex == 0 && isStreakActive)
-		StringCopy(gStringVar4,gText_Current);
-	else if (streakIndex == 0)
-		StringCopy(gStringVar4,gText_Prev);
+static const u8 *BattleArcade_GetLevelText(u32 level)
+{
+	if (level == FRONTIER_LVL_50)
+		return gText_Lv502;
 	else
-		StringCopy(gStringVar4,gText_Record);
-
-	AddTextPrinterParameterized4(windowId, fontID, 0,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
+		return gText_OpenLv;
 }
 
 static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level, u32 y)
 {
-	if (level == FRONTIER_LVL_50)
-		StringCopy(gStringVar4,gText_Lv502);
-	else
-		StringCopy(gStringVar4,gText_OpenLv);
+	AddTextPrinterParameterized4(windowId, fontID, 45,y, letterSpacing, lineSpacing, color, speed, BattleArcade_GetLevelText(level));
+}
 
-	AddTextPrinterParameterized4(windowId, fontID, 45,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
+static u32 GetRecordValue(u32 level, u32 streakIndex)
+{
+	u32 mode = gSpecialVar_0x8006;
+
+	if (streakIndex == 0)
+		return ARCADE_CURRENT_STREAK_WINS[mode][level];
+	else
+		return ARCADE_RECORDED_WINS[mode][level];
 }
 
 static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
-	u32 record = 0;
-	u32 mode = gSpecialVar_0x8006;
-
-	if (streakIndex == 0)
-		record = ARCADE_CURRENT_STREAK_WINS[mode][level];
-	else
-		record = ARCADE_RECORDED_WINS[mode][level];
-
-	record = 9999;
+	u32 record = GetRecordValue(level, streakIndex);
 
 	ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
 	StringExpandPlaceholders(gStringVar4,gText_GamesWinStreak);
