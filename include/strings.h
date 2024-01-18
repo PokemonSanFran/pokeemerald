@@ -3028,5 +3028,6 @@ extern const u8 gText_TellHimTheWords[];
 
 // Battle Arcade
 extern const u8 gText_BattleArcade[];
+extern const u8 gText_GamesWinStreak[];
 
 #endif // GUARD_STRINGS_H

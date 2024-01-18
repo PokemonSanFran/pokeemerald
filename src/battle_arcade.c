@@ -146,6 +146,16 @@ static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
 static void FieldShowBattleArcadeRecords(void);
 
+//Record Printing
+static const u8 *BattleArcade_GenerateRecordName(void);
+static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode);
+static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y);
+static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level, u32 y);
+static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y);
+static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode);
+static void DisplayRecordsText(void);
+static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 lvlMode, u32 loopIterations);
+
 static void (* const sBattleArcadeFuncs[])(void) =
 {
 	[ARCADE_FUNC_INIT]                   = InitArcadeChallenge,
@@ -1484,31 +1494,23 @@ static void Task_RecordsFadeOut(u8 taskId)
     }
 }
 
-extern const u8 gText_BattleArcade[];
-
-static void HandleRecords(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u32 color, u32 speed)
+static const u8 *BattleArcade_GetRecordName(void)
 {
-/*
- Battle Arcade | $MODE Record
-
-$ACTIVITY $LEVEL Games cleared: $NUM
-RECORD LVL 50 Games cleared: $NUM_RECORD
-
-$ACTIVITY OPEN LVL Games cleared: $NUM
-RECORD OPEN LVL Games cleared: $NUM_RECORD
- */
+	switch(gSpecialVar_0x8006)
+	{
+		case FRONTIER_MODE_SINGLES:
+			return gText_Single2;
+		case FRONTIER_MODE_DOUBLES:
+			return gText_Double;
+		default:
+		case FRONTIER_MODE_MULTIS:
+			return gText_Multi;
+	}
 }
-
-//gText_Prev
-//gText_Record
-//gText_Lv502
-//gText_OpenLv
-
-const u8 gText_GamesWinStreak[] = _("Games cleared: {STR_VAR_1}");
 
 static const u8 *BattleArcade_GenerateRecordName(void)
 {
-    StringCopy(gStringVar3,gText_Double);
+	StringCopy(gStringVar3,BattleArcade_GetRecordName());
     StringAppend(gStringVar3,gText_Space);
     StringAppend(gStringVar3,gText_Record);
     return gStringVar3;
@@ -1516,8 +1518,36 @@ static const u8 *BattleArcade_GenerateRecordName(void)
 
 static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode)
 {
-	AddTextPrinterParameterized4(windowId, fontID, 0,4, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
-	AddTextPrinterParameterized4(windowId, fontID, 122,4, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
+	AddTextPrinterParameterized4(windowId, fontID, 0,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
+	AddTextPrinterParameterized4(windowId, fontID, 122,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
+}
+
+static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
+{
+	u8 streakStatus;
+	u32 streak, recordStreak, lvlMode, streakIndex;
+	u32 loopIterations = 0;
+
+	for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
+		for (streakIndex = 0; streakIndex < 2; streakIndex++)
+			PrintRecordHeaderLevelRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed, streakIndex, lvlMode, loopIterations++);
+}
+
+static u32 CalculateRecordRowYPosition(u32 loopIterations)
+{
+	return (ARCADE_RECORD_ROWS_DEFAULT_Y_POSITION +
+			(loopIterations * ARCADE_RECORD_ROWS_MARGIN));
+}
+
+static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 lvlMode, u32 loopIterations)
+{
+	u32 y = CalculateRecordRowYPosition(loopIterations);
+
+	PrintRecordHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+
+	PrintRecordLevelMode(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+
+	PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
 }
 
 static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
@@ -1543,7 +1573,7 @@ static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u3
 	else
 		StringCopy(gStringVar4,gText_OpenLv);
 
-	AddTextPrinterParameterized4(windowId, fontID, 50,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
+	AddTextPrinterParameterized4(windowId, fontID, 45,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
 static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
@@ -1556,28 +1586,14 @@ static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpa
 	else
 		record = ARCADE_RECORDED_WINS[mode][level];
 
+	record = 9999;
+
 	ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
 	StringExpandPlaceholders(gStringVar4,gText_GamesWinStreak);
-	AddTextPrinterParameterized4(windowId, fontID, 100,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
+	AddTextPrinterParameterized4(windowId, fontID, 95,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
-static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
-{
-	u8 streakStatus;
-	u32 streak, recordStreak, lvlMode, streakIndex;
-	u32 y = 10;
-
-	for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
-		for (streakIndex = 0; streakIndex < 2; streakIndex++)
-		{
-			y += 20;
-			PrintRecordHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-			PrintRecordLevelMode(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-			PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-		}
-}
-
-static void DisplayRecordsText(void)
+static void GenerateRecordText(void)
 {
 	u32 windowId = 0;
 	u32 fontID = FONT_NORMAL;
@@ -1588,10 +1604,11 @@ static void DisplayRecordsText(void)
 
 	HandleHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_OPEN);
 	HandleRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_50);
+}
 
-	//StringCopy(gStringVar1, gText_OpenLv);
-    //StringExpandPlaceholders(gStringVar4, gText_OpenLv);
-    //PrintRecordsText(gStringVar4, 0, 1);
+static void DisplayRecordsText(void)
+{
+	GenerateRecordText();
     PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_FULL);
 }

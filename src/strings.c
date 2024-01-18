@@ -1820,4 +1820,6 @@ const u8 gText_PokeBalls[] = _("POKé BALLS");
 const u8 gText_Berry[] = _("BERRY");
 const u8 gText_Berries[] = _("BERRIES");
 
+// Battle Arcade
 const u8 gText_BattleArcade[] = _("BATTLE ARCADE");
+const u8 gText_GamesWinStreak[] = _("Games cleared: {STR_VAR_1}");
