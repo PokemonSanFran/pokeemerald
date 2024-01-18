@@ -1683,4 +1683,6 @@ void FieldShowBattleArcadeRecords(void)
     LockPlayerFieldControls();
 }
 
+// Arcade Board
+
 #endif
