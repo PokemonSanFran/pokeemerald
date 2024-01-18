@@ -779,15 +779,6 @@ static const struct MenuAction MultichoiceList_ChallengeTypesInfo[] =
     {gText_Cancel2},
 };
 
-static const struct MenuAction MultichoiceList_BattleArcadeRules[] =
-{
-    {gText_BattleRules},
-    {gText_JudgeMind},
-    {gText_JudgeSkill},
-    {gText_JudgeBody},
-    {gText_Exit},
-};
-
 static const struct MenuAction MultichoiceList_BattleArcadeRecords[] =
 {
     {gText_Single2},
@@ -924,7 +915,6 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_FALLARBOR_TENT_RULES]       = MULTICHOICE(MultichoiceList_FallarborTentRules),
     [MULTI_TAG_MATCH_TYPE]             = MULTICHOICE(MultichoiceList_TagMatchType),
     [MULTI_CHALLENGE_TYPES_INFO]       = MULTICHOICE(MultichoiceList_ChallengeTypesInfo),
-    [MULTI_BATTLE_ARCADE_RULES]         = MULTICHOICE(MultichoiceList_BattleArcadeRules),
 	[MULTI_BATTLE_ARCADE_RECORDS]       = MULTICHOICE(MultichoiceList_BattleArcadeRecords),
 };
 

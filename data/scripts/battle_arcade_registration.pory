@@ -407,38 +407,6 @@ script BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize
     return
 }
 
-script BattleFrontier_BattleArcadeLobby_EventScript_RulesBoard
-{
-    lockall
-    msgbox(BattleFrontier_BattleArcadeLobby_Text_RulesAreListed, MSGBOX_DEFAULT)
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard)
-    end
-}
-
-script BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard
-{
-    message(BattleFrontier_BattleArcadeLobby_Text_ReadWhichHeading)
-    waitmessage
-    multichoice(17, 2, MULTI_BATTLE_ARCADE_RULES, FALSE)
-    switch(var(VAR_RESULT))
-    {
-        case 0:
-            msgbox(BattleFrontier_BattleArcadeLobby_Text_ExplainArcadeRules, MSGBOX_DEFAULT)
-        case 1:
-            msgbox(BattleFrontier_BattleArcadeLobby_Text_ExplainMonRules, MSGBOX_DEFAULT)
-        case 2:
-            msgbox(BattleFrontier_BattleArcadeLobby_Text_ExplainSalonRules, MSGBOX_DEFAULT)
-        case 3:
-            msgbox(BattleFrontier_BattleArcadeLobby_Text_ExplainMultiLinkRules, MSGBOX_DEFAULT)
-        case 4:
-        case MULTI_B_PRESSED:
-            releaseall
-            end
-    }
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_ReadRulesBoard)
-    end
-}
-
 text BattleFrontier_BattleArcadeLobby_Text_DidntSaveBeforeQuitting
 {
     format("Excuse me!\pYou didn't save before you quit your\nchallenge last time.\pBecause of that, your challenge so far\nhas been disqualified. Sorry!")
@@ -709,39 +677,9 @@ text BattleFrontier_BattleArcadeLobby_Text_AwardYouTheseBattlePoints
     format("In recognition of your infinite talent,\nwe award you these Battle Point(s).")
 }
 
-text BattleFrontier_BattleArcadeLobby_Text_RulesAreListed
-{
-    format("The BATTLE ARCADE rules are listed.")
-}
-
-text BattleFrontier_BattleArcadeLobby_Text_ReadWhichHeading
-{
-    format("Which heading do you want to read?")
-}
-
 text BattleFrontier_BattleArcadeLobby_Text_ReadWhichRecord
 {
     format("Which record would you like to see?")
-}
-
-text BattleFrontier_BattleArcadeLobby_Text_ExplainArcadeRules
-{
-    format("The BATTLE ARCADE is a facility where\nfour types of battles are waged--\lSINGLE BATTLE, DOUBLE BATTLE, MULTI\lBATTLE, and LINK MULTI BATTLE.\pFor each of these types, there are\nseparate BATTLE ROOMS.\pPlease speak with a guide offering\nthe type of battle you wish to enter.")
-}
-
-text BattleFrontier_BattleArcadeLobby_Text_ExplainMonRules
-{
-    format("Depending on the BATTLE ROOM you are\nentering, you will be required to take\la certain number of POKéMON.\pThe SINGLE BATTLE mode requires\nthree POKéMON.\pThe DOUBLE BATTLE mode requires four,\nand the MULTI modes both require two.")
-}
-
-text BattleFrontier_BattleArcadeLobby_Text_ExplainSalonRules
-{
-    format("The BATTLE SALON is where you must\nfind a partner to form a tag team for\lthe MULTI BATTLE ROOM challenge.\pChoose the best partner for you by\nexamining other TRAINERS'\lPOKéMON and their moves.\pYou may choose a new tag partner\nafter winning seven straight matches.")
-}
-
-text BattleFrontier_BattleArcadeLobby_Text_ExplainMultiLinkRules
-{
-    format("The LINK MULTI BATTLE Mode is for two\nfriends to mount a challenge together.\pYou and your friend must be linked with\nWireless Adapters or a GBA Game Link\lcable.\pYou must choose two POKéMON at\nthe registration counter.\pThese POKéMON must be different\nfrom those of your friend.\pYou may not interrupt this challenge\nin the middle, unlike other modes.")
 }
 
 text BattleArcade_Entrance_Text_RulesAreListed

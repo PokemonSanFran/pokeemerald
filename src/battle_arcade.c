@@ -254,10 +254,6 @@ static void SetArcadeData(void)
     u32 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
-	DebugPrintf("set data");
-	DebugPrintf("lvl 50 challenge status is %d",((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[lvlMode][FRONTIER_LVL_50])));
-	DebugPrintf("open level challenge status is %d",((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[lvlMode][FRONTIER_LVL_OPEN])));
-
     switch (gSpecialVar_0x8005)
     {
         case 0:
@@ -1553,14 +1549,11 @@ static const u8 *BattleArcade_GetRecordHeaderName(u32 level, u32 streakIndex)
 	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[gSpecialVar_0x8006][level]));
 
 	if (streakIndex == 0 && isStreakActive)
-		//StringCopy(gStringVar4,gText_Current);
 		return gText_Current;
 	else if (streakIndex == 0)
 		return gText_Prev;
-		//StringCopy(gStringVar4,gText_Prev);
 	else
 		return gText_Record;
-		//StringCopy(gStringVar4,gText_Record);
 }
 
 static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
