@@ -34,7 +34,6 @@
 #include "script.h"
 
 //Records Window
-#include "diploma.h"
 #include "palette.h"
 #include "gpu_regs.h"
 #include "scanline_effect.h"
@@ -1296,16 +1295,11 @@ static void ResetRouletteRandomFlag(void)
     FlagClear(FLAG_ARCADE_RANDOM_CURSOR);
 }
 
-// graphical set up off board
-// populate array with effects
-// iterate again over each spot and pick a side
-
 static void SetArcadeBrainObjectEvent(void)
 {
     SetFrontierBrainObjEventGfx(FRONTIER_FACILITY_PIKE);
 }
 
-// NEW
 bool32 HasMove(struct Pokemon *pokemon, u16 move)
 {
 	u8 i;
@@ -1407,11 +1401,6 @@ static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_r
 
 static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/arcade_records/arcade_records.gbapal");
 
-/*
-static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/diploma/tilemap.bin.lz");
-static const u32 sRecordsTiles[] = INCBIN_U32("graphics/diploma/tiles.4bpp.lz");
-*/
-
 void CB2_ShowRecords(void)
 {
     SetVBlankCallback(NULL);
@@ -1428,7 +1417,6 @@ void CB2_ShowRecords(void)
     SetGpuReg(REG_OFFSET_BG1VOFS, 0);
     SetGpuReg(REG_OFFSET_BG0HOFS, 0);
     SetGpuReg(REG_OFFSET_BG0VOFS, 0);
-    // why doesn't this one use the dma manager either?
     DmaFill16(3, 0, VRAM, VRAM_SIZE);
     DmaFill32(3, 0, OAM, OAM_SIZE);
     DmaFill16(3, 0, PLTT, PLTT_SIZE);
@@ -1671,18 +1659,202 @@ static void InitRecordsWindow(void)
     PutWindowTilemap(0);
 }
 
-static void PrintRecordsText(u8 *text, u8 var1, u8 var2)
-{
-    //AddTextPrinterParameterized4(0, FONT_NORMAL, var1, var2, 0, 0, color, TEXT_SKIP_DRAW, text);
-}
-
 void FieldShowBattleArcadeRecords(void)
 {
     SetMainCallback2(CB2_ShowRecords);
-    //SetMainCallback2(CB2_ShowDiploma);
     LockPlayerFieldControls();
 }
 
+#include "gba/types.h"
+#include "gba/defines.h"
+#include "text_window.h"
+#include "characters.h"
+#include "gba/macro.h"
+#include "menu_helpers.h"
+#include "sprite.h"
+#include "constants/songs.h"
+#include "sound.h"
+#include "pokemon_icon.h"
+#include "graphics.h"
+#include "data.h"
+
+struct sGameBoardState
+{
+    MainCallback savedCallback;
+    u32 loadState;
+    u32 gameMode;
+    u8 monIconSpriteId;
+    u16 monIconDexNum;
+};
+
+enum WindowIds
+{
+	WIN_BOARD_GAME,
+	WIN_BOARD_PLAYER_MON,
+	WIN_BOARD_ENEMY_MON,
+	WIN_BOARD_COUNT,
+};
+
+enum BackgroundIds
+{
+	BG_BOARD_HELP_BAR,
+	BG_BOARD_EVENTS,
+	BG_BOARD_BACKGROUND,
+	BG_BOARD_BACKBOARD,
+	BG_BOARD_COUNT,
+};
+
+static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
+static EWRAM_DATA u8 *sBg0TilemapBuffer = NULL;
+static EWRAM_DATA u8 *sBg1TilemapBuffer = NULL;
+static EWRAM_DATA u8 *sBg2TilemapBuffer = NULL;
+
+#define MON_PLAYER_X_POS 50
+#define MON_ENEMY_X_POS 50
+#define MON_Y_POS 50
+#define MON_Y_PADDING 50
+
+static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
+static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
+
+static const struct BgTemplate sBgTemplates[] =
+{
+    {
+        .bg = BG_BOARD_HELP_BAR,
+        .charBaseIndex = 0,
+        .mapBaseIndex = 31,
+        .priority = 1
+    },
+    {
+        .bg = BG_BOARD_EVENTS,
+        .charBaseIndex = 3,
+        .mapBaseIndex = 30,
+        .priority = 2
+    },
+    {
+        .bg = BG_BOARD_BACKGROUND,
+        .charBaseIndex = 6,
+        .mapBaseIndex = 29,
+        .priority = 3
+    },
+    {
+        .bg = BG_BOARD_BACKBOARD,
+        .charBaseIndex = 9,
+        .mapBaseIndex = 28,
+        .priority = 4
+    },
+};
+
+static const struct WindowTemplate sWinTemplates[] =
+{
+	[WIN_BOARD_GAME] =
+	{
+		.bg = 0,
+		.tilemapLeft = 6,
+		.tilemapTop = 9,
+		.width = 19,
+		.height = 19,
+		.paletteNum = 15,
+		.baseBlock = 1
+	},
+	[WIN_BOARD_PLAYER_MON] =
+	{
+		.bg = 0,
+		.tilemapLeft = 0,
+		.tilemapTop = 5,
+		.width = 4,
+		.height = 14,
+		.paletteNum = 15,
+		.baseBlock = 1 + (19 * 19)
+	},
+	[WIN_BOARD_ENEMY_MON] =
+	{
+		.bg = 0,
+		.tilemapLeft = 29,
+		.tilemapTop = 0,
+		.width = 4,
+		.height = 14,
+		.paletteNum = 15,
+		.baseBlock = 1 + (4 * 14)
+	},
+	DUMMY_WIN_TEMPLATE
+};
+
+enum FontColor
+{
+    FONT_BLACK,
+    FONT_WHITE,
+};
+
+static const u8 sSampleUiWindowFontColors[][3] =
+{
+	[FONT_BLACK]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY,  TEXT_COLOR_LIGHT_GRAY},
+	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
+};
+
+static void GameBoard_SetupCB(void);
+static void GameBoard_MainCB(void);
+static void GameBoard_VBlankCB(void);
+
+static void Task_GameBoardWaitFadeIn(u8 taskId);
+static void Task_GameBoardMainInput(u8 taskId);
+static void Task_GameBoardWaitFadeAndBail(u8 taskId);
+static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId);
+
+void GameBoard_Init(MainCallback callback);
+static bool8 GameBoard_InitBgs(void);
+static void GameBoard_FadeAndBail(void);
+static bool8 GameBoard_LoadGraphics(void);
+static void GameBoard_InitWindows(void);
+static void GameBoard_PrintUiButtonHints(void);
+static void GameBoard_PrintUiMonInfo(void);
+static void GameBoard_DrawMonIcon(u16 dexNum);
+static void GameBoard_FreeResources(void);
+
+static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
+static const u32 sBackboard[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
+static const u32 sGamebackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.bin.lz");
+static const u32 sGamebackground[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.4bpp.lz");
+static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.bin.lz");
+static const u32 sLogobackground[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
+
+static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_burn.4bpp.lz");
+static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_fog.4bpp.lz");
+static const u32 sEventFreeze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_freeze.4bpp.lz");
+static const u32 sEventGiveBerry[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_berry.4bpp.lz");
+static const u32 sEventGiveBpBig[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_big.4bpp.lz");
+static const u32 sEventGiveBpSmall[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_small.4bpp.lz");
+static const u32 sEventGiveItem[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_item.4bpp.lz");
+static const u32 sEventHail[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_hail.4bpp.lz");
+static const u32 sEventLevelUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_level_up.4bpp.lz");
+static const u32 sEventLowerHp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_lower_hp.4bpp.lz");
+static const u32 sEventNoBattle[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_no_battle.4bpp.lz");
+static const u32 sEventParalyze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_paralyze.4bpp.lz");
+static const u32 sEventPoison[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_poison.4bpp.lz");
+static const u32 sEventRain[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_rain.4bpp.lz");
+static const u32 sEventRandom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_random.4bpp.lz");
+static const u32 sEventSand[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sand.4bpp.lz");
+static const u32 sEventSleep[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sleep.4bpp.lz");
+static const u32 sEventSpeedDown[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_down.4bpp.lz");
+static const u32 sEventSpeedUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_up.4bpp.lz");
+static const u32 sEventSun[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sun.4bpp.lz");
+static const u32 sEventSwap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_swap.4bpp.lz");
+static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_trick_room.4bpp.lz");
+static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_game/no_event.4bpp.lz");
+
 // Arcade Board
+// generate game board
+// figure out arcade speed
+// fade into  game board with arcade logo and parties on both sides
+// press a button to start
+// countdown from 3 2 1
+// cursor changes color with every event that it moves to
+// how does the cursor choose where to start? TODO
+// cursor is on random spot, moves one to the right every "tick"
+// entire screen is glowing white as its happening
+// pressing A stops cursor and all icons change to that cursor
+// not pressing a for 30 seconds will auto stop cursor
+// cursor glows for a bit
+// screen fades out
 
 #endif
