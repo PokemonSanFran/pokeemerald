@@ -144,6 +144,7 @@ static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
 static void FieldShowBattleArcadeRecords(void);
+void Task_OpenGameBoard(u8);
 
 //Record Printing
 static const u8 *BattleArcade_GenerateRecordName(void);
@@ -1338,46 +1339,6 @@ static void ResetSketchedMoves(void)
 	}
 }
 
-/*
-static void SparringPrintTypesMastered(u8 lvlMode, u8 x, u8 y)
-{
-    PrintSparringStreak(gText_TypesMastered, CountNumberTypeWin(lvlMode), x, y);
-}
-static void SparringPrintBestStreak(u8 lvlMode, u8 x, u8 y)
-{
-    StringCopy(gStringVar2,GetBestTypeWinType(lvlMode));
-    PrintSparringStreak(gText_BestStreak,GetBestTypeWinAmount(lvlMode),x,y);
-}
-
-static void PrintSparringStreak(const u8 *str, u16 num, u8 x, u8 y)
-{
-    if (num > SPARRING_MAX_STREAK)
-        num = SPARRING_MAX_STREAK;
-
-    ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_RIGHT_ALIGN, CountDigits(SPARRING_MAX_STREAK));
-    StringExpandPlaceholders(gStringVar4, str);
-    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, NULL);
-}
-
-void Sparring_ShowResultsWindow(void)
-{
-
-    StringExpandPlaceholders(gStringVar4, gText_RestrictedSparringResults);
-    PrintAligned(gStringVar4, SPARRING_RECORD_HEADER_Y_POS);
-    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_Lv502, SPARRING_RECORD_LEVEL_HEADER_X_POS, SPARRING_RECORD_50_LEVEL_Y_POS, TEXT_SKIP_DRAW, NULL);
-    AddTextPrinterParameterized(gRecordsWindowId, FONT_NORMAL, gText_OpenLv, SPARRING_RECORD_LEVEL_HEADER_X_POS, SPARRING_RECORD_OPEN_LEVEL_Y_POS, TEXT_SKIP_DRAW, NULL);
-
-    PrintHyphens(10);
-
-    SparringPrintBestStreak(FRONTIER_LVL_50,SPARRING_RECORD_DATA_X_POS,SPARRING_RECORD_50_LEVEL_Y_POS);
-    SparringPrintTypesMastered(FRONTIER_LVL_50,SPARRING_RECORD_DATA_X_POS,SPARRING_RECORD_50_LEVEL_BEST_Y_POS);
-    SparringPrintBestStreak(FRONTIER_LVL_OPEN, SPARRING_RECORD_DATA_X_POS, SPARRING_RECORD_OPEN_LEVEL_Y_POS);
-    SparringPrintTypesMastered(FRONTIER_LVL_OPEN, SPARRING_RECORD_DATA_X_POS, SPARRING_RECORD_OPEN_LEVEL_BEST_Y_POS);
-
-}
-
-*/
-
 static void MainCB2(void);
 static void Task_RecordsFadeIn(u8);
 static void Task_RecordsWaitForKeyPress(u8);
@@ -1661,7 +1622,9 @@ static void InitRecordsWindow(void)
 
 void FieldShowBattleArcadeRecords(void)
 {
-    SetMainCallback2(CB2_ShowRecords);
+	u8 taskId;
+	Task_OpenGameBoard(taskId);
+    //SetMainCallback2(CB2_ShowRecords);
     LockPlayerFieldControls();
 }
 
@@ -1678,7 +1641,7 @@ void FieldShowBattleArcadeRecords(void)
 #include "graphics.h"
 #include "data.h"
 
-struct sGameBoardState
+struct GameBoardState
 {
     MainCallback savedCallback;
     u32 loadState;
@@ -1717,7 +1680,7 @@ static EWRAM_DATA u8 *sBg2TilemapBuffer = NULL;
 static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
 static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
 
-static const struct BgTemplate sBgTemplates[] =
+static const struct BgTemplate sGameBoardBgTemplates[] =
 {
     {
         .bg = BG_BOARD_HELP_BAR,
@@ -1745,7 +1708,7 @@ static const struct BgTemplate sBgTemplates[] =
     },
 };
 
-static const struct WindowTemplate sWinTemplates[] =
+static const struct WindowTemplate sGameBoardWinTemplates[] =
 {
 	[WIN_BOARD_GAME] =
 	{
@@ -1786,7 +1749,7 @@ enum FontColor
     FONT_WHITE,
 };
 
-static const u8 sSampleUiWindowFontColors[][3] =
+static const u8 sGameBoardWindowFontColors[][3] =
 {
 	[FONT_BLACK]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY,  TEXT_COLOR_LIGHT_GRAY},
 	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
@@ -1806,17 +1769,16 @@ static bool8 GameBoard_InitBgs(void);
 static void GameBoard_FadeAndBail(void);
 static bool8 GameBoard_LoadGraphics(void);
 static void GameBoard_InitWindows(void);
-static void GameBoard_PrintUiButtonHints(void);
-static void GameBoard_PrintUiMonInfo(void);
-static void GameBoard_DrawMonIcon(u16 dexNum);
 static void GameBoard_FreeResources(void);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
-static const u32 sBackboard[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
+static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
+
 static const u32 sGamebackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.bin.lz");
-static const u32 sGamebackground[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.4bpp.lz");
+static const u32 sGamebackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.4bpp.lz");
+
 static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.bin.lz");
-static const u32 sLogobackground[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
+static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
 
 static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_burn.4bpp.lz");
 static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_fog.4bpp.lz");
@@ -1841,6 +1803,242 @@ static const u32 sEventSun[] = INCBIN_U32("graphics/battle_frontier/arcade_game/
 static const u32 sEventSwap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_swap.4bpp.lz");
 static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_trick_room.4bpp.lz");
 static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_game/no_event.4bpp.lz");
+
+static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
+static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_orange.4bpp.lz");
+
+void Task_OpenGameBoard(u8 taskId)
+{
+	if (gPaletteFade.active)
+		return;
+
+	CleanupOverworldWindowsAndTilemaps();
+	GameBoard_Init(CB2_ReturnToFieldWithOpenMenu);
+	DestroyTask(taskId);
+}
+
+void GameBoard_Init(MainCallback callback)
+{
+    sGameBoardState = AllocZeroed(sizeof(struct GameBoardState));
+
+    if (sGameBoardState == NULL)
+    {
+        SetMainCallback2(callback);
+        return;
+    }
+
+    sGameBoardState->loadState = 0;
+    sGameBoardState->savedCallback = callback;
+
+    SetMainCallback2(GameBoard_SetupCB);
+}
+
+static void GameBoard_SetupCB(void)
+{
+    u8 taskId;
+
+    switch (gMain.state)
+	{
+		case 0:
+			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
+			SetVBlankHBlankCallbacksToNull();
+			ClearScheduledBgCopiesToVram();
+			gMain.state++;
+			break;
+		case 1:
+			ScanlineEffect_Stop();
+			FreeAllSpritePalettes();
+			ResetPaletteFade();
+			ResetSpriteData();
+			ResetTasks();
+			gMain.state++;
+			break;
+		case 2:
+			if (GameBoard_InitBgs())
+			{
+				sGameBoardState->loadState = 0;
+				gMain.state++;
+			}
+			else
+			{
+				GameBoard_FadeAndBail();
+				return;
+			}
+			break;
+		case 3:
+			if (GameBoard_LoadGraphics() == TRUE)
+			{
+				gMain.state++;
+			}
+			break;
+		case 4:
+			GameBoard_InitWindows();
+			gMain.state++;
+			break;
+		case 5:
+			sGameBoardState->monIconDexNum = NATIONAL_DEX_BULBASAUR;
+			FreeMonIconPalettes();
+			LoadMonIconPalettes();
+			taskId = CreateTask(Task_GameBoardWaitFadeIn, 0);
+			gMain.state++;
+			break;
+		case 6:
+			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+			gMain.state++;
+			break;
+		case 7:
+			SetVBlankCallback(GameBoard_VBlankCB);
+			SetMainCallback2(GameBoard_MainCB);
+			break;
+	}
+}
+
+static void GameBoard_MainCB(void)
+{
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+    DoScheduledBgTilemapCopiesToVram();
+    UpdatePaletteFade();
+}
+
+
+static void GameBoard_VBlankCB(void)
+{
+    LoadOam();
+    ProcessSpriteCopyRequests();
+    TransferPlttBuffer();
+}
+
+static void Task_GameBoardWaitFadeIn(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        gTasks[taskId].func = Task_GameBoardMainInput;
+    }
+}
+
+static void Task_GameBoardMainInput(u8 taskId)
+{
+    if (JOY_NEW(A_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+    }
+}
+
+static void Task_GameBoardWaitFadeAndBail(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        SetMainCallback2(sGameBoardState->savedCallback);
+        GameBoard_FreeResources();
+        DestroyTask(taskId);
+    }
+}
+
+static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        SetMainCallback2(sGameBoardState->savedCallback);
+        GameBoard_FreeResources();
+        DestroyTask(taskId);
+    }
+}
+
+static bool8 GameBoard_InitBgs(void)
+{
+    const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
+
+    ResetAllBgsCoordinates();
+
+    sBg1TilemapBuffer = AllocZeroed(TILEMAP_BUFFER_SIZE);
+    if (sBg1TilemapBuffer == NULL)
+    {
+        return FALSE;
+    }
+
+    ResetBgsAndClearDma3BusyFlags(0);
+
+    InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
+
+    SetBgTilemapBuffer(1, sBg1TilemapBuffer);
+
+    ScheduleBgCopyTilemapToVram(1);
+
+    ShowBg(0);
+    ShowBg(1);
+
+    return TRUE;
+}
+
+static void GameBoard_FadeAndBail(void)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+    CreateTask(Task_GameBoardWaitFadeAndBail, 0);
+
+    SetVBlankCallback(GameBoard_VBlankCB);
+    SetMainCallback2(GameBoard_MainCB);
+}
+
+static bool8 GameBoard_LoadGraphics(void)
+{
+    switch (sGameBoardState->loadState)
+    {
+    case 0:
+        ResetTempTileDataBuffers();
+
+        DecompressAndCopyTileDataToVram(1, sBackboardTiles, 0, 0, 0);
+        sGameBoardState->loadState++;
+        break;
+    case 1:
+        if (FreeTempTileDataBuffersIfPossible() != TRUE)
+        {
+
+            LZDecompressWram(sBackboardTilemap, sBg1TilemapBuffer);
+            sGameBoardState->loadState++;
+        }
+        break;
+    case 2:
+        //LoadPalette(sGameBoardPalette, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+        sGameBoardState->loadState++;
+    default:
+        sGameBoardState->loadState = 0;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void GameBoard_InitWindows(void)
+{
+	u32 windowId;
+    InitWindows(sGameBoardWinTemplates);
+
+    DeactivateAllTextPrinters();
+
+    ScheduleBgCopyTilemapToVram(0);
+
+	for (windowId = 0; windowId < WIN_BOARD_COUNT; windowId++)
+	{
+		FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+		PutWindowTilemap(windowId);
+		CopyWindowToVram(windowId, COPYWIN_FULL);
+	}
+}
+
+static void GameBoard_FreeResources(void)
+{
+    if (sGameBoardState != NULL)
+    {
+        Free(sGameBoardState);
+    }
+    if (sBg1TilemapBuffer != NULL)
+    {
+        Free(sBg1TilemapBuffer);
+    }
+    FreeAllWindowBuffers();
+    ResetSpriteData();
+}
 
 // Arcade Board
 // generate game board
