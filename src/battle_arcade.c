@@ -1683,6 +1683,7 @@ static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL
 #define MON_ENEMY_X_POS 50
 #define MON_Y_POS 50
 #define MON_Y_PADDING 50
+#define TILEMAP_BUFFER_SIZE (1024 * 2)
 
 static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
 static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
@@ -1778,11 +1779,10 @@ static bool8 GameBoard_LoadGraphics(void);
 static void GameBoard_InitWindows(void);
 static void GameBoard_FreeResources(void);
 
+static void HandleAndShowBgs(void);
+
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
-
-static const u32 sGamebackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.bin.lz");
-static const u32 sGamebackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/gamebackground.4bpp.lz");
 
 static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.bin.lz");
 static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
@@ -1954,7 +1954,6 @@ static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
 static bool32 BattleArcade_AllocTilemapBuffers(void)
 {
 	u32 backgroundId;
-    const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
 
 	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
 	{
@@ -1968,22 +1967,12 @@ static bool32 BattleArcade_AllocTilemapBuffers(void)
 
 static bool8 GameBoard_InitBgs(void)
 {
-	u32 backgroundId;
-    const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
 
     ResetAllBgsCoordinates();
 	if (!BattleArcade_AllocTilemapBuffers())
 		return FALSE;
 
-    ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
-
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-	{
-		SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
-		ScheduleBgCopyTilemapToVram(backgroundId);
-		ShowBg(backgroundId);
-	}
+	HandleAndShowBgs();
 
 	/*
     ScheduleBgCopyTilemapToVram(1);
@@ -2072,7 +2061,6 @@ static void GameBoard_FreeResources(void)
 
 static void GameBoard_AllocTilemapBuffers(void)
 {
-    const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
 	u32 backgroundId;
 
 	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
@@ -2084,16 +2072,28 @@ static void GameBoard_AllocTilemapBuffers(void)
 
 static void HandleAndShowBgs(void)
 {
+	u32 backgroundId;
+
     ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sRecordsBgTemplates, ARRAY_COUNT(sRecordsBgTemplates));
+    InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+		SetScheduleShowBgs(backgroundId);
+}
+
+static void SetScheduleShowBgs(u32 backgroundId)
+{
+	SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
+	ScheduleBgCopyTilemapToVram(backgroundId);
+	ShowBg(backgroundId);
 }
 
 static void ChangeBackground(void)
 {
     ResetAllBgsCoordinates();
 	GameBoard_AllocTilemapBuffers();
-	/*
     HandleAndShowBgs();
+	/*
     LoadBackground();
 	*/
 }
