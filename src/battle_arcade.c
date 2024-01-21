@@ -58,8 +58,6 @@
 
 #define VAR_FACILITY_CHALLENGE_STATUS VAR_TEMP_0
 
-static EWRAM_DATA u8 sBattleArcade_TypeWinsWindowId = 0;
-
 static void (* const sBattleArcadeFuncs[])(void);
 
 static void InitArcadeChallenge(void);
@@ -1116,6 +1114,11 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
     return TRUE;
 }
 
+static bool32 GetCursorSpeed(void)
+{
+	return (VarGet(VAR_ARCADE_CURSOR_SPEED));
+}
+
 static bool32 BattleArcade_DoSpeedUp(void)
 {
     BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_UP);
@@ -1668,9 +1671,13 @@ enum BackgroundIds
 };
 
 static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
+/*
 static EWRAM_DATA u8 *sBg0TilemapBuffer = NULL;
 static EWRAM_DATA u8 *sBg1TilemapBuffer = NULL;
 static EWRAM_DATA u8 *sBg2TilemapBuffer = NULL;
+*/
+
+static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};
 
 #define MON_PLAYER_X_POS 50
 #define MON_ENEMY_X_POS 50
@@ -1877,6 +1884,7 @@ static void GameBoard_SetupCB(void)
 			break;
 		case 5:
 			sGameBoardState->monIconDexNum = NATIONAL_DEX_BULBASAUR;
+			GenerateGameBoard();
 			FreeMonIconPalettes();
 			LoadMonIconPalettes();
 			taskId = CreateTask(Task_GameBoardWaitFadeIn, 0);
@@ -1902,7 +1910,6 @@ static void GameBoard_MainCB(void)
     UpdatePaletteFade();
 }
 
-
 static void GameBoard_VBlankCB(void)
 {
     LoadOam();
@@ -1912,18 +1919,16 @@ static void GameBoard_VBlankCB(void)
 
 static void Task_GameBoardWaitFadeIn(u8 taskId)
 {
-    if (!gPaletteFade.active)
-    {
-        gTasks[taskId].func = Task_GameBoardMainInput;
-    }
+    if (gPaletteFade.active)
+		return;
+
+	gTasks[taskId].func = Task_GameBoardMainInput;
 }
 
 static void Task_GameBoardMainInput(u8 taskId)
 {
     if (JOY_NEW(A_BUTTON))
-    {
         PlaySE(SE_SELECT);
-    }
 }
 
 static void Task_GameBoardWaitFadeAndBail(u8 taskId)
@@ -1946,28 +1951,46 @@ static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
     }
 }
 
+static bool32 BattleArcade_AllocTilemapBuffers(void)
+{
+	u32 backgroundId;
+    const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+	{
+		sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
+
+		if (sBgTilemapBuffer[backgroundId] == NULL)
+			return FALSE;
+	}
+	return TRUE;
+}
+
 static bool8 GameBoard_InitBgs(void)
 {
+	u32 backgroundId;
     const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
 
     ResetAllBgsCoordinates();
-
-    sBg1TilemapBuffer = AllocZeroed(TILEMAP_BUFFER_SIZE);
-    if (sBg1TilemapBuffer == NULL)
-    {
-        return FALSE;
-    }
+	if (!BattleArcade_AllocTilemapBuffers())
+		return FALSE;
 
     ResetBgsAndClearDma3BusyFlags(0);
-
     InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
 
-    SetBgTilemapBuffer(1, sBg1TilemapBuffer);
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+	{
+		SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
+		ScheduleBgCopyTilemapToVram(backgroundId);
+		ShowBg(backgroundId);
+	}
 
+	/*
     ScheduleBgCopyTilemapToVram(1);
 
     ShowBg(0);
     ShowBg(1);
+	*/
 
     return TRUE;
 }
@@ -1988,14 +2011,16 @@ static bool8 GameBoard_LoadGraphics(void)
     case 0:
         ResetTempTileDataBuffers();
 
-        DecompressAndCopyTileDataToVram(1, sBackboardTiles, 0, 0, 0);
+        DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackboardTiles, 0, 0, 0);
+        DecompressAndCopyTileDataToVram(BG_BOARD_BACKGROUND, sLogobackgroundTiles, 0, 0, 0);
         sGameBoardState->loadState++;
         break;
     case 1:
         if (FreeTempTileDataBuffersIfPossible() != TRUE)
         {
 
-            LZDecompressWram(sBackboardTilemap, sBg1TilemapBuffer);
+            LZDecompressWram(sBackboardTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
+            LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
             sGameBoardState->loadState++;
         }
         break;
@@ -2028,16 +2053,49 @@ static void GameBoard_InitWindows(void)
 
 static void GameBoard_FreeResources(void)
 {
-    if (sGameBoardState != NULL)
-    {
-        Free(sGameBoardState);
-    }
-    if (sBg1TilemapBuffer != NULL)
-    {
-        Free(sBg1TilemapBuffer);
-    }
-    FreeAllWindowBuffers();
-    ResetSpriteData();
+	u32 backgroundId;
+
+	if (sGameBoardState != NULL)
+	{
+		Free(sGameBoardState);
+	}
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+	{
+		if (sBgTilemapBuffer[backgroundId] != NULL)
+			Free(sBgTilemapBuffer[backgroundId]);
+	}
+
+	FreeAllWindowBuffers();
+	ResetSpriteData();
+}
+
+static void GameBoard_AllocTilemapBuffers(void)
+{
+    const u32 TILEMAP_BUFFER_SIZE = (1024 * 2);
+	u32 backgroundId;
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+	{
+		Free(sBgTilemapBuffer[backgroundId]);
+		sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
+	}
+}
+
+static void HandleAndShowBgs(void)
+{
+    ResetBgsAndClearDma3BusyFlags(0);
+    InitBgsFromTemplates(0, sRecordsBgTemplates, ARRAY_COUNT(sRecordsBgTemplates));
+}
+
+static void ChangeBackground(void)
+{
+    ResetAllBgsCoordinates();
+	GameBoard_AllocTilemapBuffers();
+	/*
+    HandleAndShowBgs();
+    LoadBackground();
+	*/
 }
 
 // Arcade Board
