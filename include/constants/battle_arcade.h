@@ -137,9 +137,24 @@
 
 #define ARCADE_EVENT_LEVEL_INCREASE            3
 #define ARCADE_GAME_BOARD_SPACES               16
+#define ARCADE_GAME_BOARD_ROWS                 4
+#define ARCADE_GAME_BOARD_SPACES_PER_ROWS      4
 
 #define FLAG_ARCADE_SILVER_PRINT               FLAG_UNUSED_0x020
 #define FLAG_ARCADE_GOLD_PRINT                 FLAG_UNUSED_0x021
 #define ARCADE_BRAIN_DEFEAT_POINTS             20
+
+#define ARCADE_BOARD_MODE_WAIT                0
+#define ARCADE_BOARD_MODE_COUNTDOWN_3         1
+#define ARCADE_BOARD_MODE_COUNTDOWN_2         2
+#define ARCADE_BOARD_MODE_COUNTDOWN_1         3
+#define ARCADE_BOARD_MODE_GAME_START          4
+#define ARCADE_BOARD_MODE_GAME_FINISH         5
+#define ARCADE_BOARD_MODE_CLEANUP             6
+
+#define ARCADE_FRAMES_PER_SECOND              60
+#define ARCADE_BOARD_COUNTDOWN_TIMER          3 * ARCADE_FRAMES_PER_SECOND
+
+#define ARCADE_SPRITE_EVENT_TAG               0
 
 #endif //GUARD_CONSTANTS_ARCADE_H
