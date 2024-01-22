@@ -2401,7 +2401,7 @@ static void ChangeBackground(void)
 
 static u32 GetHorizontalPositionFromSide(u32 side)
 {
-	return (side == ARCADE_IMPACT_OPPONENT) ? 100 : 15;
+	return (side == ARCADE_IMPACT_OPPONENT) ? 225 : 15;
 }
 
 static void SpriteCB_Dummy(struct Sprite *sprite)
