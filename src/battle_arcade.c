@@ -77,7 +77,6 @@ static bool32 IsItemConsumable(u16);
 static void RestoreNonConsumableHeldItems(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32 points);
-static void StoreImpactedSideToVar(void);
 static void ResetRouletteRandomFlag(void);
 static void GenerateItemsToBeGiven(void);
 static void CalculateGiveChallengeBattlePoints(void);
@@ -107,7 +106,8 @@ static bool32 IsGiveItemVarSet(void);
 static void PrintArcadeStreak(const u8*, u16, u8, u8);
 static bool32 IsEventBanned(u32 event);
 static u32 GetChallengeNumIndex(void);
-static void StoreEventToVar(void);
+static void StoreEventToVar(u32);
+static void StoreImpactedSideToVar(u32);
 u16 GetCurrentBattleArcadeWinStreak(void);
 static u32 BattleArcade_GenerateGive(u32 type);
 static void BufferGiveString(u32);
@@ -171,8 +171,6 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
 	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
 	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
-	[ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
-	[ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
 	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
 	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
@@ -608,18 +606,6 @@ u32 GetEventFromSaveblock(void)
     return FRONTIER_SAVEDATA.arcadeGameResult.event;
 }
 
-static void StoreEventToVar(void)
-{
-    GAME_BOARD_EVENT = GetEventFromSaveblock();
-    //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
-}
-
-static void StoreImpactedSideToVar(void)
-{
-    GAME_BOARD_IMPACT = GetImpactFromSaveblock();
-    //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
-}
-
 static bool32 IsEventBanned(u32 event)
 {
 #ifndef ARCADE_GEN4_EFFECTS_UNBANNED
@@ -688,8 +674,24 @@ static void HandleGameBoardResult(void)
     u32 event = GetEventFromSaveblock();
     u32 impact = GetImpactFromSaveblock();
 
+    //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
+    //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
+
     GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(gStringVar1,impact);
+
+	StoreEventToVar(event);
+	StoreImpactedSideToVar(impact);
+}
+
+static void StoreEventToVar(u32 event)
+{
+    GAME_BOARD_EVENT = event;
+}
+
+static void StoreImpactedSideToVar(u32 impact)
+{
+    GAME_BOARD_IMPACT = impact;
 }
 
 static bool32 DoGameBoardResult(u32 event, u32 impact)
@@ -2080,11 +2082,7 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
     TempSpriteTemplate.callback = SpriteCB_Dummy;
 
 	/*
-	 *Archie — Today at 8:01 PM
 So I think part of this problem might be that you're loading the spritesheet 16 times in a row even though the sprite is the same. Someone can correct me if Im wrong but Im pretty sure you shouldn't be running LoadCompressedSpriteSheet in a loop repeatedly for the same sprite, and thats why you're obj tiles are filled up completely in that last clip
-psf — Today at 8:03 PM
-I'll work on only doing that once for each unique sprite and go from there. Thanks!
-Archie — Today at 8:09 PM
 Make sure to change the tags too if you were making unique tile tags for each of the 16 sprites. You should just have one specific tag assigned to each of the 3, 2, 1 images and just loadcompressedspritesheet all three of them before any of this happens, then when you create the sprite template you just give it that tag and it should work automagically without needing to be loaded in again.
 */
 
@@ -2196,7 +2194,7 @@ static void IncrementCursorPosition(void)
 		SetCursorPosition(++position);
 
 	//DebugPrintf("mode %d",sGameBoardState->gameMode);
-	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
+	DebugPrintf("position %d",sGameBoardState->cursorPosition);
 }
 
 static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
@@ -2208,6 +2206,7 @@ static void HandleFinishMode()
 {
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
 	SelectGameBoardSpace();
+	ResetRouletteRandomFlag();
 	DestroyEventSprites();
 	PopulateEventSprites();
 	sGameBoardState->gameMode++;
@@ -2218,7 +2217,7 @@ static void HandleFinishMode()
 static void Task_GameBoard_Game(u8 taskId)
 {
 	u32 timer = sGameBoardState->timer;
-	DebugPrintf("timer %d",sGameBoardState->timer);
+	//DebugPrintf("timer %d",sGameBoardState->timer);
 
 	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
 	{

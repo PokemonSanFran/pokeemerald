@@ -46,8 +46,6 @@ script BattleArcade_RouletteRoom_EventScript_PlayGameBoard
 script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
     arcade_handlegameresult
-    arcade_getimpactedside
-    arcade_getevent
     msgbox(BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent,MSGBOX_DEFAULT)
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)

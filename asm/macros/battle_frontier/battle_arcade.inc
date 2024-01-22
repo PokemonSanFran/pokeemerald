@@ -96,18 +96,6 @@
     special CallBattleArcadeFunc
     .endm
 
-    @ Return the side that is being impacted to VAR_RESULT
-    .macro arcade_getimpactedside
-    setvar VAR_0x8004, ARCADE_FUNC_GET_IMPACT_SIDE
-    special CallBattleArcadeFunc
-    .endm
-
-    @ Return the event to VAR_RESULT
-    .macro arcade_getevent
-    setvar VAR_0x8004, ARCADE_FUNC_GET_EVENT
-    special CallBattleArcadeFunc
-    .endm
-
     @ Loads the opponent's party
     .macro arcade_generateopponentparty
     setvar VAR_0x8004, ARCADE_FUNC_GENERATE_OPPONENT

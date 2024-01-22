@@ -16,8 +16,6 @@
 #define ARCADE_FUNC_CHECK_BRAIN_STATUS         12
 #define ARCADE_FUNC_GET_BRAIN_INTRO            13
 #define ARCADE_FUNC_EVENT_CLEAN_UP             14
-#define ARCADE_FUNC_GET_IMPACT_SIDE            15
-#define ARCADE_FUNC_GET_EVENT                  16
 #define ARCADE_FUNC_PLAY_GAME_BOARD            17
 #define ARCADE_FUNC_GENERATE_OPPONENT          18
 #define ARCADE_FUNC_SET_BRAIN_OBJECT           19
@@ -142,6 +140,8 @@
 
 #define FLAG_ARCADE_SILVER_PRINT               FLAG_UNUSED_0x020
 #define FLAG_ARCADE_GOLD_PRINT                 FLAG_UNUSED_0x021
+#define FLAG_ARCADE_RANDOM_CURSOR          FLAG_UNUSED_0x022
+
 #define ARCADE_BRAIN_DEFEAT_POINTS             20
 
 #define ARCADE_BOARD_MODE_WAIT                0

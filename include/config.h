@@ -58,7 +58,6 @@
 #define BATTLE_ARCADE // Uncomment this line to enable the battle_arcade functionality.
 #ifdef BATTLE_ARCADE
 //#define ARCADE_GEN4_EFFECTS_UNBANNED //If the Battle Arcade feature is being used in a repo where Trick Room and Fog are implemented field effects, uncomment this line. Changes to BattleArcade_DoFog and BattleArcade_DoTrickRoom may be required.
-#define FLAG_ARCADE_RANDOM_CURSOR          FLAG_UNUSED_0x022
 
 #define VAR_ARCADE_BERRY                   VAR_UNUSED_0x40FA
 #define VAR_ARCADE_ITEM                    VAR_UNUSED_0x409D
