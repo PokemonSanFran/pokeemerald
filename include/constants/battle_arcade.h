@@ -33,8 +33,6 @@
 #define ARCADE_STREAK_NUM_7                    7
 #define ARCADE_STREAK_NUM_COUNT                ARCADE_STREAK_NUM_7 + 1
 
-#define ARCADE_PANEL_PROPERTIES                0
-
 #define ARCADE_BP_SMALL                        1
 #define ARCADE_BP_BASE                         2
 #define ARCADE_BP_BIG                          3
@@ -157,7 +155,7 @@
 #define ARCADE_BOARD_GAME_SECONDS              30
 #define ARCADE_BOARD_GAME_TIMER                ARCADE_BOARD_GAME_SECONDS * ARCADE_FRAMES_PER_SECOND
 
-#define ARCADE_GFXTAG                   1000
+#define ARCADE_GFXTAG_EVENT              1000
 #define ARCADE_GFXTAG_LOWER_HP          ARCADE_GFXTAG + ARCADE_EVENT_LOWER_HP
 #define ARCADE_GFXTAG_POISON            ARCADE_GFXTAG + ARCADE_EVENT_POISON
 #define ARCADE_GFXTAG_PARALYZE          ARCADE_GFXTAG + ARCADE_EVENT_PARALYZE

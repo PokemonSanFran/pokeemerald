@@ -639,7 +639,20 @@ static void GenerateGameBoard(void)
     {
         sGameBoard[i].impact = GenerateImpact();
         sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
-        //DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
+        DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
+    }
+}
+
+static void FloodGameBoard(u32 impact, u32 event)
+{
+    u32 i;
+
+	DebugPrintf("event is %d", event);
+
+    for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
+    {
+        sGameBoard[i].impact = impact;
+        sGameBoard[i].event = event;
     }
 }
 
@@ -660,9 +673,8 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	*event = ARCADE_EVENT_LEVEL_UP;
-
-    //DebugPrintf("-----------------------");
+	//*event = ARCADE_EVENT_LEVEL_UP;
+    DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
 
@@ -1198,6 +1210,7 @@ void DoSpecialRouletteTrainerBattle(void)
 
 static void ResetLevelsToOriginal(void)
 {
+	//ARCADE TODO after the challenge, these are not reset to normal
 	struct Pokemon *frontierMon;
 	struct Pokemon *playerMon;
 	u32 playerMonLevel, frontierMonLevel, i, monId;
@@ -1756,6 +1769,7 @@ static void Task_GameBoard_Game(u8);
 static void SelectGameBoardSpace(u32*, u32*);
 static void HandleFinishMode();
 static void Task_GameBoard_CleanUp(u8 taskId);
+static void LoadTileSpriteSheets(void);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
@@ -1926,7 +1940,6 @@ static void Task_GameBoardMainInput(u8 taskId)
 	switch (GetGameBoardMode())
 	{
 		case ARCADE_BOARD_MODE_WAIT:
-			HideBg(BG_BOARD_BACKGROUND);
 			StartCountdown();
 			break;
 		case ARCADE_BOARD_MODE_GAME_START:
@@ -1939,6 +1952,7 @@ static void Task_GameBoardMainInput(u8 taskId)
 
 static void StartCountdown(void)
 {
+	HideBg(BG_BOARD_BACKGROUND);
 	sGameBoardState->gameMode++;
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
 	PopulateEventSprites();
@@ -1955,6 +1969,8 @@ static void PopulateEventSprites(void)
 {
 	u32 space, rowIndex, columnIndex, x, y;
 
+	LoadTileSpriteSheets();
+
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
 	{
         rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
@@ -1966,14 +1982,16 @@ static void PopulateEventSprites(void)
     }
 }
 
-static const u8 GetTileTag(u32 event)
+static const u16 GetTileTag(u32 space)
 {
 	u32 mode = GetGameBoardMode();
+	DebugPrintf("During GetTileTag the space is %d",space);
+	DebugPrintf("During GetTileTag the event is %d",sGameBoard[space].event);
 
 	if (mode < ARCADE_BOARD_MODE_GAME_START)
 		return mode + ARCADE_GFXTAG_COUNTDOWN;
 	else
-		return event + ARCADE_GFXTAG;
+		return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
 }
 
 static const u32* GetEventGfx(u32 event)
@@ -2032,11 +2050,27 @@ static const u16 GetSpacePalette(u32 space)
 	u32 mode = GetGameBoardMode();
 }
 
+static void LoadTileSpriteSheets(void)
+{
+	u32 space = ((GetGameBoardMode() != ARCADE_BOARD_MODE_GAME_START) ? 1 : ARCADE_GAME_BOARD_SPACES);
+	u32 i;
+
+	//DebugPrintf("LoadTileSpriteSheets");
+
+	for (i = 0; i < space; i++)
+	{
+		u16 TileTag = GetTileTag(i);
+		const u32 *gfx = GetTileGfx(i);
+		struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
+		LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
+		DebugPrintf("LoadCompressedSpriteSheet tileTag%d",TileTag);
+	}
+}
+
 static u8 CreateEventSprite(u32 x, u32 y, u32 space)
 {
     u32 spriteId;
-	u8 TileTag = GetTileTag(sGameBoard[space].event);
-	const u32 *gfx = GetTileGfx(space);
+	u16 TileTag = GetTileTag(space);
 	//const u16 palette = GetSpacePalette(space);
 	/*
     const struct SpritePalette sGlassInterfaceSpritePalette[] =
@@ -2045,18 +2079,11 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
     };
 	*/
 
-    struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0800, TileTag};
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
-
     TempSpriteTemplate.tileTag = TileTag;
     TempSpriteTemplate.callback = SpriteCB_Dummy;
+	//DebugPrintf("CreateEventSprite %d",TileTag);
 
-	/*
-So I think part of this problem might be that you're loading the spritesheet 16 times in a row even though the sprite is the same. Someone can correct me if Im wrong but Im pretty sure you shouldn't be running LoadCompressedSpriteSheet in a loop repeatedly for the same sprite, and thats why you're obj tiles are filled up completely in that last clip
-Make sure to change the tags too if you were making unique tile tags for each of the 16 sprites. You should just have one specific tag assigned to each of the 3, 2, 1 images and just loadcompressedspritesheet all three of them before any of this happens, then when you create the sprite template you just give it that tag and it should work automagically without needing to be loaded in again.
-*/
-
-    LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
     //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
     spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
 
@@ -2097,10 +2124,10 @@ static void Task_GameBoard_Countdown(u8 taskId)
 			sGameBoardState->gameMode++;
 			DestroyEventSprites();
 			PopulateEventSprites();
+			//CreateCursor
 			StartGame();
 			DestroyTask(taskId);
 			break;
-			//CreateCursor
 		default:
 			break;
 	}
@@ -2164,7 +2191,7 @@ static void IncrementCursorPosition(void)
 		SetCursorPosition(++position);
 
 	//DebugPrintf("mode %d",sGameBoardState->gameMode);
-	DebugPrintf("position %d",sGameBoardState->cursorPosition);
+	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
 }
 
 static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
@@ -2178,11 +2205,12 @@ static void HandleFinishMode()
 
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
 	SelectGameBoardSpace(&impact,&event);
+	FloodGameBoard(impact,event);
 	HandleGameBoardResult(impact,event);
 	ResetRouletteRandomFlag();
 	DestroyEventSprites();
-	PopulateEventSprites();
 	sGameBoardState->gameMode++;
+	PopulateEventSprites();
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
 	CreateTask(Task_GameBoard_CleanUp,0);
 }
@@ -2193,18 +2221,10 @@ static void Task_GameBoard_Game(u8 taskId)
 	//DebugPrintf("timer %d",sGameBoardState->timer);
 
 	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
-	{
 		HandleFinishMode();
-		return;
-	}
-
-	if (timer == 0)
-	{
+	else if (timer == 0)
 		sGameBoardState->gameMode++;
-		return;
-	}
-
-	if (ShouldCursorMove(timer))
+	else if (ShouldCursorMove(timer))
 		IncrementCursorPosition();
 
 	sGameBoardState->timer--;

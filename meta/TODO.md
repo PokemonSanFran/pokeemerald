@@ -15,10 +15,10 @@ this feature started on nov 18
 //add battle effect (copy from expansion?)
 //randomly pick a battle effect
 copy slot machine to make arcade board
-show parties on arcade board
-implement stopping on a specific space and running that arcade effect
-implement speed up
-implement slow down
+//show parties on arcade board
+//implement stopping on a specific space and running that arcade effect
+//implement speed up
+//implement slow down
 bug fixes
 handle ARCADE TODO
 add all the text for multi link partner, but she denies you from entering
