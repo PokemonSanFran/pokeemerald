@@ -1770,6 +1770,7 @@ static void HandleFinishMode();
 static void Task_GameBoard_CleanUp(u8 taskId);
 static void LoadTileSpriteSheets(void);
 static void CreateGameBoardCursor(void);
+static void CalculateTilePosition(u32 space, u32* x, u32* y);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
@@ -1974,11 +1975,7 @@ static void PopulateEventSprites(void)
 
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
 	{
-        rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-        columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-        x = 50 + columnIndex * 40;
-        y = 10 + rowIndex * 35;
-
+		CalculateTilePosition(space,&x,&y);
         sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
     }
 }
@@ -2105,17 +2102,22 @@ static void DestroyEventSprites(void)
 }
 
 // ARCADE TODO remembe rlast cursor position and start there
-//
-static void SpriteCB_Cursor(struct Sprite *sprite)
+static void CalculateTilePosition(u32 space, u32* x, u32* y)
 {
-	u32 space = GetCursorPosition();
 	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
     u32 columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-    u32 x = columnIndex * 40;
-    u32 y = rowIndex * 35;
+    *x = 50 + columnIndex * 40;
+    *y = 10 + rowIndex * 35;
+}
 
-	sprite->x2 = x;
-    sprite->y2 = y;
+
+static void SpriteCB_Cursor(struct Sprite *sprite)
+{
+	u32 x, y;
+	CalculateTilePosition(GetCursorPosition(),&x,&y);
+
+	sprite->x2 = x - 50;
+    sprite->y2 = y - 10;
 }
 
 static void CreateGameBoardCursor(void)
