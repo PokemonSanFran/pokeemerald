@@ -673,7 +673,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	*event = ARCADE_EVENT_LEVEL_UP;
+	//*event = ARCADE_EVENT_LEVEL_UP;
     DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -2108,7 +2108,14 @@ static void DestroyEventSprites(void)
 //
 static void SpriteCB_Cursor(struct Sprite *sprite)
 {
+	u32 space = GetCursorPosition();
+	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+    u32 columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+    u32 x = columnIndex * 40;
+    u32 y = rowIndex * 35;
 
+	sprite->x2 = x;
+    sprite->y2 = y;
 }
 
 static void CreateGameBoardCursor(void)
@@ -2130,7 +2137,7 @@ static void CreateGameBoardCursor(void)
 	*/
 
     TempSpriteTemplate.tileTag = TileTag;
-    TempSpriteTemplate.callback = SpriteCB_Dummy;
+    TempSpriteTemplate.callback = SpriteCB_Cursor;
 
     //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
     spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
@@ -2138,13 +2145,6 @@ static void CreateGameBoardCursor(void)
     gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
     gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
     gSprites[spriteId].oam.priority = 0;
-
-	/*
-	   rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-	   columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-	   x = 50 + columnIndex * 40;
-	   y = 10 + rowIndex * 35;
-	   */
 
 }
 
@@ -2174,27 +2174,21 @@ static void Task_GameBoard_Countdown(u8 taskId)
 	}
 }
 
-static const u32 ReturnCursorWait(u32 speed)
+static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
 {
-	switch (speed)
-	{
-		case ARCADE_SPEED_LEVEL_7:
-			return 20;
-		case ARCADE_SPEED_LEVEL_6:
-			return 16;
-		case ARCADE_SPEED_LEVEL_5:
-			return 8;
-		case ARCADE_SPEED_LEVEL_4:
-			return 4;
-		case ARCADE_SPEED_LEVEL_3:
-			return 3;
-		case ARCADE_SPEED_LEVEL_2:
-			return 2;
-		case ARCADE_SPEED_LEVEL_1:
-			return 1;
-		default:
-			return 0;
-	}
+	20,  // ARCADE_SPEED_LEVEL_0
+	16,  // ARCADE_SPEED_LEVEL_1
+	8,   // ARCADE_SPEED_LEVEL_2
+	3,   // ARCADE_SPEED_LEVEL_3
+	4,   // ARCADE_SPEED_LEVEL_4 (default)
+	2,   // ARCADE_SPEED_LEVEL_5
+	1,   // ARCADE_SPEED_LEVEL_6
+	0    // ARCADE_SPEED_LEVEL_7
+};
+
+u32 ReturnCursorWait(u32 speed)
+{
+    return cursorWaitTable[speed];
 }
 
 static bool32 ShouldCursorMove(u32 timer)
