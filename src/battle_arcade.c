@@ -142,6 +142,9 @@ static void FieldShowBattleArcadeRecords(void);
 static void PlayGameBoard(void);
 static void Task_OpenGameBoard(u8);
 static u32 GetCursorPosition(void);
+static void InitCursorPositionFromSaveblock(void);
+static void SaveCursorPositionToSaveblock(void);
+static void ResetCursorPositionOnSaveblock(void);
 
 //Record Printing
 static const u8 *BattleArcade_GenerateRecordName(void);
@@ -202,6 +205,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
 
+	ResetCursorPositionOnSaveblock();
     ResetRouletteSpeed();
     ResetRouletteRandomFlag();
     ResetFrontierTrainerIds();
@@ -1963,6 +1967,7 @@ static void StartCountdown(void)
 static void StartGame(void)
 {
 	sGameBoardState->timer = 10 * ARCADE_BOARD_GAME_TIMER;
+	InitCursorPositionFromSaveblock();
 	CreateGameBoardCursor();
 	CreateTask(Task_GameBoard_Game, 0);
 }
@@ -2101,7 +2106,6 @@ static void DestroyEventSprites(void)
     }
 }
 
-// ARCADE TODO remembe rlast cursor position and start there
 static void CalculateTilePosition(u32 space, u32* x, u32* y)
 {
 	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
@@ -2167,7 +2171,6 @@ static void Task_GameBoard_Countdown(u8 taskId)
 			sGameBoardState->gameMode++;
 			DestroyEventSprites();
 			PopulateEventSprites();
-			//CreateCursor
 			StartGame();
 			DestroyTask(taskId);
 			break;
@@ -2213,6 +2216,21 @@ static void SetCursorPosition(u32 value)
 	sGameBoardState->cursorPosition = value;
 }
 
+static void InitCursorPositionFromSaveblock(void)
+{
+	sGameBoardState->cursorPosition = FRONTIER_SAVEDATA.arcadeCursorPosition;
+}
+
+static void SaveCursorPositionToSaveblock(void)
+{
+	FRONTIER_SAVEDATA.arcadeCursorPosition = GetCursorPosition();
+}
+
+static void ResetCursorPositionOnSaveblock(void)
+{
+	FRONTIER_SAVEDATA.arcadeCursorPosition = 0;
+}
+
 static void IncrementCursorPosition(void)
 {
 	u32 position;
@@ -2243,6 +2261,7 @@ static void HandleFinishMode()
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
 	SelectGameBoardSpace(&impact,&event);
 	HandleGameBoardResult(impact,event);
+	SaveCursorPositionToSaveblock();
 	ResetRouletteRandomFlag();
 	DestroyEventSprites();
 	PopulateEventSprites();
