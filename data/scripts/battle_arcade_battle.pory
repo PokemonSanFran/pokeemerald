@@ -17,7 +17,6 @@ script BattleFrontier_RouletteRoom_EventScript_BeginChallenge
 script BattleFrontier_RouletteRoom_EventScript_TakePlayerItems
 {
     msgbox(BattleArcade_RouletteRoom_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
-	arcade_takeplayerhelditems
 }
 
 script BattleArcade_RouletteRoom_EventScript_BufferNextBattleNumber

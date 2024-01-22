@@ -164,7 +164,6 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
 	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = CalculateGiveChallengeBattlePoints,
 	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
-	[ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
 	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
@@ -204,9 +203,11 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.curChallengeBattleNum = 0;
     FRONTIER_SAVEDATA.challengePaused = FALSE;
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
+
     ResetRouletteSpeed();
     ResetRouletteRandomFlag();
     ResetFrontierTrainerIds();
+	TakePlayerHeldItems();
 	GenerateItemsToBeGiven();
     FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
@@ -315,11 +316,6 @@ static void SaveArcadeChallenge(void)
     VarSet(VAR_FACILITY_CHALLENGE_STATUS, 0);
     FRONTIER_SAVEDATA.challengePaused = TRUE;
     SaveGameFrontier();
-}
-
-static void GetOpponentIntroSpeech(void)
-{
-    FrontierSpeechToString(gFacilityTrainers[gTrainerBattleOpponent_A].speechBefore);
 }
 
 static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =

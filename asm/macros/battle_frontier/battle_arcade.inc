@@ -34,12 +34,6 @@
 	special CallBattleArcadeFunc
 	.endm
 
-	@ Buffer the opponent's easy chat intro speech to STR_VAR_4
-	.macro arcade_getopponentintro
-	setvar VAR_0x8004, ARCADE_FUNC_GET_OPPONENT_INTRO
-	special CallBattleArcadeFunc
-	.endm
-
 	@ Awards battle points depending on the number of wins and if that type has already been completed
 	.macro arcade_givepoints
 	setvar VAR_0x8004, ARCADE_FUNC_GIVE_BATTLE_POINTS
@@ -49,12 +43,6 @@
     @ Check the number of types the player has previously won and sets VAR_RESULT to TRUE if the player has not have the appropriate symbol but has qualified for it
     .macro arcade_checksymbol
     setvar VAR_0x8004, ARCADE_FUNC_CHECK_SYMBOL
-    special CallBattleArcadeFunc
-    .endm
-
-    @ Delete all the held items in the player's party
-    .macro arcade_takeplayerhelditems
-    setvar VAR_0x8004, ARCADE_FUNC_TAKE_PLAYER_ITEMS
     special CallBattleArcadeFunc
     .endm
 

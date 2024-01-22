@@ -7,10 +7,8 @@
 #define ARCADE_FUNC_SET_BATTLE_WON             3
 #define ARCADE_FUNC_SAVE                       4
 #define ARCADE_FUNC_SET_OPPONENT               5
-#define ARCADE_FUNC_GET_OPPONENT_INTRO         6
 #define ARCADE_FUNC_GIVE_BATTLE_POINTS         7
 #define ARCADE_FUNC_CHECK_SYMBOL               8
-#define ARCADE_FUNC_TAKE_PLAYER_ITEMS          9
 #define ARCADE_FUNC_TAKE_ENEMY_ITEMS           10
 #define ARCADE_FUNC_HANDLE_GAME_RESULT         11
 #define ARCADE_FUNC_CHECK_BRAIN_STATUS         12
