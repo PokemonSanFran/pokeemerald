@@ -2122,12 +2122,14 @@ static void SpriteCB_Cursor(struct Sprite *sprite)
 
 	sprite->x2 = x - 50;
     sprite->y2 = y - 10;
+	sprite->subpriority = 0;
 }
 
 static void CreateGameBoardCursor(void)
 {
 	u16 TileTag = ARCADE_GFXTAG_CURSOR;
 	u32 spriteId;
+	u32 x, y;
 
 	struct CompressedSpriteSheet sSpriteSheet_Cursor = {sCursorYellow, 0x0800, TileTag};
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
@@ -2146,12 +2148,12 @@ static void CreateGameBoardCursor(void)
     TempSpriteTemplate.callback = SpriteCB_Cursor;
 
     //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
-    spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
+	CalculateTilePosition(GetCursorPosition(),&x,&y);
+    spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
 
     gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
     gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
-    gSprites[spriteId].oam.priority = 0;
-
+    gSprites[spriteId].oam.priority = 1;
 }
 
 static void Task_GameBoard_Countdown(u8 taskId)
@@ -2193,6 +2195,7 @@ static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
 
 u32 ReturnCursorWait(u32 speed)
 {
+	return 20;
     return cursorWaitTable[speed];
 }
 
@@ -2476,18 +2479,9 @@ static void PrintPlayerParty(void)
 }
 
 // Arcade Board
-// generate game board DONE
-// figure out arcade speed DONE
-// fade into  game board with arcade logo and parties on both sides DONE
-// press a button to start
-// countdown from 3 2 1
 // cursor changes color with every event that it moves to
-// how does the cursor choose where to start? TODO
-// cursor is on random spot, moves one to the right every "tick"
 // entire screen is glowing white as its happening
-// pressing A stops cursor and all icons change to that cursor
-// not pressing a for 30 seconds will auto stop cursor
 // cursor glows for a bit
-// screen fades out
+
 
 #endif
