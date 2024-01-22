@@ -86,7 +86,7 @@ static void CheckArcadeSymbol(void);
 static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
 static struct Pokemon *LoadSideParty(u32);
-static void HandleGameBoardResult(u32);
+static void HandleGameBoardResult(u32, u32);
 static void GenerateOpponentParty(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
@@ -166,7 +166,6 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
 	[ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	//[ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
 	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
 	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
@@ -644,23 +643,23 @@ static void GenerateGameBoard(void)
     }
 }
 
-static void SelectGameBoardSpace(u32 *passImpact)
+static void SelectGameBoardSpace(u32 *impact, u32 *event)
 {
     u32 space = GetCursorPosition();
-    u32 impact = sGameBoard[space].impact;
-    u32 event = sGameBoard[space].event;
+    u32 spaceImpact = sGameBoard[space].impact;
+    u32 spaceEvent = sGameBoard[space].event;
 
-    if (event == ARCADE_EVENT_RANDOM)
+    if (spaceEvent == ARCADE_EVENT_RANDOM)
     {
         do
         {
-            impact = GenerateImpact();
-            event = GenerateEvent(impact);
-        } while (event == ARCADE_EVENT_RANDOM);
+            spaceImpact = GenerateImpact();
+            spaceEvent = GenerateEvent(spaceImpact);
+        } while (spaceEvent == ARCADE_EVENT_RANDOM);
     }
 
-	*passImpact = impact;
-    StoreEventToSaveblock(event);
+	*impact = spaceImpact;
+	*event = spaceEvent;
 
     //DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
@@ -671,16 +670,14 @@ static void GenerateOpponentParty(void)
     FillFrontierTrainerParties();
 }
 
-static void HandleGameBoardResult(u32 impact)
+static void HandleGameBoardResult(u32 impact, u32 event)
 {
-    u32 event = GetEventFromSaveblock();
-
     //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
     //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
-
     GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(gStringVar1,impact);
 
+    StoreEventToSaveblock(event);
 	StoreEventToVar(event);
 	StoreImpactedSideToVar(impact);
 }
@@ -1773,7 +1770,7 @@ static void SpriteCB_Dummy(struct Sprite *sprite);
 static u8 CreateEventSprite(u32 x, u32 y, u32 space);
 static void Task_GameBoard_Countdown(u8);
 static void Task_GameBoard_Game(u8);
-static void SelectGameBoardSpace(u32*);
+static void SelectGameBoardSpace(u32*, u32*);
 static void HandleFinishMode();
 static void Task_GameBoard_CleanUp(u8 taskId);
 
@@ -2195,11 +2192,11 @@ static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
 
 static void HandleFinishMode()
 {
-	u32 impact = 0;
+	u32 impact = 0, event = 0;
 
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
-	SelectGameBoardSpace(&impact);
-	HandleGameBoardResult(impact);
+	SelectGameBoardSpace(&impact,&event);
+	HandleGameBoardResult(impact,event);
 	ResetRouletteRandomFlag();
 	DestroyEventSprites();
 	PopulateEventSprites();
