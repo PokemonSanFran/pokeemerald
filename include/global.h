@@ -353,12 +353,6 @@ struct BattleDomeTrainer
     u16 forfeited:3;
 };
 
-struct GameResult
-{
-    u8 impact:2;
-    u8 event:5;
-};
-
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 #define BATTLE_TOWER_RECORD_COUNT 5
 
@@ -446,11 +440,10 @@ struct BattleFrontier
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
 #ifdef BATTLE_ARCADE
-    /*0xD07*/ u8 arcadeLvlMode;
     /*0xCE0*/ u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
     /*0xCF0*/ u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
     u8 arcadeLvlDiff[MAX_FRONTIER_PARTY_SIZE];
-    struct GameResult arcadeGameResult;
+    u8 arcadeGameEventResult:5;
 #endif
 };
 

@@ -45,7 +45,6 @@ script BattleArcade_RouletteRoom_EventScript_PlayGameBoard
 
 script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
-    arcade_handlegameresult
     msgbox(BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent,MSGBOX_DEFAULT)
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)
@@ -219,13 +218,13 @@ script BattleArcade_RouletteRoom_EventScript_DoRouletteBattle
 script BattleArcade_RouletteRoom_EventScript_WarpToLobbyLost
 {
 	call(BattleArcade_RouletteRoom_EventScript_SaveLost)
-    goto(BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp)
+    goto(BattleArcade_RouletteRoom_EventScript_WarpToLobby)
 }
 
 script BattleArcade_RouletteRoom_EventScript_WarpToLobbyWon
 {
 	call(BattleArcade_RouletteRoom_EventScript_SaveWon)
-    goto(BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp)
+    goto(BattleArcade_RouletteRoom_EventScript_WarpToLobby)
 }
 
 script BattleArcade_RouletteRoom_EventScript_DefeatedOpponent
@@ -372,12 +371,6 @@ script BattleArcade_RouletteRoom_EventScript_ContinueChallenge
 {
     closemessage
     goto(BattleArcade_RouletteRoom_EventScript_BattleOpponent)
-}
-
-script BattleArcade_RouletteRoom_EventScript_SetLevelModeAndWarp
-{
-    arcade_set(ARCADE_DATA_LVL_MODE)
-    goto(BattleArcade_RouletteRoom_EventScript_WarpToLobby)
 }
 
 script BattleArcade_RouletteRoom_EventScript_WarpToLobby

@@ -86,7 +86,7 @@ static void CheckArcadeSymbol(void);
 static void TakePlayerHeldItems(void);
 static void TakeEnemyHeldItems(void);
 static struct Pokemon *LoadSideParty(u32);
-static void HandleGameBoardResult(void);
+static void HandleGameBoardResult(u32);
 static void GenerateOpponentParty(void);
 static void GetBrainStatus(void);
 static void GetBrainIntroSpeech(void);
@@ -94,7 +94,6 @@ static void BattleArcade_PostBattleEventCleanup(void);
 static void BufferImpactedName(u8*, u32);
 static void ShowBattleArcadeTypeWinsWindow(void);
 static void CloseBattleArcadeTypeWinsWindow(void);
-u32 GetImpactFromSaveblock(void);
 static void ShowBattleArcadeTypeMonsWindow(void);
 static void CloseBattleArcadeTypeMonsWindow(void);
 static void InitBattleArcadeMons(void);
@@ -167,7 +166,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
 	[ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	[ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
+	//[ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
 	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
 	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
@@ -239,9 +238,6 @@ static void GetArcadeData(void)
         break;
     case ARCADE_DATA_WIN_STREAK_ACTIVE:
         gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]));
-        break;
-    case ARCADE_DATA_LVL_MODE:
-        FRONTIER_SAVEDATA.arcadeLvlMode = FRONTIER_SAVEDATA.lvlMode;
         break;
     }
 }
@@ -586,24 +582,24 @@ static u32 GenerateEvent(u32 impact)
     return event;
 }
 
-static void StoreImpactToSaveblock(u32 impact)
-{
-    FRONTIER_SAVEDATA.arcadeGameResult.impact = impact;
-}
-
 static void StoreEventToSaveblock(u32 event)
 {
-    FRONTIER_SAVEDATA.arcadeGameResult.event = event;
-}
-
-u32 GetImpactFromSaveblock(void)
-{
-    return FRONTIER_SAVEDATA.arcadeGameResult.impact;
+    FRONTIER_SAVEDATA.arcadeGameEventResult = event;
 }
 
 u32 GetEventFromSaveblock(void)
 {
-    return FRONTIER_SAVEDATA.arcadeGameResult.event;
+    return FRONTIER_SAVEDATA.arcadeGameEventResult;
+}
+
+static bool32 IsCurrentEventLevelUp(void)
+{
+     return (GetEventFromSaveblock() == ARCADE_EVENT_LEVEL_UP);
+}
+
+static bool32 IsEventSwap(void)
+{
+     return (GetEventFromSaveblock() == ARCADE_EVENT_SWAP);
 }
 
 static bool32 IsEventBanned(u32 event)
@@ -628,6 +624,12 @@ static bool32 DoesEventGiveItems(u32 event)
     return TRUE;
 }
 
+struct GameResult
+{
+    u8 impact:2;
+    u8 event:5;
+};
+
 static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
 
 static void GenerateGameBoard(void)
@@ -642,7 +644,7 @@ static void GenerateGameBoard(void)
     }
 }
 
-static void SelectGameBoardSpace(void)
+static void SelectGameBoardSpace(u32 *passImpact)
 {
     u32 space = GetCursorPosition();
     u32 impact = sGameBoard[space].impact;
@@ -657,7 +659,7 @@ static void SelectGameBoardSpace(void)
         } while (event == ARCADE_EVENT_RANDOM);
     }
 
-    StoreImpactToSaveblock(impact);
+	*passImpact = impact;
     StoreEventToSaveblock(event);
 
     //DebugPrintf("-----------------------");
@@ -669,10 +671,9 @@ static void GenerateOpponentParty(void)
     FillFrontierTrainerParties();
 }
 
-static void HandleGameBoardResult(void)
+static void HandleGameBoardResult(u32 impact)
 {
     u32 event = GetEventFromSaveblock();
-    u32 impact = GetImpactFromSaveblock();
 
     //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
     //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
@@ -1212,16 +1213,6 @@ void DoSpecialRouletteTrainerBattle(void)
     CreateTask(Task_StartBattleAfterTransition, 1);
     PlayMapChosenOrBattleBGM(0);
     BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
-}
-
-static bool32 IsCurrentEventLevelUp(void)
-{
-     return (GetEventFromSaveblock() == ARCADE_EVENT_LEVEL_UP);
-}
-
-static bool32 IsEventSwap(void)
-{
-     return (GetEventFromSaveblock() == ARCADE_EVENT_SWAP);
 }
 
 static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)
@@ -1782,7 +1773,7 @@ static void SpriteCB_Dummy(struct Sprite *sprite);
 static u8 CreateEventSprite(u32 x, u32 y, u32 space);
 static void Task_GameBoard_Countdown(u8);
 static void Task_GameBoard_Game(u8);
-static void SelectGameBoardSpace(void);
+static void SelectGameBoardSpace(u32*);
 static void HandleFinishMode();
 static void Task_GameBoard_CleanUp(u8 taskId);
 
@@ -2204,8 +2195,11 @@ static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
 
 static void HandleFinishMode()
 {
+	u32 impact = 0;
+
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
-	SelectGameBoardSpace();
+	SelectGameBoardSpace(&impact);
+	HandleGameBoardResult(impact);
 	ResetRouletteRandomFlag();
 	DestroyEventSprites();
 	PopulateEventSprites();

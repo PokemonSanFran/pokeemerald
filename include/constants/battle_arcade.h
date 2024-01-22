@@ -24,7 +24,6 @@
 
 #define ARCADE_DATA_WIN_STREAK                 1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE          2
-#define ARCADE_DATA_LVL_MODE                   3
 
 #define ARCADE_STREAK_NUM_0                    0
 #define ARCADE_STREAK_NUM_1                    1
