@@ -108,7 +108,6 @@ static void PrintArcadeStreak(const u8*, u16, u8, u8);
 static bool32 IsEventBanned(u32 event);
 static u32 GetChallengeNumIndex(void);
 static void StoreEventToVar(void);
-static void PlayGameBoard(void);
 u16 GetCurrentBattleArcadeWinStreak(void);
 static u32 BattleArcade_GenerateGive(u32 type);
 static void BufferGiveString(u32);
@@ -142,7 +141,9 @@ static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
 static void BattleArcade_GetNextPrint(void);
 static void FieldShowBattleArcadeRecords(void);
-void Task_OpenGameBoard(u8);
+static void PlayGameBoard(void);
+static void Task_OpenGameBoard(u8);
+static u32 GetCursorPosition(void);
 
 //Record Printing
 static const u8 *BattleArcade_GenerateRecordName(void);
@@ -166,13 +167,13 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
 	[ARCADE_FUNC_TAKE_PLAYER_ITEMS]      = TakePlayerHeldItems,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
 	[ARCADE_FUNC_HANDLE_GAME_RESULT]     = HandleGameBoardResult,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
 	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
 	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
 	[ARCADE_FUNC_GET_IMPACT_SIDE]        = StoreImpactedSideToVar,
 	[ARCADE_FUNC_GET_EVENT]              = StoreEventToVar,
+	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
 	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetNextPrint,
@@ -657,7 +658,7 @@ static void GenerateGameBoard(void)
 
 static void SelectGameBoardSpace(void)
 {
-    u32 space = Random() % ARCADE_GAME_BOARD_SPACES;
+    u32 space = GetCursorPosition();
     u32 impact = sGameBoard[space].impact;
     u32 event = sGameBoard[space].event;
 
@@ -674,13 +675,7 @@ static void SelectGameBoardSpace(void)
     StoreEventToSaveblock(event);
 
     //DebugPrintf("-----------------------");
-    //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
-}
-
-static void PlayGameBoard(void)
-{
-    GenerateGameBoard();
-    SelectGameBoardSpace();
+    DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
 
 static void GenerateOpponentParty(void)
@@ -1106,15 +1101,15 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
         return TRUE;
 
     if (mode == ARCADE_EVENT_SPEED_UP)
-        ++currentSpeed;
+		currentSpeed++;
     else
-        --currentSpeed;
+		currentSpeed--;
 
     VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed);
     return TRUE;
 }
 
-static bool32 GetCursorSpeed(void)
+static u32 GetCursorSpeed(void)
 {
 	return (VarGet(VAR_ARCADE_CURSOR_SPEED));
 }
@@ -1626,8 +1621,8 @@ static void InitRecordsWindow(void)
 void FieldShowBattleArcadeRecords(void)
 {
 	u8 taskId;
-	Task_OpenGameBoard(taskId);
-    //SetMainCallback2(CB2_ShowRecords);
+	//Task_OpenGameBoard(taskId);
+    SetMainCallback2(CB2_ShowRecords);
     LockPlayerFieldControls();
 }
 
@@ -1784,6 +1779,10 @@ static void PopulateEventSprites(void);
 static void SpriteCB_Dummy(struct Sprite *sprite);
 static u8 CreateEventSprite(u32 x, u32 y, u32 space);
 static void Task_GameBoard_Countdown(u8);
+static void Task_GameBoard_Game(u8);
+static void SelectGameBoardSpace(void);
+static void HandleFinishMode();
+static void Task_GameBoard_CleanUp(u8 taskId);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
@@ -1823,13 +1822,18 @@ static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_g
 static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
 static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_orange.4bpp.lz");
 
+static void PlayGameBoard(void)
+{
+    CreateTask(Task_OpenGameBoard, 0);
+}
+
 void Task_OpenGameBoard(u8 taskId)
 {
 	if (gPaletteFade.active)
 		return;
 
 	CleanupOverworldWindowsAndTilemaps();
-	GameBoard_Init(CB2_ReturnToFieldWithOpenMenu);
+	GameBoard_Init(CB2_ReturnToFieldContinueScript);
 	DestroyTask(taskId);
 }
 
@@ -1942,7 +1946,6 @@ static u32 GetGameBoardMode(void)
 
 static void Task_GameBoardMainInput(u8 taskId)
 {
-
     if (!JOY_NEW(A_BUTTON))
 		return;
 
@@ -1952,8 +1955,10 @@ static void Task_GameBoardMainInput(u8 taskId)
 		case ARCADE_BOARD_MODE_WAIT:
 			HideBg(BG_BOARD_BACKGROUND);
 			StartCountdown();
+			break;
 		case ARCADE_BOARD_MODE_GAME_START:
-			//SelectEventFinishGame();
+			HandleFinishMode();
+			break;
 		default:
 			return;
 	}
@@ -1965,6 +1970,12 @@ static void StartCountdown(void)
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
 	PopulateEventSprites();
 	CreateTask(Task_GameBoard_Countdown, 0);
+}
+
+static void StartGame(void)
+{
+	sGameBoardState->timer = ARCADE_BOARD_GAME_TIMER;
+	CreateTask(Task_GameBoard_Game, 0);
 }
 
 static void PopulateEventSprites(void)
@@ -1994,7 +2005,7 @@ static const u8 GetTileTag(u32 event)
 
 static const u32* GetEventGfx(u32 event)
 {
-	DebugPrintf("event is %d",event);
+	//DebugPrintf("event is %d",event);
 	switch (event)
 	{
 		case ARCADE_EVENT_LOWER_HP: return sEventLowerHp;
@@ -2068,6 +2079,15 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
     TempSpriteTemplate.tileTag = TileTag;
     TempSpriteTemplate.callback = SpriteCB_Dummy;
 
+	/*
+	 *Archie — Today at 8:01 PM
+So I think part of this problem might be that you're loading the spritesheet 16 times in a row even though the sprite is the same. Someone can correct me if Im wrong but Im pretty sure you shouldn't be running LoadCompressedSpriteSheet in a loop repeatedly for the same sprite, and thats why you're obj tiles are filled up completely in that last clip
+psf — Today at 8:03 PM
+I'll work on only doing that once for each unique sprite and go from there. Thanks!
+Archie — Today at 8:09 PM
+Make sure to change the tags too if you were making unique tile tags for each of the 16 sprites. You should just have one specific tag assigned to each of the 3, 2, 1 images and just loadcompressedspritesheet all three of them before any of this happens, then when you create the sprite template you just give it that tag and it should work automagically without needing to be loaded in again.
+*/
+
     LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
     //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
     spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
@@ -2109,12 +2129,126 @@ static void Task_GameBoard_Countdown(u8 taskId)
 			sGameBoardState->gameMode++;
 			DestroyEventSprites();
 			PopulateEventSprites();
+			StartGame();
 			DestroyTask(taskId);
 			break;
 			//CreateCursor
 		default:
 			break;
 	}
+}
+
+static const u32 ReturnCursorWait(u32 speed)
+{
+	switch (speed)
+	{
+		case ARCADE_SPEED_LEVEL_7:
+			return 20;
+		case ARCADE_SPEED_LEVEL_6:
+			return 16;
+		case ARCADE_SPEED_LEVEL_5:
+			return 8;
+		case ARCADE_SPEED_LEVEL_4:
+			return 4;
+		case ARCADE_SPEED_LEVEL_3:
+			return 3;
+		case ARCADE_SPEED_LEVEL_2:
+			return 2;
+		case ARCADE_SPEED_LEVEL_1:
+			return 1;
+		default:
+			return 0;
+	}
+}
+
+static bool32 ShouldCursorMove(u32 timer)
+{
+	u32 cursorWaitValue = ReturnCursorWait(GetCursorSpeed());
+
+	if (cursorWaitValue == 0)
+		return TRUE;
+
+	return (timer % cursorWaitValue == 0);
+}
+
+static u32 GetCursorPosition(void)
+{
+	return sGameBoardState->cursorPosition;
+}
+
+static void SetCursorPosition(u32 value)
+{
+	sGameBoardState->cursorPosition = value;
+}
+
+static void IncrementCursorPosition(void)
+{
+	u32 position;
+
+	if (FlagGet(FLAG_ARCADE_RANDOM_CURSOR))
+		position = Random() % ARCADE_GAME_BOARD_SPACES;
+	else
+		position = GetCursorPosition();
+
+	if ((position+1) >= ARCADE_GAME_BOARD_SPACES)
+		SetCursorPosition(0);
+	else
+		SetCursorPosition(++position);
+
+	//DebugPrintf("mode %d",sGameBoardState->gameMode);
+	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
+}
+
+static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
+{
+	u32 position = sGameBoardState->cursorPosition;
+}
+
+static void HandleFinishMode()
+{
+	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
+	SelectGameBoardSpace();
+	DestroyEventSprites();
+	PopulateEventSprites();
+	sGameBoardState->gameMode++;
+	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
+	CreateTask(Task_GameBoard_CleanUp,0);
+}
+
+static void Task_GameBoard_Game(u8 taskId)
+{
+	u32 timer = sGameBoardState->timer;
+	DebugPrintf("timer %d",sGameBoardState->timer);
+
+	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
+	{
+		HandleFinishMode();
+		return;
+	}
+
+	if (timer == 0)
+	{
+		sGameBoardState->gameMode++;
+		return;
+	}
+
+	if (ShouldCursorMove(timer))
+		IncrementCursorPosition();
+
+	sGameBoardState->timer--;
+}
+
+static void Task_GameBoard_CleanUp(u8 taskId)
+{
+	sGameBoardState->timer--;
+	//DebugPrintf("timer %d",sGameBoardState->timer);
+
+	if (sGameBoardState->timer != 0)
+		return;
+
+	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+
+	gTasks[taskId].func = Task_GameBoardWaitFadeAndExitGracefully;
 }
 
 static void Task_GameBoardWaitFadeAndBail(u8 taskId)
@@ -2153,11 +2287,12 @@ static bool32 BattleArcade_AllocTilemapBuffers(void)
 
 static bool8 GameBoard_InitBgs(void)
 {
-
     ResetAllBgsCoordinates();
+
 	if (!BattleArcade_AllocTilemapBuffers())
 		return FALSE;
 	HandleAndShowBgs();
+
     return TRUE;
 }
 

@@ -36,24 +36,18 @@ script BattleArcade_RouletteRoom_EventScript_AnnounceGameNumber
 
 script BattleArcade_RouletteRoom_EventScript_PlayGameBoard
 {
-    additem(ITEM_COIN_CASE,1)
-	addcoins(50)
     msgbox(BattleArcade_RouletteRoom_Text_WithoutFurtherAdo,MSGBOX_DEFAULT)
     closemessage
-	specialvar(VAR_RESULT, GetSlotMachineId)
-	playslotmachine(VAR_RESULT)
+    arcade_generateopponentparty
+    arcade_takeenemyhelditems
+    arcade_playgameboard
 }
 
 script BattleArcade_RouletteRoom_EventScript_HandleGameResults
 {
-    arcade_generateopponentparty
-    arcade_takeenemyhelditems
-
-    arcade_playgameboard
     arcade_handlegameresult
     arcade_getimpactedside
     arcade_getevent
-
     msgbox(BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent,MSGBOX_DEFAULT)
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)

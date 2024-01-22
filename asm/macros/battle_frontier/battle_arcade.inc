@@ -67,7 +67,9 @@
     @ Starts the actual game board
     .macro arcade_playgameboard
     setvar VAR_0x8004, ARCADE_FUNC_PLAY_GAME_BOARD
+	fadescreen FADE_TO_BLACK
     special CallBattleArcadeFunc
+	waitstate
     .endm
 
     @ Loads the result of the game to VAR_RESULT, the name of the impacted person to STR_VAR_1
@@ -130,3 +132,4 @@
 	setvar VAR_0x8005, \mode
 	special CallBattleArcadeFunc
 	.endm
+
