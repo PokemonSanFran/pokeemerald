@@ -67,7 +67,6 @@ static void SetArcadeBattleWon(void);
 static void SaveCurrentStreak(void);
 static void SaveCurrentParty(u32, u8);
 static void SaveArcadeChallenge(void);
-static void GetOpponentIntroSpeech(void);
 static bool32 BattleArcade_DoGive(u32, u32);
 static void GetContinueMenuType(void);
 static u32 GenerateSetEvent(void);
@@ -161,7 +160,6 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_SET_DATA]               = SetArcadeData,
 	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
 	[ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
-	[ARCADE_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
 	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = CalculateGiveChallengeBattlePoints,
 	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
@@ -577,24 +575,30 @@ static u32 GenerateEvent(u32 impact)
     return event;
 }
 
-static void StoreEventToSaveblock(u32 event)
+static bool32 HaveMonsBeenSwapped(void)
 {
-    FRONTIER_SAVEDATA.arcadeGameEventResult = event;
-}
+	struct Pokemon *frontierMon;
+	struct Pokemon *playerMon;
+	u32 playerMonPersonality, frontierMonPersonality, i, monId;
 
-u32 GetEventFromSaveblock(void)
-{
-    return FRONTIER_SAVEDATA.arcadeGameEventResult;
-}
+	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+	{
+		monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+		if (monId >= PARTY_SIZE)
+			continue;
 
-static bool32 IsCurrentEventLevelUp(void)
-{
-     return (GetEventFromSaveblock() == ARCADE_EVENT_LEVEL_UP);
-}
+		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+		playerMon = &gPlayerParty[i];
 
-static bool32 IsEventSwap(void)
-{
-     return (GetEventFromSaveblock() == ARCADE_EVENT_SWAP);
+		playerMonPersonality = GetMonData(playerMon, MON_DATA_PERSONALITY,NULL);
+		frontierMonPersonality = GetMonData(frontierMon, MON_DATA_PERSONALITY,NULL);
+
+		if (playerMonPersonality == frontierMonPersonality)
+			continue;
+
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static bool32 IsEventBanned(u32 event)
@@ -656,6 +660,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
+	//*event = ARCADE_EVENT_SWAP;
 
     //DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
@@ -673,7 +678,6 @@ static void HandleGameBoardResult(u32 impact, u32 event)
     GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(gStringVar1,impact);
 
-    StoreEventToSaveblock(event);
 	StoreEventToVar(event);
 	StoreImpactedSideToVar(impact);
 }
@@ -1208,38 +1212,37 @@ void DoSpecialRouletteTrainerBattle(void)
     BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
 }
 
-static void BattleArcade_ReturnPlayerPartyOriginalLevel(void)
-{
-    u32 i, newLevel;
-    struct Pokemon *party = LoadSideParty(ARCADE_IMPACT_PLAYER);
-
-    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-    {
-        if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
-            break;
-
-        newLevel = (GetMonData(&party[i], MON_DATA_LEVEL) - FRONTIER_SAVEDATA.arcadeLvlDiff[i]);
-
-        if (newLevel <= 0)
-            newLevel = MIN_LEVEL;
-
-        SetMonData(&party[i], MON_DATA_LEVEL, &newLevel);
-        CalculateMonStats(&party[i]);
-    }
-}
-
 static void ResetLevelsToOriginal(void)
 {
-    if (!IsCurrentEventLevelUp())
-        return;
+	struct Pokemon *frontierMon;
+	struct Pokemon *playerMon;
+	u32 playerMonLevel, frontierMonLevel, i, monId;
 
-    BattleArcade_ReturnPlayerPartyOriginalLevel();
+	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+	{
+		monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+
+		if (monId >= PARTY_SIZE)
+			continue;
+
+		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+		playerMon = &gPlayerParty[i];
+
+		playerMonLevel = GetMonData(playerMon, MON_DATA_LEVEL,NULL);
+		frontierMonLevel = GetMonData(frontierMon, MON_DATA_LEVEL,NULL);
+
+		if (playerMonLevel == frontierMonLevel)
+			continue;
+
+		SetMonData(playerMon, MON_DATA_LEVEL, &frontierMonLevel);
+	}
 }
 
 static void ReturnPartyToOwner(void)
 {
-    if (!IsEventSwap())
+    if (!HaveMonsBeenSwapped())
         return;
+
     BattleArcade_DoSwap();
 }
 
@@ -2033,11 +2036,10 @@ static const u32* GetTileGfx(u32 space)
 			return sCountdownTile2;
 		case ARCADE_BOARD_MODE_COUNTDOWN_1:
 			return sCountdownTile1;
-		case ARCADE_BOARD_MODE_GAME_START:
-			return GetEventGfx(sGameBoard[space].event);
 		default:
+		case ARCADE_BOARD_MODE_GAME_START:
 		case ARCADE_BOARD_MODE_GAME_FINISH:
-			return GetEventGfx(GetEventFromSaveblock());
+			return GetEventGfx(sGameBoard[space].event);
 	}
 }
 
