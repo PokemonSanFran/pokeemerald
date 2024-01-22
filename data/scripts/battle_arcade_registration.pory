@@ -196,8 +196,8 @@ script GiveMonDebugScript
 
 script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
 {
-	arcade_playgameboard //Debug
-	end
+	//arcade_playgameboard //Debug
+	//end
     lock
     faceplayer
     setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE)

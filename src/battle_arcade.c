@@ -673,7 +673,6 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	//*event = ARCADE_EVENT_LEVEL_UP;
     DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -690,6 +689,7 @@ static void HandleGameBoardResult(u32 impact, u32 event)
     GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(gStringVar1,impact);
 
+	FloodGameBoard(impact,event);
 	StoreEventToVar(event);
 	StoreImpactedSideToVar(impact);
 }
@@ -1245,8 +1245,11 @@ static void ReturnPartyToOwner(void)
 
 static void ResetWeatherPostBattle(void)
 {
+	/*
     DoCurrentWeather();
     SetSavedWeatherFromCurrMapHeader();
+	*/
+    BattleArcade_DoWeather((gMapHeader.weather));
 }
 
 u32 GetPlayerSymbolCountForArcade(void)
@@ -1985,8 +1988,6 @@ static void PopulateEventSprites(void)
 static const u16 GetTileTag(u32 space)
 {
 	u32 mode = GetGameBoardMode();
-	DebugPrintf("During GetTileTag the space is %d",space);
-	DebugPrintf("During GetTileTag the event is %d",sGameBoard[space].event);
 
 	if (mode < ARCADE_BOARD_MODE_GAME_START)
 		return mode + ARCADE_GFXTAG_COUNTDOWN;
@@ -2039,8 +2040,6 @@ static const u32* GetTileGfx(u32 space)
 		case ARCADE_BOARD_MODE_COUNTDOWN_1:
 			return sCountdownTile1;
 		default:
-		case ARCADE_BOARD_MODE_GAME_START:
-		case ARCADE_BOARD_MODE_GAME_FINISH:
 			return GetEventGfx(sGameBoard[space].event);
 	}
 }
@@ -2202,14 +2201,12 @@ static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
 static void HandleFinishMode()
 {
 	u32 impact = 0, event = 0;
-
+	sGameBoardState->gameMode++;
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
 	SelectGameBoardSpace(&impact,&event);
-	FloodGameBoard(impact,event);
 	HandleGameBoardResult(impact,event);
 	ResetRouletteRandomFlag();
 	DestroyEventSprites();
-	sGameBoardState->gameMode++;
 	PopulateEventSprites();
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
 	CreateTask(Task_GameBoard_CleanUp,0);

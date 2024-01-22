@@ -252,10 +252,6 @@ GiveMonDebugScript::
 
 
 BattleFrontier_BattleArcadeLobby_EventScript_Attendant::
-# 199 "data/scripts/battle_arcade_registration.pory"
-	arcade_playgameboard
-# 200 "data/scripts/battle_arcade_registration.pory"
-	end
 # 201 "data/scripts/battle_arcade_registration.pory"
 	lock
 # 202 "data/scripts/battle_arcade_registration.pory"
