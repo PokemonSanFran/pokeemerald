@@ -442,7 +442,6 @@ struct BattleFrontier
 #ifdef BATTLE_ARCADE
     /*0xCE0*/ u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
     /*0xCF0*/ u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
-    u8 arcadeLvlDiff[MAX_FRONTIER_PARTY_SIZE];
 #endif
 };
 

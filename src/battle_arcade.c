@@ -660,7 +660,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	//*event = ARCADE_EVENT_SWAP;
+	*event = ARCADE_EVENT_LEVEL_UP;
 
     //DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
@@ -1002,26 +1002,10 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 item)
     return TRUE;
 }
 
-static u32 CalculateNewLevel(u32 origLevel)
+static u32 CalculateAndSaveNewLevel(u32 origLevel)
 {
     u32 newLevel = (origLevel + ARCADE_EVENT_LEVEL_INCREASE);
     return (newLevel >= MAX_LEVEL) ? MAX_LEVEL : newLevel;
-}
-
-static void SaveLevelDifferentToSaveblock(u32 index, u32 origLevel, u32 newLevel)
-{
-    FRONTIER_SAVEDATA.arcadeLvlDiff[index] = (newLevel - origLevel);
-}
-
-static u32 GetLevelDifferentFromSaveblock(u32 index)
-{
-    return FRONTIER_SAVEDATA.arcadeLvlDiff[index];
-}
-
-static u32 CalculateAndSaveNewLevel(u32 index, u32 origLevel)
-{
-    SaveLevelDifferentToSaveblock(index,origLevel,CalculateNewLevel(origLevel));
-    return (origLevel + GetLevelDifferentFromSaveblock(index));
 }
 
 static bool32 BattleArcade_DoLevelUp(u32 impact)
@@ -1034,7 +1018,7 @@ static bool32 BattleArcade_DoLevelUp(u32 impact)
         if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
             break;
 
-        newLevel = CalculateAndSaveNewLevel(i,(GetMonData(&party[i], MON_DATA_LEVEL)));
+        newLevel = CalculateAndSaveNewLevel(GetMonData(&party[i], MON_DATA_LEVEL));
         SetMonData(&party[i], MON_DATA_LEVEL, &newLevel);
     }
     return TRUE;
