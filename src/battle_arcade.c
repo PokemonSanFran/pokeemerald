@@ -673,6 +673,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
+	*event = ARCADE_EVENT_LEVEL_UP;
     DebugPrintf("-----------------------");
     DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -1210,7 +1211,6 @@ void DoSpecialRouletteTrainerBattle(void)
 
 static void ResetLevelsToOriginal(void)
 {
-	//ARCADE TODO after the challenge, these are not reset to normal
 	struct Pokemon *frontierMon;
 	struct Pokemon *playerMon;
 	u32 playerMonLevel, frontierMonLevel, i, monId;
@@ -1245,10 +1245,6 @@ static void ReturnPartyToOwner(void)
 
 static void ResetWeatherPostBattle(void)
 {
-	/*
-    DoCurrentWeather();
-    SetSavedWeatherFromCurrMapHeader();
-	*/
     BattleArcade_DoWeather((gMapHeader.weather));
 }
 
@@ -1266,11 +1262,11 @@ void ConvertFacilityFromArcadeToPike(u32* facility)
 
 void BattleArcade_PostBattleEventCleanup(void)
 {
-    ResetLevelsToOriginal();
-    ReturnPartyToOwner();
     ResetWeatherPostBattle();
-    HealPlayerParty();
+    ReturnPartyToOwner();
+    ResetLevelsToOriginal();
 	ResetSketchedMoves();
+    HealPlayerParty();
 }
 
 static void ResetRouletteSpeed(void)
@@ -1773,6 +1769,7 @@ static void SelectGameBoardSpace(u32*, u32*);
 static void HandleFinishMode();
 static void Task_GameBoard_CleanUp(u8 taskId);
 static void LoadTileSpriteSheets(void);
+static void CreateGameBoardCursor(void);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
@@ -1964,7 +1961,8 @@ static void StartCountdown(void)
 
 static void StartGame(void)
 {
-	sGameBoardState->timer = ARCADE_BOARD_GAME_TIMER;
+	sGameBoardState->timer = 10 * ARCADE_BOARD_GAME_TIMER;
+	CreateGameBoardCursor();
 	CreateTask(Task_GameBoard_Game, 0);
 }
 
@@ -2104,6 +2102,50 @@ static void DestroyEventSprites(void)
         DestroySpriteAndFreeResources(&gSprites[sGameBoardState->eventIconSpriteId[space]]);
         sGameBoardState->eventIconSpriteId[space] = 0;
     }
+}
+
+// ARCADE TODO remembe rlast cursor position and start there
+//
+static void SpriteCB_Cursor(struct Sprite *sprite)
+{
+
+}
+
+static void CreateGameBoardCursor(void)
+{
+	u16 TileTag = ARCADE_GFXTAG_CURSOR;
+	u32 spriteId;
+
+	struct CompressedSpriteSheet sSpriteSheet_Cursor = {sCursorYellow, 0x0800, TileTag};
+    struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
+
+	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
+
+	//const u16 palette = GetSpacePalette(space);
+	/*
+    const struct SpritePalette sGlassInterfaceSpritePalette[] =
+    {
+        {sMenuPalette, PAL_GLASS_UI_SPRITES},
+    };
+	*/
+
+    TempSpriteTemplate.tileTag = TileTag;
+    TempSpriteTemplate.callback = SpriteCB_Dummy;
+
+    //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
+    spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
+
+    gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
+    gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
+    gSprites[spriteId].oam.priority = 0;
+
+	/*
+	   rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+	   columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+	   x = 50 + columnIndex * 40;
+	   y = 10 + rowIndex * 35;
+	   */
+
 }
 
 static void Task_GameBoard_Countdown(u8 taskId)
@@ -2360,17 +2402,6 @@ static void GameBoard_FreeResources(void)
 	ResetSpriteData();
 }
 
-static void GameBoard_AllocTilemapBuffers(void)
-{
-	u32 backgroundId;
-
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-	{
-		Free(sBgTilemapBuffer[backgroundId]);
-		sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
-	}
-}
-
 static void HandleAndShowBgs(void)
 {
 	u32 backgroundId;
@@ -2387,16 +2418,6 @@ static void SetScheduleShowBgs(u32 backgroundId)
 	SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
 	ScheduleBgCopyTilemapToVram(backgroundId);
 	ShowBg(backgroundId);
-}
-
-static void ChangeBackground(void)
-{
-    ResetAllBgsCoordinates();
-	GameBoard_AllocTilemapBuffers();
-    HandleAndShowBgs();
-	/*
-    LoadBackground();
-	*/
 }
 
 static u32 GetHorizontalPositionFromSide(u32 side)
