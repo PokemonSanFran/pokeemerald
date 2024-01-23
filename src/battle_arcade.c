@@ -1727,7 +1727,6 @@ static void PrintEnemyParty(void);
 static void PrintPlayerParty(void);
 static void StartCountdown(void);
 static void PopulateEventSprites(void);
-static void SpriteCB_Dummy(struct Sprite *sprite);
 static u8 CreateEventSprite(u32 x, u32 y, u32 space);
 static void Task_GameBoard_Countdown(u8);
 static void Task_GameBoard_Game(u8);
@@ -2041,12 +2040,7 @@ static void PopulateEventSprites(void)
 
 static const u16 GetTileTag(u32 space)
 {
-	u32 mode = GetGameBoardMode();
-
-	if (mode < ARCADE_BOARD_MODE_GAME_START)
-		return mode + ARCADE_GFXTAG_COUNTDOWN;
-	else
-		return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
+	return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
 }
 
 static const u32* GetEventGfx(u32 event)
@@ -2081,23 +2075,6 @@ static const u32* GetEventGfx(u32 event)
 	}
 }
 
-static const u32* GetTileGfx(u32 space)
-{
-	u32 mode = GetGameBoardMode();
-
-	switch(mode)
-	{
-		case ARCADE_BOARD_MODE_COUNTDOWN_3:
-			return sCountdownTile3;
-		case ARCADE_BOARD_MODE_COUNTDOWN_2:
-			return sCountdownTile2;
-		case ARCADE_BOARD_MODE_COUNTDOWN_1:
-			return sCountdownTile1;
-		default:
-			return GetEventGfx(sGameBoard[space].event);
-	}
-}
-
 static const u16 GetSpacePalette(u32 space)
 {
 	u32 mode = GetGameBoardMode();
@@ -2105,15 +2082,12 @@ static const u16 GetSpacePalette(u32 space)
 
 static void LoadTileSpriteSheets(void)
 {
-	u32 space = ((GetGameBoardMode() != ARCADE_BOARD_MODE_GAME_START) ? 1 : ARCADE_GAME_BOARD_SPACES);
 	u32 i;
-
 	//DebugPrintf("LoadTileSpriteSheets");
-
-	for (i = 0; i < space; i++)
+	for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
 	{
 		u16 TileTag = GetTileTag(i);
-		const u32 *gfx = GetTileGfx(i);
+		const u32 *gfx = GetEventGfx(sGameBoard[i].event);
 		struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
 		LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
 		//DebugPrintf("LoadCompressedSpriteSheet tileTag%d",TileTag);
@@ -2134,7 +2108,7 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
 
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
     TempSpriteTemplate.tileTag = TileTag;
-    TempSpriteTemplate.callback = SpriteCB_Dummy;
+    TempSpriteTemplate.callback = SpriteCallbackDummy;
 	//DebugPrintf("CreateEventSprite %d",TileTag);
 
     //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
@@ -2177,7 +2151,6 @@ static void CalculateTilePosition(u32 space, u32* x, u32* y)
     *x = 50 + columnIndex * 40;
     *y = 10 + rowIndex * 35;
 }
-
 
 static void SpriteCB_Cursor(struct Sprite *sprite)
 {
@@ -2511,11 +2484,6 @@ static u32 GetHorizontalPositionFromSide(u32 side)
 	return (side == ARCADE_IMPACT_OPPONENT) ? 225 : 15;
 }
 
-static void SpriteCB_Dummy(struct Sprite *sprite)
-{
-	return;
-}
-
 static void PrintPartyIcons(u32 side)
 {
 	u32 x = GetHorizontalPositionFromSide(side);
@@ -2528,7 +2496,7 @@ static void PrintPartyIcons(u32 side)
 		if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
 			break;
 
-		sGameBoardState->monIconSpriteId[side][i] = CreateMonIcon(GetMonData(&party[i], MON_DATA_SPECIES),SpriteCB_Dummy , x, y, 4, GetMonData(&party[i],MON_DATA_PERSONALITY),FALSE);
+		sGameBoardState->monIconSpriteId[side][i] = CreateMonIcon(GetMonData(&party[i], MON_DATA_SPECIES),SpriteCallbackDummy, x, y, 4, GetMonData(&party[i],MON_DATA_PERSONALITY),FALSE);
 		//DebugPrintf("gSprites mon %d",sGameBoardState->monIconSpriteId[side][i]);
 		//DebugPrintf("mon gsprites %d tileNum %d",sGameBoardState->monIconSpriteId[side][i],gSprites[sGameBoardState->monIconSpriteId[side[i]].oam.tileNum]);
 		gSprites[sGameBoardState->monIconSpriteId[side][i]].oam.priority = 0;
@@ -2549,10 +2517,9 @@ static void PrintPlayerParty(void)
 // Arcade Board
 // get palettes working
 // cursor changes color with every animation
-// change 3 2 1 to animation table instead of new sprites
+//lucy has ??? pokemon when fought early on
+// when epxplaining why I can'tm bring multiple item pokemon, text jsut cuts out
 //add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
-// when epxplaining why I can'tm bring multiple item pokemon, text jsut cuts out
-//lucy has ??? pokemon when fought early on
 
 #endif
