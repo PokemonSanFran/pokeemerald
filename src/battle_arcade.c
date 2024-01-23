@@ -1626,6 +1626,7 @@ struct GameBoardState
 	u16 timer;
 	u8 cursorPosition;
 	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
+	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
 };
 
 enum WindowIds
@@ -1735,7 +1736,10 @@ static void HandleFinishMode();
 static void Task_GameBoard_CleanUp(u8 taskId);
 static void LoadTileSpriteSheets(void);
 static void CreateGameBoardCursor(void);
-static void CalculateTilePosition(u32 space, u32* x, u32* y);
+static void CalculateTilePosition(u32, u32*, u32*);
+static u32 CreateCountdownPanel(u32 x, u32 y);
+static void PopulateCountdownSprites(void);
+static void DestroyCountdownPanels(void);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
@@ -1744,9 +1748,9 @@ static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier
 static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
 
 
-static const u32 sCountdownTile1[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_1.4bpp.lz");
-static const u32 sCountdownTile2[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_2.4bpp.lz");
-static const u32 sCountdownTile3[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_3.4bpp.lz");
+static const u32 sCountdownTile1[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_1.4bpp");
+static const u32 sCountdownTile2[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_2.4bpp");
+static const u32 sCountdownTile3[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_3.4bpp");
 
 static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_burn.4bpp.lz");
 static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_fog.4bpp.lz");
@@ -1777,6 +1781,54 @@ static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_g
 
 static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
 static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
+
+#define DEFAULT_ANIM  0
+
+static const union AnimCmd sCountdownPanelAnim[] =
+{
+    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER),
+    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER),
+    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER+10),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sCountdownAnims[] =
+{
+    [DEFAULT_ANIM] = sCountdownPanelAnim
+};
+
+static const struct SpriteFrameImage sCountdownPanelPicTable[] =
+{
+    obj_frame_tiles(sCountdownTile3),
+    obj_frame_tiles(sCountdownTile2),
+    obj_frame_tiles(sCountdownTile1),
+};
+
+static const struct OamData CountdownPanelOam =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
+{
+    .tileTag = TAG_NONE,
+    .paletteTag = 0,
+    .oam = &CountdownPanelOam,
+    .anims = sCountdownAnims,
+    .images = sCountdownPanelPicTable,
+    .callback = SpriteCallbackDummy,
+};
 
 static const u8 *GetHelpBarText(void)
 {
@@ -1949,7 +2001,7 @@ static void StartCountdown(void)
 	HideBg(BG_BOARD_BACKGROUND);
 	sGameBoardState->gameMode++;
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
-	PopulateEventSprites();
+	PopulateCountdownSprites();
 	PrintHelpBar();
 	CreateTask(Task_GameBoard_Countdown, 0);
 }
@@ -1959,7 +2011,19 @@ static void StartGame(void)
 	sGameBoardState->timer = ARCADE_BOARD_GAME_TIMER;
 	InitCursorPositionFromSaveblock();
 	CreateGameBoardCursor();
+	DestroyCountdownPanels();
 	CreateTask(Task_GameBoard_Game, 0);
+}
+
+static void PopulateCountdownSprites(void)
+{
+	u32 space, rowIndex, columnIndex, x, y, spriteId;
+
+    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
+	{
+		CalculateTilePosition(space,&x,&y);
+		sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
+    }
 }
 
 static void PopulateEventSprites(void)
@@ -1971,7 +2035,7 @@ static void PopulateEventSprites(void)
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
 	{
 		CalculateTilePosition(space,&x,&y);
-        sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
+		sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
     }
 }
 
@@ -2095,6 +2159,16 @@ static void DestroyEventSprites(void)
         sGameBoardState->eventIconSpriteId[space] = 0;
     }
 }
+static void DestroyCountdownPanels(void)
+{
+    u32 space;
+
+    for (space = 0; space < ARCADE_GAME_BOARD_SPACES; space++)
+    {
+        DestroySpriteAndFreeResources(&gSprites[sGameBoardState->countdownPanelSpriteId[space]]);
+        sGameBoardState->countdownPanelSpriteId[space] = 0;
+    }
+}
 
 static void CalculateTilePosition(u32 space, u32* x, u32* y)
 {
@@ -2113,6 +2187,11 @@ static void SpriteCB_Cursor(struct Sprite *sprite)
 	sprite->x2 = x - 50;
     sprite->y2 = y - 10;
 	sprite->subpriority = 0;
+}
+
+static u32 CreateCountdownPanel(u32 x, u32 y)
+{
+	return CreateSprite(&sCountdownPanelSpriteTemplate, x, y, 0);
 }
 
 static void CreateGameBoardCursor(void)
@@ -2156,12 +2235,9 @@ static void Task_GameBoard_Countdown(u8 taskId)
 		case (ARCADE_FRAMES_PER_SECOND * 2):
 		case (ARCADE_FRAMES_PER_SECOND):
 			sGameBoardState->gameMode++;
-			DestroyEventSprites();
-			PopulateEventSprites();
 			break;
 		case 0:
 			sGameBoardState->gameMode++;
-			DestroyEventSprites();
 			PopulateEventSprites();
 			PrintHelpBar();
 			StartGame();
