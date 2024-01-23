@@ -667,7 +667,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	//*event = ARCADE_EVENT_LEVEL_UP;
+	//*event = ARCADE_EVENT_GIVE_BERRY;
     //DebugPrintf("-----------------------");
     //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -2533,7 +2533,6 @@ static void PrintPlayerParty(void)
 // get palettes working
 // cursor changes color with every animation
 //lucy has no intro text
-//guy will walk to player when giving item
 //add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
 

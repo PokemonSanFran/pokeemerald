@@ -105,9 +105,37 @@ script BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact
     //arcade_playoverworldeffect
 }
 
+script BattleArcade_BattleRoom_EventScript_MoveMCToTrainer
+{
+	if (var(GAME_BOARD_IMPACT) == ARCADE_IMPACT_PLAYER)
+	{
+		applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_WalkToPlayer)
+	}
+	else
+	{
+		applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_WalkToOpponent)
+	}
+	waitmovement(MC)
+}
+
+script BattleArcade_BattleRoom_EventScript_MoveMCFromTrainer
+{
+	if (var(GAME_BOARD_IMPACT) == ARCADE_IMPACT_PLAYER)
+	{
+		applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_WalkFromPlayer)
+	}
+	else
+	{
+		applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_WalkFromOpponent)
+	}
+}
+
 script BattleArcade_BattleRoom_EventScript_MoveMCBack
 {
-    applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack)
+    if ((var(GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_BERRY) && (var(GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_ITEM))
+    {
+		applymovement(MC,BattleFrontier_BattleArcadeBattleRoom_Movement_MoveBack)
+    }
     waitmovement(MC)
 }
 
@@ -373,4 +401,27 @@ movement BattleArcade_BattleRoom_Movement_RunToHeal
 movement BattleArcade_BattleRoom_Movement_FaceAttendant
 {
     walk_in_place_left
+}
+
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkToPlayer
+{
+	walk_down
+	walk_left * 3
+}
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkToOpponent
+{
+	walk_down
+	walk_right * 3
+}
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkFromPlayer
+{
+	walk_right * 3
+	walk_up * 2
+    walk_in_place_fast_down
+}
+movement BattleFrontier_BattleArcadeBattleRoom_Movement_WalkFromOpponent
+{
+	walk_left * 3
+	walk_up * 2
+    walk_in_place_fast_down
 }

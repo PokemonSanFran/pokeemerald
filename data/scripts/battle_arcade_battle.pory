@@ -47,8 +47,11 @@ script BattleArcade_RouletteRoom_EventScript_HandleGameResults
     msgbox(BattleArcade_RouletteRoom_Text_ThisIsOurCurrentEvent,MSGBOX_DEFAULT)
     call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
     call(BattleArcade_RouletteRoom_AnnounceImpactString)
+	call(BattleArcade_RouletteRoom_GiveItem_Script)
     call(BattleArcade_BattleRoom_EventScript_MoveMCBack)
     call(BattleArcade_RouletteRoom_SkipBattle_Script)
+	msgbox(BattleArcade_RouletteRoom_Text_OkLetTheBattleCommence,MSGBOX_DEFAULT)
+	closemessage
 }
 
 script BattleArcade_RouletteRoom_AnnounceImpactString
@@ -61,6 +64,19 @@ script BattleArcade_RouletteRoom_AnnounceImpactString
     {
         call(BattleArcade_RouletteRoom_AnnounceImpactString_Failure)
     }
+	closemessage
+}
+
+script BattleArcade_RouletteRoom_GiveItem_Script
+{
+    if ((var(GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_BERRY) && (var(GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_ITEM))
+    {
+        return
+    }
+    call(BattleArcade_BattleRoom_EventScript_MoveMCToTrainer)
+	msgbox(BattleArcade_RouletteRoom_Text_HereYouGo)
+	closemessage
+	call(BattleArcade_BattleRoom_EventScript_MoveMCFromTrainer)
 }
 
 script BattleArcade_RouletteRoom_SkipBattle_Script
