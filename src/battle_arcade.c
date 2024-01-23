@@ -48,16 +48,6 @@
 
 #ifdef BATTLE_ARCADE
 
-#define FRONTIER_SAVEDATA gSaveBlock2Ptr->frontier
-#define ARCADE_CURRENT_STREAK_WINS FRONTIER_SAVEDATA.arcadeWinStreaks
-#define ARCADE_RECORDED_WINS FRONTIER_SAVEDATA.arcadeRecordWinStreaks
-
-#define GAME_BOARD_EVENT gSpecialVar_0x8007
-#define GAME_BOARD_IMPACT gSpecialVar_0x8008
-#define GAME_BOARD_SUCCESS gSpecialVar_0x8009
-
-#define VAR_FACILITY_CHALLENGE_STATUS VAR_TEMP_0
-
 static void (* const sBattleArcadeFuncs[])(void);
 
 static void InitArcadeChallenge(void);
@@ -643,16 +633,13 @@ static void GenerateGameBoard(void)
     {
         sGameBoard[i].impact = GenerateImpact();
         sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
-        DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
+        //DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
     }
 }
 
 static void FloodGameBoard(u32 impact, u32 event)
 {
     u32 i;
-
-	DebugPrintf("event is %d", event);
-
     for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
     {
         sGameBoard[i].impact = impact;
@@ -678,8 +665,8 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 	*impact = spaceImpact;
 	*event = spaceEvent;
 	//*event = ARCADE_EVENT_LEVEL_UP;
-    DebugPrintf("-----------------------");
-    DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
+    //DebugPrintf("-----------------------");
+    //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
 
 static void GenerateOpponentParty(void)
@@ -1144,7 +1131,6 @@ static bool32 BattleArcade_DoNoEvent(void)
 	return TRUE;
 }
 
-#define VAR_BRAIN_STATUS VAR_TEMP_F
 
 static void GetBrainStatus(void)
 {
@@ -1334,6 +1320,9 @@ static void DisplayRecordsText(void);
 static void InitRecordsBg(void);
 static void InitRecordsWindow(void);
 static void PrintRecordsText(u8 *, u8, u8);
+static const u8 *GetHelpBarText(void);
+static void PrintHelpBar(void);
+static u32 GetGameBoardMode(void);
 
 EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;
 
@@ -1641,9 +1630,7 @@ struct GameBoardState
 
 enum WindowIds
 {
-	WIN_BOARD_GAME,
-	WIN_BOARD_PLAYER_MON,
-	WIN_BOARD_ENEMY_MON,
+	WIN_BOARD_HELP_BAR,
 	WIN_BOARD_COUNT,
 };
 
@@ -1658,12 +1645,6 @@ enum BackgroundIds
 
 static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
 static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};
-
-#define MON_PLAYER_X_POS 50
-#define MON_ENEMY_X_POS 50
-#define MON_Y_POS 50
-#define MON_Y_PADDING 50
-#define TILEMAP_BUFFER_SIZE (1024 * 2)
 
 static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
 static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
@@ -1698,35 +1679,15 @@ static const struct BgTemplate sGameBoardBgTemplates[] =
 
 static const struct WindowTemplate sGameBoardWinTemplates[] =
 {
-	[WIN_BOARD_GAME] =
-	{
-		.bg = 0,
-		.tilemapLeft = 6,
-		.tilemapTop = 9,
-		.width = 19,
-		.height = 19,
-		.paletteNum = 15,
-		.baseBlock = 1
-	},
-	[WIN_BOARD_PLAYER_MON] =
+	[WIN_BOARD_HELP_BAR] =
 	{
 		.bg = 0,
 		.tilemapLeft = 0,
-		.tilemapTop = 5,
-		.width = 4,
-		.height = 14,
+		.tilemapTop = 18,
+		.width = 30,
+		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 1 + (19 * 19)
-	},
-	[WIN_BOARD_ENEMY_MON] =
-	{
-		.bg = 0,
-		.tilemapLeft = 29,
-		.tilemapTop = 0,
-		.width = 4,
-		.height = 14,
-		.paletteNum = 15,
-		.baseBlock = 1 + (4 * 14)
+		.baseBlock = 1,
 	},
 	DUMMY_WIN_TEMPLATE
 };
@@ -1814,6 +1775,33 @@ static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_g
 static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
 static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_orange.4bpp.lz");
 
+static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
+static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
+
+static const u8 *GetHelpBarText(void)
+{
+	switch (GetGameBoardMode())
+	{
+		case ARCADE_BOARD_MODE_WAIT:
+			return sText_HelpBarStart;
+		case ARCADE_BOARD_MODE_GAME_START:
+			return sText_HelpBarFinish;
+		default:
+			return gText_Blank;
+	}
+}
+
+static void PrintHelpBar(void)
+{
+    u32 windowId = WIN_BOARD_HELP_BAR;
+    u32 fontId = FONT_NARROW;
+
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+    AddTextPrinterParameterized4(windowId, fontId, BAR_LEFT_PADDING, BAR_TOP_PADDING, GetFontAttribute(fontId, FONTATTR_LETTER_SPACING), GetFontAttribute(fontId, FONTATTR_LINE_SPACING), sGameBoardWindowFontColors[FONT_WHITE], TEXT_SKIP_DRAW, GetHelpBarText());
+
+    CopyWindowToVram(windowId, COPYWIN_GFX);
+}
+
 static void PlayGameBoard(void)
 {
     CreateTask(Task_OpenGameBoard, 0);
@@ -1893,6 +1881,7 @@ static void GameBoard_SetupCB(void)
 			LoadMonIconPalettes();
 			PrintEnemyParty();
 			PrintPlayerParty();
+			PrintHelpBar();
 			taskId = CreateTask(Task_GameBoardWaitFadeIn, 0);
 			gMain.state++;
 			break;
@@ -1961,12 +1950,13 @@ static void StartCountdown(void)
 	sGameBoardState->gameMode++;
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
 	PopulateEventSprites();
+	PrintHelpBar();
 	CreateTask(Task_GameBoard_Countdown, 0);
 }
 
 static void StartGame(void)
 {
-	sGameBoardState->timer = 10 * ARCADE_BOARD_GAME_TIMER;
+	sGameBoardState->timer = ARCADE_BOARD_GAME_TIMER;
 	InitCursorPositionFromSaveblock();
 	CreateGameBoardCursor();
 	CreateTask(Task_GameBoard_Game, 0);
@@ -2062,7 +2052,7 @@ static void LoadTileSpriteSheets(void)
 		const u32 *gfx = GetTileGfx(i);
 		struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
 		LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
-		DebugPrintf("LoadCompressedSpriteSheet tileTag%d",TileTag);
+		//DebugPrintf("LoadCompressedSpriteSheet tileTag%d",TileTag);
 	}
 }
 
@@ -2148,8 +2138,8 @@ static void CreateGameBoardCursor(void)
     TempSpriteTemplate.callback = SpriteCB_Cursor;
 
     //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
-	CalculateTilePosition(GetCursorPosition(),&x,&y);
-    spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
+	//CalculateTilePosition(GetCursorPosition(),&x,&y);
+    spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
 
     gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
     gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
@@ -2173,6 +2163,7 @@ static void Task_GameBoard_Countdown(u8 taskId)
 			sGameBoardState->gameMode++;
 			DestroyEventSprites();
 			PopulateEventSprites();
+			PrintHelpBar();
 			StartGame();
 			DestroyTask(taskId);
 			break;
@@ -2262,6 +2253,7 @@ static void HandleFinishMode()
 	u32 impact = 0, event = 0;
 	sGameBoardState->gameMode++;
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
+	PrintHelpBar();
 	SelectGameBoardSpace(&impact,&event);
 	HandleGameBoardResult(impact,event);
 	SaveCursorPositionToSaveblock();
@@ -2479,9 +2471,10 @@ static void PrintPlayerParty(void)
 }
 
 // Arcade Board
-// cursor changes color with every event that it moves to
+// get palettes working
+// cursor changes color with every animation
+// change 3 2 1 to animation table instead of new sprites
+//add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
-// cursor glows for a bit
-
 
 #endif
