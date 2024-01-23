@@ -2476,5 +2476,7 @@ static void PrintPlayerParty(void)
 // change 3 2 1 to animation table instead of new sprites
 //add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
+// when epxplaining why I can'tm bring multiple item pokemon, text jsut cuts out
+//lucy has ??? pokemon when fought early on
 
 #endif
