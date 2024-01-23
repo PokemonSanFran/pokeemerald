@@ -30,8 +30,7 @@
 #define ARCADE_STREAK_NUM_4                    4
 #define ARCADE_STREAK_NUM_5                    5
 #define ARCADE_STREAK_NUM_6                    6
-#define ARCADE_STREAK_NUM_7                    7
-#define ARCADE_STREAK_NUM_COUNT                ARCADE_STREAK_NUM_7 + 1
+#define ARCADE_STREAK_NUM_COUNT                ARCADE_STREAK_NUM_6 + 1
 
 #define ARCADE_BP_SMALL                        1
 #define ARCADE_BP_BASE                         2

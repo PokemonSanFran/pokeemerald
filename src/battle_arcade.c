@@ -59,7 +59,6 @@ static void SaveCurrentParty(u32, u8);
 static void SaveArcadeChallenge(void);
 static bool32 BattleArcade_DoGive(u32, u32);
 static void GetContinueMenuType(void);
-static u32 GenerateSetEvent(void);
 void SetFrontierFacilityToPike(void);
 static u32 GetImpactSide(u32 event);
 static bool32 IsItemConsumable(u16);
@@ -403,18 +402,13 @@ static void TakePlayerHeldItems(void)
 
 static u32 ConvertBattlesToImpactIndex(void)
 {
-    u16 numBattle = GetCurrentBattleArcadeWinStreak();
+	u16 numBattle = GetCurrentBattleArcadeWinStreak();
 
-    if (numBattle <= 4)
-        return ARCADE_BATTLE_NUM_0_4;
-    else if (numBattle <= 10)
-        return ARCADE_BATTLE_NUM_5_10;
-    else if (numBattle <= 15)
-        return ARCADE_BATTLE_NUM_11_15;
-    else if (numBattle <= 20)
-        return ARCADE_BATTLE_NUM_16_20;
-    else
-        return ARCADE_BATTLE_NUM_21_PLUS;
+	return numBattle <= 4 ? ARCADE_BATTLE_NUM_0_4 :
+		numBattle <= 10 ? ARCADE_BATTLE_NUM_5_10 :
+		numBattle <= 15 ? ARCADE_BATTLE_NUM_11_15 :
+		numBattle <= 20 ? ARCADE_BATTLE_NUM_16_20 :
+		ARCADE_BATTLE_NUM_21_PLUS;
 }
 
 static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
@@ -429,23 +423,13 @@ static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
 
 static u32 GenerateImpact(void)
 {
-    u32 impactRoll = Random() % 100;
-    u32 impactIndex = ConvertBattlesToImpactIndex();
-    u32 impactLine = 0;
-    u32 i = 0;
+    u32 impactLine = 0, i = 0;
 
-    //DebugPrintf("impact roll %d",impactRoll);
-    //DebugPrintf("impact index %d",impactIndex);
-
-	//return ARCADE_IMPACT_OPPONENT; // Debug
     for (i = 0; i < ARCADE_IMPACT_COUNT;i++)
     {
-        //impactRoll = 99; //Debug
-        impactLine += ImpactTable[impactIndex][i];
-        //DebugPrintf("impact line for %d is %d",i,impactLine);
-
-        if (impactRoll < impactLine)
-            return i;
+        impactLine += ImpactTable[ConvertBattlesToImpactIndex()][i];
+        if ((Random () % 100) < impactLine)
+			return i;
     }
     return ARCADE_IMPACT_COUNT;
 }
@@ -479,7 +463,6 @@ static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
     {1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_NO_EVENT
 };
 
-
 static const u32 SpecialPanelTable[][ARCADE_EVENT_SPECIAL_COUNT] =
 {
     //Battle 1  2  3  4  5  6  7  //Event panels
@@ -500,11 +483,13 @@ static s32 GetPanelUpperBound(u32 impact)
     switch (impact)
     {
         case ARCADE_IMPACT_PLAYER:
-        case ARCADE_IMPACT_OPPONENT: return ARCADE_EVENT_WEATHER_START;
-        case ARCADE_IMPACT_ALL: return ARCADE_EVENT_SPECIAL_START;
+        case ARCADE_IMPACT_OPPONENT:
+			return ARCADE_EVENT_WEATHER_START;
+        case ARCADE_IMPACT_ALL:
+			return ARCADE_EVENT_SPECIAL_START;
         default:
-        case ARCADE_IMPACT_SPECIAL: return ARCADE_EVENT_COUNT;
-
+        case ARCADE_IMPACT_SPECIAL:
+			return ARCADE_EVENT_COUNT;
     }
 }
 
@@ -514,11 +499,13 @@ static s32 GetPanelLowerBound(u32 impact)
     switch (impact)
     {
         case ARCADE_IMPACT_PLAYER:
-        case ARCADE_IMPACT_OPPONENT: return ARCADE_EVENT_INDIVIDUAL_START;
-        case ARCADE_IMPACT_ALL: return ARCADE_EVENT_WEATHER_START;
+        case ARCADE_IMPACT_OPPONENT:
+			return ARCADE_EVENT_INDIVIDUAL_START;
+        case ARCADE_IMPACT_ALL:
+			return ARCADE_EVENT_WEATHER_START;
         default:
-        case ARCADE_IMPACT_SPECIAL: return ARCADE_EVENT_SPECIAL_START;
-
+        case ARCADE_IMPACT_SPECIAL:
+			return ARCADE_EVENT_SPECIAL_START;
     }
 }
 
@@ -546,9 +533,15 @@ static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
     if (IsEventBanned(event))
         return FALSE;
     if (!IsEventValidDuringCurrentStreak(event))
+	{
+		DebugPrintf("IsEventValidDuringCurrentStreak FAIL");
         return FALSE;
+	}
     if (!IsEventValidDuringCurrentBattle(event))
+	{
+		DebugPrintf("IsEventValidDuringCurrentBattle FAIL");
         return FALSE;
+}
     return TRUE;
 }
 
@@ -563,11 +556,14 @@ static u32 GenerateRandomBetweenBounds(u32 impact)
 static u32 GenerateEvent(u32 impact)
 {
     u32 event = GenerateRandomBetweenBounds(impact);
+	DebugPrintf("GenerateRandomBetweenBounds %d",event);
 
     do
     {
         event = GenerateRandomBetweenBounds(impact);
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
+
+	DebugPrintf("GenerateRandomBetweenBounds %d",event);
 
     //DebugPrintf("event original roll is %d",event);
     //return ARCADE_EVENT_GIVE_ITEM; // Debug
@@ -638,7 +634,9 @@ static void GenerateGameBoard(void)
     {
         sGameBoard[i].impact = GenerateImpact();
         sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
-        //DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
+		DebugPrintf("event generated");
+
+        DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
     }
 }
 
@@ -874,8 +872,8 @@ static u32 GetChallengeNumIndex(void)
 {
     u32 challengeNum = GetChallengeNum();
 
-    if (challengeNum > ARCADE_STREAK_NUM_7)
-        return ARCADE_STREAK_NUM_7;
+    if (challengeNum > ARCADE_STREAK_NUM_6)
+        return ARCADE_STREAK_NUM_6;
     else
         return challengeNum;
 }
@@ -1073,6 +1071,18 @@ static bool32 BattleArcade_DoSwap(void)
     u32 i;
     struct Pokemon tempParty[MAX_FRONTIER_PARTY_SIZE];
 
+	/*
+	 //Debug
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
+            break;
+
+        CopyMon(&tempParty[i],&gPlayerParty[i],sizeof(gPlayerParty[i]));
+        CopyMon(&gPlayerParty[i],&gEnemyParty[i],sizeof(gEnemyParty[i]));
+        CopyMon(&gEnemyParty[i],&tempParty[i],sizeof(tempParty[i]));
+    }
+	*/
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
         if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE)
@@ -2522,7 +2532,6 @@ static void PrintPlayerParty(void)
 // Arcade Board
 // get palettes working
 // cursor changes color with every animation
-//lucy has ??? pokemon when fought early on test with em9
 //lucy has no intro text
 //guy will walk to player when giving item
 //add all the text for multi link partner, but she denies you from entering
