@@ -454,14 +454,6 @@ script BattleArcade_RouletteRoom_EventScript_BrainReadyMenuNoRecord
     }
 }
 
-script BattleArcade_RouletteRoom_EventScript_PlayBrainText
-{
-    arcade_getbrainintro
-    msgbox(gStringVar4, MSGBOX_DEFAULT)
-    waitmessage
-    closemessage
-}
-
 script BattleArcade_RouletteRoom_EventScript_HandleBattleResult
 {
     if (var(VAR_RESULT) == B_OUTCOME_WON)
@@ -863,6 +855,14 @@ text BattleArcade_RouletteRoom_Text_IKnowOneThing
 text BattleArcade_RouletteRoom_Text_YouAreProving
 {
 	format("You are proving yourself incredible. Are you incredible because you are so lucky you shrug off bad luck entirely? Or, are you so incredibly talented to not be swayed by luck, good or bad? I wish to see for myself what brought you to me today!")
+}
+text BattleArcade_RouletteRoom_Text_AlwaysBeSmiling
+{
+	format("Dahlia: Always be smiling! Luck comes to those who are happy! That's why I always keep a big smile and believe in my Pokémon when I battle.")
+}
+text BattleArcade_RouletteRoom_Text_WheneverIBattle
+{
+	format("Dahlia: Whenever I battle someone tough, I smile. I cannot help it! How about you? What do you do? Do you laugh? Cry? Get angry?")
 }
 text BattleArcade_RouletteRoom_Text_HowFabulousOfYouYour
 {

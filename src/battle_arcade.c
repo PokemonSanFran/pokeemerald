@@ -347,7 +347,7 @@ static void CalculateGiveChallengeBattlePoints(void)
 static void GiveBattlePoints(u32 points)
 {
     IncrementDailyBattlePoints(points);
-    ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
+    ConvertIntToDecimalStringN(gStringVar3, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
@@ -667,7 +667,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	//*event = ARCADE_EVENT_GIVE_BERRY;
+	*event = ARCADE_EVENT_GIVE_BP_BIG;
     //DebugPrintf("-----------------------");
     //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -1166,10 +1166,15 @@ static void GetBrainStatus(void)
 	//VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
 }
 
+extern const u8 BattleArcade_RouletteRoom_Text_AlwaysBeSmiling[];
+extern const u8 BattleArcade_RouletteRoom_Text_WheneverIBattle[];
+
 static void GetBrainIntroSpeech(void)
 {
-    //return one string for silver fight and otherwise the gold string
-    return;
+	if (VarGet(VAR_BRAIN_STATUS) == FRONTIER_BRAIN_SILVER)
+		StringCopy(gStringVar4,BattleArcade_RouletteRoom_Text_AlwaysBeSmiling);
+	else
+		StringCopy(gStringVar4,BattleArcade_RouletteRoom_Text_WheneverIBattle);
 }
 
 void SetBattleTypeFlags(void)
@@ -2250,7 +2255,7 @@ static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
 
 u32 ReturnCursorWait(u32 speed)
 {
-	return 20;
+	//return 20; // Debug
     return cursorWaitTable[speed];
 }
 
@@ -2532,8 +2537,8 @@ static void PrintPlayerParty(void)
 // Arcade Board
 // get palettes working
 // cursor changes color with every animation
-//lucy has no intro text
-//add all the text for multi link partner, but she denies you from entering
+// lucy has no intro text
+// add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
 
 #endif
