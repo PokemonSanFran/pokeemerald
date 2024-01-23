@@ -267,9 +267,14 @@ static void IncrementCurrentWinStreak(void)
 
 static void SetArcadeBattleWon(void)
 {
-	IncrementCurrentWinStreak();
-    SaveCurrentStreak();
-    gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
+	u32 i;
+
+	//for (i = 0; i < 4; i++)
+	//{
+		IncrementCurrentWinStreak();
+		SaveCurrentStreak();
+	//}
+		gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
 }
 
 u16 GetCurrentBattleArcadeWinStreak(void)
@@ -2517,8 +2522,9 @@ static void PrintPlayerParty(void)
 // Arcade Board
 // get palettes working
 // cursor changes color with every animation
-//lucy has ??? pokemon when fought early on
-// when epxplaining why I can'tm bring multiple item pokemon, text jsut cuts out
+//lucy has ??? pokemon when fought early on test with em9
+//lucy has no intro text
+//guy will walk to player when giving item
 //add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
 
