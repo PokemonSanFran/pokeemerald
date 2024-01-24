@@ -2547,5 +2547,15 @@ static void PrintPlayerParty(void)
 // get palettes working
 // cursor changes color with every animation
 // entire screen is glowing white as its happening
+//
+// clean up and refactor lobby
+// clean up and refactor maps lobby
+// clean up and refactor battle
+// clean up and refactor maps battle
+// re-organize battle arcade c into chunks (battles, game board front end, game board back end, records)
+// refactor battle arcade c
+// figure out why the cursor feels too fast at default
+// add branch tags
+// write documentation
 
 #endif

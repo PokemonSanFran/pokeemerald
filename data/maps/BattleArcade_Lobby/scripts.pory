@@ -2,37 +2,34 @@ const VAR_FACILITY_CHALLENGE_STATUS = VAR_TEMP_0
 const VAR_ATTENDANT_TALKED = VAR_TEMP_2
 const CHALLENGE_STATUS_UNKNOWN = 0
 const CHALLENGE_STATUS_END = 255
-const LOCAL_VAR_PARTY_SIZE = VAR_0x8005
-const LOCAL_VAR_ARCADE_MODE_FORMAT = VAR_0x8007
 
 const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
-
-const MODE_50_SINGLES = 51
-const MODE_50_DOUBLES = 52
-const MODE_50_MULTIS = 53
-const MODE_OPEN_SINGLES = 101
-const MODE_OPEN_DOUBLES = 102
-const MODE_OPEN_MULTIS = 103
 
 mapscripts BattleArcade_Lobby_MapScripts
 {
     MAP_SCRIPT_ON_FRAME_TABLE
         [
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleFrontier_BattleArcadeLobby_EventScript_GetChallengeStatus
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: BattleFrontier_BattleArcadeLobby_EventScript_QuitWithoutSaving
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: BattleFrontier_BattleArcadeLobby_EventScript_ResumeChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: BattleFrontier_BattleArcadeLobby_EventScript_WonChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: BattleFrontier_BattleArcadeLobby_EventScript_LostChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Registration_EventScript_GetChallengeStatus
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: BattleArcade_Registration_EventScript_QuitWithoutSaving
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: BattleArcade_Registration_EventScript_ResumeChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: BattleArcade_Registration_EventScript_WonChallenge
+            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: BattleArcade_Registration_EventScript_LostChallenge
         ]
 
         MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
         [
-            VAR_NEED_TO_FACE_NORTH, 0 :BattleFrontier_BattleArcadeLobby_EventScript_PlayerFaceNorth
+            VAR_NEED_TO_FACE_NORTH, 0 :BattleArcade_Lobby_EventScript_PlayerFaceNorth
         ]
 }
 
+script BattleArcade_Lobby_EventScript_PlayerFaceNorth
+{
+    setvar(VAR_NEED_TO_FACE_NORTH, 1)
+    turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
+    end
+}
 
-script BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator
+script BattleArcade_Lobby_EventScript_WalkToElevator
 {
     closemessage
 
@@ -41,7 +38,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_WalkToElevator
     waitmovement(OBJ_EVENT_ID_PLAYER)
 }
 
-script BattleFrontier_BattleArcadeLobby_EventScript_WarpToHallway
+script BattleArcade_Lobby_EventScript_WarpToHallway
 {
     warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
 }
