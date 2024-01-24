@@ -192,13 +192,14 @@ script BattleArcade_Challenge_EventScript_LoadOpponentText
 	frontier_isbrain
 	if (var(VAR_RESULT) == TRUE)
 	{
-        call(BattleArcade_Challenge_EventScript_BufferBattlePreBattleText)
+        call(BattleArcade_Challenge_EventScript_BufferBrainPreBattleText)
+		msgbox(gStringVar3, MSGBOX_DEFAULT)
 	}
 	else
 	{
 		tower_getopponentintro(0)
+		msgbox(gStringVar4, MSGBOX_DEFAULT)
 	}
-	msgbox(gStringVar4, MSGBOX_DEFAULT)
 	waitmessage
 	closemessage
 }
@@ -521,7 +522,7 @@ script BattleArcade_Challenge_EventScript_BrainIntro
     }
 }
 
-script BattleArcade_Challenge_EventScript_BufferBattlePreBattleText
+script BattleArcade_Challenge_EventScript_BufferBrainPreBattleText
 {
     arcade_getprintfromstreak
     if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)

@@ -126,7 +126,7 @@ static void FillFrontierTrainerParties(void);
 static void ResetLevelsToOriginal(void);
 static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
-static void BattleArcade_GetNextPrint(void);
+static void BattleArcade_GetPrintFromStreak(void);
 static void FieldShowBattleArcadeRecords(void);
 static void PlayGameBoard(void);
 static void Task_OpenGameBoard(u8);
@@ -160,7 +160,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
 	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
-	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetNextPrint,
+	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetPrintFromStreak,
 	[ARCADE_FUNC_RECORDS]                = FieldShowBattleArcadeRecords
 };
 
@@ -352,7 +352,7 @@ static void GiveBattlePoints(u32 points)
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 }
 
-static void BattleArcade_GetNextPrint(void)
+static void BattleArcade_GetPrintFromStreak(void)
 {
 	switch(GetCurrentBattleArcadeWinStreak())
 	{
@@ -666,7 +666,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	//*event = ARCADE_EVENT_GIVE_BP_BIG;
+	*event = ARCADE_EVENT_GIVE_BP_BIG;
     //DebugPrintf("-----------------------");
     //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -1151,7 +1151,7 @@ static bool32 BattleArcade_DoNoEvent(void)
 
 static void GetBrainStatus(void)
 {
-	u32 winStreak = (GetCurrentBattleArcadeWinStreak());
+	BattleArcade_GetPrintFromStreak();
 
 	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
 	{
@@ -1159,18 +1159,8 @@ static void GetBrainStatus(void)
 		return;
 	}
 
-	switch(++winStreak)
-	{
-		case ARCADE_SILVER_BATTLE_NUMBER:
-			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER);
-			break;
-		case ARCADE_GOLD_BATTLE_NUMBER:
-			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_GOLD);
-			break;
-		default:
-			VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_NOT_READY);
-			break;
-	}
+	VarSet(VAR_BRAIN_STATUS,gSpecialVar_Result);
+
 	//VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
 }
 
@@ -1259,7 +1249,7 @@ static void ResetWeatherPostBattle(void)
 
 u32 GetPlayerSymbolCountForArcade(void)
 {
-	BattleArcade_GetNextPrint();
+	BattleArcade_GetPrintFromStreak();
 	return --gSpecialVar_Result;
 }
 
