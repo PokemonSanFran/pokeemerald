@@ -1,9 +1,7 @@
-const VAR_BRAIN_STATUS = VAR_TEMP_F
 const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
 
-const GAME_BOARD_EVENT =  VAR_0x8007
-const GAME_BOARD_IMPACT = VAR_0x8008
-const GAME_BOARD_SUCCESS = VAR_0x8009
+const LOCAL_VAR_GAME_BOARD_EVENT =  VAR_0x8007
+const LOCAL_VAR_GAME_BOARD_SUCCESS = VAR_0x8009
 
 script BattleArcade_Challenge_EventScript_BeginChallenge
 {
@@ -76,7 +74,7 @@ script BattleArcade_Challenge_EventScript_HandleGameResults
 
 script BattleArcade_Challenge_AnnounceImpactGiveItem
 {
-    if (var(GAME_BOARD_SUCCESS))
+    if (var(LOCAL_VAR_GAME_BOARD_SUCCESS))
     {
         call(BattleArcade_Challenge_AnnounceImpactGiveItem_Success)
     }
@@ -90,7 +88,7 @@ script BattleArcade_Challenge_AnnounceImpactGiveItem
 
 script BattleArcade_Challenge_AnnounceImpactGiveItem_Success
 {
-    switch(var(GAME_BOARD_EVENT))
+    switch(var(LOCAL_VAR_GAME_BOARD_EVENT))
     {
         case ARCADE_EVENT_LOWER_HP:
             msgbox(BattleArcade_Challenge_Text_MatchCommenceWithoutFullHp,MSGBOX_DEFAULT)
@@ -142,7 +140,7 @@ script BattleArcade_Challenge_AnnounceImpactGiveItem_Success
 
 script BattleArcade_Challenge_AnnounceImpactGiveItem_Failure
 {
-    switch(var(GAME_BOARD_EVENT))
+    switch(var(LOCAL_VAR_GAME_BOARD_EVENT))
     {
         case ARCADE_EVENT_POISON:
             msgbox(BattleArcade_Challenge_Text_MatchPoisonedLuckyBreak,MSGBOX_DEFAULT)
@@ -159,7 +157,7 @@ script BattleArcade_Challenge_AnnounceImpactGiveItem_Failure
 }
 script BattleArcade_Challenge_GiveItem_Script
 {
-    if ((var(GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_BERRY) && (var(GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_ITEM))
+    if ((var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_BERRY) && (var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_ITEM))
     {
         return
     }
@@ -171,7 +169,7 @@ script BattleArcade_Challenge_GiveItem_Script
 
 script BattleArcade_Challenge_SkipBattle_Script
 {
-    if (var(GAME_BOARD_EVENT) != ARCADE_EVENT_NO_BATTLE)
+    if (var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_NO_BATTLE)
     {
         return
     }
@@ -214,7 +212,7 @@ script BattleArcade_Challenge_EventScript_DoArcadeBattle
 {
     closemessage
 
-    setvar(VAR_HEARD_BRAIN_INTRO, 0)
+    setvar(VAR_HEARD_BRAIN_INTRO, FALSE)
     frontier_set(FRONTIER_DATA_RECORD_DISABLED, FALSE)
     setvar(VAR_0x8005, 0)
 
@@ -340,7 +338,7 @@ script BattleArcade_Challenge_EventScript_HealPlayer
 script BattleArcade_Challenge_EventScript_AskReadyForOpponent
 {
     arcade_getbrainstatus
-    if(var(VAR_BRAIN_STATUS) != FRONTIER_BRAIN_NOT_READY)
+    if(var(VAR_RESULT) != FRONTIER_BRAIN_NOT_READY)
     {
         goto(BattleArcade_Challenge_EventScript_BrainUpNext)
     }
@@ -453,13 +451,13 @@ script BattleArcade_Challenge_EventScript_ContinueChallenge
 
 script BattleArcade_Challenge_EventScript_BrainUpNext
 {
-    if (var(VAR_HEARD_BRAIN_INTRO) == 1)
+    if (var(VAR_HEARD_BRAIN_INTRO) == TRUE)
     {
         goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
     }
 
     msgbox(BattleArcade_Challenge_Text_CongratulationsTrainerInRecognition, MSGBOX_DEFAULT)
-    setvar(VAR_HEARD_BRAIN_INTRO,1)
+    setvar(VAR_HEARD_BRAIN_INTRO,TRUE)
 
     goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
 }

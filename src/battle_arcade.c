@@ -126,7 +126,8 @@ static void FillFrontierTrainerParties(void);
 static void ResetLevelsToOriginal(void);
 static void ResetRouletteSpeed(void);
 static void ResetSketchedMoves(void);
-static void BattleArcade_GetPrintFromStreak(void);
+static u32 BattleArcade_GetPrintFromStreak(void);
+static void BattleArcade_BufferPrintFromStreak(void);
 static void FieldShowBattleArcadeRecords(void);
 static void PlayGameBoard(void);
 static void Task_OpenGameBoard(u8);
@@ -160,7 +161,7 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
 	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
-	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_GetPrintFromStreak,
+	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_BufferPrintFromStreak,
 	[ARCADE_FUNC_RECORDS]                = FieldShowBattleArcadeRecords
 };
 
@@ -352,7 +353,12 @@ static void GiveBattlePoints(u32 points)
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 }
 
-static void BattleArcade_GetPrintFromStreak(void)
+static void BattleArcade_BufferPrintFromStreak(void)
+{
+	gSpecialVar_Result = BattleArcade_GetPrintFromStreak();
+}
+
+static u32 BattleArcade_GetPrintFromStreak(void)
 {
 	switch(GetCurrentBattleArcadeWinStreak())
 	{
@@ -683,7 +689,7 @@ static void HandleGameBoardResult(u32 impact, u32 event)
 {
     //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
     //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
-    GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
+    LOCAL_VAR_GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(gStringVar1,impact);
 
 	FloodGameBoard(impact,event);
@@ -693,12 +699,12 @@ static void HandleGameBoardResult(u32 impact, u32 event)
 
 static void StoreEventToVar(u32 event)
 {
-    GAME_BOARD_EVENT = event;
+    LOCAL_VAR_GAME_BOARD_EVENT = event;
 }
 
 static void StoreImpactedSideToVar(u32 impact)
 {
-    GAME_BOARD_IMPACT = impact;
+    LOCAL_VAR_GAME_BOARD_IMPACT = impact;
 }
 
 static bool32 DoGameBoardResult(u32 event, u32 impact)
@@ -1151,17 +1157,13 @@ static bool32 BattleArcade_DoNoEvent(void)
 
 static void GetBrainStatus(void)
 {
-	BattleArcade_GetPrintFromStreak();
-
 	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
 	{
-		VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_NOT_READY);
+		gSpecialVar_Result = FRONTIER_BRAIN_NOT_READY;
 		return;
 	}
 
-	VarSet(VAR_BRAIN_STATUS,gSpecialVar_Result);
-
-	//VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
+	BattleArcade_BufferPrintFromStreak();
 }
 
 void SetBattleTypeFlags(void)
@@ -1249,8 +1251,7 @@ static void ResetWeatherPostBattle(void)
 
 u32 GetPlayerSymbolCountForArcade(void)
 {
-	BattleArcade_GetPrintFromStreak();
-	return --gSpecialVar_Result;
+	return (BattleArcade_GetPrintFromStreak() - 1);
 }
 
 void ConvertFacilityFromArcadeToPike(u32* facility)
