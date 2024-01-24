@@ -2628,7 +2628,7 @@ s32 GetFronterBrainSymbol(void)
     s32 symbol = GetPlayerSymbolCountForFacility(facility);
 
 	if (facility == FRONTIER_FACILITY_ARCADE)
-		return GetPlayerSymbolCountForArcade();
+		return GetArcadePrintCount();
 
 	ConvertFacilityFromArcadeToPike(&facility);
 

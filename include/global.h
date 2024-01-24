@@ -356,6 +356,13 @@ struct BattleDomeTrainer
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 #define BATTLE_TOWER_RECORD_COUNT 5
 
+struct CursorData
+{
+	u8 speed:5;
+	u8 position:5;
+	u8 isRandom:1;
+};
+
 struct BattleFrontier
 {
     /*0x64C*/ struct EmeraldBattleTowerRecord towerPlayer;
@@ -443,6 +450,7 @@ struct BattleFrontier
     /*0xCE0*/ u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
     /*0xCF0*/ u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
 	u8 arcadeCursorPosition:5;
+	struct CursorData gameCursor;
 #endif
 };
 

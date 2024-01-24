@@ -1,150 +1,232 @@
 #include "global.h"
-#include "battle_tower.h"
-#include "event_data.h"
-#include "battle_setup.h"
-#include "text.h"
-#include "main.h"
-#include "international_string_util.h"
 #include "battle.h"
-#include "frontier_util.h"
-#include "strings.h"
-#include "string_util.h"
-#include "item.h"
-#include "tv.h"
-#include "overworld.h"
 #include "battle_arcade.h"
+#include "battle_dome.h"
+#include "battle_pike.h"
 #include "battle_records.h"
+#include "battle_setup.h"
+#include "battle_tower.h"
+#include "battle_transition.h"
+#include "bg.h"
+#include "decompress.h"
+#include "event_data.h"
+#include "field_weather.h"
+#include "frontier_util.h"
+#include "gpu_regs.h"
+#include "international_string_util.h"
+#include "item.h"
+#include "main.h"
+#include "malloc.h"
+#include "menu.h"
+#include "overworld.h"
+#include "palette.h"
+#include "pokedex.h"
+#include "random.h"
+#include "scanline_effect.h"
+#include "script.h"
 #include "script_pokemon_util.h"
+#include "string_util.h"
+#include "strings.h"
+#include "task.h"
+#include "text.h"
+#include "tv.h"
+#include "window.h"
+#include "constants/battle_arcade.h"
 #include "constants/battle_frontier.h"
+#include "constants/field_specials.h"
 #include "constants/frontier_util.h"
+#include "constants/hold_effects.h"
 #include "constants/item.h"
 #include "constants/items.h"
 #include "constants/moves.h"
-#include "constants/battle_arcade.h"
-#include "constants/field_specials.h"
-#include "constants/hold_effects.h"
-#include "constants/trainers.h"
 #include "constants/opponents.h"
-#include "battle_dome.h"
-#include "random.h"
-#include "battle_transition.h"
-#include "battle_pike.h"
-#include "constants/weather.h"
-#include "field_weather.h"
-#include "script.h"
-
-//Records Window
-#include "palette.h"
-#include "gpu_regs.h"
-#include "scanline_effect.h"
-#include "task.h"
-#include "malloc.h"
-#include "decompress.h"
-#include "bg.h"
-#include "window.h"
-#include "menu.h"
-#include "pokedex.h"
 #include "constants/rgb.h"
+#include "constants/trainers.h"
+#include "constants/weather.h"
 
-#ifdef BATTLE_ARCADE
-
-static void (* const sBattleArcadeFuncs[])(void);
-
+// Arcade Challenge Functions
+void CallBattleArcadeFunc(void);
 static void InitArcadeChallenge(void);
+static void ResetCursorPositionOnSaveblock(void);
+static void ResetCursorSpeed(void);
+static void TakePlayerHeldItems(void);
+static void GenerateItemsToBeGiven(void);
+static u32 GenerateItemOrBerry(u32);
 static void GetArcadeData(void);
+static u16 GetCurrentArcadeWinStreak(void);
 static void SetArcadeData(void);
 static void SetArcadeBattleWon(void);
-static void SaveCurrentStreak(void);
-static void SaveCurrentParty(u32, u8);
+static void IncrementCurrentArcadeWinStreak(void);
+static void SaveCurrentArcadeWinStreak(void);
 static void SaveArcadeChallenge(void);
-static bool32 BattleArcade_DoGive(u32, u32);
-static void GetContinueMenuType(void);
-void SetFrontierFacilityToPike(void);
-static u32 GetImpactSide(u32 event);
-static bool32 IsItemConsumable(u16);
-static void RestoreNonConsumableHeldItems(void);
+static void GiveBattlePointsForChallenge(void);
 static u32 CalculateBattlePoints(u32);
-static void GiveBattlePoints(u32 points);
-static void ResetRouletteRandomFlag(void);
-static void GenerateItemsToBeGiven(void);
-static void CalculateGiveChallengeBattlePoints(void);
-static void SetArcadeBrainObjectEvent(void);
-static u32 CountNumberTypeWin(u8);
-static void CheckArcadeSymbol(void);
-static void TakePlayerHeldItems(void);
+static void GiveBattlePoints(u32);
+static void BufferEarnedArcadePrint(void);
+static u32 GetEarnedArcadePrint(void);
+static bool32 ShouldGetGoldPrint(u32);
+static bool32 ShouldGetSilverPrint(u32);
+static bool32 ShouldGetPrint(u32, u32, u32);
 static void TakeEnemyHeldItems(void);
-static struct Pokemon *LoadSideParty(u32);
-static void HandleGameBoardResult(u32, u32);
-static void GenerateOpponentParty(void);
-static void GetBrainStatus(void);
-static void GetBrainIntroSpeech(void);
-static void BattleArcade_PostBattleEventCleanup(void);
-static void BufferImpactedName(u8*, u32);
-static void ShowBattleArcadeTypeWinsWindow(void);
-static void CloseBattleArcadeTypeWinsWindow(void);
-static void ShowBattleArcadeTypeMonsWindow(void);
-static void CloseBattleArcadeTypeMonsWindow(void);
-static void InitBattleArcadeMons(void);
-static void ArcadePrintTypesMastered(u8, u8, u8);
-static u32 GetBestTypeWinAmount(u8);
-static const u8 *GetBestTypeWinType(u8);
-static void ArcadePrintBestStreak(u8, u8, u8);
-static bool32 IsGiveItemVarSet(void);
-static void PrintArcadeStreak(const u8*, u16, u8, u8);
-static bool32 IsEventBanned(u32 event);
+static void GetArcadeBrainStatus(void);
+static void CleanUpAfterArcadeBattle(void);
+static void StartArcadeGameFromOverworld(void);
+static void FillArcadeTrainerParty(void);
+void ConvertFacilityFromArcadeToPike(u32*);
+u32 GetArcadePrintCount(void);
+static void SetArcadeBrainObjectEvent(void);
+static void BufferPrintFromCurrentArcadeWinStreak(void);
+static u32 GetPrintFromCurrentArcadeWinStreak(void);
+static void ShowArcadeRecordsFromOverworld(void);
+void DoArcadeTrainerBattle(void);
+static void SetArcadeBattleFlags(void);
+
+// Arcade Game Board Front End
+static bool32 BattleArcade_AllocTilemapBuffers(void);
+static void CalculateTilePosition(u32, u32*, u32*);
+static u32 CreateCountdownPanel(u32, u32);
+static u8 CreateEventSprite(u32, u32, u32);
+static void CreateGameBoardCursor(void);
+static void DestroyCountdownPanels(void);
+static void DestroyEventSprites(void);
+static void GameBoard_FadeAndBail(void);
+static void GameBoard_FreeResources(void);
+static void GameBoard_Init(MainCallback);
+static bool8 GameBoard_InitBgs(void);
+static void GameBoard_InitWindows(void);
+static bool8 GameBoard_LoadGraphics(void);
+static void GameBoard_MainCB(void);
+static void GameBoard_SetupCB(void);
+static void GameBoard_VBlankCB(void);
+static u32 GetCursorPosition(void);
+static u32 GetCursorSpeed(void);
+static void SetCursorSpeed(u32);
+static const u32* GetEventGfx(u32);
+static u32 GetGameBoardMode(void);
+static const u8 *GetHelpBarText(void);
+static u32 GetHorizontalPositionFromSide(u32);
+static void Task_GameBoardMainInput(u8);
+static void Task_GameBoardWaitFadeAndBail(u8);
+static void Task_GameBoardWaitFadeAndExitGracefully(u8);
+static void Task_GameBoardWaitFadeIn(u8);
+static void Task_GameBoard_CleanUp(u8);
+static void Task_GameBoard_Countdown(u8);
+static void Task_GameBoard_Game(u8);
+static const u16 GetTileTag(u32);
+static void IncrementCursorPosition(void);
+static void SpriteCB_Cursor(struct Sprite*);
+static void SpriteCB_GameBoardCursorPosition(struct Sprite*);
+static void LoadTileSpriteSheets(void);
+static void SetCursorPosition(u32);
+static void SetScheduleShowBgs(u32);
+static bool32 ShouldCursorMove(u32);
+static void StartCountdown(void);
+static void StartGame(void);
+static void Task_OpenGameBoard(u8);
+
+// Arcade Game Board Back End Init
+static u32 ConvertBattlesToImpactIndex(void);
+static u32 GenerateEvent(u32);
+static void GenerateGameBoard(void);
+static u32 GenerateImpact(void);
+static u32 GenerateRandomBetweenBounds(u32);
+static const u32 (*GetCategoryGroups(u32))[ARCADE_BERRY_GROUP_SIZE];
+static u32 GetCategorySize(u32);
+static u32 GetChallengeNum(void);
 static u32 GetChallengeNumIndex(void);
-static void StoreEventToVar(u32);
-static void StoreImpactedSideToVar(u32);
-u16 GetCurrentBattleArcadeWinStreak(void);
-static u32 BattleArcade_GenerateGive(u32 type);
-static void BufferGiveString(u32);
+static u32 GetGroupIdFromWinStreak(void);
+static s32 GetPanelLowerBound(u32);
+static s32 GetPanelUpperBound(u32);
+static void InitRecordsWindow(void);
+static bool32 IsEventBanned(u32);
+static bool32 IsEventValidDuringBattleOrStreak(u32, u32);
+static bool32 IsEventValidDuringCurrentBattle(u32);
+static bool32 IsEventValidDuringCurrentStreak(u32);
+static void HandleAndShowBgs(void);
+static void HandleFinishMode();
+static void PopulateCountdownSprites(void);
+static void PopulateEventSprites(void);
+static void PrintEnemyParty(void);
+static void PrintHelpBar(void);
+static void PrintPartyIcons(u32);
+static void PrintPlayerParty(void);
+static void InitCursorPositionFromSaveblock(void);
+static u32 ReturnCursorWait(u32);
+static void SaveCursorPositionToSaveblock(void);
+static void SelectGameBoardSpace(u32*, u32*);
+
+// Arcade Game Board Back End Resolve
+static void ResetCursorRandomFlag(void);
+static u32 CalculateAndSaveNewLevel(u32);
 static bool32 DoGameBoardResult(u32, u32);
-static bool32 BattleArcade_DoLowerHP(u32);
-static bool32 BattleArcade_DoPoison(u32);
-static bool32 BattleArcade_DoParalyze(u32);
+static void FloodGameBoard(u32, u32);
+static bool32 BattleArcade_ChangeSpeed(u32);
 static bool32 BattleArcade_DoBurn(u32);
-static bool32 BattleArcade_DoSleep(u32);
+static bool32 BattleArcade_DoFog(void);
 static bool32 BattleArcade_DoFreeze(u32);
-static bool32 BattleArcade_DoStatusAilment(u32, u32);
+static bool32 BattleArcade_DoGive(u32, u32);
+static bool32 BattleArcade_DoGiveBPBig(void);
+static bool32 BattleArcade_DoGiveBPSmall(void);
 static bool32 BattleArcade_DoGiveBerry(u32);
 static bool32 BattleArcade_DoGiveItem(u32);
-static bool32 BattleArcade_DoLevelUp(u32);
-static bool32 BattleArcade_DoSun(void);
-static bool32 BattleArcade_DoRain(void);
-static bool32 BattleArcade_DoSand(void);
 static bool32 BattleArcade_DoHail(void);
-static bool32 BattleArcade_DoFog(void);
-static bool32 BattleArcade_DoTrickRoom(void);
-static bool32 BattleArcade_DoSwap(void);
-static bool32 BattleArcade_DoSpeedUp(void);
-static bool32 BattleArcade_DoSpeedDown(void);
-static bool32 BattleArcade_DoGiveBPSmall(void);
-static bool32 BattleArcade_DoGiveBPBig(void);
+static bool32 BattleArcade_DoLevelUp(u32);
+static bool32 BattleArcade_DoLowerHP(u32);
 static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
-static void FillFrontierTrainerParties(void);
-static void ResetLevelsToOriginal(void);
-static void ResetRouletteSpeed(void);
+static bool32 BattleArcade_DoParalyze(u32);
+static bool32 BattleArcade_DoPoison(u32);
+static bool32 BattleArcade_DoRain(void);
+static bool32 BattleArcade_DoSand(void);
+static bool32 BattleArcade_DoSleep(u32);
+static bool32 BattleArcade_DoSpeedDown(void);
+static bool32 BattleArcade_DoSpeedUp(void);
+static bool32 BattleArcade_DoStatusAilment(u32, u32);
+static bool32 BattleArcade_DoSun(void);
+static bool32 BattleArcade_DoSwap(void);
+static bool32 BattleArcade_DoTrickRoom(void);
+static void BattleArcade_DoWeather(u32);
+static void HandleGameBoardResult(u32, u32);
+static bool32 HasMove(struct Pokemon*, u16);
+static bool32 HaveMonsBeenSwapped(void);
 static void ResetSketchedMoves(void);
-static u32 BattleArcade_GetPrintFromStreak(void);
-static void BattleArcade_BufferPrintFromStreak(void);
-static void FieldShowBattleArcadeRecords(void);
-static void PlayGameBoard(void);
-static void Task_OpenGameBoard(u8);
-static u32 GetCursorPosition(void);
-static void InitCursorPositionFromSaveblock(void);
-static void SaveCursorPositionToSaveblock(void);
-static void ResetCursorPositionOnSaveblock(void);
+static void ResetWeatherPostBattle(void);
+static bool32 IsStatusSleepOrFreeze(u32);
+static void InitalizePartyIndex(u32*);
+static struct Pokemon *LoadSideParty(u32);
+static void ResetLevelsToOriginal(void);
+static void ReturnPartyToOwner(void);
+static void ShufflePartyIndex(u32*);
+static void StoreEventToVar(u32);
+static void StoreImpactedSideToVar(u32);
+static void BufferImpactedName(u8*, u32);
+static void BufferGiveString(u32);
+static u32 GetImpactedTrainerId(u32);
 
-//Record Printing
+// Arcade Records Window
 static const u8 *BattleArcade_GenerateRecordName(void);
-static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode);
-static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y);
-static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level, u32 y);
-static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y);
-static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode);
+static const u8 *BattleArcade_GetLevelText(u32);
+static const u8 *BattleArcade_GetRecordHeaderName(u32, u32);
+static const u8 *BattleArcade_GetRecordName(void);
+static void CB2_ShowRecords(void);
+static u32 CalculateRecordRowYPosition(u32);
 static void DisplayRecordsText(void);
-static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 lvlMode, u32 loopIterations);
+static void GenerateRecordText(void);
+static void PrintRecord(u32, u32, u32, u32, u8*, u32, u32, u32, u32);
+static void PrintRecordHeader(u32, u32, u32, u32, u8*, u32, u32, u32, u32);
+static void PrintRecordHeaderLevelRecord(u32, u32, u32, u32, u8*, u32, u32, u32, u32);
+static void PrintRecordLevelMode(u32, u32, u32, u32, u8*, u32, u32, u32, u32);
+static void HandleHeader(u32, u32, u32, u32, u8*, u32, u32);
+static void HandleRecord(u32, u32, u32, u32, u8*, u32, u32);
+static void Task_RecordsFadeIn(u8);
+static void Task_RecordsFadeOut(u8);
+static void Task_RecordsWaitForKeyPress(u8);
+static u32 GetRecordValue(u32, u32);
+static void InitRecordsBg(void);
+static void MainCB2(void);
+static void VBlankCB(void);
+
+#ifdef BATTLE_ARCADE
 
 static void (* const sBattleArcadeFuncs[])(void) =
 {
@@ -153,16 +235,16 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_SET_DATA]               = SetArcadeData,
 	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
 	[ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
-	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = CalculateGiveChallengeBattlePoints,
-	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
+	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePointsForChallenge,
+	[ARCADE_FUNC_CHECK_SYMBOL]           = BufferEarnedArcadePrint,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
-	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
-	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
-	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
+	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
+	[ARCADE_FUNC_EVENT_CLEAN_UP]         = CleanUpAfterArcadeBattle,
+	[ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameFromOverworld,
+	[ARCADE_FUNC_GENERATE_OPPONENT]      = FillArcadeTrainerParty,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
-	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BattleArcade_BufferPrintFromStreak,
-	[ARCADE_FUNC_RECORDS]                = FieldShowBattleArcadeRecords
+	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentArcadeWinStreak,
+	[ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -195,8 +277,7 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
 
 	ResetCursorPositionOnSaveblock();
-    ResetRouletteSpeed();
-    ResetRouletteRandomFlag();
+    ResetCursorSpeed();
     ResetFrontierTrainerIds();
 	TakePlayerHeldItems();
 	GenerateItemsToBeGiven();
@@ -209,10 +290,25 @@ static void InitArcadeChallenge(void)
     gTrainerBattleOpponent_A = 0;
 }
 
+static void ResetCursorPositionOnSaveblock(void)
+{
+    FRONTIER_SAVEDATA.arcadeCursorPosition = 0;
+}
+
+static void ResetCursorSpeed(void)
+{
+	ARCADE_CURSOR.speed = ARCADE_SPEED_DEFAULT;
+}
+
+static void TakePlayerHeldItems(void)
+{
+    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, ITEM_NONE);
+}
+
 static void GenerateItemsToBeGiven(void)
 {
-    VarSet(VAR_ARCADE_BERRY,BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_BERRY));
-    VarSet(VAR_ARCADE_ITEM,BattleArcade_GenerateGive(ARCADE_EVENT_GIVE_ITEM));
+    VarSet(VAR_ARCADE_BERRY,GenerateItemOrBerry(ARCADE_EVENT_GIVE_BERRY));
+    VarSet(VAR_ARCADE_ITEM,GenerateItemOrBerry(ARCADE_EVENT_GIVE_ITEM));
 }
 
 static void GetArcadeData(void)
@@ -225,7 +321,7 @@ static void GetArcadeData(void)
     case 0:
         break;
     case ARCADE_DATA_WIN_STREAK:
-        gSpecialVar_Result = GetCurrentBattleArcadeWinStreak();
+        gSpecialVar_Result = GetCurrentArcadeWinStreak();
         break;
     case ARCADE_DATA_WIN_STREAK_ACTIVE:
         gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]));
@@ -254,7 +350,7 @@ static void SetArcadeData(void)
     }
 }
 
-static void IncrementCurrentWinStreak(void)
+static void IncrementCurrentArcadeWinStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
@@ -270,13 +366,13 @@ static void SetArcadeBattleWon(void)
 
 	//for (i = 0; i < 4; i++)
 	//{
-		IncrementCurrentWinStreak();
-		SaveCurrentStreak();
+		IncrementCurrentArcadeWinStreak();
+		SaveCurrentArcadeWinStreak();
 	//}
 		gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
 }
 
-u16 GetCurrentBattleArcadeWinStreak(void)
+u16 GetCurrentArcadeWinStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
@@ -289,12 +385,12 @@ u16 GetCurrentBattleArcadeWinStreak(void)
 }
 
 
-static void SaveCurrentStreak(void)
+static void SaveCurrentArcadeWinStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     u32 oldStreak = ARCADE_RECORDED_WINS[battleMode][lvlMode];
-    u32 currentStreak = GetCurrentBattleArcadeWinStreak();
+    u32 currentStreak = GetCurrentArcadeWinStreak();
 
     if (oldStreak >= currentStreak)
         return;
@@ -338,7 +434,7 @@ static u32 CalculateBattlePoints(u32 challengeNum)
 	return (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN) ? ARCADE_BRAIN_DEFEAT_POINTS : sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
 }
 
-static void CalculateGiveChallengeBattlePoints(void)
+static void GiveBattlePointsForChallenge(void)
 {
 	u32 points = CalculateBattlePoints(((ARCADE_CURRENT_STREAK_WINS[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
     GiveBattlePoints(points);
@@ -353,14 +449,14 @@ static void GiveBattlePoints(u32 points)
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
 }
 
-static void BattleArcade_BufferPrintFromStreak(void)
+static void BufferPrintFromCurrentArcadeWinStreak(void)
 {
-	gSpecialVar_Result = BattleArcade_GetPrintFromStreak();
+	gSpecialVar_Result = GetPrintFromCurrentArcadeWinStreak();
 }
 
-static u32 BattleArcade_GetPrintFromStreak(void)
+static u32 GetPrintFromCurrentArcadeWinStreak(void)
 {
-	switch(GetCurrentBattleArcadeWinStreak())
+	switch(GetCurrentArcadeWinStreak())
 	{
 		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
 			return ARCADE_SYMBOL_SILVER;
@@ -371,25 +467,42 @@ static u32 BattleArcade_GetPrintFromStreak(void)
 	}
 }
 
-static void CheckArcadeSymbol(void)
+static void BufferEarnedArcadePrint(void)
 {
-    u32 numWins = (GetCurrentBattleArcadeWinStreak());
-    u32 hasSilver = FlagGet(FLAG_ARCADE_SILVER_PRINT);
-    u32 hasGold = FlagGet(FLAG_ARCADE_GOLD_PRINT);
-    bool32 shouldGetGold = (numWins == ARCADE_GOLD_BATTLE_NUMBER);
-    bool32 shouldGetSilver = (numWins == ARCADE_SILVER_BATTLE_NUMBER);
-
-    if (shouldGetGold && !hasGold)
-        gSpecialVar_Result = ARCADE_SYMBOL_GOLD;
-    else if (shouldGetSilver && !hasSilver)
-        gSpecialVar_Result = ARCADE_SYMBOL_SILVER;
-    else
-        gSpecialVar_Result = ARCADE_SYMBOL_NONE;
+    gSpecialVar_Result = GetEarnedArcadePrint();
 }
 
-u32 Arcade_SetChallengeNumToMax(u8 challengeNum)
+static u32 GetEarnedArcadePrint(void)
 {
-    return (VarGet(VAR_FRONTIER_FACILITY) == FRONTIER_FACILITY_ARCADE) ? UCHAR_MAX : challengeNum;
+    u32 numWins = (GetCurrentArcadeWinStreak());
+
+    if (ShouldGetGoldPrint(numWins))
+        return ARCADE_SYMBOL_GOLD;
+    else if (ShouldGetSilverPrint(numWins))
+        return ARCADE_SYMBOL_SILVER;
+    else
+        return ARCADE_SYMBOL_NONE;
+}
+
+static bool32 ShouldGetGoldPrint(u32 numWins)
+{
+    return ShouldGetPrint(FLAG_ARCADE_GOLD_PRINT,numWins,ARCADE_GOLD_BATTLE_NUMBER);
+}
+
+static bool32 ShouldGetSilverPrint(u32 numWins)
+{
+    return ShouldGetPrint(FLAG_ARCADE_SILVER_PRINT,numWins,ARCADE_SILVER_BATTLE_NUMBER);
+}
+
+static bool32 ShouldGetPrint(u32 print, u32 numWins, u32 battleNum)
+{
+    if (FlagGet(print))
+        return FALSE;
+
+    if (numWins != battleNum)
+        return FALSE;
+
+    return TRUE;
 }
 
 static void TakeEnemyHeldItems(void)
@@ -397,14 +510,9 @@ static void TakeEnemyHeldItems(void)
     BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, ITEM_NONE);
 }
 
-static void TakePlayerHeldItems(void)
-{
-    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, ITEM_NONE);
-}
-
 static u32 ConvertBattlesToImpactIndex(void)
 {
-	u16 numBattle = GetCurrentBattleArcadeWinStreak();
+	u16 numBattle = GetCurrentArcadeWinStreak();
 
 	return numBattle <= 4 ? ARCADE_BATTLE_NUM_0_4 :
 		numBattle <= 10 ? ARCADE_BATTLE_NUM_5_10 :
@@ -607,19 +715,6 @@ static bool32 IsEventBanned(u32 event)
     return FALSE;
 }
 
-static bool32 IsEventBattle(u32 event)
-{
-    return (event != ARCADE_EVENT_NO_BATTLE);
-}
-
-static bool32 DoesEventGiveItems(u32 event)
-{
-    if ((event != ARCADE_EVENT_GIVE_BERRY) && (event != ARCADE_EVENT_GIVE_ITEM))
-        return FALSE;
-
-    return TRUE;
-}
-
 struct GameResult
 {
     u8 impact:2;
@@ -672,14 +767,6 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 	*event = ARCADE_EVENT_GIVE_BP_BIG;
     //DebugPrintf("-----------------------");
     //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
-}
-
-static void GenerateOpponentParty(void)
-{
-	u32 originalBattleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-	VarSet(VAR_FRONTIER_BATTLE_MODE,FRONTIER_MODE_SINGLES);
-	FillFrontierTrainerParties();
-	VarSet(VAR_FRONTIER_BATTLE_MODE,originalBattleMode);
 }
 
 static void HandleGameBoardResult(u32 impact, u32 event)
@@ -870,7 +957,7 @@ static bool32 BattleArcade_DoGiveItem(u32 impact)
 
 static u32 GetChallengeNum(void)
 {
-    return (GetCurrentBattleArcadeWinStreak() / FRONTIER_STAGES_PER_CHALLENGE);
+    return (GetCurrentArcadeWinStreak() / FRONTIER_STAGES_PER_CHALLENGE);
 }
 
 static u32 GetChallengeNumIndex(void)
@@ -973,7 +1060,7 @@ static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
     return (type == ARCADE_EVENT_GIVE_ITEM) ? gameItems : gameBerries;
 }
 
-static u32 BattleArcade_GenerateGive(u32 type)
+static u32 GenerateItemOrBerry(u32 type)
 {
     u32 heldItem = ITEM_NONE;
     u32 maxGroupSize = GetCategorySize(type);
@@ -988,17 +1075,10 @@ static u32 BattleArcade_GenerateGive(u32 type)
     return heldItem;
 }
 
-static bool32 IsImpactedSideOpponent(u32 impact)
-{
-    return (impact == ARCADE_IMPACT_OPPONENT);
-}
-
 static bool32 BattleArcade_DoGive(u32 impact, u32 item)
 {
     u32 i;
     struct Pokemon *party = LoadSideParty(impact);
-
-    //DebugPrintf("dogive");
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
     {
@@ -1102,7 +1182,7 @@ static bool32 BattleArcade_DoSwap(void)
 
 static bool32 BattleArcade_ChangeSpeed(u32 mode)
 {
-    u32 currentSpeed = VarGet(VAR_ARCADE_CURSOR_SPEED);
+    u32 currentSpeed = GetCursorSpeed();
     u32 boundarySpeed = (mode == ARCADE_EVENT_SPEED_UP) ? ARCADE_SPEED_LEVEL_7 : ARCADE_SPEED_LEVEL_0;
 
     if (currentSpeed == boundarySpeed)
@@ -1113,13 +1193,18 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
     else
 		currentSpeed--;
 
-    VarSet(VAR_ARCADE_CURSOR_SPEED,currentSpeed);
+	SetCursorSpeed(currentSpeed);
     return TRUE;
 }
 
 static u32 GetCursorSpeed(void)
 {
-	return (VarGet(VAR_ARCADE_CURSOR_SPEED));
+    return ARCADE_CURSOR.speed;
+}
+
+static void SetCursorSpeed(u32 speed)
+{
+	ARCADE_CURSOR.speed = speed;
 }
 
 static bool32 BattleArcade_DoSpeedUp(void)
@@ -1152,7 +1237,7 @@ static bool32 BattleArcade_DoNoEvent(void)
 }
 
 
-static void GetBrainStatus(void)
+static void GetArcadeBrainStatus(void)
 {
 	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
 	{
@@ -1160,10 +1245,10 @@ static void GetBrainStatus(void)
 		return;
 	}
 
-	BattleArcade_BufferPrintFromStreak();
+	BufferPrintFromCurrentArcadeWinStreak();
 }
 
-void SetBattleTypeFlags(void)
+void SetArcadeBattleFlags(void)
 {
     gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
     switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
@@ -1179,17 +1264,15 @@ void SetBattleTypeFlags(void)
     }
 }
 
-void FillFrontierTrainerParties(void)
+void FillArcadeTrainerParty(void)
 {
     switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
     {
         case FRONTIER_MODE_SINGLES:
+        case FRONTIER_MODE_DOUBLES:
             FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
             break;
-        case FRONTIER_MODE_DOUBLES:
-            FillFrontierTrainerParty(FRONTIER_DOUBLES_PARTY_SIZE);
-            break;
-        case FRONTIER_MODE_MULTIS:
+        case FRONTIER_MODE_LINK_MULTIS:
             FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
             gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
             FillPartnerParty(gPartnerTrainerId);
@@ -1201,7 +1284,7 @@ void DoArcadeTrainerBattle(void)
 {
     gBattleScripting.specialTrainerBattleType = SPECIAL_BATTLE_TOWER;
 
-    SetBattleTypeFlags();
+    SetArcadeBattleFlags();
     CreateTask(Task_StartBattleAfterTransition, 1);
     PlayMapChosenOrBattleBGM(0);
     BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
@@ -1246,9 +1329,9 @@ static void ResetWeatherPostBattle(void)
     BattleArcade_DoWeather((gMapHeader.weather));
 }
 
-u32 GetPlayerSymbolCountForArcade(void)
+u32 GetArcadePrintCount(void)
 {
-	return (BattleArcade_GetPrintFromStreak() - 1);
+	return (GetPrintFromCurrentArcadeWinStreak() - 1);
 }
 
 void ConvertFacilityFromArcadeToPike(u32* facility)
@@ -1257,7 +1340,7 @@ void ConvertFacilityFromArcadeToPike(u32* facility)
 		*facility = FRONTIER_FACILITY_PIKE;
 }
 
-void BattleArcade_PostBattleEventCleanup(void)
+void CleanUpAfterArcadeBattle(void)
 {
     ResetWeatherPostBattle();
     ReturnPartyToOwner();
@@ -1266,12 +1349,7 @@ void BattleArcade_PostBattleEventCleanup(void)
     HealPlayerParty();
 }
 
-static void ResetRouletteSpeed(void)
-{
-    VarSet(VAR_ARCADE_CURSOR_SPEED,ARCADE_SPEED_DEFAULT);
-}
-
-static void ResetRouletteRandomFlag(void)
+static void ResetCursorRandomFlag(void)
 {
     FlagClear(FLAG_ARCADE_RANDOM_CURSOR);
 }
@@ -1318,18 +1396,6 @@ static void ResetSketchedMoves(void)
 		}
 	}
 }
-
-static void MainCB2(void);
-static void Task_RecordsFadeIn(u8);
-static void Task_RecordsWaitForKeyPress(u8);
-static void Task_RecordsFadeOut(u8);
-static void DisplayRecordsText(void);
-static void InitRecordsBg(void);
-static void InitRecordsWindow(void);
-static void PrintRecordsText(u8 *, u8, u8);
-static const u8 *GetHelpBarText(void);
-static void PrintHelpBar(void);
-static u32 GetGameBoardMode(void);
 
 EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;
 
@@ -1603,7 +1669,7 @@ static void InitRecordsWindow(void)
     PutWindowTilemap(0);
 }
 
-void FieldShowBattleArcadeRecords(void)
+void ShowArcadeRecordsFromOverworld(void)
 {
 	u8 taskId;
 	//Task_OpenGameBoard(taskId);
@@ -1711,41 +1777,6 @@ static const u8 sGameBoardWindowFontColors[][3] =
 	[FONT_BLACK]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY,  TEXT_COLOR_LIGHT_GRAY},
 	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
 };
-
-static void GameBoard_SetupCB(void);
-static void GameBoard_MainCB(void);
-static void GameBoard_VBlankCB(void);
-
-static void Task_GameBoardWaitFadeIn(u8 taskId);
-static void Task_GameBoardMainInput(u8 taskId);
-static void Task_GameBoardWaitFadeAndBail(u8 taskId);
-static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId);
-
-void GameBoard_Init(MainCallback callback);
-static bool8 GameBoard_InitBgs(void);
-static void GameBoard_FadeAndBail(void);
-static bool8 GameBoard_LoadGraphics(void);
-static void GameBoard_InitWindows(void);
-static void GameBoard_FreeResources(void);
-
-static void HandleAndShowBgs(void);
-static void SetScheduleShowBgs(u32 backgroundId);
-static void PrintEnemyParty(void);
-static void PrintPlayerParty(void);
-static void StartCountdown(void);
-static void PopulateEventSprites(void);
-static u8 CreateEventSprite(u32 x, u32 y, u32 space);
-static void Task_GameBoard_Countdown(u8);
-static void Task_GameBoard_Game(u8);
-static void SelectGameBoardSpace(u32*, u32*);
-static void HandleFinishMode();
-static void Task_GameBoard_CleanUp(u8 taskId);
-static void LoadTileSpriteSheets(void);
-static void CreateGameBoardCursor(void);
-static void CalculateTilePosition(u32, u32*, u32*);
-static u32 CreateCountdownPanel(u32 x, u32 y);
-static void PopulateCountdownSprites(void);
-static void DestroyCountdownPanels(void);
 
 static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
 static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
@@ -1860,7 +1891,7 @@ static void PrintHelpBar(void)
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
-static void PlayGameBoard(void)
+static void StartArcadeGameFromOverworld(void)
 {
     CreateTask(Task_OpenGameBoard, 0);
 }
@@ -2082,11 +2113,6 @@ static const u32* GetEventGfx(u32 event)
 	}
 }
 
-static const u16 GetSpacePalette(u32 space)
-{
-	u32 mode = GetGameBoardMode();
-}
-
 static void LoadTileSpriteSheets(void)
 {
 	u32 i;
@@ -2105,13 +2131,6 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
 {
     u32 spriteId;
 	u16 TileTag = GetTileTag(space);
-	//const u16 palette = GetSpacePalette(space);
-	/*
-    const struct SpritePalette sGlassInterfaceSpritePalette[] =
-    {
-        {sMenuPalette, PAL_GLASS_UI_SPRITES},
-    };
-	*/
 
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
     TempSpriteTemplate.tileTag = TileTag;
@@ -2185,19 +2204,9 @@ static void CreateGameBoardCursor(void)
 
 	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
 
-	//const u16 palette = GetSpacePalette(space);
-	/*
-    const struct SpritePalette sGlassInterfaceSpritePalette[] =
-    {
-        {sMenuPalette, PAL_GLASS_UI_SPRITES},
-    };
-	*/
-
     TempSpriteTemplate.tileTag = TileTag;
     TempSpriteTemplate.callback = SpriteCB_Cursor;
 
-    //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
-	//CalculateTilePosition(GetCursorPosition(),&x,&y);
     spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
 
     gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
@@ -2276,11 +2285,6 @@ static void SaveCursorPositionToSaveblock(void)
 	FRONTIER_SAVEDATA.arcadeCursorPosition = GetCursorPosition();
 }
 
-static void ResetCursorPositionOnSaveblock(void)
-{
-	FRONTIER_SAVEDATA.arcadeCursorPosition = 0;
-}
-
 static void IncrementCursorPosition(void)
 {
 	u32 position;
@@ -2313,7 +2317,7 @@ static void HandleFinishMode()
 	SelectGameBoardSpace(&impact,&event);
 	HandleGameBoardResult(impact,event);
 	SaveCursorPositionToSaveblock();
-	ResetRouletteRandomFlag();
+	ResetCursorRandomFlag();
 	DestroyEventSprites();
 	PopulateEventSprites();
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
