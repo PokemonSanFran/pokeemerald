@@ -363,14 +363,11 @@ static u32 BattleArcade_GetPrintFromStreak(void)
 	switch(GetCurrentBattleArcadeWinStreak())
 	{
 		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
-			gSpecialVar_Result = ARCADE_SYMBOL_SILVER;
-			break;
+			return ARCADE_SYMBOL_SILVER;
 		case (ARCADE_GOLD_BATTLE_NUMBER - 1):
-			gSpecialVar_Result = ARCADE_SYMBOL_GOLD;
-			break;
+			return ARCADE_SYMBOL_GOLD;
 		default:
-			gSpecialVar_Result = ARCADE_SYMBOL_NONE;
-			break;
+			return ARCADE_SYMBOL_NONE;
 	}
 }
 

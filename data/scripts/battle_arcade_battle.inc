@@ -267,7 +267,7 @@ BattleArcade_Challenge_AnnounceImpactGiveItem_Success_19:
 
 BattleArcade_Challenge_AnnounceImpactGiveItem_Success_20:
 # 132 "data/scripts/battle_arcade_battle.pory"
-	msgbox BattleArcade_Challenge_Text_ReceivedBp, MSGBOX_DEFAULT
+	msgbox BattleArcade_Challenge_Text_ReceivedBp, MSGBOX_GETPOINTS
 	return
 
 BattleArcade_Challenge_AnnounceImpactGiveItem_Success_21:

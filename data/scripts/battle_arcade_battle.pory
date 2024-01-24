@@ -129,7 +129,7 @@ script BattleArcade_Challenge_AnnounceImpactGiveItem_Success
             msgbox(BattleArcade_Challenge_Text_BoardmotionRandom,MSGBOX_DEFAULT)
         case ARCADE_EVENT_GIVE_BP_SMALL:
         case ARCADE_EVENT_GIVE_BP_BIG:
-            msgbox(BattleArcade_Challenge_Text_ReceivedBp,MSGBOX_DEFAULT)
+            msgbox(BattleArcade_Challenge_Text_ReceivedBp,MSGBOX_GETPOINTS)
         case ARCADE_EVENT_NO_BATTLE:
             msgbox(BattleArcade_Challenge_Text_OhLuckyYouCanSkip,MSGBOX_DEFAULT)
         default:

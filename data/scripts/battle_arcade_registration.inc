@@ -631,15 +631,15 @@ BattleArcade_Registration_EventScript_ShowResults::
 
 
 GiveMonDebugScript::
-# 539 "data/scripts/battle_arcade_registration.pory"
+# 534 "data/scripts/battle_arcade_registration.pory"
 	givemon SPECIES_SALAMENCE, 50, ITEM_LEFTOVERS
-# 540 "data/scripts/battle_arcade_registration.pory"
+# 535 "data/scripts/battle_arcade_registration.pory"
 	givemon SPECIES_METAGROSS, 50, ITEM_CHOICE_BAND
-# 541 "data/scripts/battle_arcade_registration.pory"
+# 536 "data/scripts/battle_arcade_registration.pory"
 	givemon SPECIES_LATIOS, 50, ITEM_LUM_BERRY
-# 542 "data/scripts/battle_arcade_registration.pory"
+# 537 "data/scripts/battle_arcade_registration.pory"
 	givemon SPECIES_NUZLEAF, 50, ITEM_STARF_BERRY
-# 543 "data/scripts/battle_arcade_registration.pory"
+# 538 "data/scripts/battle_arcade_registration.pory"
 	setflag FLAG_SYS_POKEMON_GET
 	return
 
@@ -742,66 +742,61 @@ BattleArcade_Entrance_Text_YouMayTeamUpWith::
 	.string "Arcade Multi Battle challenge can't be\l"
 	.string "interrupted.$"
 
-BattleFrontier_BattleArcadeLobby_Text_RecordLastMatch::
-# 477 "data/scripts/battle_arcade_registration.pory"
-	.string "Shall I record your last BATTLE ARCADE\n"
-	.string "match on your FRONTIER PASS?$"
-
 BattleArcade_Entrance_Text_WeveMissedYou::
-# 482 "data/scripts/battle_arcade_registration.pory"
+# 477 "data/scripts/battle_arcade_registration.pory"
 	.string "We've missed you! You must save the\n"
 	.string "game before you resume your challenge.\l"
 	.string "Please wait.$"
 
 BattleArcade_Entrance_Text_ExcuseMeYouDidnt::
-# 487 "data/scripts/battle_arcade_registration.pory"
+# 482 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me! You didn't save before you\n"
 	.string "quit your challenge last time. Because\l"
 	.string "of that, you have been disqualified\l"
 	.string "from your challenge!$"
 
 BattleArcade_Entrance_Text_CongratulationsInHonorOf::
-# 492 "data/scripts/battle_arcade_registration.pory"
+# 487 "data/scripts/battle_arcade_registration.pory"
 	.string "Congratulations! In honor of your\n"
 	.string "victory, we present you with this\l"
 	.string "commemorative print!$"
 
 BattleArcade_Entrance_Text_TheSilverPrintWasAdded::
-# 497 "data/scripts/battle_arcade_registration.pory"
+# 492 "data/scripts/battle_arcade_registration.pory"
 	.string "The Silver Print was added to\n"
 	.string "{PLAYER}'s Vs. Recorder!$"
 
 BattleArcade_Entrance_Text_TheGoldPrintWasAdded::
-# 502 "data/scripts/battle_arcade_registration.pory"
+# 497 "data/scripts/battle_arcade_registration.pory"
 	.string "The Gold Print was added to\n"
 	.string "{PLAYER}'s Vs. Recorder!$"
 
 BattleArcade_Entrance_Text_WeHopeToSeeYou::
-# 507 "data/scripts/battle_arcade_registration.pory"
+# 502 "data/scripts/battle_arcade_registration.pory"
 	.string "We hope to see you again!$"
 
 BattleArcade_Entrance_Text_ReadWhichRecord::
-# 512 "data/scripts/battle_arcade_registration.pory"
+# 507 "data/scripts/battle_arcade_registration.pory"
 	.string "Which record would you like to see?$"
 
 BattleArcade_Entrance_Text_LinkMultisAreNot::
-# 517 "data/scripts/battle_arcade_registration.pory"
+# 512 "data/scripts/battle_arcade_registration.pory"
 	.string "I'm sorry! Link Multi Battles have not\n"
 	.string "been implemented at this time. Please\l"
 	.string "come back later.$"
 
 BattleArcade_Entrance_Text_OneTrainerShouldSelectBecome::
-# 524 "data/scripts/battle_arcade_registration.pory"
+# 519 "data/scripts/battle_arcade_registration.pory"
 	.string "One Trainer should select “BECOME\n"
 	.string "LEADER.” The other Trainer must select\l"
 	.string "“JOIN GROUP.”$"
 
 BattleArcade_Entrance_Text_WeNeedToLaunchDs::
-# 528 "data/scripts/battle_arcade_registration.pory"
+# 523 "data/scripts/battle_arcade_registration.pory"
 	.string "We need to launch DS Wireless\n"
 	.string "Communications.$"
 
 BattleArcade_Entrance_Text_YouMustSaveTheGame::
-# 532 "data/scripts/battle_arcade_registration.pory"
+# 527 "data/scripts/battle_arcade_registration.pory"
 	.string "You must save the game before I show\n"
 	.string "you in. Please wait.$"
