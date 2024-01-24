@@ -87,11 +87,16 @@ enum BackgroundIds
 void CallBattleArcadeFunc(void);
 static void InitArcadeChallenge(void);
 static void ResetCursorPositionOnSaveblock(void);
+static void SetCursorPosition(u32);
+static void SaveCursorPositionToSaveblock(void);
 static void ResetCursorSpeed(void);
 static void ClearCursorRandomMode(void);
 static void TakePlayerHeldItems(void);
 static void GenerateItemsToBeGiven(void);
 static u32 GenerateItemOrBerry(u32);
+static u32 GetCategorySize(u32);
+static u32 GetGroupIdFromWinStreak(void);
+static const u32 (*GetCategoryGroups(u32))[ARCADE_BERRY_GROUP_SIZE];
 static void GetArcadeData(void);
 static u16 GetCurrentArcadeWinStreak(void);
 static void SetArcadeData(void);
@@ -110,6 +115,10 @@ static bool32 ShouldGetPrint(u32, u32, u32);
 static void TakeEnemyHeldItems(void);
 static void GetArcadeBrainStatus(void);
 static void CleanUpAfterArcadeBattle(void);
+static void ResetWeatherPostBattle(void);
+static void ReturnPartyToOwner(void);
+static void ResetLevelsToOriginal(void);
+static void ResetSketchedMoves(void);
 static void StartArcadeGameFromOverworld(void);
 static void FillArcadeTrainerParty(void);
 void ConvertFacilityFromArcadeToPike(u32*);
@@ -157,7 +166,6 @@ static void IncrementCursorPosition(void);
 static void SpriteCB_Cursor(struct Sprite*);
 static void SpriteCB_GameBoardCursorPosition(struct Sprite*);
 static void LoadTileSpriteSheets(void);
-static void SetCursorPosition(u32);
 static void SetScheduleShowBgs(u32);
 static bool32 ShouldCursorMove(u32);
 static void StartCountdown(void);
@@ -171,11 +179,8 @@ static u32 GenerateEvent(u32);
 static void GenerateGameBoard(void);
 static u32 GenerateImpact(void);
 static u32 GenerateRandomBetweenBounds(u32);
-static const u32 (*GetCategoryGroups(u32))[ARCADE_BERRY_GROUP_SIZE];
-static u32 GetCategorySize(u32);
 static u32 GetChallengeNum(void);
 static u32 GetChallengeNumIndex(void);
-static u32 GetGroupIdFromWinStreak(void);
 static s32 GetPanelLowerBound(u32);
 static s32 GetPanelUpperBound(u32);
 static void InitRecordsWindow(void);
@@ -193,7 +198,6 @@ static void PrintPartyIcons(u32);
 static void PrintPlayerParty(void);
 static void InitCursorPositionFromSaveblock(void);
 static u32 ReturnCursorWait(u32);
-static void SaveCursorPositionToSaveblock(void);
 static void SelectGameBoardSpace(u32*, u32*);
 
 // Arcade Game Board Back End Resolve
@@ -231,13 +235,9 @@ static void BattleArcade_DoWeather(u32);
 static void HandleGameBoardResult(u32, u32);
 static bool32 HasMove(struct Pokemon*, u16);
 static bool32 HaveMonsBeenSwapped(void);
-static void ResetSketchedMoves(void);
-static void ResetWeatherPostBattle(void);
 static bool32 IsStatusSleepOrFreeze(u32);
 static void InitalizePartyIndex(u32*);
 static struct Pokemon *LoadSideParty(u32);
-static void ResetLevelsToOriginal(void);
-static void ReturnPartyToOwner(void);
 static void ShufflePartyIndex(u32*);
 static void StoreEventToVar(u32);
 static void StoreImpactedSideToVar(u32);
@@ -356,6 +356,11 @@ static void ResetCursorSpeed(void)
 	ARCADE_CURSOR.speed = ARCADE_SPEED_DEFAULT;
 }
 
+static void ClearCursorRandomMode(void)
+{
+	ARCADE_CURSOR.isRandom = FALSE;
+}
+
 static void TakePlayerHeldItems(void)
 {
     BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, ITEM_NONE);
@@ -365,6 +370,111 @@ static void GenerateItemsToBeGiven(void)
 {
     VarSet(VAR_ARCADE_BERRY,GenerateItemOrBerry(ARCADE_EVENT_GIVE_BERRY));
     VarSet(VAR_ARCADE_ITEM,GenerateItemOrBerry(ARCADE_EVENT_GIVE_ITEM));
+}
+
+static u32 GenerateItemOrBerry(u32 type)
+{
+    u32 heldItem = ITEM_NONE;
+    u32 maxGroupSize = GetCategorySize(type);
+    u32 groupId = GetGroupIdFromWinStreak();
+    const u32 (*itemGroups)[ARCADE_BERRY_GROUP_SIZE] = GetCategoryGroups(type);
+
+    do
+    {
+        heldItem = itemGroups[groupId][Random() % maxGroupSize];
+    } while (heldItem == ITEM_NONE);
+
+    return heldItem;
+}
+
+static u32 GetCategorySize(u32 type)
+{
+    if (type == ARCADE_EVENT_GIVE_ITEM)
+        return ARCADE_ITEM_GROUP_SIZE;
+    else
+        return ARCADE_BERRY_GROUP_SIZE;
+}
+
+static u32 GetGroupIdFromWinStreak(void)
+{
+    u32 challengeNum = GetChallengeNum();
+
+    if (challengeNum < 3)
+        return ARCADE_BERRY_GROUP_1;
+    else if (challengeNum > 6)
+        return ARCADE_BERRY_GROUP_3;
+    else
+        return ARCADE_BERRY_GROUP_2;
+}
+
+static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
+{
+    static const u32 gameBerries[ARCADE_BERRY_GROUP_COUNT][ARCADE_BERRY_GROUP_SIZE] =
+    {
+        [ARCADE_BERRY_GROUP_1] =
+        {
+            ITEM_CHERI_BERRY,
+            ITEM_CHESTO_BERRY,
+            ITEM_PECHA_BERRY,
+            ITEM_RAWST_BERRY,
+            ITEM_ASPEAR_BERRY,
+            ///////////////////////////////////
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+        },
+        [ARCADE_BERRY_GROUP_2] =
+        {
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+        },
+        [ARCADE_BERRY_GROUP_3] =
+        {
+            ITEM_PERSIM_BERRY,
+            ITEM_SITRUS_BERRY,
+            ITEM_LUM_BERRY,
+            ///////////////////////////////////
+            ITEM_LIECHI_BERRY,
+            ITEM_GANLON_BERRY,
+            ITEM_SALAC_BERRY,
+            ITEM_PETAYA_BERRY,
+            ITEM_APICOT_BERRY,
+            ITEM_LANSAT_BERRY,
+            ITEM_STARF_BERRY,
+        },
+    };
+
+    static const u32 gameItems[ARCADE_ITEM_GROUP_COUNT][ARCADE_ITEM_GROUP_SIZE] =
+    {
+        [ARCADE_ITEM_GROUP_1] =
+        {
+            ITEM_KINGS_ROCK,
+            ITEM_QUICK_CLAW,
+            ITEM_BRIGHT_POWDER,
+            ///////////////////////////////////
+            ITEM_FOCUS_BAND,
+            ITEM_LEFTOVERS,
+        },
+        [ARCADE_ITEM_GROUP_2] =
+        {
+            ITEM_WHITE_HERB,
+            ITEM_SHELL_BELL,
+            ///////////////////////////////////
+            ITEM_SCOPE_LENS,
+        },
+        [ARCADE_ITEM_GROUP_3] =
+        {
+            ITEM_FOCUS_BAND,
+            ITEM_LEFTOVERS,
+            ///////////////////////////////////
+            ITEM_SCOPE_LENS,
+            ///////////////////////////////////
+            ITEM_CHOICE_BAND
+        },
+    };
+
+    return (type == ARCADE_EVENT_GIVE_ITEM) ? gameItems : gameBerries;
 }
 
 static void GetArcadeData(void)
@@ -383,6 +493,18 @@ static void GetArcadeData(void)
         gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]));
         break;
     }
+}
+
+u16 GetCurrentArcadeWinStreak(void)
+{
+    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+    u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
+    u32 winStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode];
+
+    if (winStreak > MAX_STREAK)
+        return MAX_STREAK;
+    else
+        return winStreak;
 }
 
 static void SetArcadeData(void)
@@ -406,16 +528,6 @@ static void SetArcadeData(void)
     }
 }
 
-static void IncrementCurrentArcadeWinStreak(void)
-{
-    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
-    u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
-	u32 currentWinStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode];
-
-	if (currentWinStreak < MAX_STREAK)
-		ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode]++;
-}
-
 static void SetArcadeBattleWon(void)
 {
 	u32 i;
@@ -428,18 +540,15 @@ static void SetArcadeBattleWon(void)
 		gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
 }
 
-u16 GetCurrentArcadeWinStreak(void)
+static void IncrementCurrentArcadeWinStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
-    u32 winStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode];
+	u32 currentWinStreak = ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode];
 
-    if (winStreak > MAX_STREAK)
-        return MAX_STREAK;
-    else
-        return winStreak;
+	if (currentWinStreak < MAX_STREAK)
+		ARCADE_CURRENT_STREAK_WINS[battleMode][lvlMode]++;
 }
-
 
 static void SaveCurrentArcadeWinStreak(void)
 {
@@ -478,6 +587,12 @@ static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =
     {6,6,6},
 };
 
+static void GiveBattlePointsForChallenge(void)
+{
+	u32 points = CalculateBattlePoints(((ARCADE_CURRENT_STREAK_WINS[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
+    GiveBattlePoints(points);
+}
+
 static u32 CalculateBattlePoints(u32 challengeNum)
 {
     u32 maxChallengeNum = ARRAY_COUNT(sArcadeBattlePointAwards);
@@ -490,12 +605,6 @@ static u32 CalculateBattlePoints(u32 challengeNum)
 	return (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN) ? ARCADE_BRAIN_DEFEAT_POINTS : sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
 }
 
-static void GiveBattlePointsForChallenge(void)
-{
-	u32 points = CalculateBattlePoints(((ARCADE_CURRENT_STREAK_WINS[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
-    GiveBattlePoints(points);
-}
-
 static void GiveBattlePoints(u32 points)
 {
     IncrementDailyBattlePoints(points);
@@ -503,24 +612,6 @@ static void GiveBattlePoints(u32 points)
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
-}
-
-static void BufferPrintFromCurrentArcadeWinStreak(void)
-{
-	gSpecialVar_Result = GetPrintFromCurrentArcadeWinStreak();
-}
-
-static u32 GetPrintFromCurrentArcadeWinStreak(void)
-{
-	switch(GetCurrentArcadeWinStreak())
-	{
-		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
-			return ARCADE_SYMBOL_SILVER;
-		case (ARCADE_GOLD_BATTLE_NUMBER - 1):
-			return ARCADE_SYMBOL_GOLD;
-		default:
-			return ARCADE_SYMBOL_NONE;
-	}
 }
 
 static void BufferEarnedArcadePrint(void)
@@ -539,7 +630,6 @@ static u32 GetEarnedArcadePrint(void)
     else
         return ARCADE_SYMBOL_NONE;
 }
-
 static bool32 ShouldGetGoldPrint(u32 numWins)
 {
     return ShouldGetPrint(FLAG_ARCADE_GOLD_PRINT,numWins,ARCADE_GOLD_BATTLE_NUMBER);
@@ -564,6 +654,180 @@ static bool32 ShouldGetPrint(u32 print, u32 numWins, u32 battleNum)
 static void TakeEnemyHeldItems(void)
 {
     BattleArcade_DoGive(ARCADE_IMPACT_OPPONENT, ITEM_NONE);
+}
+
+static void GetArcadeBrainStatus(void)
+{
+	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
+	{
+		gSpecialVar_Result = FRONTIER_BRAIN_NOT_READY;
+		return;
+	}
+
+	BufferPrintFromCurrentArcadeWinStreak();
+}
+
+void CleanUpAfterArcadeBattle(void)
+{
+    ResetWeatherPostBattle();
+    ReturnPartyToOwner();
+    ResetLevelsToOriginal();
+	ResetSketchedMoves();
+    HealPlayerParty();
+}
+
+static void ResetWeatherPostBattle(void)
+{
+    BattleArcade_DoWeather((gMapHeader.weather));
+}
+
+static void ReturnPartyToOwner(void)
+{
+    if (!HaveMonsBeenSwapped())
+        return;
+
+    BattleArcade_DoSwap();
+}
+
+static void ResetLevelsToOriginal(void)
+{
+	struct Pokemon *frontierMon;
+	struct Pokemon *playerMon;
+	u32 playerMonLevel, frontierMonLevel, i, monId;
+
+	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+	{
+		monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+
+		if (monId >= PARTY_SIZE)
+			continue;
+
+		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+		playerMon = &gPlayerParty[i];
+
+		playerMonLevel = GetMonData(playerMon, MON_DATA_LEVEL,NULL);
+		frontierMonLevel = GetMonData(frontierMon, MON_DATA_LEVEL,NULL);
+
+		if (playerMonLevel == frontierMonLevel)
+			continue;
+
+		SetMonData(playerMon, MON_DATA_LEVEL, &frontierMonLevel);
+	}
+}
+
+static void ResetSketchedMoves(void)
+{
+	u8 i, j;
+	struct Pokemon *frontierMon;
+	struct Pokemon *playerMon;
+
+	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+	{
+		u32 monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+
+		if (monId >= PARTY_SIZE)
+			continue;
+
+		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+		playerMon = &gPlayerParty[i];
+
+		for (j = 0; j < MAX_MON_MOVES; j++)
+		{
+			if (HasMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
+				continue;
+
+			SetMonMoveSlot(playerMon, MOVE_SKETCH, j);
+			break;
+		}
+	}
+}
+
+static void StartArcadeGameFromOverworld(void)
+{
+    CreateTask(Task_OpenGameBoard, 0);
+}
+
+void FillArcadeTrainerParty(void)
+{
+    switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
+    {
+        case FRONTIER_MODE_SINGLES:
+        case FRONTIER_MODE_DOUBLES:
+            FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
+            break;
+        case FRONTIER_MODE_LINK_MULTIS:
+            FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
+            gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
+            FillPartnerParty(gPartnerTrainerId);
+            break;
+    }
+}
+
+void ConvertFacilityFromArcadeToPike(u32* facility)
+{
+	if (*facility == FRONTIER_FACILITY_ARCADE)
+		*facility = FRONTIER_FACILITY_PIKE;
+}
+
+u32 GetArcadePrintCount(void)
+{
+	return (GetPrintFromCurrentArcadeWinStreak() - 1);
+}
+
+static void SetArcadeBrainObjectEvent(void)
+{
+    SetFrontierBrainObjEventGfx(FRONTIER_FACILITY_PIKE);
+}
+
+static void BufferPrintFromCurrentArcadeWinStreak(void)
+{
+	gSpecialVar_Result = GetPrintFromCurrentArcadeWinStreak();
+}
+
+static u32 GetPrintFromCurrentArcadeWinStreak(void)
+{
+	switch(GetCurrentArcadeWinStreak())
+	{
+		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
+			return ARCADE_SYMBOL_SILVER;
+		case (ARCADE_GOLD_BATTLE_NUMBER - 1):
+			return ARCADE_SYMBOL_GOLD;
+		default:
+			return ARCADE_SYMBOL_NONE;
+	}
+}
+
+void ShowArcadeRecordsFromOverworld(void)
+{
+	u8 taskId;
+    SetMainCallback2(CB2_ShowRecords);
+    LockPlayerFieldControls();
+}
+
+void DoArcadeTrainerBattle(void)
+{
+    gBattleScripting.specialTrainerBattleType = SPECIAL_BATTLE_TOWER;
+
+    SetArcadeBattleFlags();
+    CreateTask(Task_StartBattleAfterTransition, 1);
+    PlayMapChosenOrBattleBGM(0);
+    BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
+}
+
+void SetArcadeBattleFlags(void)
+{
+    gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
+    switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
+    {
+        case FRONTIER_MODE_SINGLES:
+            break;
+        case FRONTIER_MODE_DOUBLES:
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+            break;
+        case FRONTIER_MODE_MULTIS:
+            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
+            break;
+    }
 }
 
 static u32 ConvertBattlesToImpactIndex(void)
@@ -1015,111 +1279,6 @@ static u32 GetChallengeNumIndex(void)
         return challengeNum;
 }
 
-static u32 GetGroupIdFromWinStreak(void)
-{
-    u32 challengeNum = GetChallengeNum();
-
-    if (challengeNum < 3)
-        return ARCADE_BERRY_GROUP_1;
-    else if (challengeNum > 6)
-        return ARCADE_BERRY_GROUP_3;
-    else
-        return ARCADE_BERRY_GROUP_2;
-}
-
-static u32 GetCategorySize(u32 type)
-{
-    if (type == ARCADE_EVENT_GIVE_ITEM)
-        return ARCADE_ITEM_GROUP_SIZE;
-    else
-        return ARCADE_BERRY_GROUP_SIZE;
-}
-
-static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
-{
-    static const u32 gameBerries[ARCADE_BERRY_GROUP_COUNT][ARCADE_BERRY_GROUP_SIZE] =
-    {
-        [ARCADE_BERRY_GROUP_1] =
-        {
-            ITEM_CHERI_BERRY,
-            ITEM_CHESTO_BERRY,
-            ITEM_PECHA_BERRY,
-            ITEM_RAWST_BERRY,
-            ITEM_ASPEAR_BERRY,
-            ///////////////////////////////////
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-        },
-        [ARCADE_BERRY_GROUP_2] =
-        {
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-        },
-        [ARCADE_BERRY_GROUP_3] =
-        {
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-            ///////////////////////////////////
-            ITEM_LIECHI_BERRY,
-            ITEM_GANLON_BERRY,
-            ITEM_SALAC_BERRY,
-            ITEM_PETAYA_BERRY,
-            ITEM_APICOT_BERRY,
-            ITEM_LANSAT_BERRY,
-            ITEM_STARF_BERRY,
-        },
-    };
-
-    static const u32 gameItems[ARCADE_ITEM_GROUP_COUNT][ARCADE_ITEM_GROUP_SIZE] =
-    {
-        [ARCADE_ITEM_GROUP_1] =
-        {
-            ITEM_KINGS_ROCK,
-            ITEM_QUICK_CLAW,
-            ITEM_BRIGHT_POWDER,
-            ///////////////////////////////////
-            ITEM_FOCUS_BAND,
-            ITEM_LEFTOVERS,
-        },
-        [ARCADE_ITEM_GROUP_2] =
-        {
-            ITEM_WHITE_HERB,
-            ITEM_SHELL_BELL,
-            ///////////////////////////////////
-            ITEM_SCOPE_LENS,
-        },
-        [ARCADE_ITEM_GROUP_3] =
-        {
-            ITEM_FOCUS_BAND,
-            ITEM_LEFTOVERS,
-            ///////////////////////////////////
-            ITEM_SCOPE_LENS,
-            ///////////////////////////////////
-            ITEM_CHOICE_BAND
-        },
-    };
-
-    return (type == ARCADE_EVENT_GIVE_ITEM) ? gameItems : gameBerries;
-}
-
-static u32 GenerateItemOrBerry(u32 type)
-{
-    u32 heldItem = ITEM_NONE;
-    u32 maxGroupSize = GetCategorySize(type);
-    u32 groupId = GetGroupIdFromWinStreak();
-    const u32 (*itemGroups)[ARCADE_BERRY_GROUP_SIZE] = GetCategoryGroups(type);
-
-    do
-    {
-        heldItem = itemGroups[groupId][Random() % maxGroupSize];
-    } while (heldItem == ITEM_NONE);
-
-    return heldItem;
-}
-
 static bool32 BattleArcade_DoGive(u32 impact, u32 item)
 {
     u32 i;
@@ -1279,11 +1438,6 @@ static void SetCursorRandomMode(void)
 	ARCADE_CURSOR.isRandom = TRUE;
 }
 
-static void ClearCursorRandomMode(void)
-{
-	ARCADE_CURSOR.isRandom = FALSE;
-}
-
 static bool32 BattleArcade_DoGiveBPSmall(void)
 {
     GiveBattlePoints(ARCADE_BP_SMALL);
@@ -1303,124 +1457,6 @@ static bool32 BattleArcade_DoNoEvent(void)
 	return TRUE;
 }
 
-
-static void GetArcadeBrainStatus(void)
-{
-	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
-	{
-		gSpecialVar_Result = FRONTIER_BRAIN_NOT_READY;
-		return;
-	}
-
-	BufferPrintFromCurrentArcadeWinStreak();
-}
-
-void SetArcadeBattleFlags(void)
-{
-    gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
-    switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
-    {
-        case FRONTIER_MODE_SINGLES:
-            break;
-        case FRONTIER_MODE_DOUBLES:
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
-            break;
-        case FRONTIER_MODE_MULTIS:
-            gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
-            break;
-    }
-}
-
-void FillArcadeTrainerParty(void)
-{
-    switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
-    {
-        case FRONTIER_MODE_SINGLES:
-        case FRONTIER_MODE_DOUBLES:
-            FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
-            break;
-        case FRONTIER_MODE_LINK_MULTIS:
-            FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
-            gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
-            FillPartnerParty(gPartnerTrainerId);
-            break;
-    }
-}
-
-void DoArcadeTrainerBattle(void)
-{
-    gBattleScripting.specialTrainerBattleType = SPECIAL_BATTLE_TOWER;
-
-    SetArcadeBattleFlags();
-    CreateTask(Task_StartBattleAfterTransition, 1);
-    PlayMapChosenOrBattleBGM(0);
-    BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
-}
-
-static void ResetLevelsToOriginal(void)
-{
-	struct Pokemon *frontierMon;
-	struct Pokemon *playerMon;
-	u32 playerMonLevel, frontierMonLevel, i, monId;
-
-	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-	{
-		monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
-
-		if (monId >= PARTY_SIZE)
-			continue;
-
-		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
-		playerMon = &gPlayerParty[i];
-
-		playerMonLevel = GetMonData(playerMon, MON_DATA_LEVEL,NULL);
-		frontierMonLevel = GetMonData(frontierMon, MON_DATA_LEVEL,NULL);
-
-		if (playerMonLevel == frontierMonLevel)
-			continue;
-
-		SetMonData(playerMon, MON_DATA_LEVEL, &frontierMonLevel);
-	}
-}
-
-static void ReturnPartyToOwner(void)
-{
-    if (!HaveMonsBeenSwapped())
-        return;
-
-    BattleArcade_DoSwap();
-}
-
-static void ResetWeatherPostBattle(void)
-{
-    BattleArcade_DoWeather((gMapHeader.weather));
-}
-
-u32 GetArcadePrintCount(void)
-{
-	return (GetPrintFromCurrentArcadeWinStreak() - 1);
-}
-
-void ConvertFacilityFromArcadeToPike(u32* facility)
-{
-	if (*facility == FRONTIER_FACILITY_ARCADE)
-		*facility = FRONTIER_FACILITY_PIKE;
-}
-
-void CleanUpAfterArcadeBattle(void)
-{
-    ResetWeatherPostBattle();
-    ReturnPartyToOwner();
-    ResetLevelsToOriginal();
-	ResetSketchedMoves();
-    HealPlayerParty();
-}
-
-static void SetArcadeBrainObjectEvent(void)
-{
-    SetFrontierBrainObjEventGfx(FRONTIER_FACILITY_PIKE);
-}
-
 bool32 HasMove(struct Pokemon *pokemon, u16 move)
 {
 	u8 i;
@@ -1430,33 +1466,6 @@ bool32 HasMove(struct Pokemon *pokemon, u16 move)
 			return TRUE;
 
 	return FALSE;
-}
-
-static void ResetSketchedMoves(void)
-{
-	u8 i, j;
-	struct Pokemon *frontierMon;
-	struct Pokemon *playerMon;
-
-	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-	{
-		u32 monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
-
-		if (monId >= PARTY_SIZE)
-			continue;
-
-		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
-		playerMon = &gPlayerParty[i];
-
-		for (j = 0; j < MAX_MON_MOVES; j++)
-		{
-			if (HasMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
-				continue;
-
-			SetMonMoveSlot(playerMon, MOVE_SKETCH, j);
-			break;
-		}
-	}
 }
 
 EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;
@@ -1731,14 +1740,6 @@ static void InitRecordsWindow(void)
     PutWindowTilemap(0);
 }
 
-void ShowArcadeRecordsFromOverworld(void)
-{
-	u8 taskId;
-	//Task_OpenGameBoard(taskId);
-    SetMainCallback2(CB2_ShowRecords);
-    LockPlayerFieldControls();
-}
-
 static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
 static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
 
@@ -1908,11 +1909,6 @@ static void PrintHelpBar(void)
     AddTextPrinterParameterized4(windowId, fontId, BAR_LEFT_PADDING, BAR_TOP_PADDING, GetFontAttribute(fontId, FONTATTR_LETTER_SPACING), GetFontAttribute(fontId, FONTATTR_LINE_SPACING), sGameBoardWindowFontColors[FONT_WHITE], TEXT_SKIP_DRAW, GetHelpBarText());
 
     CopyWindowToVram(windowId, COPYWIN_GFX);
-}
-
-static void StartArcadeGameFromOverworld(void)
-{
-    CreateTask(Task_OpenGameBoard, 0);
 }
 
 void Task_OpenGameBoard(u8 taskId)
