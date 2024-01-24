@@ -1,0 +1,266 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Arcade_SetChallengeNumToMax	src/battle_arcade.c	/^u32 Arcade_SetChallengeNumToMax(u8 challengeNum)$/;"	f
+BG_BOARD_BACKBOARD	src/battle_arcade.c	/^	BG_BOARD_BACKBOARD,$/;"	e	enum:BackgroundIds	file:
+BG_BOARD_BACKGROUND	src/battle_arcade.c	/^	BG_BOARD_BACKGROUND,$/;"	e	enum:BackgroundIds	file:
+BG_BOARD_COUNT	src/battle_arcade.c	/^	BG_BOARD_COUNT,$/;"	e	enum:BackgroundIds	file:
+BG_BOARD_EVENTS	src/battle_arcade.c	/^	BG_BOARD_EVENTS,$/;"	e	enum:BackgroundIds	file:
+BG_BOARD_HELP_BAR	src/battle_arcade.c	/^	BG_BOARD_HELP_BAR,$/;"	e	enum:BackgroundIds	file:
+BackgroundIds	src/battle_arcade.c	/^enum BackgroundIds$/;"	g	file:
+BattleArcade_AllocTilemapBuffers	src/battle_arcade.c	/^static bool32 BattleArcade_AllocTilemapBuffers(void)$/;"	f	file:
+BattleArcade_BufferPrintFromStreak	src/battle_arcade.c	/^static void BattleArcade_BufferPrintFromStreak(void)$/;"	f	file:
+BattleArcade_ChangeSpeed	src/battle_arcade.c	/^static bool32 BattleArcade_ChangeSpeed(u32 mode)$/;"	f	file:
+BattleArcade_DoBurn	src/battle_arcade.c	/^static bool32 BattleArcade_DoBurn(u32 impact)$/;"	f	file:
+BattleArcade_DoFog	src/battle_arcade.c	/^static bool32 BattleArcade_DoFog(void)$/;"	f	file:
+BattleArcade_DoFreeze	src/battle_arcade.c	/^static bool32 BattleArcade_DoFreeze(u32 impact)$/;"	f	file:
+BattleArcade_DoGive	src/battle_arcade.c	/^static bool32 BattleArcade_DoGive(u32 impact, u32 item)$/;"	f	file:
+BattleArcade_DoGiveBPBig	src/battle_arcade.c	/^static bool32 BattleArcade_DoGiveBPBig(void)$/;"	f	file:
+BattleArcade_DoGiveBPSmall	src/battle_arcade.c	/^static bool32 BattleArcade_DoGiveBPSmall(void)$/;"	f	file:
+BattleArcade_DoGiveBerry	src/battle_arcade.c	/^static bool32 BattleArcade_DoGiveBerry(u32 impact)$/;"	f	file:
+BattleArcade_DoGiveItem	src/battle_arcade.c	/^static bool32 BattleArcade_DoGiveItem(u32 impact)$/;"	f	file:
+BattleArcade_DoHail	src/battle_arcade.c	/^static bool32 BattleArcade_DoHail(void)$/;"	f	file:
+BattleArcade_DoLevelUp	src/battle_arcade.c	/^static bool32 BattleArcade_DoLevelUp(u32 impact)$/;"	f	file:
+BattleArcade_DoLowerHP	src/battle_arcade.c	/^static bool32 BattleArcade_DoLowerHP(u32 impact)$/;"	f	file:
+BattleArcade_DoNoBattle	src/battle_arcade.c	/^static bool32 BattleArcade_DoNoBattle(void)$/;"	f	file:
+BattleArcade_DoNoEvent	src/battle_arcade.c	/^static bool32 BattleArcade_DoNoEvent(void)$/;"	f	file:
+BattleArcade_DoParalyze	src/battle_arcade.c	/^static bool32 BattleArcade_DoParalyze(u32 impact)$/;"	f	file:
+BattleArcade_DoPoison	src/battle_arcade.c	/^static bool32 BattleArcade_DoPoison(u32 impact)$/;"	f	file:
+BattleArcade_DoRain	src/battle_arcade.c	/^static bool32 BattleArcade_DoRain(void)$/;"	f	file:
+BattleArcade_DoSand	src/battle_arcade.c	/^static bool32 BattleArcade_DoSand(void)$/;"	f	file:
+BattleArcade_DoSleep	src/battle_arcade.c	/^static bool32 BattleArcade_DoSleep(u32 impact)$/;"	f	file:
+BattleArcade_DoSpeedDown	src/battle_arcade.c	/^static bool32 BattleArcade_DoSpeedDown(void)$/;"	f	file:
+BattleArcade_DoSpeedUp	src/battle_arcade.c	/^static bool32 BattleArcade_DoSpeedUp(void)$/;"	f	file:
+BattleArcade_DoStatusAilment	src/battle_arcade.c	/^static bool32 BattleArcade_DoStatusAilment(u32 impact, u32 status)$/;"	f	file:
+BattleArcade_DoSun	src/battle_arcade.c	/^static bool32 BattleArcade_DoSun(void)$/;"	f	file:
+BattleArcade_DoSwap	src/battle_arcade.c	/^static bool32 BattleArcade_DoSwap(void)$/;"	f	file:
+BattleArcade_DoTrickRoom	src/battle_arcade.c	/^static bool32 BattleArcade_DoTrickRoom(void)$/;"	f	file:
+BattleArcade_DoWeather	src/battle_arcade.c	/^static void BattleArcade_DoWeather(u32 weather)$/;"	f	file:
+BattleArcade_GenerateGive	src/battle_arcade.c	/^static u32 BattleArcade_GenerateGive(u32 type)$/;"	f	file:
+BattleArcade_GenerateRecordName	src/battle_arcade.c	/^static const u8 *BattleArcade_GenerateRecordName(void)$/;"	f	file:
+BattleArcade_GetLevelText	src/battle_arcade.c	/^static const u8 *BattleArcade_GetLevelText(u32 level)$/;"	f	file:
+BattleArcade_GetPrintFromStreak	src/battle_arcade.c	/^static u32 BattleArcade_GetPrintFromStreak(void)$/;"	f	file:
+BattleArcade_GetRecordHeaderName	src/battle_arcade.c	/^static const u8 *BattleArcade_GetRecordHeaderName(u32 level, u32 streakIndex)$/;"	f	file:
+BattleArcade_GetRecordName	src/battle_arcade.c	/^static const u8 *BattleArcade_GetRecordName(void)$/;"	f	file:
+BattleArcade_PostBattleEventCleanup	src/battle_arcade.c	/^void BattleArcade_PostBattleEventCleanup(void)$/;"	f
+BufferGiveString	src/battle_arcade.c	/^static void BufferGiveString(u32 item)$/;"	f	file:
+BufferImpactedName	src/battle_arcade.c	/^static void BufferImpactedName(u8 *dest, u32 impact)$/;"	f	file:
+CB2_ShowRecords	src/battle_arcade.c	/^void CB2_ShowRecords(void)$/;"	f
+CalculateAndSaveNewLevel	src/battle_arcade.c	/^static u32 CalculateAndSaveNewLevel(u32 origLevel)$/;"	f	file:
+CalculateBattlePoints	src/battle_arcade.c	/^static u32 CalculateBattlePoints(u32 challengeNum)$/;"	f	file:
+CalculateGiveChallengeBattlePoints	src/battle_arcade.c	/^static void CalculateGiveChallengeBattlePoints(void)$/;"	f	file:
+CalculateRecordRowYPosition	src/battle_arcade.c	/^static u32 CalculateRecordRowYPosition(u32 loopIterations)$/;"	f	file:
+CalculateTilePosition	src/battle_arcade.c	/^static void CalculateTilePosition(u32 space, u32* x, u32* y)$/;"	f	file:
+CallBattleArcadeFunc	src/battle_arcade.c	/^void CallBattleArcadeFunc(void)$/;"	f
+CheckArcadeSymbol	src/battle_arcade.c	/^static void CheckArcadeSymbol(void)$/;"	f	file:
+ConvertBattlesToImpactIndex	src/battle_arcade.c	/^static u32 ConvertBattlesToImpactIndex(void)$/;"	f	file:
+ConvertFacilityFromArcadeToPike	src/battle_arcade.c	/^void ConvertFacilityFromArcadeToPike(u32* facility)$/;"	f
+CountdownPanelOam	src/battle_arcade.c	/^static const struct OamData CountdownPanelOam =$/;"	v	typeref:struct:OamData	file:
+CreateCountdownPanel	src/battle_arcade.c	/^static u32 CreateCountdownPanel(u32 x, u32 y)$/;"	f	file:
+CreateEventSprite	src/battle_arcade.c	/^static u8 CreateEventSprite(u32 x, u32 y, u32 space)$/;"	f	file:
+CreateGameBoardCursor	src/battle_arcade.c	/^static void CreateGameBoardCursor(void)$/;"	f	file:
+DEFAULT_ANIM	src/battle_arcade.c	1791;"	d	file:
+DestroyCountdownPanels	src/battle_arcade.c	/^static void DestroyCountdownPanels(void)$/;"	f	file:
+DestroyEventSprites	src/battle_arcade.c	/^static void DestroyEventSprites(void)$/;"	f	file:
+DisplayRecordsText	src/battle_arcade.c	/^static void DisplayRecordsText(void)$/;"	f	file:
+DoArcadeTrainerBattle	src/battle_arcade.c	/^void DoArcadeTrainerBattle(void)$/;"	f
+DoGameBoardResult	src/battle_arcade.c	/^static bool32 DoGameBoardResult(u32 event, u32 impact)$/;"	f	file:
+DoesEventGiveItems	src/battle_arcade.c	/^static bool32 DoesEventGiveItems(u32 event)$/;"	f	file:
+FONT_BLACK	src/battle_arcade.c	/^    FONT_BLACK,$/;"	e	enum:FontColor	file:
+FONT_WHITE	src/battle_arcade.c	/^    FONT_WHITE,$/;"	e	enum:FontColor	file:
+FieldShowBattleArcadeRecords	src/battle_arcade.c	/^void FieldShowBattleArcadeRecords(void)$/;"	f
+FillFrontierTrainerParties	src/battle_arcade.c	/^void FillFrontierTrainerParties(void)$/;"	f
+FloodGameBoard	src/battle_arcade.c	/^static void FloodGameBoard(u32 impact, u32 event)$/;"	f	file:
+FontColor	src/battle_arcade.c	/^enum FontColor$/;"	g	file:
+GameBoardState	src/battle_arcade.c	/^struct GameBoardState$/;"	s	file:
+GameBoard_FadeAndBail	src/battle_arcade.c	/^static void GameBoard_FadeAndBail(void)$/;"	f	file:
+GameBoard_FreeResources	src/battle_arcade.c	/^static void GameBoard_FreeResources(void)$/;"	f	file:
+GameBoard_Init	src/battle_arcade.c	/^void GameBoard_Init(MainCallback callback)$/;"	f
+GameBoard_InitBgs	src/battle_arcade.c	/^static bool8 GameBoard_InitBgs(void)$/;"	f	file:
+GameBoard_InitWindows	src/battle_arcade.c	/^static void GameBoard_InitWindows(void)$/;"	f	file:
+GameBoard_LoadGraphics	src/battle_arcade.c	/^static bool8 GameBoard_LoadGraphics(void)$/;"	f	file:
+GameBoard_MainCB	src/battle_arcade.c	/^static void GameBoard_MainCB(void)$/;"	f	file:
+GameBoard_SetupCB	src/battle_arcade.c	/^static void GameBoard_SetupCB(void)$/;"	f	file:
+GameBoard_VBlankCB	src/battle_arcade.c	/^static void GameBoard_VBlankCB(void)$/;"	f	file:
+GameResult	src/battle_arcade.c	/^struct GameResult$/;"	s	file:
+GenerateEvent	src/battle_arcade.c	/^static u32 GenerateEvent(u32 impact)$/;"	f	file:
+GenerateGameBoard	src/battle_arcade.c	/^static void GenerateGameBoard(void)$/;"	f	file:
+GenerateImpact	src/battle_arcade.c	/^static u32 GenerateImpact(void)$/;"	f	file:
+GenerateItemsToBeGiven	src/battle_arcade.c	/^static void GenerateItemsToBeGiven(void)$/;"	f	file:
+GenerateOpponentParty	src/battle_arcade.c	/^static void GenerateOpponentParty(void)$/;"	f	file:
+GenerateRandomBetweenBounds	src/battle_arcade.c	/^static u32 GenerateRandomBetweenBounds(u32 impact)$/;"	f	file:
+GenerateRecordText	src/battle_arcade.c	/^static void GenerateRecordText(void)$/;"	f	file:
+GetArcadeData	src/battle_arcade.c	/^static void GetArcadeData(void)$/;"	f	file:
+GetBrainStatus	src/battle_arcade.c	/^static void GetBrainStatus(void)$/;"	f	file:
+GetCategoryGroups	src/battle_arcade.c	/^static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]$/;"	f	file:
+GetCategorySize	src/battle_arcade.c	/^static u32 GetCategorySize(u32 type)$/;"	f	file:
+GetChallengeNum	src/battle_arcade.c	/^static u32 GetChallengeNum(void)$/;"	f	file:
+GetChallengeNumIndex	src/battle_arcade.c	/^static u32 GetChallengeNumIndex(void)$/;"	f	file:
+GetCurrentBattleArcadeWinStreak	src/battle_arcade.c	/^u16 GetCurrentBattleArcadeWinStreak(void)$/;"	f
+GetCursorPosition	src/battle_arcade.c	/^static u32 GetCursorPosition(void)$/;"	f	file:
+GetCursorSpeed	src/battle_arcade.c	/^static u32 GetCursorSpeed(void)$/;"	f	file:
+GetEventGfx	src/battle_arcade.c	/^static const u32* GetEventGfx(u32 event)$/;"	f	file:
+GetGameBoardMode	src/battle_arcade.c	/^static u32 GetGameBoardMode(void)$/;"	f	file:
+GetGroupIdFromWinStreak	src/battle_arcade.c	/^static u32 GetGroupIdFromWinStreak(void)$/;"	f	file:
+GetHelpBarText	src/battle_arcade.c	/^static const u8 *GetHelpBarText(void)$/;"	f	file:
+GetHorizontalPositionFromSide	src/battle_arcade.c	/^static u32 GetHorizontalPositionFromSide(u32 side)$/;"	f	file:
+GetImpactedTrainerId	src/battle_arcade.c	/^static u32 GetImpactedTrainerId(u32 impact)$/;"	f	file:
+GetPanelLowerBound	src/battle_arcade.c	/^static s32 GetPanelLowerBound(u32 impact)$/;"	f	file:
+GetPanelUpperBound	src/battle_arcade.c	/^static s32 GetPanelUpperBound(u32 impact)$/;"	f	file:
+GetPlayerSymbolCountForArcade	src/battle_arcade.c	/^u32 GetPlayerSymbolCountForArcade(void)$/;"	f
+GetRecordValue	src/battle_arcade.c	/^static u32 GetRecordValue(u32 level, u32 streakIndex)$/;"	f	file:
+GetSpacePalette	src/battle_arcade.c	/^static const u16 GetSpacePalette(u32 space)$/;"	f	file:
+GetTileTag	src/battle_arcade.c	/^static const u16 GetTileTag(u32 space)$/;"	f	file:
+GiveBattlePoints	src/battle_arcade.c	/^static void GiveBattlePoints(u32 points)$/;"	f	file:
+HandleAndShowBgs	src/battle_arcade.c	/^static void HandleAndShowBgs(void)$/;"	f	file:
+HandleFinishMode	src/battle_arcade.c	/^static void HandleFinishMode()$/;"	f	file:
+HandleGameBoardResult	src/battle_arcade.c	/^static void HandleGameBoardResult(u32 impact, u32 event)$/;"	f	file:
+HandleHeader	src/battle_arcade.c	/^static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode)$/;"	f	file:
+HandleRecord	src/battle_arcade.c	/^static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)$/;"	f	file:
+HasMove	src/battle_arcade.c	/^bool32 HasMove(struct Pokemon *pokemon, u16 move)$/;"	f
+HaveMonsBeenSwapped	src/battle_arcade.c	/^static bool32 HaveMonsBeenSwapped(void)$/;"	f	file:
+ImpactTable	src/battle_arcade.c	/^static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =$/;"	v	file:
+IncrementCurrentWinStreak	src/battle_arcade.c	/^static void IncrementCurrentWinStreak(void)$/;"	f	file:
+IncrementCursorPosition	src/battle_arcade.c	/^static void IncrementCursorPosition(void)$/;"	f	file:
+InitArcadeChallenge	src/battle_arcade.c	/^static void InitArcadeChallenge(void)$/;"	f	file:
+InitCursorPositionFromSaveblock	src/battle_arcade.c	/^static void InitCursorPositionFromSaveblock(void)$/;"	f	file:
+InitRecordsBg	src/battle_arcade.c	/^static void InitRecordsBg(void)$/;"	f	file:
+InitRecordsWindow	src/battle_arcade.c	/^static void InitRecordsWindow(void)$/;"	f	file:
+InitalizePartyIndex	src/battle_arcade.c	/^static void InitalizePartyIndex(u32 *newIndex)$/;"	f	file:
+IsEventBanned	src/battle_arcade.c	/^static bool32 IsEventBanned(u32 event)$/;"	f	file:
+IsEventBattle	src/battle_arcade.c	/^static bool32 IsEventBattle(u32 event)$/;"	f	file:
+IsEventValidDuringBattleOrStreak	src/battle_arcade.c	/^static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)$/;"	f	file:
+IsEventValidDuringCurrentBattle	src/battle_arcade.c	/^static bool32 IsEventValidDuringCurrentBattle(u32 event)$/;"	f	file:
+IsEventValidDuringCurrentStreak	src/battle_arcade.c	/^static bool32 IsEventValidDuringCurrentStreak(u32 event)$/;"	f	file:
+IsImpactedSideOpponent	src/battle_arcade.c	/^static bool32 IsImpactedSideOpponent(u32 impact)$/;"	f	file:
+IsStatusSleepOrFreeze	src/battle_arcade.c	/^static bool32 IsStatusSleepOrFreeze(u32 status)$/;"	f	file:
+LoadSideParty	src/battle_arcade.c	/^static struct Pokemon *LoadSideParty(u32 impact)$/;"	f	file:
+LoadTileSpriteSheets	src/battle_arcade.c	/^static void LoadTileSpriteSheets(void)$/;"	f	file:
+MainCB2	src/battle_arcade.c	/^static void MainCB2(void)$/;"	f	file:
+PanelStreakTable	src/battle_arcade.c	/^static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =$/;"	v	file:
+PlayGameBoard	src/battle_arcade.c	/^static void PlayGameBoard(void)$/;"	f	file:
+PopulateCountdownSprites	src/battle_arcade.c	/^static void PopulateCountdownSprites(void)$/;"	f	file:
+PopulateEventSprites	src/battle_arcade.c	/^static void PopulateEventSprites(void)$/;"	f	file:
+PrintEnemyParty	src/battle_arcade.c	/^static void PrintEnemyParty(void)$/;"	f	file:
+PrintHelpBar	src/battle_arcade.c	/^static void PrintHelpBar(void)$/;"	f	file:
+PrintPartyIcons	src/battle_arcade.c	/^static void PrintPartyIcons(u32 side)$/;"	f	file:
+PrintPlayerParty	src/battle_arcade.c	/^static void PrintPlayerParty(void)$/;"	f	file:
+PrintRecord	src/battle_arcade.c	/^static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)$/;"	f	file:
+PrintRecordHeader	src/battle_arcade.c	/^static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)$/;"	f	file:
+PrintRecordHeaderLevelRecord	src/battle_arcade.c	/^static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 lvlMode, u32 loopIterations)$/;"	f	file:
+PrintRecordLevelMode	src/battle_arcade.c	/^static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level, u32 y)$/;"	f	file:
+ResetCursorPositionOnSaveblock	src/battle_arcade.c	/^static void ResetCursorPositionOnSaveblock(void)$/;"	f	file:
+ResetLevelsToOriginal	src/battle_arcade.c	/^static void ResetLevelsToOriginal(void)$/;"	f	file:
+ResetRouletteRandomFlag	src/battle_arcade.c	/^static void ResetRouletteRandomFlag(void)$/;"	f	file:
+ResetRouletteSpeed	src/battle_arcade.c	/^static void ResetRouletteSpeed(void)$/;"	f	file:
+ResetSketchedMoves	src/battle_arcade.c	/^static void ResetSketchedMoves(void)$/;"	f	file:
+ResetWeatherPostBattle	src/battle_arcade.c	/^static void ResetWeatherPostBattle(void)$/;"	f	file:
+ReturnCursorWait	src/battle_arcade.c	/^u32 ReturnCursorWait(u32 speed)$/;"	f
+ReturnPartyToOwner	src/battle_arcade.c	/^static void ReturnPartyToOwner(void)$/;"	f	file:
+SaveArcadeChallenge	src/battle_arcade.c	/^static void SaveArcadeChallenge(void)$/;"	f	file:
+SaveCurrentStreak	src/battle_arcade.c	/^static void SaveCurrentStreak(void)$/;"	f	file:
+SaveCursorPositionToSaveblock	src/battle_arcade.c	/^static void SaveCursorPositionToSaveblock(void)$/;"	f	file:
+SelectGameBoardSpace	src/battle_arcade.c	/^static void SelectGameBoardSpace(u32 *impact, u32 *event)$/;"	f	file:
+SetArcadeBattleWon	src/battle_arcade.c	/^static void SetArcadeBattleWon(void)$/;"	f	file:
+SetArcadeBrainObjectEvent	src/battle_arcade.c	/^static void SetArcadeBrainObjectEvent(void)$/;"	f	file:
+SetArcadeData	src/battle_arcade.c	/^static void SetArcadeData(void)$/;"	f	file:
+SetBattleTypeFlags	src/battle_arcade.c	/^void SetBattleTypeFlags(void)$/;"	f
+SetCursorPosition	src/battle_arcade.c	/^static void SetCursorPosition(u32 value)$/;"	f	file:
+SetScheduleShowBgs	src/battle_arcade.c	/^static void SetScheduleShowBgs(u32 backgroundId)$/;"	f	file:
+ShouldCursorMove	src/battle_arcade.c	/^static bool32 ShouldCursorMove(u32 timer)$/;"	f	file:
+ShufflePartyIndex	src/battle_arcade.c	/^static void ShufflePartyIndex(u32 *newIndex)$/;"	f	file:
+SpecialPanelTable	src/battle_arcade.c	/^static const u32 SpecialPanelTable[][ARCADE_EVENT_SPECIAL_COUNT] =$/;"	v	file:
+SpriteCB_Cursor	src/battle_arcade.c	/^static void SpriteCB_Cursor(struct Sprite *sprite)$/;"	f	file:
+SpriteCB_GameBoardCursorPosition	src/battle_arcade.c	/^static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)$/;"	f	file:
+StartCountdown	src/battle_arcade.c	/^static void StartCountdown(void)$/;"	f	file:
+StartGame	src/battle_arcade.c	/^static void StartGame(void)$/;"	f	file:
+StoreEventToVar	src/battle_arcade.c	/^static void StoreEventToVar(u32 event)$/;"	f	file:
+StoreImpactedSideToVar	src/battle_arcade.c	/^static void StoreImpactedSideToVar(u32 impact)$/;"	f	file:
+TakeEnemyHeldItems	src/battle_arcade.c	/^static void TakeEnemyHeldItems(void)$/;"	f	file:
+TakePlayerHeldItems	src/battle_arcade.c	/^static void TakePlayerHeldItems(void)$/;"	f	file:
+Task_GameBoardMainInput	src/battle_arcade.c	/^static void Task_GameBoardMainInput(u8 taskId)$/;"	f	file:
+Task_GameBoardWaitFadeAndBail	src/battle_arcade.c	/^static void Task_GameBoardWaitFadeAndBail(u8 taskId)$/;"	f	file:
+Task_GameBoardWaitFadeAndExitGracefully	src/battle_arcade.c	/^static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)$/;"	f	file:
+Task_GameBoardWaitFadeIn	src/battle_arcade.c	/^static void Task_GameBoardWaitFadeIn(u8 taskId)$/;"	f	file:
+Task_GameBoard_CleanUp	src/battle_arcade.c	/^static void Task_GameBoard_CleanUp(u8 taskId)$/;"	f	file:
+Task_GameBoard_Countdown	src/battle_arcade.c	/^static void Task_GameBoard_Countdown(u8 taskId)$/;"	f	file:
+Task_GameBoard_Game	src/battle_arcade.c	/^static void Task_GameBoard_Game(u8 taskId)$/;"	f	file:
+Task_OpenGameBoard	src/battle_arcade.c	/^void Task_OpenGameBoard(u8 taskId)$/;"	f
+Task_RecordsFadeIn	src/battle_arcade.c	/^static void Task_RecordsFadeIn(u8 taskId)$/;"	f	file:
+Task_RecordsFadeOut	src/battle_arcade.c	/^static void Task_RecordsFadeOut(u8 taskId)$/;"	f	file:
+Task_RecordsWaitForKeyPress	src/battle_arcade.c	/^static void Task_RecordsWaitForKeyPress(u8 taskId)$/;"	f	file:
+VBlankCB	src/battle_arcade.c	/^static void VBlankCB(void)$/;"	f	file:
+WIN_BOARD_COUNT	src/battle_arcade.c	/^	WIN_BOARD_COUNT,$/;"	e	enum:WindowIds	file:
+WIN_BOARD_HELP_BAR	src/battle_arcade.c	/^	WIN_BOARD_HELP_BAR,$/;"	e	enum:WindowIds	file:
+WindowIds	src/battle_arcade.c	/^enum WindowIds$/;"	g	file:
+countdownPanelSpriteId	src/battle_arcade.c	/^	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];$/;"	m	struct:GameBoardState	file:
+cursorPosition	src/battle_arcade.c	/^	u8 cursorPosition;$/;"	m	struct:GameBoardState	file:
+cursorWaitTable	src/battle_arcade.c	/^static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =$/;"	v	file:
+event	src/battle_arcade.c	/^    u8 event:5;$/;"	m	struct:GameResult	file:
+eventIconSpriteId	src/battle_arcade.c	/^	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];$/;"	m	struct:GameBoardState	file:
+gameMode	src/battle_arcade.c	/^    u8 gameMode;$/;"	m	struct:GameBoardState	file:
+impact	src/battle_arcade.c	/^    u8 impact:2;$/;"	m	struct:GameResult	file:
+loadState	src/battle_arcade.c	/^    u8 loadState;$/;"	m	struct:GameBoardState	file:
+monIconSpriteId	src/battle_arcade.c	/^    u8 monIconSpriteId[2][MAX_FRONTIER_PARTY_SIZE];$/;"	m	struct:GameBoardState	file:
+sArcadeBattlePointAwards	src/battle_arcade.c	/^static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =$/;"	v	file:
+sBackboardTilemap	src/battle_arcade.c	/^static const u32 sBackboardTilemap[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/backboard.bin.lz");$/;"	v	file:
+sBackboardTiles	src/battle_arcade.c	/^static const u32 sBackboardTiles[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/backboard.4bpp.lz");$/;"	v	file:
+sBattleArcadeFuncs	src/battle_arcade.c	/^static void (* const sBattleArcadeFuncs[])(void) =$/;"	v	file:
+sBattleArcadeFuncs	src/battle_arcade.c	/^static void (* const sBattleArcadeFuncs[])(void);$/;"	v	file:
+sBgTilemapBuffer	src/battle_arcade.c	/^static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};$/;"	v	file:
+sCountdownAnims	src/battle_arcade.c	/^static const union AnimCmd *const sCountdownAnims[] =$/;"	v	file:
+sCountdownPanelAnim	src/battle_arcade.c	/^static const union AnimCmd sCountdownPanelAnim[] =$/;"	v	typeref:union:AnimCmd	file:
+sCountdownPanelPicTable	src/battle_arcade.c	/^static const struct SpriteFrameImage sCountdownPanelPicTable[] =$/;"	v	typeref:struct:SpriteFrameImage	file:
+sCountdownPanelSpriteTemplate	src/battle_arcade.c	/^static const struct SpriteTemplate sCountdownPanelSpriteTemplate =$/;"	v	typeref:struct:SpriteTemplate	file:
+sCountdownTile1	src/battle_arcade.c	/^static const u32 sCountdownTile1[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/countdown_1.4bpp");$/;"	v	file:
+sCountdownTile2	src/battle_arcade.c	/^static const u32 sCountdownTile2[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/countdown_2.4bpp");$/;"	v	file:
+sCountdownTile3	src/battle_arcade.c	/^static const u32 sCountdownTile3[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/countdown_3.4bpp");$/;"	v	file:
+sCursorOrange	src/battle_arcade.c	/^static const u32 sCursorOrange[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/cursor_orange.4bpp.lz");$/;"	v	file:
+sCursorYellow	src/battle_arcade.c	/^static const u32 sCursorYellow[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/cursor_yellow.4bpp.lz");$/;"	v	file:
+sEventBurn	src/battle_arcade.c	/^static const u32 sEventBurn[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_burn.4bpp.lz");$/;"	v	file:
+sEventFog	src/battle_arcade.c	/^static const u32 sEventFog[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_fog.4bpp.lz");$/;"	v	file:
+sEventFreeze	src/battle_arcade.c	/^static const u32 sEventFreeze[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_freeze.4bpp.lz");$/;"	v	file:
+sEventGiveBerry	src/battle_arcade.c	/^static const u32 sEventGiveBerry[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_give_berry.4bpp.lz");$/;"	v	file:
+sEventGiveBpBig	src/battle_arcade.c	/^static const u32 sEventGiveBpBig[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_give_bp_big.4bpp.lz");$/;"	v	file:
+sEventGiveBpSmall	src/battle_arcade.c	/^static const u32 sEventGiveBpSmall[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_give_bp_small.4bpp.lz");$/;"	v	file:
+sEventGiveItem	src/battle_arcade.c	/^static const u32 sEventGiveItem[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_give_item.4bpp.lz");$/;"	v	file:
+sEventHail	src/battle_arcade.c	/^static const u32 sEventHail[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_hail.4bpp.lz");$/;"	v	file:
+sEventLevelUp	src/battle_arcade.c	/^static const u32 sEventLevelUp[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_level_up.4bpp.lz");$/;"	v	file:
+sEventLowerHp	src/battle_arcade.c	/^static const u32 sEventLowerHp[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_lower_hp.4bpp.lz");$/;"	v	file:
+sEventNoBattle	src/battle_arcade.c	/^static const u32 sEventNoBattle[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_no_battle.4bpp.lz");$/;"	v	file:
+sEventNoEvent	src/battle_arcade.c	/^static const u32 sEventNoEvent[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/no_event.4bpp.lz");$/;"	v	file:
+sEventParalyze	src/battle_arcade.c	/^static const u32 sEventParalyze[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_paralyze.4bpp.lz");$/;"	v	file:
+sEventPoison	src/battle_arcade.c	/^static const u32 sEventPoison[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_poison.4bpp.lz");$/;"	v	file:
+sEventRain	src/battle_arcade.c	/^static const u32 sEventRain[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_rain.4bpp.lz");$/;"	v	file:
+sEventRandom	src/battle_arcade.c	/^static const u32 sEventRandom[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_random.4bpp.lz");$/;"	v	file:
+sEventSand	src/battle_arcade.c	/^static const u32 sEventSand[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_sand.4bpp.lz");$/;"	v	file:
+sEventSleep	src/battle_arcade.c	/^static const u32 sEventSleep[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_sleep.4bpp.lz");$/;"	v	file:
+sEventSpeedDown	src/battle_arcade.c	/^static const u32 sEventSpeedDown[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_speed_down.4bpp.lz");$/;"	v	file:
+sEventSpeedUp	src/battle_arcade.c	/^static const u32 sEventSpeedUp[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_speed_up.4bpp.lz");$/;"	v	file:
+sEventSun	src/battle_arcade.c	/^static const u32 sEventSun[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_sun.4bpp.lz");$/;"	v	file:
+sEventSwap	src/battle_arcade.c	/^static const u32 sEventSwap[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_swap.4bpp.lz");$/;"	v	file:
+sEventTrickRoom	src/battle_arcade.c	/^static const u32 sEventTrickRoom[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/event_trick_room.4bpp.lz");$/;"	v	file:
+sGameBoard	src/battle_arcade.c	/^static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};$/;"	v	typeref:struct:GameResult	file:
+sGameBoardBgTemplates	src/battle_arcade.c	/^static const struct BgTemplate sGameBoardBgTemplates[] =$/;"	v	typeref:struct:BgTemplate	file:
+sGameBoardState	src/battle_arcade.c	/^static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;$/;"	v	typeref:struct:GameBoardState	file:
+sGameBoardWinTemplates	src/battle_arcade.c	/^static const struct WindowTemplate sGameBoardWinTemplates[] =$/;"	v	typeref:struct:WindowTemplate	file:
+sGameBoardWindowFontColors	src/battle_arcade.c	/^static const u8 sGameBoardWindowFontColors[][3] =$/;"	v	file:
+sHelpBar_Start	src/battle_arcade.c	/^static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");$/;"	v	file:
+sHelpBar_Stop	src/battle_arcade.c	/^static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");$/;"	v	file:
+sLogobackgroundTilemap	src/battle_arcade.c	/^static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/logobackground.bin.lz");$/;"	v	file:
+sLogobackgroundTiles	src/battle_arcade.c	/^static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics\/battle_frontier\/arcade_game\/logobackground.4bpp.lz");$/;"	v	file:
+sRecordsBgTemplates	src/battle_arcade.c	/^static const struct BgTemplate sRecordsBgTemplates[2] =$/;"	v	typeref:struct:BgTemplate	file:
+sRecordsPalettes	src/battle_arcade.c	/^static const u16 sRecordsPalettes[] = INCBIN_U16("graphics\/battle_frontier\/arcade_records\/arcade_records.gbapal");$/;"	v	file:
+sRecordsTilemap	src/battle_arcade.c	/^static const u32 sRecordsTilemap[] = INCBIN_U32("graphics\/battle_frontier\/arcade_records\/arcade_records.bin.lz");$/;"	v	file:
+sRecordsTilemapPtr	src/battle_arcade.c	/^EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;$/;"	v	file:
+sRecordsTiles	src/battle_arcade.c	/^static const u32 sRecordsTiles[] = INCBIN_U32("graphics\/battle_frontier\/arcade_records\/arcade_records.4bpp.lz");$/;"	v	file:
+sRecordsWinTemplates	src/battle_arcade.c	/^static const struct WindowTemplate sRecordsWinTemplates[2] =$/;"	v	typeref:struct:WindowTemplate	file:
+sText_HelpBarFinish	src/battle_arcade.c	/^static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");$/;"	v	file:
+sText_HelpBarStart	src/battle_arcade.c	/^static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");$/;"	v	file:
+sWinStreakFlags	src/battle_arcade.c	/^static const u32 sWinStreakFlags[][2] =$/;"	v	file:
+sWinStreakMasks	src/battle_arcade.c	/^static const u32 sWinStreakMasks[][2] =$/;"	v	file:
+savedCallback	src/battle_arcade.c	/^    MainCallback savedCallback;$/;"	m	struct:GameBoardState	file:
+timer	src/battle_arcade.c	/^	u16 timer;$/;"	m	struct:GameBoardState	file:
