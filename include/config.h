@@ -62,8 +62,5 @@
 #define VAR_ARCADE_BERRY                   VAR_UNUSED_0x40FA
 #define VAR_ARCADE_ITEM                    VAR_UNUSED_0x409D
 
-//replace with a u8, bitshifted to hold up to ARCADE_SPEED_LEVEL_MAX
-#define VAR_ARCADE_CURSOR_SPEED            VAR_UNUSED_0x4091
-
 #endif
 #endif // GUARD_CONFIG_H

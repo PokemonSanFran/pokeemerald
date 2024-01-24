@@ -43,12 +43,52 @@
 #include "constants/rgb.h"
 #include "constants/trainers.h"
 #include "constants/weather.h"
+#include "gba/types.h"
+#include "gba/defines.h"
+#include "text_window.h"
+#include "characters.h"
+#include "gba/macro.h"
+#include "menu_helpers.h"
+#include "sprite.h"
+#include "constants/songs.h"
+#include "sound.h"
+#include "pokemon_icon.h"
+#include "graphics.h"
+#include "data.h"
+
+struct GameBoardState
+{
+    MainCallback savedCallback;
+    u8 loadState;
+    u8 gameMode;
+    u8 monIconSpriteId[2][MAX_FRONTIER_PARTY_SIZE];
+	u16 timer;
+	u8 cursorPosition;
+	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
+	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
+};
+
+enum WindowIds
+{
+	WIN_BOARD_HELP_BAR,
+	WIN_BOARD_COUNT,
+};
+
+enum BackgroundIds
+{
+	BG_BOARD_HELP_BAR,
+	BG_BOARD_EVENTS,
+	BG_BOARD_BACKGROUND,
+	BG_BOARD_BACKBOARD,
+	BG_BOARD_COUNT,
+};
 
 // Arcade Challenge Functions
 void CallBattleArcadeFunc(void);
 static void InitArcadeChallenge(void);
 static void ResetCursorPositionOnSaveblock(void);
 static void ResetCursorSpeed(void);
+static void ClearCursorRandomMode(void);
 static void TakePlayerHeldItems(void);
 static void GenerateItemsToBeGiven(void);
 static u32 GenerateItemOrBerry(u32);
@@ -123,6 +163,7 @@ static bool32 ShouldCursorMove(u32);
 static void StartCountdown(void);
 static void StartGame(void);
 static void Task_OpenGameBoard(u8);
+static bool32 IsCursorInRandomMode(void);
 
 // Arcade Game Board Back End Init
 static u32 ConvertBattlesToImpactIndex(void);
@@ -156,7 +197,6 @@ static void SaveCursorPositionToSaveblock(void);
 static void SelectGameBoardSpace(u32*, u32*);
 
 // Arcade Game Board Back End Resolve
-static void ResetCursorRandomFlag(void);
 static u32 CalculateAndSaveNewLevel(u32);
 static bool32 DoGameBoardResult(u32, u32);
 static void FloodGameBoard(u32, u32);
@@ -179,8 +219,10 @@ static bool32 BattleArcade_DoPoison(u32);
 static bool32 BattleArcade_DoRain(void);
 static bool32 BattleArcade_DoSand(void);
 static bool32 BattleArcade_DoSleep(u32);
-static bool32 BattleArcade_DoSpeedDown(void);
 static bool32 BattleArcade_DoSpeedUp(void);
+static bool32 BattleArcade_DoSpeedDown(void);
+static bool32 BattleArcade_DoRandom(void);
+static void SetCursorRandomMode(void);
 static bool32 BattleArcade_DoStatusAilment(u32, u32);
 static bool32 BattleArcade_DoSun(void);
 static bool32 BattleArcade_DoSwap(void);
@@ -227,6 +269,9 @@ static void MainCB2(void);
 static void VBlankCB(void);
 
 #ifdef BATTLE_ARCADE
+
+static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
+static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};
 
 static void (* const sBattleArcadeFuncs[])(void) =
 {
@@ -761,21 +806,9 @@ static void FloodGameBoard(u32 impact, u32 event)
 static void SelectGameBoardSpace(u32 *impact, u32 *event)
 {
     u32 space = GetCursorPosition();
-    u32 spaceImpact = sGameBoard[space].impact;
-    u32 spaceEvent = sGameBoard[space].event;
+    *impact = sGameBoard[space].impact;
+    *event = sGameBoard[space].event;
 
-    if (spaceEvent == ARCADE_EVENT_RANDOM)
-    {
-        do
-        {
-            spaceImpact = GenerateImpact();
-            spaceEvent = GenerateEvent(spaceImpact);
-        } while (spaceEvent == ARCADE_EVENT_RANDOM);
-    }
-
-	*impact = spaceImpact;
-	*event = spaceEvent;
-	*event = ARCADE_EVENT_GIVE_BP_BIG;
     //DebugPrintf("-----------------------");
     //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -826,6 +859,7 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         case ARCADE_EVENT_SWAP: return BattleArcade_DoSwap();
         case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
         case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
+		case ARCADE_EVENT_RANDOM: return BattleArcade_DoRandom();
         case ARCADE_EVENT_GIVE_BP_SMALL: return BattleArcade_DoGiveBPSmall();
         case ARCADE_EVENT_GIVE_BP_BIG: return BattleArcade_DoGiveBPBig();
         case ARCADE_EVENT_NO_BATTLE: return BattleArcade_DoNoBattle();
@@ -1228,6 +1262,28 @@ static bool32 BattleArcade_DoSpeedDown(void)
     BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_DOWN);
 	return TRUE;
 }
+
+static bool32 BattleArcade_DoRandom(void)
+{
+	SetCursorRandomMode();
+	return TRUE;
+}
+
+static bool32 IsCursorInRandomMode(void)
+{
+	return (ARCADE_CURSOR.isRandom);
+}
+
+static void SetCursorRandomMode(void)
+{
+	ARCADE_CURSOR.isRandom = TRUE;
+}
+
+static void ClearCursorRandomMode(void)
+{
+	ARCADE_CURSOR.isRandom = FALSE;
+}
+
 static bool32 BattleArcade_DoGiveBPSmall(void)
 {
     GiveBattlePoints(ARCADE_BP_SMALL);
@@ -1358,11 +1414,6 @@ void CleanUpAfterArcadeBattle(void)
     ResetLevelsToOriginal();
 	ResetSketchedMoves();
     HealPlayerParty();
-}
-
-static void ResetCursorRandomFlag(void)
-{
-    FlagClear(FLAG_ARCADE_RANDOM_CURSOR);
 }
 
 static void SetArcadeBrainObjectEvent(void)
@@ -1687,49 +1738,6 @@ void ShowArcadeRecordsFromOverworld(void)
     SetMainCallback2(CB2_ShowRecords);
     LockPlayerFieldControls();
 }
-
-#include "gba/types.h"
-#include "gba/defines.h"
-#include "text_window.h"
-#include "characters.h"
-#include "gba/macro.h"
-#include "menu_helpers.h"
-#include "sprite.h"
-#include "constants/songs.h"
-#include "sound.h"
-#include "pokemon_icon.h"
-#include "graphics.h"
-#include "data.h"
-
-struct GameBoardState
-{
-    MainCallback savedCallback;
-    u8 loadState;
-    u8 gameMode;
-    u8 monIconSpriteId[2][MAX_FRONTIER_PARTY_SIZE];
-	u16 timer;
-	u8 cursorPosition;
-	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
-	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
-};
-
-enum WindowIds
-{
-	WIN_BOARD_HELP_BAR,
-	WIN_BOARD_COUNT,
-};
-
-enum BackgroundIds
-{
-	BG_BOARD_HELP_BAR,
-	BG_BOARD_EVENTS,
-	BG_BOARD_BACKGROUND,
-	BG_BOARD_BACKBOARD,
-	BG_BOARD_COUNT,
-};
-
-static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
-static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};
 
 static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
 static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
@@ -2290,7 +2298,7 @@ static void IncrementCursorPosition(void)
 {
 	u32 position;
 
-	if (FlagGet(FLAG_ARCADE_RANDOM_CURSOR))
+	if (IsCursorInRandomMode())
 		position = Random() % ARCADE_GAME_BOARD_SPACES;
 	else
 		position = GetCursorPosition();
@@ -2318,7 +2326,7 @@ static void HandleFinishMode()
 	SelectGameBoardSpace(&impact,&event);
 	HandleGameBoardResult(impact,event);
 	SaveCursorPositionToSaveblock();
-	ResetCursorRandomFlag();
+	ClearCursorRandomMode();
 	DestroyEventSprites();
 	PopulateEventSprites();
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;

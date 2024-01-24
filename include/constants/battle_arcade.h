@@ -128,8 +128,6 @@
 
 #define FLAG_ARCADE_SILVER_PRINT               FLAG_UNUSED_0x020
 #define FLAG_ARCADE_GOLD_PRINT                 FLAG_UNUSED_0x021
-#define FLAG_ARCADE_RANDOM_CURSOR          FLAG_UNUSED_0x022
-
 #define ARCADE_BRAIN_DEFEAT_POINTS             20
 
 #define ARCADE_BOARD_MODE_WAIT                0
@@ -190,5 +188,8 @@
 #define LOCAL_VAR_GAME_BOARD_SUCCESS gSpecialVar_0x8009
 
 #define VAR_FACILITY_CHALLENGE_STATUS VAR_TEMP_0
+
+#define VAR_ARCADE_BERRY                   VAR_UNUSED_0x40FA
+#define VAR_ARCADE_ITEM                    VAR_UNUSED_0x409D
 
 #endif //GUARD_CONSTANTS_ARCADE_H
