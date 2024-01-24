@@ -156,7 +156,6 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_CHECK_SYMBOL]           = CheckArcadeSymbol,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetBrainStatus,
-	[ARCADE_FUNC_GET_BRAIN_INTRO]        = GetBrainIntroSpeech,
 	[ARCADE_FUNC_EVENT_CLEAN_UP]         = BattleArcade_PostBattleEventCleanup,
 	[ARCADE_FUNC_PLAY_GAME_BOARD]        = PlayGameBoard,
 	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateOpponentParty,
@@ -1175,17 +1174,6 @@ static void GetBrainStatus(void)
 	//VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_SILVER); //Debug
 }
 
-extern const u8 BattleArcade_RouletteRoom_Text_AlwaysBeSmiling[];
-extern const u8 BattleArcade_RouletteRoom_Text_WheneverIBattle[];
-
-static void GetBrainIntroSpeech(void)
-{
-	if (VarGet(VAR_BRAIN_STATUS) == FRONTIER_BRAIN_SILVER)
-		StringCopy(gStringVar4,BattleArcade_RouletteRoom_Text_AlwaysBeSmiling);
-	else
-		StringCopy(gStringVar4,BattleArcade_RouletteRoom_Text_WheneverIBattle);
-}
-
 void SetBattleTypeFlags(void)
 {
     gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
@@ -1220,8 +1208,10 @@ void FillFrontierTrainerParties(void)
     }
 }
 
-void DoSpecialRouletteTrainerBattle(void)
+void DoArcadeTrainerBattle(void)
 {
+    gBattleScripting.specialTrainerBattleType = SPECIAL_BATTLE_TOWER;
+
     SetBattleTypeFlags();
     CreateTask(Task_StartBattleAfterTransition, 1);
     PlayMapChosenOrBattleBGM(0);
@@ -2547,13 +2537,11 @@ static void PrintPlayerParty(void)
 // get palettes working
 // cursor changes color with every animation
 // entire screen is glowing white as its happening
-//
-// clean up and refactor lobby
-// clean up and refactor maps lobby
 // clean up and refactor battle
 // clean up and refactor maps battle
 // re-organize battle arcade c into chunks (battles, game board front end, game board back end, records)
 // refactor battle arcade c
+// get Kura's opinion
 // figure out why the cursor feels too fast at default
 // add branch tags
 // write documentation

@@ -1969,9 +1969,6 @@ static void HandleSpecialTrainerBattleEnd(void)
     case SPECIAL_BATTLE_PIKE_SINGLE:
     case SPECIAL_BATTLE_PIKE_DOUBLE:
     case SPECIAL_BATTLE_PYRAMID:
-#ifdef BATTLE_ARCADE
-    case SPECIAL_BATTLE_ARCADE:
-#endif
         if (gSaveBlock2Ptr->frontier.battlesCount < 0xFFFFFF)
         {
             gSaveBlock2Ptr->frontier.battlesCount++;

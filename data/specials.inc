@@ -536,4 +536,4 @@ gSpecials::
 	def_special CloseDeptStoreElevatorWindow
 	def_special TrySetBattleTowerLinkType
     def_special CallBattleArcadeFunc
-    def_special DoSpecialRouletteTrainerBattle
+    def_special DoArcadeTrainerBattle
