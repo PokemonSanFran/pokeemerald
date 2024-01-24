@@ -674,7 +674,10 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 static void GenerateOpponentParty(void)
 {
-    FillFrontierTrainerParties();
+	u32 originalBattleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+	VarSet(VAR_FRONTIER_BATTLE_MODE,FRONTIER_MODE_SINGLES);
+	FillFrontierTrainerParties();
+	VarSet(VAR_FRONTIER_BATTLE_MODE,originalBattleMode);
 }
 
 static void HandleGameBoardResult(u32 impact, u32 event)
