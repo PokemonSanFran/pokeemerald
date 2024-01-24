@@ -292,7 +292,18 @@ static void InitArcadeChallenge(void)
 
 static void ResetCursorPositionOnSaveblock(void)
 {
-    FRONTIER_SAVEDATA.arcadeCursorPosition = 0;
+	SetCursorPosition(0);
+	SaveCursorPositionToSaveblock();
+}
+
+static void SetCursorPosition(u32 value)
+{
+	sGameBoardState->cursorPosition = value;
+}
+
+static void SaveCursorPositionToSaveblock(void)
+{
+	ARCADE_CURSOR.position = GetCursorPosition();
 }
 
 static void ResetCursorSpeed(void)
@@ -2270,19 +2281,9 @@ static u32 GetCursorPosition(void)
 	return sGameBoardState->cursorPosition;
 }
 
-static void SetCursorPosition(u32 value)
-{
-	sGameBoardState->cursorPosition = value;
-}
-
 static void InitCursorPositionFromSaveblock(void)
 {
-	sGameBoardState->cursorPosition = FRONTIER_SAVEDATA.arcadeCursorPosition;
-}
-
-static void SaveCursorPositionToSaveblock(void)
-{
-	FRONTIER_SAVEDATA.arcadeCursorPosition = GetCursorPosition();
+	sGameBoardState->cursorPosition = ARCADE_CURSOR.position;
 }
 
 static void IncrementCursorPosition(void)
@@ -2305,7 +2306,7 @@ static void IncrementCursorPosition(void)
 
 static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
 {
-	u32 position = sGameBoardState->cursorPosition;
+	u32 position = GetCursorPosition();
 }
 
 static void HandleFinishMode()
