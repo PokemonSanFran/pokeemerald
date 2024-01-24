@@ -89,6 +89,7 @@ static void InitArcadeChallenge(void);
 static void ResetCursorPositionOnSaveblock(void);
 static void SetCursorPosition(u32);
 static void SaveCursorPositionToSaveblock(void);
+static u32 GetCursorPosition(void);
 static void ResetCursorSpeed(void);
 static void ClearCursorRandomMode(void);
 static void TakePlayerHeldItems(void);
@@ -131,52 +132,64 @@ void DoArcadeTrainerBattle(void);
 static void SetArcadeBattleFlags(void);
 
 // Arcade Game Board Front End
-static bool32 BattleArcade_AllocTilemapBuffers(void);
-static void CalculateTilePosition(u32, u32*, u32*);
-static u32 CreateCountdownPanel(u32, u32);
-static u8 CreateEventSprite(u32, u32, u32);
-static void CreateGameBoardCursor(void);
-static void DestroyCountdownPanels(void);
-static void DestroyEventSprites(void);
-static void GameBoard_FadeAndBail(void);
-static void GameBoard_FreeResources(void);
+static void Task_OpenGameBoard(u8);
 static void GameBoard_Init(MainCallback);
-static bool8 GameBoard_InitBgs(void);
-static void GameBoard_InitWindows(void);
-static bool8 GameBoard_LoadGraphics(void);
-static void GameBoard_MainCB(void);
 static void GameBoard_SetupCB(void);
-static void GameBoard_VBlankCB(void);
-static u32 GetCursorPosition(void);
-static u32 GetCursorSpeed(void);
-static void SetCursorSpeed(u32);
-static const u32* GetEventGfx(u32);
+static bool8 GameBoard_InitBgs(void);
+static bool32 BattleArcade_AllocTilemapBuffers(void);
+static void HandleAndShowBgs(void);
+static void SetScheduleShowBgs(u32);
+static void GameBoard_FadeAndBail(void);
+static void Task_GameBoardWaitFadeAndBail(u8);
+static bool8 GameBoard_LoadGraphics(void);
+static void GameBoard_InitWindows(void);
+static void PrintEnemyParty(void);
+static void PrintPlayerParty(void);
+static void PrintPartyIcons(u32);
+static u32 GetHorizontalPositionFromSide(u32);
+static struct Pokemon *LoadSideParty(u32);
+static void PrintHelpBar(void);
 static u32 GetGameBoardMode(void);
 static const u8 *GetHelpBarText(void);
-static u32 GetHorizontalPositionFromSide(u32);
-static void Task_GameBoardMainInput(u8);
-static void Task_GameBoardWaitFadeAndBail(u8);
-static void Task_GameBoardWaitFadeAndExitGracefully(u8);
 static void Task_GameBoardWaitFadeIn(u8);
-static void Task_GameBoard_CleanUp(u8);
-static void Task_GameBoard_Countdown(u8);
-static void Task_GameBoard_Game(u8);
-static const u16 GetTileTag(u32);
-static void IncrementCursorPosition(void);
-static void SpriteCB_Cursor(struct Sprite*);
-static void SpriteCB_GameBoardCursorPosition(struct Sprite*);
-static void LoadTileSpriteSheets(void);
-static void SetScheduleShowBgs(u32);
-static bool32 ShouldCursorMove(u32);
+static void GameBoard_VBlankCB(void);
+static void GameBoard_MainCB(void);
+static void Task_GameBoardMainInput(u8);
 static void StartCountdown(void);
+static void PopulateCountdownSprites(void);
+static void CalculateTilePosition(u32, u32*, u32*);
+static u32 CreateCountdownPanel(u32, u32);
+static void Task_GameBoard_Countdown(u8);
+static void PopulateEventSprites(void);
+static void LoadTileSpriteSheets(void);
+static const u32* GetEventGfx(u32);
+static u8 CreateEventSprite(u32, u32, u32);
+static const u16 GetTileTag(u32);
 static void StartGame(void);
-static void Task_OpenGameBoard(u8);
+static void InitCursorPositionFromSaveblock(void);
+static void CreateGameBoardCursor(void);
+static void SpriteCB_Cursor(struct Sprite*);
+static void DestroyCountdownPanels(void);
+static void Task_GameBoard_Game(u8);
+static u32 GetGameBoardTimer(void);
+static void IncrementGameBoardMode(void);
+static bool32 ShouldCursorMove(u32);
+static void IncrementCursorPosition(void);
 static bool32 IsCursorInRandomMode(void);
+static bool32 IsGameBoardTimerEmpty(void);
+static void DecrementGameBoardTimer(void);
+static void HandleFinishMode();
+static void SelectGameBoardSpace(u32*, u32*);
+static void HandleGameBoardResult(u32, u32);
+static void DestroyEventSprites(void);
+static void Task_GameBoard_CleanUp(u8);
+static void Task_GameBoardWaitFadeAndExitGracefully(u8);
+static void GameBoard_FreeResources(void);
 
 // Arcade Game Board Back End Init
+static void GenerateGameBoard(void);
 static u32 ConvertBattlesToImpactIndex(void);
 static u32 GenerateEvent(u32);
-static void GenerateGameBoard(void);
 static u32 GenerateImpact(void);
 static u32 GenerateRandomBetweenBounds(u32);
 static u32 GetChallengeNum(void);
@@ -188,23 +201,15 @@ static bool32 IsEventBanned(u32);
 static bool32 IsEventValidDuringBattleOrStreak(u32, u32);
 static bool32 IsEventValidDuringCurrentBattle(u32);
 static bool32 IsEventValidDuringCurrentStreak(u32);
-static void HandleAndShowBgs(void);
-static void HandleFinishMode();
-static void PopulateCountdownSprites(void);
-static void PopulateEventSprites(void);
-static void PrintEnemyParty(void);
-static void PrintHelpBar(void);
-static void PrintPartyIcons(u32);
-static void PrintPlayerParty(void);
-static void InitCursorPositionFromSaveblock(void);
 static u32 ReturnCursorWait(u32);
-static void SelectGameBoardSpace(u32*, u32*);
 
 // Arcade Game Board Back End Resolve
 static u32 CalculateAndSaveNewLevel(u32);
 static bool32 DoGameBoardResult(u32, u32);
 static void FloodGameBoard(u32, u32);
 static bool32 BattleArcade_ChangeSpeed(u32);
+static u32 GetCursorSpeed(void);
+static void SetCursorSpeed(u32);
 static bool32 BattleArcade_DoBurn(u32);
 static bool32 BattleArcade_DoFog(void);
 static bool32 BattleArcade_DoFreeze(u32);
@@ -232,12 +237,10 @@ static bool32 BattleArcade_DoSun(void);
 static bool32 BattleArcade_DoSwap(void);
 static bool32 BattleArcade_DoTrickRoom(void);
 static void BattleArcade_DoWeather(u32);
-static void HandleGameBoardResult(u32, u32);
 static bool32 HasMove(struct Pokemon*, u16);
 static bool32 HaveMonsBeenSwapped(void);
 static bool32 IsStatusSleepOrFreeze(u32);
 static void InitalizePartyIndex(u32*);
-static struct Pokemon *LoadSideParty(u32);
 static void ShufflePartyIndex(u32*);
 static void StoreEventToVar(u32);
 static void StoreImpactedSideToVar(u32);
@@ -349,6 +352,11 @@ static void SetCursorPosition(u32 value)
 static void SaveCursorPositionToSaveblock(void)
 {
 	ARCADE_CURSOR.position = GetCursorPosition();
+}
+
+static u32 GetCursorPosition(void)
+{
+    return sGameBoardState->cursorPosition;
 }
 
 static void ResetCursorSpeed(void)
@@ -2280,11 +2288,6 @@ static bool32 ShouldCursorMove(u32 timer)
 	return (timer % cursorWaitValue == 0);
 }
 
-static u32 GetCursorPosition(void)
-{
-	return sGameBoardState->cursorPosition;
-}
-
 static void InitCursorPositionFromSaveblock(void)
 {
 	sGameBoardState->cursorPosition = ARCADE_CURSOR.position;
@@ -2308,11 +2311,6 @@ static void IncrementCursorPosition(void)
 	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
 }
 
-static void SpriteCB_GameBoardCursorPosition(struct Sprite *sprite)
-{
-	u32 position = GetCursorPosition();
-}
-
 static void HandleFinishMode()
 {
 	u32 impact = 0, event = 0;
@@ -2331,25 +2329,44 @@ static void HandleFinishMode()
 
 static void Task_GameBoard_Game(u8 taskId)
 {
-	u32 timer = sGameBoardState->timer;
-	//DebugPrintf("timer %d",sGameBoardState->timer);
+	u32 timer = GetGameBoardTimer();
 
 	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
 		HandleFinishMode();
-	else if (timer == 0)
-		sGameBoardState->gameMode++;
+    else if (IsGameBoardTimerEmpty())
+        IncrementGameBoardMode();
 	else if (ShouldCursorMove(timer))
 		IncrementCursorPosition();
 
-	sGameBoardState->timer--;
+	DecrementGameBoardTimer();
+}
+
+static u32 GetGameBoardTimer(void)
+{
+    return sGameBoardState->timer;
+}
+
+static void IncrementGameBoardMode(void)
+{
+    sGameBoardState->gameMode++;
+}
+
+static bool32 IsGameBoardTimerEmpty(void)
+{
+    return (GetGameBoardTimer() == 0);
+}
+
+static void DecrementGameBoardTimer(void)
+{
+    sGameBoardState->timer--;
 }
 
 static void Task_GameBoard_CleanUp(u8 taskId)
 {
-	sGameBoardState->timer--;
+	DecrementGameBoardTimer();
 	//DebugPrintf("timer %d",sGameBoardState->timer);
 
-	if (sGameBoardState->timer != 0)
+	if (!IsGameBoardTimerEmpty())
 		return;
 
 	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
@@ -2534,8 +2551,6 @@ static void PrintPlayerParty(void)
 // get palettes working
 // cursor changes color with every animation
 // entire screen is glowing white as its happening
-// clean up and refactor battle
-// clean up and refactor maps battle
 // re-organize battle arcade c into chunks (battles, game board front end, game board back end, records)
 // refactor battle arcade c
 // get Kura's opinion
