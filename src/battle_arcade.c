@@ -667,7 +667,7 @@ static void SelectGameBoardSpace(u32 *impact, u32 *event)
 
 	*impact = spaceImpact;
 	*event = spaceEvent;
-	*event = ARCADE_EVENT_GIVE_BP_BIG;
+	//*event = ARCADE_EVENT_GIVE_BP_BIG;
     //DebugPrintf("-----------------------");
     //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
 }
@@ -1150,6 +1150,12 @@ static bool32 BattleArcade_DoNoEvent(void)
 static void GetBrainStatus(void)
 {
 	u32 winStreak = (GetCurrentBattleArcadeWinStreak());
+
+	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
+	{
+		VarSet(VAR_BRAIN_STATUS,FRONTIER_BRAIN_NOT_READY);
+		return;
+	}
 
 	switch(++winStreak)
 	{
@@ -2537,8 +2543,6 @@ static void PrintPlayerParty(void)
 // Arcade Board
 // get palettes working
 // cursor changes color with every animation
-// lucy has no intro text
-// add all the text for multi link partner, but she denies you from entering
 // entire screen is glowing white as its happening
 
 #endif

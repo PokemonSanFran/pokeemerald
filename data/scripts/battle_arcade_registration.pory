@@ -204,15 +204,34 @@ script BattleFrontier_BattleArcadeLobby_EventScript_Attendant
 
     special(SavePlayerParty)
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
-    {
-        //warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
-        msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
-    }
+	{
+		//warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
+		msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
+		goto(BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge)
+	}
     else
-    {
-        msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti, MSGBOX_DEFAULT)
-    }
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge)
+	{
+		msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti, MSGBOX_DEFAULT)
+		goto(BattleFrontier_BattleArcadeLobby_EventScript_AskEnterMultiChallenge)
+	}
+}
+
+script BattleFrontier_BattleArcadeLobby_EventScript_AskEnterMultiChallenge
+{
+	message(BattleArcade_Entrance_Text_WouldYouLikeToTake)
+	waitmessage
+	multichoice(17,5,MULTI_CHALLENGEINFO, FALSE)
+	switch(var(VAR_RESULT))
+	{
+		case 0:
+            setvar(VAR_FRONTIER_BATTLE_MODE, FRONTIER_MODE_LINK_MULTIS)
+			goto(BattleFrontier_BattleArcadeLobby_EventScript_TryEnterChallenge)
+		case 1:
+				goto(BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge)
+		case 2:
+		case MULTI_B_PRESSED:
+				goto(BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge)
+	}
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge
@@ -278,6 +297,12 @@ script BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge
     closemessage
     delay(2)
 
+    if (var(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
+	{
+		arcade_save(0)
+		goto(BattleArcade_Entrance_LinkMulti_EventScript_Cancel)
+	}
+
     call(Common_EventScript_SaveGame)
     setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
 
@@ -287,7 +312,31 @@ script BattleFrontier_BattleArcadeLobby_EventScript_SaveBeforeChallenge
         goto(BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge)
     }
 
+    call(BattleFrontier_BattleArcadeLobby_EventScript_HandleMultiplayer)
     goto(BattleFrontier_BattleArcadeLobby_EventScript_EnterElevator)
+}
+
+script BattleArcade_Entrance_LinkMulti_EventScript_Cancel
+{
+	msgbox(BattleArcade_Entrance_Text_LinkMultisAreNot)
+	closemessage
+	frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)
+	goto(BattleFrontier_BattleArcadeLobby_EventScript_CancelChallenge)
+}
+
+script BattleFrontier_BattleArcadeLobby_EventScript_HandleMultiplayer
+{
+	if (var(VAR_FRONTIER_BATTLE_MODE) != FRONTIER_MODE_LINK_MULTIS)
+	{
+		return
+	}
+
+	specialvar(VAR_RESULT, IsWirelessAdapterConnected)
+	if (var(VAR_RESULT))
+	{
+		goto(BattleFrontier_BattleTowerLobby_EventScript_TryWirelessLink)
+	}
+	goto(BattleFrontier_BattleTowerLobby_EventScript_TryCableLink)
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge
@@ -295,13 +344,13 @@ script BattleFrontier_BattleArcadeLobby_EventScript_ExplainChallenge
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
     {
         msgbox(BattleArcade_Entrance_Text_AtTheBattleArcade, MSGBOX_DEFAULT)
+		goto(BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge)
     }
     else
     {
         msgbox(BattleArcade_Entrance_Text_YouMayTeamUpWith, MSGBOX_DEFAULT)
+		goto(BattleFrontier_BattleArcadeLobby_EventScript_AskEnterMultiChallenge)
     }
-    goto(BattleFrontier_BattleArcadeLobby_EventScript_AskEnterChallenge)
-        end
 }
 
 script BattleFrontier_BattleArcadeLobby_EventScript_SinglesAttendant
@@ -404,7 +453,7 @@ script BattleFrontier_BattleArcadeLobby_EventScript_GetPartySize
     {
         case FRONTIER_MODE_SINGLES: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_PARTY_SIZE)
         case FRONTIER_MODE_DOUBLES: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_DOUBLES_PARTY_SIZE)
-        case FRONTIER_MODE_MULTIS: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_MULTI_PARTY_SIZE)
+        case FRONTIER_MODE_LINK_MULTIS: setvar(LOCAL_VAR_PARTY_SIZE, FRONTIER_MULTI_PARTY_SIZE)
     }
     return
 }
@@ -866,4 +915,8 @@ text BattleArcade_Entrance_Text_IfTheGameBoardTriggers
 text BattleArcade_Entrance_Text_RecordLastMatch
 {
     format("Want me to record your last BATTLE ARCADE match on your FRONTIER PASS?")
+}
+text BattleArcade_Entrance_Text_LinkMultisAreNot
+{
+	format("I'm sorry! Link Multi Battles have not been implemented at this time. Please come back later.")
 }
