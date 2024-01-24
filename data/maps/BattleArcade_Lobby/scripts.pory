@@ -1,5 +1,4 @@
 const VAR_FACILITY_CHALLENGE_STATUS = VAR_TEMP_0
-const VAR_ATTENDANT_TALKED = VAR_TEMP_2
 const CHALLENGE_STATUS_UNKNOWN = 0
 const CHALLENGE_STATUS_END = 255
 
@@ -8,18 +7,18 @@ const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
 mapscripts BattleArcade_Lobby_MapScripts
 {
     MAP_SCRIPT_ON_FRAME_TABLE
-        [
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Registration_EventScript_GetChallengeStatus
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: BattleArcade_Registration_EventScript_QuitWithoutSaving
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: BattleArcade_Registration_EventScript_ResumeChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: BattleArcade_Registration_EventScript_WonChallenge
-            VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: BattleArcade_Registration_EventScript_LostChallenge
-        ]
+    [
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Registration_EventScript_GetChallengeStatus
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING:  BattleArcade_Registration_EventScript_QuitWithoutSaving
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED:  BattleArcade_Registration_EventScript_ResumeChallenge
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON:     BattleArcade_Registration_EventScript_WonChallenge
+        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST:    BattleArcade_Registration_EventScript_LostChallenge
+    ]
 
-        MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
-        [
-            VAR_NEED_TO_FACE_NORTH, 0 :BattleArcade_Lobby_EventScript_PlayerFaceNorth
-        ]
+	MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+	[
+		VAR_NEED_TO_FACE_NORTH, 0 :BattleArcade_Lobby_EventScript_PlayerFaceNorth
+	]
 }
 
 script BattleArcade_Lobby_EventScript_PlayerFaceNorth
@@ -29,26 +28,27 @@ script BattleArcade_Lobby_EventScript_PlayerFaceNorth
     end
 }
 
-script BattleArcade_Lobby_EventScript_WalkToElevator
-{
-    closemessage
-
-    applymovement(VAR_LAST_TALKED,BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator)
-    applymovement(OBJ_EVENT_ID_PLAYER, BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator)
-    waitmovement(OBJ_EVENT_ID_PLAYER)
-}
-
 script BattleArcade_Lobby_EventScript_WarpToHallway
 {
     warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
 }
-movement BattleFrontier_BattleArcadeLobby_Movement_AttendantEnterElevator
+
+script BattleArcade_Lobby_EventScript_WalkToElevator
+{
+    closemessage
+
+    applymovement(VAR_LAST_TALKED,BattleArcade_Lobby_Movement_AttendantEnterElevator)
+    applymovement(OBJ_EVENT_ID_PLAYER, BattleArcade_Lobby_Movement_PlayerEnterElevator)
+    waitmovement(OBJ_EVENT_ID_PLAYER)
+}
+
+movement BattleArcade_Lobby_Movement_AttendantEnterElevator
 {
     walk_up * 2
     set_invisible
 }
 
-movement BattleFrontier_BattleArcadeLobby_Movement_PlayerEnterElevator
+movement BattleArcade_Lobby_Movement_PlayerEnterElevator
 {
     walk_up * 3
     set_invisible
