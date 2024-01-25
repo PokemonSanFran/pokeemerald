@@ -121,7 +121,7 @@ static void ReturnPartyToOwner(void);
 static bool32 HaveMonsBeenSwapped(void);
 static void ResetLevelsToOriginal(void);
 static void ResetSketchedMoves(void);
-static bool32 HasMove(struct Pokemon*, u16);
+static bool32 MonKnowsMove(struct Pokemon*, u16);
 static void StartArcadeGameFromOverworld(void);
 static void FillArcadeTrainerParty(void);
 void ConvertFacilityFromArcadeToPike(u32*);
@@ -129,7 +129,7 @@ u32 GetArcadePrintCount(void);
 static void SetArcadeBrainObjectEvent(void);
 static void BufferPrintFromCurrentArcadeWinStreak(void);
 static u32 GetPrintFromCurrentArcadeWinStreak(void);
-static void ShowArcadeRecordsFromOverworld(void);
+void ShowArcadeRecordsFromOverworld(void);
 void DoArcadeTrainerBattle(void);
 static void SetArcadeBattleFlags(void);
 
@@ -248,8 +248,8 @@ static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 
 // Arcade Records Window
-void Task_OpenArcadeRecord(u8);
-void ArcadeRecords_Init(MainCallback);
+static void Task_OpenArcadeRecord(u8);
+static void ArcadeRecords_Init(MainCallback);
 static void ArcadeRecords_SetupCB(void);
 static bool8 ArcadeRecords_InitBgs(void);
 static bool32 ArcadeRecords_AllocTilemapBuffers(void);
@@ -307,14 +307,14 @@ static const u32 sWinStreakFlags[][2] =
 {
     {STREAK_ARCADE_SINGLES_50,     STREAK_ARCADE_SINGLES_OPEN},
     {STREAK_ARCADE_DOUBLES_50,     STREAK_ARCADE_DOUBLES_OPEN},
-    {STREAK_ARCADE_MULTIS_50,      STREAK_ARCADE_MULTIS_OPEN},
+    {STREAK_ARCADE_LINK_MULTIS_50,      STREAK_ARCADE_LINK_MULTIS_OPEN},
 };
 
 static const u32 sWinStreakMasks[][2] =
 {
     {~(STREAK_ARCADE_SINGLES_50),     ~(STREAK_ARCADE_SINGLES_OPEN)},
     {~(STREAK_ARCADE_DOUBLES_50),     ~(STREAK_ARCADE_DOUBLES_OPEN)},
-    {~(STREAK_ARCADE_MULTIS_50),      ~(STREAK_ARCADE_MULTIS_OPEN)},
+    {~(STREAK_ARCADE_LINK_MULTIS_50),      ~(STREAK_ARCADE_LINK_MULTIS_OPEN)},
 };
 
 void CallBattleArcadeFunc(void)
@@ -749,7 +749,7 @@ static void ResetSketchedMoves(void)
 
 		for (j = 0; j < MAX_MON_MOVES; j++)
 		{
-			if (HasMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
+			if (MonKnowsMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
 				continue;
 
 			SetMonMoveSlot(playerMon, MOVE_SKETCH, j);
@@ -758,7 +758,7 @@ static void ResetSketchedMoves(void)
 	}
 }
 
-bool32 HasMove(struct Pokemon *pokemon, u16 move)
+bool32 MonKnowsMove(struct Pokemon *pokemon, u16 move)
 {
 	u8 i;
 
@@ -850,6 +850,7 @@ void SetArcadeBattleFlags(void)
             gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
             break;
         case FRONTIER_MODE_MULTIS:
+		case FRONTIER_MODE_LINK_MULTIS:
             gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
             break;
     }
@@ -955,10 +956,6 @@ static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/arcade
 static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_game/no_event.4bpp.lz");
 
 static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
-static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_orange.4bpp.lz");
-
-static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
-static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
 
 static const union AnimCmd sCountdownPanelAnim[] =
 {
@@ -1171,7 +1168,6 @@ static bool8 GameBoard_LoadGraphics(void)
     case 1:
         if (FreeTempTileDataBuffersIfPossible() != TRUE)
         {
-
             LZDecompressWram(sBackboardTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
             LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
             sGameBoardState->loadState++;
@@ -1275,6 +1271,9 @@ static void PrintHelpBar(void)
 
 static const u8 *GetHelpBarText(void)
 {
+	static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
+	static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
+
 	switch (GetGameBoardMode())
 	{
 		case ARCADE_BOARD_MODE_WAIT:
@@ -1742,38 +1741,40 @@ static void GameBoard_FreeResources(void)
 	ResetSpriteData();
 }
 
-static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
-{
-	//Opponent, Player, All, Special
-    [ARCADE_BATTLE_NUM_0_4]     = {10, 75, 10, 5},
-    [ARCADE_BATTLE_NUM_5_10]    = {25, 40, 30, 5},
-    [ARCADE_BATTLE_NUM_11_15]   = {30, 30, 35, 5},
-    [ARCADE_BATTLE_NUM_16_20]   = {35, 20, 30, 15},
-    [ARCADE_BATTLE_NUM_21_PLUS] = {15, 15, 40, 30},
-};
-
 static u32 GenerateImpact(void)
 {
-    u32 impactLine = 0, impactIndex = 0;
+	static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
+	{
+		//Opponent, Player, All, Special
+		[ARCADE_WINSTREAK_BRACKET_0_4]     = {10, 75, 10, 5},
+		[ARCADE_WINSTREAK_BRACKET_5_10]    = {25, 40, 30, 5},
+		[ARCADE_WINSTREAK_BRACKET_11_15]   = {30, 30, 35, 5},
+		[ARCADE_WINSTREAK_BRACKET_16_20]   = {35, 20, 30, 15},
+		[ARCADE_WINSTREAK_BRACKET_21_PLUS] = {15, 15, 40, 30},
+	};
 
-    for (impactIndex = 0; impactIndex < ARCADE_IMPACT_COUNT; impactIndex++)
-    {
-        impactLine += ImpactTable[ConvertWinStreakToImpactBracket()][impactIndex];
-        if ((Random () % 100) < impactLine)
+	u32 impactThreshold = 0, impactIndex = 0;
+	u32 randImpact = Random() % 100;
+	u32 impactBracket = ConvertWinStreakToImpactBracket();
+
+	for (impactIndex = 0; impactIndex < ARCADE_IMPACT_COUNT; impactIndex++)
+	{
+		impactThreshold += ImpactTable[impactBracket][impactIndex];
+		if (randImpact < impactThreshold)
 			return impactIndex;
-    }
-    return ARCADE_IMPACT_PLAYER;
+	}
+	return ARCADE_IMPACT_PLAYER;
 }
 
 static u32 ConvertWinStreakToImpactBracket(void)
 {
 	u32 winStreak = GetCurrentArcadeWinStreak();
 
-	return winStreak <= 4 ? ARCADE_BATTLE_NUM_0_4 :
-		winStreak <= 10 ? ARCADE_BATTLE_NUM_5_10 :
-		winStreak <= 15 ? ARCADE_BATTLE_NUM_11_15 :
-		winStreak <= 20 ? ARCADE_BATTLE_NUM_16_20 :
-		ARCADE_BATTLE_NUM_21_PLUS;
+	return winStreak <= 4 ? ARCADE_WINSTREAK_BRACKET_0_4 :
+		winStreak <= 10 ? ARCADE_WINSTREAK_BRACKET_5_10 :
+		winStreak <= 15 ? ARCADE_WINSTREAK_BRACKET_11_15 :
+		winStreak <= 20 ? ARCADE_WINSTREAK_BRACKET_16_20 :
+		ARCADE_WINSTREAK_BRACKET_21_PLUS;
 }
 
 static u32 GenerateEvent(u32 impact)
@@ -2328,7 +2329,7 @@ static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade
 static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.4bpp.lz");
 static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/arcade_records/arcade_records.gbapal");
 
-void Task_OpenArcadeRecord(u8 taskId)
+static void Task_OpenArcadeRecord(u8 taskId)
 {
 	if (gPaletteFade.active)
 		return;
@@ -2338,7 +2339,7 @@ void Task_OpenArcadeRecord(u8 taskId)
 	DestroyTask(taskId);
 }
 
-void ArcadeRecords_Init(MainCallback callback)
+static void ArcadeRecords_Init(MainCallback callback)
 {
     SetMainCallback2(ArcadeRecords_SetupCB);
 }

@@ -83,12 +83,12 @@
 #define ARCADE_IMPACT_SPECIAL                  3
 #define ARCADE_IMPACT_COUNT                    4
 
-#define ARCADE_BATTLE_NUM_0_4                  0
-#define ARCADE_BATTLE_NUM_5_10                 1
-#define ARCADE_BATTLE_NUM_11_15                2
-#define ARCADE_BATTLE_NUM_16_20                3
-#define ARCADE_BATTLE_NUM_21_PLUS              4
-#define ARCADE_BATTLE_NUM_INDEX_COUNT          5
+#define ARCADE_WINSTREAK_BRACKET_0_4           0
+#define ARCADE_WINSTREAK_BRACKET_5_10          1
+#define ARCADE_WINSTREAK_BRACKET_11_15         2
+#define ARCADE_WINSTREAK_BRACKET_16_20         3
+#define ARCADE_WINSTREAK_BRACKET_21_PLUS       4
+#define ARCADE_WINSTREAK_BRACKET_INDEX_COUNT   5
 
 #define ARCADE_SPEED_LEVEL_0                   0
 #define ARCADE_SPEED_LEVEL_1                   1
