@@ -5645,8 +5645,10 @@ static u8 CheckBattleEntriesAndGetMessage(void)
         {
             if (species == GetMonData(&party[order[j] - 1], MON_DATA_SPECIES))
                 return PARTY_MSG_MONS_CANT_BE_SAME;
+			// Start battle_arcade
 			if (facility == FRONTIER_FACILITY_ARCADE)
 				continue;
+			// End battle_arcade
             if (item != ITEM_NONE && item == GetMonData(&party[order[j] - 1], MON_DATA_HELD_ITEM))
                 return PARTY_MSG_NO_SAME_HOLD_ITEMS;
         }

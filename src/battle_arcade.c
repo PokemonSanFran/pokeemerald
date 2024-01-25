@@ -2577,7 +2577,9 @@ static const u8 *BattleArcade_GenerateRecordName(void)
 
 static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode)
 {
-	AddTextPrinterParameterized4(windowId, fontID, 0,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, gText_BattleArcade);
+	static const u8 sText_BattleArcade[] = _("BATTLE ARCADE");
+
+	AddTextPrinterParameterized4(windowId, fontID, 0,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, sText_BattleArcade);
 	AddTextPrinterParameterized4(windowId, fontID, 122, ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
 }
 
@@ -2650,9 +2652,10 @@ static u32 GetRecordValue(u32 level, u32 streakIndex)
 static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
 	u32 record = GetRecordValue(level, streakIndex);
+	static const u8 sText_GamesWinStreak[] = _("Games cleared: {STR_VAR_1}");
 
 	ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
-	StringExpandPlaceholders(gStringVar4,gText_GamesWinStreak);
+	StringExpandPlaceholders(gStringVar4,sText_GamesWinStreak);
 	AddTextPrinterParameterized4(windowId, fontID, 95,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
