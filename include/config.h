@@ -55,9 +55,4 @@
 #endif
 #endif
 
-#define BATTLE_ARCADE // Uncomment this line to enable the battle_arcade functionality.
-#ifdef BATTLE_ARCADE
-//#define ARCADE_GEN4_EFFECTS_UNBANNED //If the Battle Arcade feature is being used in a repo where Trick Room and Fog are implemented field effects, uncomment this line. Changes to BattleArcade_DoFog and BattleArcade_DoTrickRoom may be required.
-
-#endif
 #endif // GUARD_CONFIG_H

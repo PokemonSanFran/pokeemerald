@@ -1,5 +1,5 @@
-#ifdef BATTLE_ARCADE
 void CallBattleArcadeFunc(void);
 void ConvertFacilityFromArcadeToPike(u32*);
 u32 GetArcadePrintCount();
-#endif
+
+//#define ARCADE_GEN4_EFFECTS_UNBANNED //If the Battle Arcade feature is being used in a repo where Trick Room and Fog are implemented field effects, uncomment this line. Changes to BattleArcade_DoFog and BattleArcade_DoTrickRoom may be required.

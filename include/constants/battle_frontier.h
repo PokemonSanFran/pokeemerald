@@ -13,7 +13,7 @@
 #define FRONTIER_FACILITY_FACTORY  4  // also Slateport Tent
 #define FRONTIER_FACILITY_PIKE     5
 #define FRONTIER_FACILITY_PYRAMID  6
-#define NUM_FRONTIER_FACILITIES    8
+#define NUM_FRONTIER_FACILITIES    7
 // VAR_FRONTIER_FACILITY is re-used for the below facilities as well
 #define FACILITY_LINK_CONTEST      7
 #define FACILITY_UNION_ROOM        8

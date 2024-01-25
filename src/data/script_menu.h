@@ -771,6 +771,7 @@ static const struct MenuAction MultichoiceList_TagMatchType[] =
     {gText_Exit},
 };
 
+// Start battle_arcade
 static const struct MenuAction MultichoiceList_ChallengeTypesInfo[] =
 {
     {gText_SingleBattle},
@@ -786,6 +787,7 @@ static const struct MenuAction MultichoiceList_BattleArcadeRecords[] =
     {gText_Multi},
     {gText_Cancel2},
 };
+// End battle_arcade
 
 static const struct MenuAction MultichoiceList_Exit[] =
 {
@@ -914,8 +916,10 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_SLATEPORT_TENT_RULES]       = MULTICHOICE(MultichoiceList_SlateportTentRules),
     [MULTI_FALLARBOR_TENT_RULES]       = MULTICHOICE(MultichoiceList_FallarborTentRules),
     [MULTI_TAG_MATCH_TYPE]             = MULTICHOICE(MultichoiceList_TagMatchType),
+// Start battle_arcade
     [MULTI_CHALLENGE_TYPES_INFO]       = MULTICHOICE(MultichoiceList_ChallengeTypesInfo),
 	[MULTI_BATTLE_ARCADE_RECORDS]       = MULTICHOICE(MultichoiceList_BattleArcadeRecords),
+// End battle_arcade
 };
 
 const u8 *const gStdStrings[] =
@@ -1022,4 +1026,3 @@ static const u8 *const sWirelessOptions_NoRecordMixBerryCrush[] =
     CableClub_Text_YouMayBattleHere,
     CableClub_Text_CancelSelectedItem,
 };
-

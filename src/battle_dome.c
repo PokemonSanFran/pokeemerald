@@ -127,6 +127,7 @@ static int BufferDomeWinString(u8, u8 *);
 static u8 GetDomeBrainTrainerPicId(void);
 static u8 GetDomeBrainTrainerClass(void);
 static void CopyDomeBrainTrainerName(u8 *);
+static void CopyDomeTrainerName(u8 *, u16);
 static void HblankCb_TourneyTree(void);
 static void VblankCb_TourneyTree(void);
 static u8 UpdateTourneyTreeCursor(u8);
@@ -6130,7 +6131,7 @@ static void DecideRoundWinners(u8 roundId)
     }
 }
 
-void CopyDomeTrainerName(u8 *str, u16 trainerId)
+static void CopyDomeTrainerName(u8 *str, u16 trainerId)
 {
     int i = 0;
     SetFacilityPtrsGetLevel();
