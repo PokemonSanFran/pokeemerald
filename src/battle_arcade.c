@@ -68,13 +68,13 @@ struct GameBoardState
 	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
 };
 
-enum WindowIds
+enum GameBoard_WindowIds
 {
 	WIN_BOARD_HELP_BAR,
 	WIN_BOARD_COUNT,
 };
 
-enum BackgroundIds
+enum GameBoard_BackgroundIds
 {
 	BG_BOARD_HELP_BAR,
 	BG_BOARD_EVENTS,
@@ -139,7 +139,7 @@ static void GameBoard_Init(MainCallback);
 static void GameBoard_SetupCB(void);
 static bool8 GameBoard_InitBgs(void);
 static bool32 BattleArcade_AllocTilemapBuffers(void);
-static void HandleAndShowBgs(void);
+static void GameBoard_HandleAndShowBgs(void);
 static void SetScheduleShowBgs(u32);
 static void GameBoard_FadeAndBail(void);
 static void Task_GameBoardWaitFadeAndBail(u8);
@@ -156,8 +156,8 @@ static const u8 *GetHelpBarText(void);
 static u32 GetGameBoardMode(void);
 static void Task_GameBoardWaitFadeIn(u8);
 static void Task_GameBoardMainInput(u8);
-static void GameBoard_VBlankCB(void);
-static void GameBoard_MainCB(void);
+static void VBlankCB(void);
+static void MainCB(void);
 static void StartCountdown(void);
 static void PopulateCountdownSprites(void);
 static void CalculateTilePosition(u32, u32*, u32*);
@@ -248,9 +248,18 @@ static bool32 BattleArcade_DoNoBattle(void);
 static bool32 BattleArcade_DoNoEvent(void);
 
 // Arcade Records Window
-static void CB2_ShowRecords(void);
-static void InitRecordsBg(void);
-static void InitRecordsWindow(void);
+void Task_OpenArcadeRecord(u8);
+void ArcadeRecords_Init(MainCallback);
+static void ArcadeRecords_SetupCB(void);
+static bool8 ArcadeRecords_InitBgs(void);
+static bool32 ArcadeRecords_AllocTilemapBuffers(void);
+static void ArcadeRecord_HandleAndShowBgs(void);
+static void ArcadeRecord_SetScheduleShowBgs(u32);
+static void ArcadeRecord_FadeAndBail(void);
+static void Task_ArcadeRecordWaitFadeAndBail(u8);
+static bool8 ArcadeRecord_LoadGraphics(void);
+static void ArcadeRecord_InitWindows(void);
+static void DisplayRecordsText(void);
 static void GenerateRecordText(void);
 static void HandleHeader(u32, u32, u32, u32, u8*, u32, u32);
 static const u8 *BattleArcade_GenerateRecordName(void);
@@ -264,12 +273,11 @@ static void PrintRecordLevelMode(u32, u32, u32, u32, u8*, u32, u32, u32, u32);
 static const u8 *BattleArcade_GetLevelText(u32);
 static void PrintRecord(u32, u32, u32, u32, u8*, u32, u32, u32, u32);
 static u32 GetRecordValue(u32, u32);
-static void DisplayRecordsText(void);
-static void VBlankCB(void);
-static void MainCB2(void);
-static void Task_RecordsFadeIn(u8);
+static void Task_ArcadeRecordWaitFadeIn(u8);
 static void Task_RecordsWaitForKeyPress(u8);
-static void Task_RecordsFadeOut(u8);
+static void Task_ArcadeRecord_CleanUp(u8);
+static void Task_ArcadeRecordWaitFadeAndExitGracefully(u8);
+static void ArcadeRecord_FreeResources(void);
 
 #ifdef BATTLE_ARCADE
 
@@ -818,9 +826,7 @@ static u32 GetPrintFromCurrentArcadeWinStreak(void)
 
 void ShowArcadeRecordsFromOverworld(void)
 {
-	u8 taskId;
-    SetMainCallback2(CB2_ShowRecords);
-    LockPlayerFieldControls();
+	CreateTask(Task_OpenArcadeRecord,0);
 }
 
 void DoArcadeTrainerBattle(void)
@@ -1083,8 +1089,8 @@ static void GameBoard_SetupCB(void)
 			gMain.state++;
 			break;
 		case 7:
-			SetVBlankCallback(GameBoard_VBlankCB);
-			SetMainCallback2(GameBoard_MainCB);
+			SetVBlankCallback(VBlankCB);
+			SetMainCallback2(MainCB);
 			break;
 	}
 }
@@ -1095,7 +1101,7 @@ static bool8 GameBoard_InitBgs(void)
 
 	if (!BattleArcade_AllocTilemapBuffers())
 		return FALSE;
-	HandleAndShowBgs();
+	GameBoard_HandleAndShowBgs();
 
     return TRUE;
 }
@@ -1114,7 +1120,7 @@ static bool32 BattleArcade_AllocTilemapBuffers(void)
 	return TRUE;
 }
 
-static void HandleAndShowBgs(void)
+static void GameBoard_HandleAndShowBgs(void)
 {
 	u32 backgroundId;
 
@@ -1137,8 +1143,8 @@ static void GameBoard_FadeAndBail(void)
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     CreateTask(Task_GameBoardWaitFadeAndBail, 0);
 
-    SetVBlankCallback(GameBoard_VBlankCB);
-    SetMainCallback2(GameBoard_MainCB);
+    SetVBlankCallback(VBlankCB);
+    SetMainCallback2(MainCB);
 }
 
 static void Task_GameBoardWaitFadeAndBail(u8 taskId)
@@ -1312,14 +1318,14 @@ static void Task_GameBoardMainInput(u8 taskId)
 	}
 }
 
-static void GameBoard_VBlankCB(void)
+static void VBlankCB(void)
 {
     LoadOam();
     ProcessSpriteCopyRequests();
     TransferPlttBuffer();
 }
 
-static void GameBoard_MainCB(void)
+static void MainCB(void)
 {
     RunTasks();
     AnimateSprites();
@@ -2267,12 +2273,24 @@ static bool32 BattleArcade_DoNoEvent(void)
 	return TRUE;
 }
 
-EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;
+enum ArcadeRecord_WindowIds
+{
+    WIN_RECORD_TEXT,
+	WIN_RECORD_DUMMY,
+    WIN_RECORD_COUNT,
+};
 
-static const struct BgTemplate sRecordsBgTemplates[2] =
+enum ArcadeRecord_BackgroundIds
+{
+    BG_RECORD_TEXT,
+    BG_RECORD_BACKGROUND,
+    BG_RECORD_COUNT,
+};
+
+static const struct BgTemplate sArcadeRecordBgTemplates[BG_RECORD_COUNT] =
 {
     {
-        .bg = 0,
+        .bg = BG_RECORD_TEXT,
         .charBaseIndex = 1,
         .mapBaseIndex = 31,
         .screenSize = 0,
@@ -2281,7 +2299,7 @@ static const struct BgTemplate sRecordsBgTemplates[2] =
         .baseTile = 0,
     },
     {
-        .bg = 1,
+        .bg = BG_RECORD_BACKGROUND,
         .charBaseIndex = 0,
         .mapBaseIndex = 6,
         .screenSize = 0,
@@ -2291,11 +2309,11 @@ static const struct BgTemplate sRecordsBgTemplates[2] =
     },
 };
 
-
-static const struct WindowTemplate sRecordsWinTemplates[2] =
+static const struct WindowTemplate sArcadeRecordWinTemplates[WIN_RECORD_COUNT] =
 {
+    [WIN_RECORD_TEXT] =
     {
-        .bg = 0,
+        .bg = BG_RECORD_TEXT,
         .tilemapLeft = 3,
         .tilemapTop = 1,
         .width = 26,
@@ -2306,52 +2324,232 @@ static const struct WindowTemplate sRecordsWinTemplates[2] =
     DUMMY_WIN_TEMPLATE,
 };
 
-
 static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.bin.lz");
 static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.4bpp.lz");
 static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/arcade_records/arcade_records.gbapal");
 
-void CB2_ShowRecords(void)
+void Task_OpenArcadeRecord(u8 taskId)
 {
-    SetVBlankCallback(NULL);
-    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_MODE_0);
-    SetGpuReg(REG_OFFSET_BG3CNT, 0);
-    SetGpuReg(REG_OFFSET_BG2CNT, 0);
-    SetGpuReg(REG_OFFSET_BG1CNT, 0);
-    SetGpuReg(REG_OFFSET_BG0CNT, 0);
-    SetGpuReg(REG_OFFSET_BG3HOFS, 0);
-    SetGpuReg(REG_OFFSET_BG3VOFS, 0);
-    SetGpuReg(REG_OFFSET_BG2HOFS, 0);
-    SetGpuReg(REG_OFFSET_BG2VOFS, 0);
-    SetGpuReg(REG_OFFSET_BG1HOFS, 0);
-    SetGpuReg(REG_OFFSET_BG1VOFS, 0);
-    SetGpuReg(REG_OFFSET_BG0HOFS, 0);
-    SetGpuReg(REG_OFFSET_BG0VOFS, 0);
-    DmaFill16(3, 0, VRAM, VRAM_SIZE);
-    DmaFill32(3, 0, OAM, OAM_SIZE);
-    DmaFill16(3, 0, PLTT, PLTT_SIZE);
-    ScanlineEffect_Stop();
-    ResetTasks();
-    ResetSpriteData();
-    ResetPaletteFade();
-    FreeAllSpritePalettes();
-    LoadPalette(sRecordsPalettes, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
-    sRecordsTilemapPtr = Alloc(0x1000);
-    InitRecordsBg();
-    InitRecordsWindow();
-    ResetTempTileDataBuffers();
-    DecompressAndCopyTileDataToVram(1, &sRecordsTiles, 0, 0, 0);
-    while (FreeTempTileDataBuffersIfPossible())
-        ;
-    LZDecompressWram(sRecordsTilemap, sRecordsTilemapPtr);
-    CopyBgTilemapBufferToVram(1);
-    DisplayRecordsText();
-    BlendPalettes(PALETTES_ALL, 16, RGB_BLACK);
-    BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
-    EnableInterrupts(1);
+	if (gPaletteFade.active)
+		return;
+
+	CleanupOverworldWindowsAndTilemaps();
+	ArcadeRecords_Init(CB2_ReturnToFieldFadeFromBlack);
+	DestroyTask(taskId);
+}
+
+void ArcadeRecords_Init(MainCallback callback)
+{
+    SetMainCallback2(ArcadeRecords_SetupCB);
+}
+
+static void ArcadeRecords_SetupCB(void)
+{
+	u8 taskId;
+
+	switch (gMain.state)
+	{
+		case 0:
+			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
+			SetVBlankHBlankCallbacksToNull();
+			ClearScheduledBgCopiesToVram();
+			gMain.state++;
+			break;
+		case 1:
+			ScanlineEffect_Stop();
+			FreeAllSpritePalettes();
+			ResetPaletteFade();
+			ResetSpriteData();
+			ResetTasks();
+			gMain.state++;
+			break;
+		case 2:
+			if (ArcadeRecords_InitBgs())
+				gMain.state++;
+			else
+			{
+				ArcadeRecord_FadeAndBail();
+				return;
+			}
+			break;
+		case 3:
+			if (ArcadeRecord_LoadGraphics() == TRUE)
+				gMain.state++;
+			break;
+		case 4:
+			ArcadeRecord_InitWindows();
+			gMain.state++;
+			break;
+		case 5:
+			DisplayRecordsText();
+			taskId = CreateTask(Task_ArcadeRecordWaitFadeIn, 0);
+			gMain.state++;
+			break;
+		case 6:
+			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+			gMain.state++;
+			break;
+		case 7:
+			SetVBlankCallback(VBlankCB);
+			SetMainCallback2(MainCB);
+			break;
+	}
+}
+
+static EWRAM_DATA u8 arcadeRecordLoadState = 0;
+
+static bool8 ArcadeRecords_InitBgs(void)
+{
+    ResetAllBgsCoordinates();
+
+    if (!ArcadeRecords_AllocTilemapBuffers())
+        return FALSE;
+    ArcadeRecord_HandleAndShowBgs();
+
+    return TRUE;
+}
+
+static bool32 ArcadeRecords_AllocTilemapBuffers(void)
+{
+    u32 backgroundId;
+
+    for (backgroundId = 0; backgroundId < BG_RECORD_COUNT; backgroundId++)
+    {
+        sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
+
+        if (sBgTilemapBuffer[backgroundId] == NULL)
+            return FALSE;
+    }
+    return TRUE;
+}
+
+static void ArcadeRecord_HandleAndShowBgs(void)
+{
+    u32 backgroundId;
+
+    ResetBgsAndClearDma3BusyFlags(0);
+    InitBgsFromTemplates(0, sArcadeRecordBgTemplates, NELEMS(sArcadeRecordBgTemplates));
+
+    for (backgroundId = 0; backgroundId < BG_RECORD_COUNT; backgroundId++)
+        ArcadeRecord_SetScheduleShowBgs(backgroundId);
+}
+
+static void ArcadeRecord_SetScheduleShowBgs(u32 backgroundId)
+{
+    SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
+    ScheduleBgCopyTilemapToVram(backgroundId);
+    ShowBg(backgroundId);
+}
+
+static void ArcadeRecord_FadeAndBail(void)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+    CreateTask(Task_ArcadeRecordWaitFadeAndBail, 0);
+
     SetVBlankCallback(VBlankCB);
-    SetMainCallback2(MainCB2);
-    CreateTask(Task_RecordsFadeIn, 0);
+    SetMainCallback2(MainCB);
+}
+
+static void Task_ArcadeRecordWaitFadeAndBail(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        SetMainCallback2(CB2_ReturnToFieldFadeFromBlack);
+        ArcadeRecord_FreeResources();
+        DestroyTask(taskId);
+    }
+}
+
+static bool8 ArcadeRecord_LoadGraphics(void)
+{
+    switch (arcadeRecordLoadState)
+    {
+    case 0:
+        ResetTempTileDataBuffers();
+
+        DecompressAndCopyTileDataToVram(BG_RECORD_BACKGROUND, sRecordsTiles, 0, 0, 0);
+        arcadeRecordLoadState++;
+        break;
+    case 1:
+        if (FreeTempTileDataBuffersIfPossible() != TRUE)
+        {
+            LZDecompressWram(sRecordsTilemap, sBgTilemapBuffer[BG_RECORD_BACKGROUND]);
+            arcadeRecordLoadState++;
+        }
+        break;
+    case 2:
+        LoadPalette(sRecordsPalettes, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+        arcadeRecordLoadState++;
+    default:
+        arcadeRecordLoadState = 0;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void ArcadeRecord_InitWindows(void)
+{
+    u32 windowId;
+    InitWindows(sArcadeRecordWinTemplates);
+
+    DeactivateAllTextPrinters();
+
+    ScheduleBgCopyTilemapToVram(0);
+
+    for (windowId = 0; windowId < WIN_RECORD_COUNT; windowId++)
+    {
+        FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+        PutWindowTilemap(windowId);
+        CopyWindowToVram(windowId, COPYWIN_FULL);
+    }
+}
+
+static void Task_ArcadeRecordWaitFadeIn(u8 taskId)
+{
+    if (gPaletteFade.active)
+        return;
+
+    gTasks[taskId].func = Task_RecordsWaitForKeyPress;
+}
+
+
+static void Task_RecordsWaitForKeyPress(u8 taskId)
+{
+    if (JOY_NEW(A_BUTTON | B_BUTTON))
+    {
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+        gTasks[taskId].func = Task_ArcadeRecord_CleanUp;
+    }
+}
+
+static void Task_ArcadeRecord_CleanUp(u8 taskId)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+    gTasks[taskId].func = Task_ArcadeRecordWaitFadeAndExitGracefully;
+}
+
+static void Task_ArcadeRecordWaitFadeAndExitGracefully(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        SetMainCallback2(CB2_ReturnToFieldFadeFromBlack);
+        ArcadeRecord_FreeResources();
+        DestroyTask(taskId);
+    }
+}
+
+static void ArcadeRecord_FreeResources(void)
+{
+    u32 backgroundId;
+
+    for (backgroundId = 0; backgroundId < BG_RECORD_COUNT; backgroundId++)
+    {
+        if (sBgTilemapBuffer[backgroundId] != NULL)
+            Free(sBgTilemapBuffer[backgroundId]);
+    }
+
+    FreeAllWindowBuffers();
+    ResetSpriteData();
 }
 
 static const u8 *BattleArcade_GetRecordName(void)
@@ -2475,69 +2673,6 @@ static void DisplayRecordsText(void)
 	GenerateRecordText();
     PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_FULL);
-}
-
-static void InitRecordsBg(void)
-{
-    ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sRecordsBgTemplates, ARRAY_COUNT(sRecordsBgTemplates));
-    SetBgTilemapBuffer(1, sRecordsTilemapPtr);
-    SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP);
-    ShowBg(0);
-    ShowBg(1);
-    SetGpuReg(REG_OFFSET_BLDCNT, 0);
-    SetGpuReg(REG_OFFSET_BLDALPHA, 0);
-    SetGpuReg(REG_OFFSET_BLDY, 0);
-}
-
-static void InitRecordsWindow(void)
-{
-    InitWindows(sRecordsWinTemplates);
-    DeactivateAllTextPrinters();
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
-    FillWindowPixelBuffer(0, PIXEL_FILL(0));
-    PutWindowTilemap(0);
-}
-
-static void VBlankCB(void)
-{
-    LoadOam();
-    ProcessSpriteCopyRequests();
-    TransferPlttBuffer();
-}
-
-static void MainCB2(void)
-{
-    RunTasks();
-    AnimateSprites();
-    BuildOamBuffer();
-    UpdatePaletteFade();
-}
-
-static void Task_RecordsFadeIn(u8 taskId)
-{
-    if (!gPaletteFade.active)
-        gTasks[taskId].func = Task_RecordsWaitForKeyPress;
-}
-
-static void Task_RecordsWaitForKeyPress(u8 taskId)
-{
-    if (JOY_NEW(A_BUTTON | B_BUTTON))
-    {
-        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-        gTasks[taskId].func = Task_RecordsFadeOut;
-    }
-}
-
-static void Task_RecordsFadeOut(u8 taskId)
-{
-    if (!gPaletteFade.active)
-    {
-        Free(sRecordsTilemapPtr);
-        FreeAllWindowBuffers();
-        DestroyTask(taskId);
-        SetMainCallback2(CB2_ReturnToFieldFadeFromBlack);
-    }
 }
 
 // Arcade Board
