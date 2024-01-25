@@ -178,7 +178,7 @@ static u32 GetGameBoardTimer(void);
 static void IncrementGameBoardMode(void);
 static bool32 ShouldCursorMove(u32);
 static u32 ReturnCursorWait(u32);
-static void IncrementCursorPosition(void);
+static void ChangeCursorPosition(void);
 static bool32 IsCursorInRandomMode(void);
 static bool32 IsGameBoardTimerEmpty(void);
 static void DecrementGameBoardTimer(void);
@@ -1541,7 +1541,7 @@ static void Task_GameBoard_Game(u8 taskId)
     else if (IsGameBoardTimerEmpty())
         IncrementGameBoardMode();
 	else if (ShouldCursorMove(timer))
-		IncrementCursorPosition();
+		ChangeCursorPosition();
 
 	DecrementGameBoardTimer();
 }
@@ -1584,19 +1584,19 @@ u32 ReturnCursorWait(u32 speed)
 	return cursorWaitTable[speed];
 }
 
-static void IncrementCursorPosition(void)
+static void ChangeCursorPosition(void)
 {
-	u32 position;
+	u32 newPosition = GetCursorPosition() + 1;
 
 	if (IsCursorInRandomMode())
-		position = Random() % ARCADE_GAME_BOARD_SPACES;
+		SetCursorPosition(Random() % ARCADE_GAME_BOARD_SPACES);
 	else
-		position = GetCursorPosition();
-
-	if ((position+1) >= ARCADE_GAME_BOARD_SPACES)
-		SetCursorPosition(0);
-	else
-		SetCursorPosition(++position);
+	{
+		if (newPosition >= ARCADE_GAME_BOARD_SPACES)
+			SetCursorPosition(0);
+		else
+			SetCursorPosition(newPosition);
+	}
 
 	//DebugPrintf("mode %d",sGameBoardState->gameMode);
 	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
