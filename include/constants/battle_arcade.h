@@ -8,7 +8,7 @@
 #define ARCADE_FUNC_GENERATE_OPPONENT           5
 #define ARCADE_FUNC_TAKE_ENEMY_ITEMS            6
 #define ARCADE_FUNC_PLAY_GAME_BOARD             7
-#define ARCADE_FUNC_EVENT_CLEAN_UP              9
+#define ARCADE_FUNC_BATTLE_CLEAN_UP              9
 #define ARCADE_FUNC_SET_BATTLE_WON              10
 #define ARCADE_FUNC_GIVE_BATTLE_POINTS          11
 #define ARCADE_FUNC_CHECK_SYMBOL                12

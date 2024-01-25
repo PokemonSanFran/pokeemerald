@@ -105,7 +105,7 @@ static void SetArcadeBattleWon(void);
 static void IncrementCurrentArcadeWinStreak(void);
 static void SaveCurrentArcadeWinStreak(void);
 static void SaveArcadeChallenge(void);
-static void GiveBattlePointsForChallenge(void);
+static void GiveArcadeChallengeBattlePoints(void);
 static u32 CalculateBattlePoints(u32);
 static void GiveBattlePoints(u32);
 static void BufferEarnedArcadePrint(void);
@@ -115,15 +115,15 @@ static bool32 ShouldGetSilverPrint(u32);
 static bool32 ShouldGetPrint(u32, u32, u32);
 static void TakeEnemyHeldItems(void);
 static void GetArcadeBrainStatus(void);
-static void CleanUpAfterArcadeBattle(void);
+static void ArcadeBattleCleanup(void);
 static void ResetWeatherPostBattle(void);
 static void ReturnPartyToOwner(void);
 static bool32 HaveMonsBeenSwapped(void);
 static void ResetLevelsToOriginal(void);
 static void ResetSketchedMoves(void);
 static bool32 MonKnowsMove(struct Pokemon*, u16);
-static void StartArcadeGameFromOverworld(void);
-static void FillArcadeTrainerParty(void);
+static void StartArcadeGameBoardFromOverworld(void);
+static void GenerateArcadeOpponent(void);
 void ConvertFacilityFromArcadeToPike(u32*);
 u32 GetArcadePrintCount(void);
 static void SetArcadeBrainObjectEvent(void);
@@ -290,12 +290,12 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_GET_DATA]               = GetArcadeData,
 	[ARCADE_FUNC_SET_DATA]               = SetArcadeData,
 	[ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
-	[ARCADE_FUNC_GENERATE_OPPONENT]      = FillArcadeTrainerParty,
+	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateArcadeOpponent,
 	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	[ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameFromOverworld,
-	[ARCADE_FUNC_EVENT_CLEAN_UP]         = CleanUpAfterArcadeBattle,
+	[ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameBoardFromOverworld,
+	[ARCADE_FUNC_BATTLE_CLEAN_UP]        = ArcadeBattleCleanup,
 	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
-	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePointsForChallenge,
+	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveArcadeChallengeBattlePoints,
 	[ARCADE_FUNC_CHECK_SYMBOL]           = BufferEarnedArcadePrint,
 	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentArcadeWinStreak,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
@@ -307,14 +307,14 @@ static const u32 sWinStreakFlags[][2] =
 {
     {STREAK_ARCADE_SINGLES_50,     STREAK_ARCADE_SINGLES_OPEN},
     {STREAK_ARCADE_DOUBLES_50,     STREAK_ARCADE_DOUBLES_OPEN},
-    {STREAK_ARCADE_LINK_MULTIS_50,      STREAK_ARCADE_LINK_MULTIS_OPEN},
+    {STREAK_ARCADE_LINK_MULTIS_50, STREAK_ARCADE_LINK_MULTIS_OPEN},
 };
 
 static const u32 sWinStreakMasks[][2] =
 {
     {~(STREAK_ARCADE_SINGLES_50),     ~(STREAK_ARCADE_SINGLES_OPEN)},
     {~(STREAK_ARCADE_DOUBLES_50),     ~(STREAK_ARCADE_DOUBLES_OPEN)},
-    {~(STREAK_ARCADE_LINK_MULTIS_50),      ~(STREAK_ARCADE_LINK_MULTIS_OPEN)},
+    {~(STREAK_ARCADE_LINK_MULTIS_50), ~(STREAK_ARCADE_LINK_MULTIS_OPEN)},
 };
 
 void CallBattleArcadeFunc(void)
@@ -603,7 +603,7 @@ static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =
     {6,6,6},
 };
 
-static void GiveBattlePointsForChallenge(void)
+static void GiveArcadeChallengeBattlePoints(void)
 {
 	u32 points = CalculateBattlePoints(((ARCADE_CURRENT_STREAK_WINS[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
     GiveBattlePoints(points);
@@ -683,7 +683,7 @@ static void GetArcadeBrainStatus(void)
 	BufferPrintFromCurrentArcadeWinStreak();
 }
 
-void CleanUpAfterArcadeBattle(void)
+void ArcadeBattleCleanup(void)
 {
     ResetWeatherPostBattle();
     ReturnPartyToOwner();
@@ -769,12 +769,12 @@ bool32 MonKnowsMove(struct Pokemon *pokemon, u16 move)
 	return FALSE;
 }
 
-static void StartArcadeGameFromOverworld(void)
+static void StartArcadeGameBoardFromOverworld(void)
 {
     CreateTask(Task_OpenGameBoard, 0);
 }
 
-void FillArcadeTrainerParty(void)
+void GenerateArcadeOpponent(void)
 {
     switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
     {
