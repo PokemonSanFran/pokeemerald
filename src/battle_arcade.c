@@ -1561,6 +1561,24 @@ static bool32 ShouldCursorMove(u32 timer)
 	return (timer % cursorWaitValue == 0);
 }
 
+u32 ReturnCursorWait(u32 speed)
+{
+	static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
+	{
+		[ARCADE_SPEED_LEVEL_0] = 20,
+		[ARCADE_SPEED_LEVEL_1] = 16,
+		[ARCADE_SPEED_LEVEL_2] = 8,
+		[ARCADE_SPEED_LEVEL_3] = 3,
+		[ARCADE_SPEED_DEFAULT] = 4,
+		[ARCADE_SPEED_LEVEL_5] = 2,
+		[ARCADE_SPEED_LEVEL_6] = 1,
+		[ARCADE_SPEED_LEVEL_7] = 0
+	};
+
+	//return 20; // Debug
+	return cursorWaitTable[speed];
+}
+
 static void IncrementCursorPosition(void)
 {
 	u32 position;
@@ -2251,16 +2269,46 @@ static bool32 BattleArcade_DoNoEvent(void)
 
 EWRAM_DATA static u8 *sRecordsTilemapPtr = NULL;
 
-static void VBlankCB(void)
+static const struct BgTemplate sRecordsBgTemplates[2] =
 {
-    LoadOam();
-    ProcessSpriteCopyRequests();
-    TransferPlttBuffer();
-}
+    {
+        .bg = 0,
+        .charBaseIndex = 1,
+        .mapBaseIndex = 31,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 0,
+        .baseTile = 0,
+    },
+    {
+        .bg = 1,
+        .charBaseIndex = 0,
+        .mapBaseIndex = 6,
+        .screenSize = 0,
+        .paletteMode = 0,
+        .priority = 1,
+        .baseTile = 0,
+    },
+};
+
+
+static const struct WindowTemplate sRecordsWinTemplates[2] =
+{
+    {
+        .bg = 0,
+        .tilemapLeft = 3,
+        .tilemapTop = 1,
+        .width = 26,
+        .height = 16,
+        .paletteNum = 15,
+        .baseBlock = 1,
+    },
+    DUMMY_WIN_TEMPLATE,
+};
+
 
 static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.bin.lz");
 static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.4bpp.lz");
-
 static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/arcade_records/arcade_records.gbapal");
 
 void CB2_ShowRecords(void)
@@ -2306,40 +2354,6 @@ void CB2_ShowRecords(void)
     CreateTask(Task_RecordsFadeIn, 0);
 }
 
-static void MainCB2(void)
-{
-    RunTasks();
-    AnimateSprites();
-    BuildOamBuffer();
-    UpdatePaletteFade();
-}
-
-static void Task_RecordsFadeIn(u8 taskId)
-{
-    if (!gPaletteFade.active)
-        gTasks[taskId].func = Task_RecordsWaitForKeyPress;
-}
-
-static void Task_RecordsWaitForKeyPress(u8 taskId)
-{
-    if (JOY_NEW(A_BUTTON | B_BUTTON))
-    {
-        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-        gTasks[taskId].func = Task_RecordsFadeOut;
-    }
-}
-
-static void Task_RecordsFadeOut(u8 taskId)
-{
-    if (!gPaletteFade.active)
-    {
-        Free(sRecordsTilemapPtr);
-        FreeAllWindowBuffers();
-        DestroyTask(taskId);
-        SetMainCallback2(CB2_ReturnToFieldFadeFromBlack);
-    }
-}
-
 static const u8 *BattleArcade_GetRecordName(void)
 {
 	switch(gSpecialVar_0x8006)
@@ -2349,7 +2363,7 @@ static const u8 *BattleArcade_GetRecordName(void)
 		case FRONTIER_MODE_DOUBLES:
 			return gText_Double;
 		default:
-		case FRONTIER_MODE_MULTIS:
+		case FRONTIER_MODE_LINK_MULTIS:
 			return gText_Multi;
 	}
 }
@@ -2463,28 +2477,6 @@ static void DisplayRecordsText(void)
     CopyWindowToVram(0, COPYWIN_FULL);
 }
 
-static const struct BgTemplate sRecordsBgTemplates[2] =
-{
-    {
-        .bg = 0,
-        .charBaseIndex = 1,
-        .mapBaseIndex = 31,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 0,
-        .baseTile = 0,
-    },
-    {
-        .bg = 1,
-        .charBaseIndex = 0,
-        .mapBaseIndex = 6,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 1,
-        .baseTile = 0,
-    },
-};
-
 static void InitRecordsBg(void)
 {
     ResetBgsAndClearDma3BusyFlags(0);
@@ -2498,20 +2490,6 @@ static void InitRecordsBg(void)
     SetGpuReg(REG_OFFSET_BLDY, 0);
 }
 
-static const struct WindowTemplate sRecordsWinTemplates[2] =
-{
-    {
-        .bg = 0,
-        .tilemapLeft = 3,
-        .tilemapTop = 1,
-        .width = 26,
-        .height = 16,
-        .paletteNum = 15,
-        .baseBlock = 1,
-    },
-    DUMMY_WIN_TEMPLATE,
-};
-
 static void InitRecordsWindow(void)
 {
     InitWindows(sRecordsWinTemplates);
@@ -2521,25 +2499,45 @@ static void InitRecordsWindow(void)
     PutWindowTilemap(0);
 }
 
-static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
-static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
-
-static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
+static void VBlankCB(void)
 {
-	20,  // ARCADE_SPEED_LEVEL_0
-	16,  // ARCADE_SPEED_LEVEL_1
-	8,   // ARCADE_SPEED_LEVEL_2
-	3,   // ARCADE_SPEED_LEVEL_3
-	4,   // ARCADE_SPEED_LEVEL_4 (default)
-	2,   // ARCADE_SPEED_LEVEL_5
-	1,   // ARCADE_SPEED_LEVEL_6
-	0    // ARCADE_SPEED_LEVEL_7
-};
+    LoadOam();
+    ProcessSpriteCopyRequests();
+    TransferPlttBuffer();
+}
 
-u32 ReturnCursorWait(u32 speed)
+static void MainCB2(void)
 {
-	//return 20; // Debug
-    return cursorWaitTable[speed];
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+    UpdatePaletteFade();
+}
+
+static void Task_RecordsFadeIn(u8 taskId)
+{
+    if (!gPaletteFade.active)
+        gTasks[taskId].func = Task_RecordsWaitForKeyPress;
+}
+
+static void Task_RecordsWaitForKeyPress(u8 taskId)
+{
+    if (JOY_NEW(A_BUTTON | B_BUTTON))
+    {
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+        gTasks[taskId].func = Task_RecordsFadeOut;
+    }
+}
+
+static void Task_RecordsFadeOut(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        Free(sRecordsTilemapPtr);
+        FreeAllWindowBuffers();
+        DestroyTask(taskId);
+        SetMainCallback2(CB2_ReturnToFieldFadeFromBlack);
+    }
 }
 
 // Arcade Board

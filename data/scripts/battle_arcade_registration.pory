@@ -391,8 +391,11 @@ script BattleArcade_Registration_EventScript_AskModeResultsBoard
     multichoice(17, 2, MULTI_BATTLE_ARCADE_RECORDS, FALSE)
     switch(var(VAR_RESULT))
 	{
-		case MULTI_B_PRESSED:
+		case 2:
+			setvar(VAR_RESULT,FRONTIER_MODE_LINK_MULTIS)
+			goto(BattleArcade_Registration_EventScript_ShowResults)
 		case 3:
+		case MULTI_B_PRESSED:
 			closemessage
 			releaseall
 			end

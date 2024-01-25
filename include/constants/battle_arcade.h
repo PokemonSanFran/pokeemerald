@@ -100,7 +100,7 @@
 #define ARCADE_SPEED_LEVEL_7                   7
 #define ARCADE_SPEED_COUNT                     ARCADE_SPEED_LEVEL_7 + 1
 
-#define ARCADE_SPEED_DEFAULT                   ARCADE_SPEED_LEVEL_3
+#define ARCADE_SPEED_DEFAULT                   ARCADE_SPEED_LEVEL_4
 #define ARCADE_SPEED_LEVEL_MIN                 ARCADE_SPEED_LEVEL_0
 #define ARCADE_SPEED_LEVEL_MAX                 ARCADE_SPEED_LEVEL_7
 
