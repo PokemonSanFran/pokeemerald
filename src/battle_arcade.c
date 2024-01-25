@@ -289,17 +289,17 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_INIT]                   = InitArcadeChallenge,
 	[ARCADE_FUNC_GET_DATA]               = GetArcadeData,
 	[ARCADE_FUNC_SET_DATA]               = SetArcadeData,
-	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
 	[ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
+	[ARCADE_FUNC_GENERATE_OPPONENT]      = FillArcadeTrainerParty,
+	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
+	[ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameFromOverworld,
+	[ARCADE_FUNC_EVENT_CLEAN_UP]         = CleanUpAfterArcadeBattle,
+	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
 	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePointsForChallenge,
 	[ARCADE_FUNC_CHECK_SYMBOL]           = BufferEarnedArcadePrint,
-	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
-	[ARCADE_FUNC_EVENT_CLEAN_UP]         = CleanUpAfterArcadeBattle,
-	[ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameFromOverworld,
-	[ARCADE_FUNC_GENERATE_OPPONENT]      = FillArcadeTrainerParty,
-	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentArcadeWinStreak,
+	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
+	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 	[ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld
 };
 
@@ -1109,7 +1109,7 @@ static bool32 BattleArcade_AllocTilemapBuffers(void)
 
 	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
 	{
-		sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
+		sBgTilemapBuffer[backgroundId] = AllocZeroed(ARCADE_TILEMAP_BUFFER_SIZE);
 
 		if (sBgTilemapBuffer[backgroundId] == NULL)
 			return FALSE;
@@ -2416,7 +2416,7 @@ static bool32 ArcadeRecords_AllocTilemapBuffers(void)
 
     for (backgroundId = 0; backgroundId < BG_RECORD_COUNT; backgroundId++)
     {
-        sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
+        sBgTilemapBuffer[backgroundId] = AllocZeroed(ARCADE_TILEMAP_BUFFER_SIZE);
 
         if (sBgTilemapBuffer[backgroundId] == NULL)
             return FALSE;
