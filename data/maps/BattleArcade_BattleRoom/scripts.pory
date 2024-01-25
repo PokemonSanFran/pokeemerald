@@ -7,9 +7,10 @@ const LOCAL_VAR_GAME_BOARD_EVENT =  VAR_0x8007
 const LOCAL_VAR_GAME_BOARD_IMPACT = VAR_0x8008
 const LOCAL_VAR_GAME_BOARD_SUCCESS = VAR_0x8009
 
-const VAR_CHALLENGE_STATUS = VAR_TEMP_0
-const CHALLENGE_STATUS_AT_ENTRANCE = 0
-const CHALLENGE_STATUS_IN_POSITION = 0
+const VAR_ENTRANCE_STATUS = VAR_TEMP_0
+const ENTRANCE_STATUS_AT_ENTRANCE = 0
+const ENTRANCE_STATUS_IN_POSITION = 1
+const ENTRANCE_STATUS_BEGUN = 2
 
 const PLAYER = OBJ_EVENT_ID_PLAYER
 const CAMERA = OBJ_EVENT_ID_CAMERA
@@ -22,8 +23,8 @@ mapscripts BattleArcade_BattleRoom_MapScripts
     ]
     MAP_SCRIPT_ON_FRAME_TABLE
     [
-        VAR_CHALLENGE_STATUS, CHALLENGE_STATUS_AT_ENTRANCE: BattleArcade_BattleRoom_EventScript_EnterRoom
-        VAR_CHALLENGE_STATUS, CHALLENGE_STATUS_IN_POSITION: BattleArcade_Challenge_EventScript_BeginChallenge
+        VAR_ENTRANCE_STATUS, ENTRANCE_STATUS_AT_ENTRANCE: BattleArcade_BattleRoom_EventScript_EnterRoom
+        VAR_ENTRANCE_STATUS, ENTRANCE_STATUS_IN_POSITION: BattleArcade_Challenge_EventScript_BeginChallenge
     ]
 }
 
@@ -36,7 +37,7 @@ script BattleArcade_BattleRoom_EventScript_PlayerFaceNorth
 
 script BattleArcade_BattleRoom_EventScript_EnterRoom
 {
-    setvar(VAR_CHALLENGE_STATUS, CHALLENGE_STATUS_IN_POSITION)
+    setvar(VAR_ENTRANCE_STATUS, ENTRANCE_STATUS_IN_POSITION)
     special(SpawnCameraObject)
     applymovement(ATTENDANT, BattleArcade_BattleRoom_WatchPlayer)
     applymovement(PLAYER, BattleArcade_BattleRoom_Player_WalkToBattlefield)

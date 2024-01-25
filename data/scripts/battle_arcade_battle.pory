@@ -3,12 +3,18 @@ const VAR_HEARD_BRAIN_INTRO = VAR_TEMP_2
 const LOCAL_VAR_GAME_BOARD_EVENT =  VAR_0x8007
 const LOCAL_VAR_GAME_BOARD_SUCCESS = VAR_0x8009
 
+const VAR_ENTRANCE_STATUS = VAR_TEMP_0
+const ENTRANCE_STATUS_AT_ENTRANCE = 0
+const ENTRANCE_STATUS_IN_POSITION = 1
+const ENTRANCE_STATUS_BEGUN = 2
+
 script BattleArcade_Challenge_EventScript_BeginChallenge
 {
-    setvar(VAR_TEMP_0, 2)
+    setvar(VAR_ENTRANCE_STATUS, ENTRANCE_STATUS_BEGUN)
     call(BattleArcade_BattleRoom_EventScript_MCFaceCrowd)
     msgbox(BattleArcade_Challenge_Text_WelcomeToTheBattleArcade,MSGBOX_DEFAULT)
 	msgbox(BattleArcade_Challenge_Text_FirstIllNeedToHoldOn,MSGBOX_DEFAULT)
+	arcade_takeplayerhelditems
     goto(BattleArcade_Challenge_EventScript_BattleOpponent)
 }
 
@@ -760,7 +766,7 @@ text BattleArcade_Challenge_Text_BoardmotionRandom
 }
 text BattleArcade_Challenge_Text_ReceivedBp
 {
-	format("{PLAYER} received {STR_VAR_3} BP!")
+	format("{PLAYER} received {STR_VAR_1} BP!")
 }
 text BattleArcade_Challenge_Text_AndReceivedBp
 {

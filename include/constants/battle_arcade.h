@@ -16,6 +16,7 @@
 #define ARCADE_FUNC_CHECK_BRAIN_STATUS          14
 #define ARCADE_FUNC_SET_BRAIN_OBJECT            15
 #define ARCADE_FUNC_RECORDS                     16
+#define ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM       17
 
 #define ARCADE_DATA_WIN_STREAK                  1
 #define ARCADE_DATA_WIN_STREAK_ACTIVE           2

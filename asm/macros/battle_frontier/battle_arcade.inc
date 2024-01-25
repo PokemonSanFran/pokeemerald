@@ -96,3 +96,9 @@
 	setvar VAR_0x8005, \mode
 	special CallBattleArcadeFunc
 	.endm
+
+    @ Delete all the held items in the player's party
+    .macro arcade_takeplayerhelditems
+    setvar VAR_0x8004, ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM
+    special CallBattleArcadeFunc
+    .endm

@@ -300,7 +300,8 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentArcadeWinStreak,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
-	[ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld
+	[ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld,
+	[ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM]  = TakePlayerHeldItems,
 };
 
 static const u32 sWinStreakFlags[][2] =
@@ -335,7 +336,6 @@ static void InitArcadeChallenge(void)
 	ResetCursorPositionOnSaveblock();
     ResetCursorSpeed();
     ResetFrontierTrainerIds();
-	TakePlayerHeldItems();
 	GenerateItemsToBeGiven();
     FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
@@ -344,6 +344,11 @@ static void InitArcadeChallenge(void)
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     gTrainerBattleOpponent_A = 0;
+}
+
+static void TakePlayerHeldItems(void)
+{
+    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, ITEM_NONE);
 }
 
 static void ResetCursorPositionOnSaveblock(void)
@@ -375,11 +380,6 @@ static void ResetCursorSpeed(void)
 static void ClearCursorRandomMode(void)
 {
 	ARCADE_CURSOR.isRandom = FALSE;
-}
-
-static void TakePlayerHeldItems(void)
-{
-    BattleArcade_DoGive(ARCADE_IMPACT_PLAYER, ITEM_NONE);
 }
 
 static void GenerateItemsToBeGiven(void)
@@ -624,7 +624,7 @@ static u32 CalculateBattlePoints(u32 challengeNum)
 static void GiveBattlePoints(u32 points)
 {
     IncrementDailyBattlePoints(points);
-    ConvertIntToDecimalStringN(gStringVar3, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
+    ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);
@@ -832,7 +832,6 @@ void ShowArcadeRecordsFromOverworld(void)
 void DoArcadeTrainerBattle(void)
 {
     gBattleScripting.specialTrainerBattleType = SPECIAL_BATTLE_TOWER;
-
     SetArcadeBattleFlags();
     CreateTask(Task_StartBattleAfterTransition, 1);
     PlayMapChosenOrBattleBGM(0);
@@ -1875,6 +1874,9 @@ static bool32 IsEventValidDuringCurrentBattle(u32 event)
 		[ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
 	};
 
+	if (event < ARCADE_EVENT_SPECIAL_START)
+		return TRUE;
+
 	if (!SpecialPanelTable[event][FRONTIER_SAVEDATA.curChallengeBattleNum])
 		return FALSE;
 
@@ -2088,9 +2090,7 @@ static bool32 BattleArcade_DoGive(u32 impact, u32 item)
             break;
 
         SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
-        //DebugPrintf("slot %d has item %d",i,GetMonData(&party[i],MON_DATA_HELD_ITEM,NULL));
     }
-    //DebugPrintf("-----------");
 
     BufferGiveString(item);
     return TRUE;
@@ -2680,8 +2680,6 @@ static void DisplayRecordsText(void)
 // get palettes working
 // cursor changes color with every animation
 // entire screen is glowing white as its happening
-// re-organize battle arcade c into chunks (battles, game board front end, game board back end, records)
-// refactor battle arcade c
 // get Kura's opinion
 // figure out why the cursor feels too fast at default
 // add branch tags
