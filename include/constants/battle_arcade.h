@@ -192,4 +192,6 @@
 #define VAR_ARCADE_BERRY                   VAR_UNUSED_0x40FA
 #define VAR_ARCADE_ITEM                    VAR_UNUSED_0x409D
 
+#define DEFAULT_ANIM  0
+
 #endif //GUARD_CONSTANTS_ARCADE_H

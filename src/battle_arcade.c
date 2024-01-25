@@ -8,27 +8,38 @@
 #include "battle_tower.h"
 #include "battle_transition.h"
 #include "bg.h"
+#include "characters.h"
+#include "data.h"
 #include "decompress.h"
 #include "event_data.h"
 #include "field_weather.h"
 #include "frontier_util.h"
+#include "gba/defines.h"
+#include "gba/macro.h"
+#include "gba/types.h"
 #include "gpu_regs.h"
+#include "graphics.h"
 #include "international_string_util.h"
 #include "item.h"
 #include "main.h"
 #include "malloc.h"
 #include "menu.h"
+#include "menu_helpers.h"
 #include "overworld.h"
 #include "palette.h"
 #include "pokedex.h"
+#include "pokemon_icon.h"
 #include "random.h"
 #include "scanline_effect.h"
 #include "script.h"
 #include "script_pokemon_util.h"
+#include "sound.h"
+#include "sprite.h"
 #include "string_util.h"
 #include "strings.h"
 #include "task.h"
 #include "text.h"
+#include "text_window.h"
 #include "tv.h"
 #include "window.h"
 #include "constants/battle_arcade.h"
@@ -41,20 +52,9 @@
 #include "constants/moves.h"
 #include "constants/opponents.h"
 #include "constants/rgb.h"
+#include "constants/songs.h"
 #include "constants/trainers.h"
 #include "constants/weather.h"
-#include "gba/types.h"
-#include "gba/defines.h"
-#include "text_window.h"
-#include "characters.h"
-#include "gba/macro.h"
-#include "menu_helpers.h"
-#include "sprite.h"
-#include "constants/songs.h"
-#include "sound.h"
-#include "pokemon_icon.h"
-#include "graphics.h"
-#include "data.h"
 
 struct GameBoardState
 {
@@ -143,18 +143,19 @@ static void GameBoard_FadeAndBail(void);
 static void Task_GameBoardWaitFadeAndBail(u8);
 static bool8 GameBoard_LoadGraphics(void);
 static void GameBoard_InitWindows(void);
+static void GenerateGameBoard(void);
 static void PrintEnemyParty(void);
 static void PrintPlayerParty(void);
 static void PrintPartyIcons(u32);
 static u32 GetHorizontalPositionFromSide(u32);
 static struct Pokemon *LoadSideParty(u32);
 static void PrintHelpBar(void);
-static u32 GetGameBoardMode(void);
 static const u8 *GetHelpBarText(void);
+static u32 GetGameBoardMode(void);
 static void Task_GameBoardWaitFadeIn(u8);
+static void Task_GameBoardMainInput(u8);
 static void GameBoard_VBlankCB(void);
 static void GameBoard_MainCB(void);
-static void Task_GameBoardMainInput(u8);
 static void StartCountdown(void);
 static void PopulateCountdownSprites(void);
 static void CalculateTilePosition(u32, u32*, u32*);
@@ -174,6 +175,7 @@ static void Task_GameBoard_Game(u8);
 static u32 GetGameBoardTimer(void);
 static void IncrementGameBoardMode(void);
 static bool32 ShouldCursorMove(u32);
+static u32 ReturnCursorWait(u32);
 static void IncrementCursorPosition(void);
 static bool32 IsCursorInRandomMode(void);
 static bool32 IsGameBoardTimerEmpty(void);
@@ -187,21 +189,18 @@ static void Task_GameBoardWaitFadeAndExitGracefully(u8);
 static void GameBoard_FreeResources(void);
 
 // Arcade Game Board Back End Init
-static void GenerateGameBoard(void);
-static u32 ConvertBattlesToImpactIndex(void);
-static u32 GenerateEvent(u32);
 static u32 GenerateImpact(void);
+static u32 ConvertWinStreakToImpactBracket(void);
+static u32 GenerateEvent(u32);
 static u32 GenerateRandomBetweenBounds(u32);
-static u32 GetChallengeNum(void);
-static u32 GetChallengeNumIndex(void);
-static s32 GetPanelLowerBound(u32);
 static s32 GetPanelUpperBound(u32);
-static void InitRecordsWindow(void);
-static bool32 IsEventBanned(u32);
+static s32 GetPanelLowerBound(u32);
 static bool32 IsEventValidDuringBattleOrStreak(u32, u32);
+static bool32 IsEventBanned(u32);
 static bool32 IsEventValidDuringCurrentBattle(u32);
 static bool32 IsEventValidDuringCurrentStreak(u32);
-static u32 ReturnCursorWait(u32);
+static u32 GetChallengeNumIndex(void);
+static u32 GetChallengeNum(void);
 
 // Arcade Game Board Back End Resolve
 static u32 CalculateAndSaveNewLevel(u32);
@@ -249,6 +248,7 @@ static void BufferGiveString(u32);
 static u32 GetImpactedTrainerId(u32);
 
 // Arcade Records Window
+static void InitRecordsWindow(void);
 static const u8 *BattleArcade_GenerateRecordName(void);
 static const u8 *BattleArcade_GetLevelText(u32);
 static const u8 *BattleArcade_GetRecordHeaderName(u32, u32);
@@ -838,82 +838,900 @@ void SetArcadeBattleFlags(void)
     }
 }
 
-static u32 ConvertBattlesToImpactIndex(void)
-{
-	u16 numBattle = GetCurrentArcadeWinStreak();
+// Arcade Game Board Front End
 
-	return numBattle <= 4 ? ARCADE_BATTLE_NUM_0_4 :
-		numBattle <= 10 ? ARCADE_BATTLE_NUM_5_10 :
-		numBattle <= 15 ? ARCADE_BATTLE_NUM_11_15 :
-		numBattle <= 20 ? ARCADE_BATTLE_NUM_16_20 :
-		ARCADE_BATTLE_NUM_21_PLUS;
+static const struct BgTemplate sGameBoardBgTemplates[] =
+{
+    {
+        .bg = BG_BOARD_HELP_BAR,
+        .charBaseIndex = 0,
+        .mapBaseIndex = 31,
+        .priority = 1
+    },
+    {
+        .bg = BG_BOARD_EVENTS,
+        .charBaseIndex = 3,
+        .mapBaseIndex = 30,
+        .priority = 2
+    },
+    {
+        .bg = BG_BOARD_BACKGROUND,
+        .charBaseIndex = 6,
+        .mapBaseIndex = 29,
+        .priority = 4
+    },
+    {
+        .bg = BG_BOARD_BACKBOARD,
+        .charBaseIndex = 9,
+        .mapBaseIndex = 28,
+        .priority = 3
+    },
+};
+
+static const struct WindowTemplate sGameBoardWinTemplates[] =
+{
+	[WIN_BOARD_HELP_BAR] =
+	{
+		.bg = 0,
+		.tilemapLeft = 0,
+		.tilemapTop = 18,
+		.width = 30,
+		.height = 2,
+		.paletteNum = 15,
+		.baseBlock = 1,
+	},
+	DUMMY_WIN_TEMPLATE
+};
+
+struct GameResult
+{
+    u8 impact:2;
+    u8 event:5;
+};
+
+static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
+
+enum FontColor
+{
+    FONT_BLACK,
+    FONT_WHITE,
+};
+
+static const u8 sGameBoardWindowFontColors[][3] =
+{
+	[FONT_BLACK]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY,  TEXT_COLOR_LIGHT_GRAY},
+	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
+};
+
+static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
+static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
+
+static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.bin.lz");
+static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
+
+static const u32 sCountdownTile1[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_1.4bpp");
+static const u32 sCountdownTile2[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_2.4bpp");
+static const u32 sCountdownTile3[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_3.4bpp");
+
+static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_burn.4bpp.lz");
+static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_fog.4bpp.lz");
+static const u32 sEventFreeze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_freeze.4bpp.lz");
+static const u32 sEventGiveBerry[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_berry.4bpp.lz");
+static const u32 sEventGiveBpBig[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_big.4bpp.lz");
+static const u32 sEventGiveBpSmall[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_small.4bpp.lz");
+static const u32 sEventGiveItem[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_item.4bpp.lz");
+static const u32 sEventHail[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_hail.4bpp.lz");
+static const u32 sEventLevelUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_level_up.4bpp.lz");
+static const u32 sEventLowerHp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_lower_hp.4bpp.lz");
+static const u32 sEventNoBattle[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_no_battle.4bpp.lz");
+static const u32 sEventParalyze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_paralyze.4bpp.lz");
+static const u32 sEventPoison[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_poison.4bpp.lz");
+static const u32 sEventRain[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_rain.4bpp.lz");
+static const u32 sEventRandom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_random.4bpp.lz");
+static const u32 sEventSand[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sand.4bpp.lz");
+static const u32 sEventSleep[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sleep.4bpp.lz");
+static const u32 sEventSpeedDown[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_down.4bpp.lz");
+static const u32 sEventSpeedUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_up.4bpp.lz");
+static const u32 sEventSun[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sun.4bpp.lz");
+static const u32 sEventSwap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_swap.4bpp.lz");
+static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_trick_room.4bpp.lz");
+static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_game/no_event.4bpp.lz");
+
+static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
+static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_orange.4bpp.lz");
+
+static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
+static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
+
+static const union AnimCmd sCountdownPanelAnim[] =
+{
+    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER),
+    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER),
+    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER+10),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sCountdownAnims[] =
+{
+    [DEFAULT_ANIM] = sCountdownPanelAnim
+};
+
+static const struct SpriteFrameImage sCountdownPanelPicTable[] =
+{
+    obj_frame_tiles(sCountdownTile3),
+    obj_frame_tiles(sCountdownTile2),
+    obj_frame_tiles(sCountdownTile1),
+};
+
+static const struct OamData CountdownPanelOam =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
+{
+    .tileTag = TAG_NONE,
+    .paletteTag = 0,
+    .oam = &CountdownPanelOam,
+    .anims = sCountdownAnims,
+    .images = sCountdownPanelPicTable,
+    .callback = SpriteCallbackDummy,
+};
+
+void Task_OpenGameBoard(u8 taskId)
+{
+	if (gPaletteFade.active)
+		return;
+
+	CleanupOverworldWindowsAndTilemaps();
+	GameBoard_Init(CB2_ReturnToFieldContinueScript);
+	DestroyTask(taskId);
+}
+
+void GameBoard_Init(MainCallback callback)
+{
+    sGameBoardState = AllocZeroed(sizeof(struct GameBoardState));
+
+    if (sGameBoardState == NULL)
+    {
+        SetMainCallback2(callback);
+        return;
+    }
+
+    sGameBoardState->loadState = 0;
+    sGameBoardState->savedCallback = callback;
+
+    SetMainCallback2(GameBoard_SetupCB);
+}
+
+static void GameBoard_SetupCB(void)
+{
+    u8 taskId;
+
+    switch (gMain.state)
+	{
+		case 0:
+			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
+			SetVBlankHBlankCallbacksToNull();
+			ClearScheduledBgCopiesToVram();
+			gMain.state++;
+			break;
+		case 1:
+			ScanlineEffect_Stop();
+			FreeAllSpritePalettes();
+			ResetPaletteFade();
+			ResetSpriteData();
+			ResetTasks();
+			gMain.state++;
+			break;
+		case 2:
+			if (GameBoard_InitBgs())
+			{
+				sGameBoardState->loadState = 0;
+				gMain.state++;
+			}
+			else
+			{
+				GameBoard_FadeAndBail();
+				return;
+			}
+			break;
+		case 3:
+			if (GameBoard_LoadGraphics() == TRUE)
+			{
+				gMain.state++;
+			}
+			break;
+		case 4:
+			GameBoard_InitWindows();
+			gMain.state++;
+			break;
+		case 5:
+			GenerateGameBoard();
+			FreeMonIconPalettes();
+			LoadMonIconPalettes();
+			PrintEnemyParty();
+			PrintPlayerParty();
+			PrintHelpBar();
+			taskId = CreateTask(Task_GameBoardWaitFadeIn, 0);
+			gMain.state++;
+			break;
+		case 6:
+			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+			gMain.state++;
+			break;
+		case 7:
+			SetVBlankCallback(GameBoard_VBlankCB);
+			SetMainCallback2(GameBoard_MainCB);
+			break;
+	}
+}
+
+static bool8 GameBoard_InitBgs(void)
+{
+    ResetAllBgsCoordinates();
+
+	if (!BattleArcade_AllocTilemapBuffers())
+		return FALSE;
+	HandleAndShowBgs();
+
+    return TRUE;
+}
+
+static bool32 BattleArcade_AllocTilemapBuffers(void)
+{
+	u32 backgroundId;
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+	{
+		sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
+
+		if (sBgTilemapBuffer[backgroundId] == NULL)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+static void HandleAndShowBgs(void)
+{
+	u32 backgroundId;
+
+    ResetBgsAndClearDma3BusyFlags(0);
+    InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+		SetScheduleShowBgs(backgroundId);
+}
+
+static void SetScheduleShowBgs(u32 backgroundId)
+{
+	SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
+	ScheduleBgCopyTilemapToVram(backgroundId);
+	ShowBg(backgroundId);
+}
+
+static void GameBoard_FadeAndBail(void)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+    CreateTask(Task_GameBoardWaitFadeAndBail, 0);
+
+    SetVBlankCallback(GameBoard_VBlankCB);
+    SetMainCallback2(GameBoard_MainCB);
+}
+
+static void Task_GameBoardWaitFadeAndBail(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        SetMainCallback2(sGameBoardState->savedCallback);
+        GameBoard_FreeResources();
+        DestroyTask(taskId);
+    }
+}
+
+static bool8 GameBoard_LoadGraphics(void)
+{
+    switch (sGameBoardState->loadState)
+    {
+    case 0:
+        ResetTempTileDataBuffers();
+
+        DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackboardTiles, 0, 0, 0);
+        DecompressAndCopyTileDataToVram(BG_BOARD_BACKGROUND, sLogobackgroundTiles, 0, 0, 0);
+        sGameBoardState->loadState++;
+        break;
+    case 1:
+        if (FreeTempTileDataBuffersIfPossible() != TRUE)
+        {
+
+            LZDecompressWram(sBackboardTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
+            LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
+            sGameBoardState->loadState++;
+        }
+        break;
+    case 2:
+        //LoadPalette(sGameBoardPalette, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+        sGameBoardState->loadState++;
+    default:
+        sGameBoardState->loadState = 0;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void GameBoard_InitWindows(void)
+{
+	u32 windowId;
+    InitWindows(sGameBoardWinTemplates);
+
+    DeactivateAllTextPrinters();
+
+    ScheduleBgCopyTilemapToVram(0);
+
+	for (windowId = 0; windowId < WIN_BOARD_COUNT; windowId++)
+	{
+		FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+		PutWindowTilemap(windowId);
+		CopyWindowToVram(windowId, COPYWIN_FULL);
+	}
+}
+
+static void GenerateGameBoard(void)
+{
+    u32 i, impact;
+
+    for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
+    {
+        sGameBoard[i].impact = GenerateImpact();
+        sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
+		DebugPrintf("event generated");
+
+        DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
+    }
+}
+
+
+static void PrintEnemyParty(void)
+{
+	PrintPartyIcons(ARCADE_IMPACT_OPPONENT);
+}
+
+static void PrintPlayerParty(void)
+{
+	PrintPartyIcons(ARCADE_IMPACT_PLAYER);
+}
+
+static void PrintPartyIcons(u32 side)
+{
+	u32 x = GetHorizontalPositionFromSide(side);
+	u32 y = 27;
+	u32 i;
+	struct Pokemon *party = LoadSideParty(side);
+
+	for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
+	{
+		if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
+			break;
+
+		sGameBoardState->monIconSpriteId[side][i] = CreateMonIcon(GetMonData(&party[i], MON_DATA_SPECIES),SpriteCallbackDummy, x, y, 4, GetMonData(&party[i],MON_DATA_PERSONALITY),FALSE);
+		//DebugPrintf("gSprites mon %d",sGameBoardState->monIconSpriteId[side][i]);
+		//DebugPrintf("mon gsprites %d tileNum %d",sGameBoardState->monIconSpriteId[side][i],gSprites[sGameBoardState->monIconSpriteId[side[i]].oam.tileNum]);
+		gSprites[sGameBoardState->monIconSpriteId[side][i]].oam.priority = 0;
+		y += 37;
+	}
+}
+
+static u32 GetHorizontalPositionFromSide(u32 side)
+{
+	return (side == ARCADE_IMPACT_OPPONENT) ? 225 : 15;
+}
+
+static struct Pokemon *LoadSideParty(u32 impact)
+{
+    if (impact == ARCADE_IMPACT_PLAYER)
+        return gPlayerParty;
+    else
+        return gEnemyParty;
+}
+
+static void PrintHelpBar(void)
+{
+    u32 windowId = WIN_BOARD_HELP_BAR;
+    u32 fontId = FONT_NARROW;
+
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+    AddTextPrinterParameterized4(windowId, fontId, BAR_LEFT_PADDING, BAR_TOP_PADDING, GetFontAttribute(fontId, FONTATTR_LETTER_SPACING), GetFontAttribute(fontId, FONTATTR_LINE_SPACING), sGameBoardWindowFontColors[FONT_WHITE], TEXT_SKIP_DRAW, GetHelpBarText());
+
+    CopyWindowToVram(windowId, COPYWIN_GFX);
+}
+
+static const u8 *GetHelpBarText(void)
+{
+	switch (GetGameBoardMode())
+	{
+		case ARCADE_BOARD_MODE_WAIT:
+			return sText_HelpBarStart;
+		case ARCADE_BOARD_MODE_GAME_START:
+			return sText_HelpBarFinish;
+		default:
+			return gText_Blank;
+	}
+}
+
+static u32 GetGameBoardMode(void)
+{
+	return sGameBoardState->gameMode;
+}
+
+static void Task_GameBoardWaitFadeIn(u8 taskId)
+{
+    if (gPaletteFade.active)
+		return;
+
+	gTasks[taskId].func = Task_GameBoardMainInput;
+}
+
+static void Task_GameBoardMainInput(u8 taskId)
+{
+    if (!JOY_NEW(A_BUTTON))
+		return;
+
+	PlaySE(SE_SELECT);
+	switch (GetGameBoardMode())
+	{
+		case ARCADE_BOARD_MODE_WAIT:
+			StartCountdown();
+			break;
+		case ARCADE_BOARD_MODE_GAME_START:
+			HandleFinishMode();
+			break;
+		default:
+			return;
+	}
+}
+
+static void GameBoard_VBlankCB(void)
+{
+    LoadOam();
+    ProcessSpriteCopyRequests();
+    TransferPlttBuffer();
+}
+
+static void GameBoard_MainCB(void)
+{
+    RunTasks();
+    AnimateSprites();
+    BuildOamBuffer();
+    DoScheduledBgTilemapCopiesToVram();
+    UpdatePaletteFade();
+}
+
+static void StartCountdown(void)
+{
+	HideBg(BG_BOARD_BACKGROUND);
+	sGameBoardState->gameMode++;
+	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
+	PopulateCountdownSprites();
+	PrintHelpBar();
+	CreateTask(Task_GameBoard_Countdown, 0);
+}
+
+static void PopulateCountdownSprites(void)
+{
+	u32 space, rowIndex, columnIndex, x, y, spriteId;
+
+    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
+	{
+		CalculateTilePosition(space,&x,&y);
+		sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
+    }
+}
+
+static void CalculateTilePosition(u32 space, u32* x, u32* y)
+{
+	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+    u32 columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+    *x = 50 + columnIndex * 40;
+    *y = 10 + rowIndex * 35;
+}
+
+static u32 CreateCountdownPanel(u32 x, u32 y)
+{
+	return CreateSprite(&sCountdownPanelSpriteTemplate, x, y, 0);
+}
+
+static void Task_GameBoard_Countdown(u8 taskId)
+{
+	sGameBoardState->timer--;
+	//DebugPrintf("timer %d",sGameBoardState->timer);
+
+	switch(sGameBoardState->timer)
+	{
+		case (ARCADE_FRAMES_PER_SECOND * 2):
+		case (ARCADE_FRAMES_PER_SECOND):
+			sGameBoardState->gameMode++;
+			break;
+		case 0:
+			sGameBoardState->gameMode++;
+			PopulateEventSprites();
+			PrintHelpBar();
+			StartGame();
+			DestroyTask(taskId);
+			break;
+		default:
+			break;
+	}
+}
+
+static void PopulateEventSprites(void)
+{
+	u32 space, rowIndex, columnIndex, x, y;
+
+	LoadTileSpriteSheets();
+
+    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
+	{
+		CalculateTilePosition(space,&x,&y);
+		sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
+    }
+}
+
+static void LoadTileSpriteSheets(void)
+{
+	u32 i;
+	//DebugPrintf("LoadTileSpriteSheets");
+	for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
+	{
+		u16 TileTag = GetTileTag(i);
+		const u32 *gfx = GetEventGfx(sGameBoard[i].event);
+		struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
+		LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
+		//DebugPrintf("LoadCompressedSpriteSheet tileTag%d",TileTag);
+	}
+}
+
+static const u32* GetEventGfx(u32 event)
+{
+	//DebugPrintf("event is %d",event);
+	switch (event)
+	{
+		case ARCADE_EVENT_LOWER_HP: return sEventLowerHp;
+		case ARCADE_EVENT_POISON: return sEventPoison;
+		case ARCADE_EVENT_PARALYZE: return sEventParalyze;
+		case ARCADE_EVENT_BURN: return sEventBurn;
+		case ARCADE_EVENT_SLEEP: return sEventSleep;
+		case ARCADE_EVENT_FREEZE: return sEventFreeze;
+		case ARCADE_EVENT_GIVE_BERRY: return sEventGiveBerry;
+		case ARCADE_EVENT_GIVE_ITEM: return sEventGiveItem;
+		case ARCADE_EVENT_LEVEL_UP: return sEventLevelUp;
+		case ARCADE_EVENT_SUN: return sEventSun;
+		case ARCADE_EVENT_RAIN: return sEventRain;
+		case ARCADE_EVENT_SAND: return sEventSand;
+		case ARCADE_EVENT_HAIL: return sEventHail;
+		case ARCADE_EVENT_FOG: return sEventFog;
+		case ARCADE_EVENT_TRICK_ROOM: return sEventTrickRoom;
+		case ARCADE_EVENT_SWAP: return sEventSwap;
+		case ARCADE_EVENT_SPEED_UP: return sEventSpeedUp;
+		case ARCADE_EVENT_SPEED_DOWN: return sEventSpeedDown;
+		case ARCADE_EVENT_RANDOM: return sEventRandom;
+		case ARCADE_EVENT_GIVE_BP_SMALL: return sEventGiveBpSmall;
+		case ARCADE_EVENT_NO_BATTLE: return sEventNoBattle;
+		case ARCADE_EVENT_GIVE_BP_BIG: return sEventGiveBpBig;
+		default:
+		case ARCADE_EVENT_NO_EVENT: return sEventNoEvent;
+	}
+}
+
+static u8 CreateEventSprite(u32 x, u32 y, u32 space)
+{
+    u32 spriteId;
+	u16 TileTag = GetTileTag(space);
+
+    struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
+    TempSpriteTemplate.tileTag = TileTag;
+    TempSpriteTemplate.callback = SpriteCallbackDummy;
+	//DebugPrintf("CreateEventSprite %d",TileTag);
+
+    //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
+    spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
+
+    gSprites[spriteId].oam.shape = SPRITE_SHAPE(32x32);
+    gSprites[spriteId].oam.size = SPRITE_SIZE(32x32);
+    gSprites[spriteId].oam.priority = 0;
+
+	//DebugPrintf("gsprites %d tileNum %d tileTag %d",spriteId,gSprites[spriteId].oam.tileNum,TileTag);
+
+	return spriteId;
+}
+
+static const u16 GetTileTag(u32 space)
+{
+	return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
+}
+
+static void StartGame(void)
+{
+	sGameBoardState->timer = ARCADE_BOARD_GAME_TIMER;
+	InitCursorPositionFromSaveblock();
+	CreateGameBoardCursor();
+	DestroyCountdownPanels();
+	CreateTask(Task_GameBoard_Game, 0);
+}
+
+static void InitCursorPositionFromSaveblock(void)
+{
+	sGameBoardState->cursorPosition = ARCADE_CURSOR.position;
+}
+
+static void CreateGameBoardCursor(void)
+{
+	u16 TileTag = ARCADE_GFXTAG_CURSOR;
+	u32 spriteId;
+	u32 x, y;
+
+	struct CompressedSpriteSheet sSpriteSheet_Cursor = {sCursorYellow, 0x0800, TileTag};
+    struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
+
+	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
+
+    TempSpriteTemplate.tileTag = TileTag;
+    TempSpriteTemplate.callback = SpriteCB_Cursor;
+
+    spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
+
+    gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
+    gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
+    gSprites[spriteId].oam.priority = 1;
+}
+
+static void SpriteCB_Cursor(struct Sprite *sprite)
+{
+	u32 x, y;
+	CalculateTilePosition(GetCursorPosition(),&x,&y);
+
+	sprite->x2 = x - 50;
+    sprite->y2 = y - 10;
+	sprite->subpriority = 0;
+}
+
+static void DestroyCountdownPanels(void)
+{
+    u32 space;
+
+    for (space = 0; space < ARCADE_GAME_BOARD_SPACES; space++)
+    {
+        DestroySpriteAndFreeResources(&gSprites[sGameBoardState->countdownPanelSpriteId[space]]);
+        sGameBoardState->countdownPanelSpriteId[space] = 0;
+    }
+}
+
+static void Task_GameBoard_Game(u8 taskId)
+{
+	u32 timer = GetGameBoardTimer();
+
+	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
+		HandleFinishMode();
+    else if (IsGameBoardTimerEmpty())
+        IncrementGameBoardMode();
+	else if (ShouldCursorMove(timer))
+		IncrementCursorPosition();
+
+	DecrementGameBoardTimer();
+}
+
+static u32 GetGameBoardTimer(void)
+{
+    return sGameBoardState->timer;
+}
+
+static void IncrementGameBoardMode(void)
+{
+    sGameBoardState->gameMode++;
+}
+
+static bool32 ShouldCursorMove(u32 timer)
+{
+	u32 cursorWaitValue = ReturnCursorWait(GetCursorSpeed());
+
+	if (cursorWaitValue == 0)
+		return TRUE;
+
+	return (timer % cursorWaitValue == 0);
+}
+
+static void IncrementCursorPosition(void)
+{
+	u32 position;
+
+	if (IsCursorInRandomMode())
+		position = Random() % ARCADE_GAME_BOARD_SPACES;
+	else
+		position = GetCursorPosition();
+
+	if ((position+1) >= ARCADE_GAME_BOARD_SPACES)
+		SetCursorPosition(0);
+	else
+		SetCursorPosition(++position);
+
+	//DebugPrintf("mode %d",sGameBoardState->gameMode);
+	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
+}
+
+static bool32 IsCursorInRandomMode(void)
+{
+	return (ARCADE_CURSOR.isRandom);
+}
+
+static bool32 IsGameBoardTimerEmpty(void)
+{
+    return (GetGameBoardTimer() == 0);
+}
+
+static void DecrementGameBoardTimer(void)
+{
+    sGameBoardState->timer--;
+}
+
+static void HandleFinishMode()
+{
+	u32 impact = 0, event = 0;
+	sGameBoardState->gameMode++;
+	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
+	PrintHelpBar();
+	SelectGameBoardSpace(&impact,&event);
+	HandleGameBoardResult(impact,event);
+	SaveCursorPositionToSaveblock();
+	ClearCursorRandomMode();
+	DestroyEventSprites();
+	PopulateEventSprites();
+	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
+	CreateTask(Task_GameBoard_CleanUp,0);
+}
+
+static void SelectGameBoardSpace(u32 *impact, u32 *event)
+{
+    u32 space = GetCursorPosition();
+    *impact = sGameBoard[space].impact;
+    *event = sGameBoard[space].event;
+
+    //DebugPrintf("-----------------------");
+    //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
+}
+
+static void HandleGameBoardResult(u32 impact, u32 event)
+{
+    //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
+    //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
+    LOCAL_VAR_GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
+    BufferImpactedName(gStringVar1,impact);
+
+	FloodGameBoard(impact,event);
+	StoreEventToVar(event);
+	StoreImpactedSideToVar(impact);
+}
+
+static void DestroyEventSprites(void)
+{
+    u32 space;
+
+    for (space = 0; space < ARCADE_GAME_BOARD_SPACES; space++)
+    {
+        DestroySpriteAndFreeResources(&gSprites[sGameBoardState->eventIconSpriteId[space]]);
+        sGameBoardState->eventIconSpriteId[space] = 0;
+    }
+}
+
+static void Task_GameBoard_CleanUp(u8 taskId)
+{
+	DecrementGameBoardTimer();
+	//DebugPrintf("timer %d",sGameBoardState->timer);
+
+	if (!IsGameBoardTimerEmpty())
+		return;
+
+	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+
+	gTasks[taskId].func = Task_GameBoardWaitFadeAndExitGracefully;
+}
+
+static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
+{
+    if (!gPaletteFade.active)
+    {
+        SetMainCallback2(sGameBoardState->savedCallback);
+        GameBoard_FreeResources();
+        DestroyTask(taskId);
+    }
+}
+
+static void GameBoard_FreeResources(void)
+{
+	u32 backgroundId;
+
+	if (sGameBoardState != NULL)
+	{
+		Free(sGameBoardState);
+	}
+
+	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+	{
+		if (sBgTilemapBuffer[backgroundId] != NULL)
+			Free(sBgTilemapBuffer[backgroundId]);
+	}
+
+	FreeAllWindowBuffers();
+	ResetSpriteData();
 }
 
 static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
 {
-    //red、black、white、yellow    //Battles
-    { 10, 75, 10,  5 },        //0-4
-    { 25, 40, 30,  5 },        //5-10
-    { 30, 30, 35,  5 },        //11-15
-    { 35, 20, 30, 15 },        //16-20
-    { 15, 15, 40, 30 },        //21-
+	//Opponent, Player, All, Special
+    [ARCADE_BATTLE_NUM_0_4]     = {10, 75, 10, 5},
+    [ARCADE_BATTLE_NUM_5_10]    = {25, 40, 30, 5},
+    [ARCADE_BATTLE_NUM_11_15]   = {30, 30, 35, 5},
+    [ARCADE_BATTLE_NUM_16_20]   = {35, 20, 30, 15},
+    [ARCADE_BATTLE_NUM_21_PLUS] = {15, 15, 40, 30},
 };
 
 static u32 GenerateImpact(void)
 {
-    u32 impactLine = 0, i = 0;
+    u32 impactLine = 0, impactIndex = 0;
 
-    for (i = 0; i < ARCADE_IMPACT_COUNT;i++)
+    for (impactIndex = 0; impactIndex < ARCADE_IMPACT_COUNT; impactIndex++)
     {
-        impactLine += ImpactTable[ConvertBattlesToImpactIndex()][i];
+        impactLine += ImpactTable[ConvertWinStreakToImpactBracket()][impactIndex];
         if ((Random () % 100) < impactLine)
-			return i;
+			return impactIndex;
     }
-    return ARCADE_IMPACT_COUNT;
+    return ARCADE_IMPACT_PLAYER;
 }
 
-static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
+static u32 ConvertWinStreakToImpactBracket(void)
 {
-    //Streak 1  2  3  4  5  6  7  //Event panels
-    //-------------------------------------------------------
-    {0, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_LOWER_HP
-    {1, 0, 1, 0, 0, 0, 1},      // ARCADE_EVENT_POISON
-    {1, 0, 1, 0, 0, 0, 1},      // ARCADE_EVENT_PARALYZE
-    {1, 0, 1, 0, 0, 0, 1},      // ARCADE_EVENT_BURN
-    {0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_SLEEP
-    {0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_FREEZE
-    {1, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_GIVE_BERRY
-    {0, 0, 0, 1, 1, 1, 1},      // ARCADE_EVENT_GIVE_ITEM
-    {0, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_LEVEL_UP
-    {0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_SUN
-    {0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_RAIN
-    {0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_SAND
-    {0, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_HAIL
-    {0, 0, 0, 1, 0, 1, 1},      // ARCADE_EVENT_FOG
-    {0, 0, 0, 1, 0, 1, 1},      // ARCADE_EVENT_TRICK_ROOM
-    {1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_SWAP
-    {1, 1, 1, 0, 0, 0, 1},      // ARCADE_EVENT_SPEED_UP
-    {1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_SPEED_DOWN
-    {0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_RANDOM
-    {0, 0, 0, 1, 1, 1, 1},      // ARCADE_EVENT_GIVE_BP_SMALL
-    {0, 0, 0, 0, 1, 1, 1},      // ARCADE_EVENT_NO_BATTLE
-    {0, 0, 0, 0, 0, 0, 1},      // ARCADE_EVENT_GIVE_BP_BIG
-    {1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_NO_EVENT
-};
+	u32 winStreak = GetCurrentArcadeWinStreak();
 
-static const u32 SpecialPanelTable[][ARCADE_EVENT_SPECIAL_COUNT] =
+	return winStreak <= 4 ? ARCADE_BATTLE_NUM_0_4 :
+		winStreak <= 10 ? ARCADE_BATTLE_NUM_5_10 :
+		winStreak <= 15 ? ARCADE_BATTLE_NUM_11_15 :
+		winStreak <= 20 ? ARCADE_BATTLE_NUM_16_20 :
+		ARCADE_BATTLE_NUM_21_PLUS;
+}
+
+static u32 GenerateEvent(u32 impact)
 {
-    //Battle 1  2  3  4  5  6  7  //Event panels
-    //-------------------------------------------------------
-    {1, 1, 1, 1, 1, 1, 0},      // ARCADE_EVENT_SWAP
-    {1, 1, 1, 1, 1, 1, 0},      // ARCADE_EVENT_SPEED_UP
-    {1, 1, 1, 1, 1, 1, 0},      // ARCADE_EVENT_SPEED_DOWN
-    {1, 1, 1, 1, 1, 1, 0},      // ARCADE_EVENT_RANDOM
-    {1, 0, 1, 0, 1, 0, 0},      // ARCADE_EVENT_GIVE_BP_SMALL
-    {0, 1, 0, 1, 0, 1, 0},      // ARCADE_EVENT_NO_BATTLE
-    {0, 1, 0, 1, 0, 1, 0},      // ARCADE_EVENT_GIVE_BP_BIG
-    {1, 1, 1, 1, 1, 1, 1},      // ARCADE_EVENT_NO_EVENT
-};
+    u32 event = GenerateRandomBetweenBounds(impact);
+	DebugPrintf("GenerateRandomBetweenBounds %d",event);
+
+    do
+    {
+        event = GenerateRandomBetweenBounds(impact);
+    } while (!IsEventValidDuringBattleOrStreak(event,impact));
+
+	DebugPrintf("GenerateRandomBetweenBounds %d",event);
+
+    //DebugPrintf("event original roll is %d",event);
+    //return ARCADE_EVENT_GIVE_ITEM; // Debug
+    return event;
+}
+
+static u32 GenerateRandomBetweenBounds(u32 impact)
+{
+    u32 upper = GetPanelUpperBound(impact);
+    u32 lower = GetPanelLowerBound(impact);
+
+    return (lower + Random() % (upper - lower + 1));
+}
 
 static s32 GetPanelUpperBound(u32 impact)
 {
@@ -947,25 +1765,6 @@ static s32 GetPanelLowerBound(u32 impact)
     }
 }
 
-static bool32 IsEventValidDuringCurrentStreak(u32 event)
-{
-    if (event < ARCADE_EVENT_SPECIAL_START)
-        return TRUE;
-
-    if (!PanelStreakTable[event][GetChallengeNumIndex()])
-        return FALSE;
-
-    return TRUE;
-}
-
-static bool32 IsEventValidDuringCurrentBattle(u32 event)
-{
-    if (!SpecialPanelTable[event - ARCADE_EVENT_SPECIAL_START][FRONTIER_SAVEDATA.curChallengeBattleNum])
-        return FALSE;
-
-    return TRUE;
-}
-
 static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
 {
     if (IsEventBanned(event))
@@ -983,30 +1782,92 @@ static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
     return TRUE;
 }
 
-static u32 GenerateRandomBetweenBounds(u32 impact)
+static bool32 IsEventBanned(u32 event)
 {
-    u32 upper = GetPanelUpperBound(impact);
-    u32 lower = GetPanelLowerBound(impact);
-
-    return (lower + Random() % (upper - lower + 1));
+#ifndef ARCADE_GEN4_EFFECTS_UNBANNED
+    if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
+        return TRUE;
+#endif
+    return FALSE;
 }
 
-static u32 GenerateEvent(u32 impact)
+static bool32 IsEventValidDuringCurrentBattle(u32 event)
 {
-    u32 event = GenerateRandomBetweenBounds(impact);
-	DebugPrintf("GenerateRandomBetweenBounds %d",event);
+	static const u32 SpecialPanelTable[][FRONTIER_STAGES_PER_CHALLENGE] =
+	{
+                               //Battle 1  2  3  4  5  6  7
+		[ARCADE_EVENT_SWAP]          = {1, 1, 1, 1, 1, 1, 0},
+		[ARCADE_EVENT_SPEED_UP]      = {1, 1, 1, 1, 1, 1, 0},
+		[ARCADE_EVENT_SPEED_DOWN]    = {1, 1, 1, 1, 1, 1, 0},
+		[ARCADE_EVENT_RANDOM]        = {1, 1, 1, 1, 1, 1, 0},
+		[ARCADE_EVENT_GIVE_BP_SMALL] = {1, 0, 1, 0, 1, 0, 0},
+		[ARCADE_EVENT_NO_BATTLE]     = {0, 1, 0, 1, 0, 1, 0},
+		[ARCADE_EVENT_GIVE_BP_BIG]   = {0, 1, 0, 1, 0, 1, 0},
+		[ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
+	};
 
-    do
-    {
-        event = GenerateRandomBetweenBounds(impact);
-    } while (!IsEventValidDuringBattleOrStreak(event,impact));
+	if (!SpecialPanelTable[event][FRONTIER_SAVEDATA.curChallengeBattleNum])
+		return FALSE;
 
-	DebugPrintf("GenerateRandomBetweenBounds %d",event);
-
-    //DebugPrintf("event original roll is %d",event);
-    //return ARCADE_EVENT_GIVE_ITEM; // Debug
-    return event;
+	return TRUE;
 }
+
+static bool32 IsEventValidDuringCurrentStreak(u32 event)
+{
+
+	static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
+	{
+                               //Streak 1  2  3  4  5  6  7
+		[ARCADE_EVENT_LOWER_HP]      = {0, 1, 1, 1, 1, 1, 1},
+		[ARCADE_EVENT_POISON]        = {1, 0, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_PARALYZE]      = {1, 0, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_BURN]          = {1, 0, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_SLEEP]         = {0, 0, 0, 0, 1, 1, 1},
+		[ARCADE_EVENT_FREEZE]        = {0, 0, 0, 0, 1, 1, 1},
+		[ARCADE_EVENT_GIVE_BERRY]    = {1, 1, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_GIVE_ITEM]     = {0, 0, 0, 1, 1, 1, 1},
+		[ARCADE_EVENT_LEVEL_UP]      = {0, 1, 1, 1, 1, 1, 1},
+		[ARCADE_EVENT_SUN]           = {0, 1, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_RAIN]          = {0, 1, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_SAND]          = {0, 1, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_HAIL]          = {0, 1, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_FOG]           = {0, 0, 0, 1, 0, 1, 1},
+		[ARCADE_EVENT_TRICK_ROOM]    = {0, 0, 0, 1, 0, 1, 1},
+		[ARCADE_EVENT_SWAP]          = {1, 1, 1, 1, 1, 1, 1},
+		[ARCADE_EVENT_SPEED_UP]      = {1, 1, 1, 0, 0, 0, 1},
+		[ARCADE_EVENT_SPEED_DOWN]    = {1, 1, 1, 1, 1, 1, 1},
+		[ARCADE_EVENT_RANDOM]        = {0, 0, 0, 0, 1, 1, 1},
+		[ARCADE_EVENT_GIVE_BP_SMALL] = {0, 0, 0, 1, 1, 1, 1},
+		[ARCADE_EVENT_NO_BATTLE]     = {0, 0, 0, 0, 1, 1, 1},
+		[ARCADE_EVENT_GIVE_BP_BIG]   = {0, 0, 0, 0, 0, 0, 1},
+		[ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
+	};
+
+	if (event < ARCADE_EVENT_SPECIAL_START)
+		return TRUE;
+
+	if (!PanelStreakTable[event][GetChallengeNumIndex()])
+		return FALSE;
+
+	return TRUE;
+}
+
+static u32 GetChallengeNumIndex(void)
+{
+    u32 challengeNum = GetChallengeNum();
+
+    if (challengeNum > ARCADE_STREAK_NUM_6)
+        return ARCADE_STREAK_NUM_6;
+    else
+        return challengeNum;
+}
+
+static u32 GetChallengeNum(void)
+{
+    return (GetCurrentArcadeWinStreak() / FRONTIER_STAGES_PER_CHALLENGE);
+}
+
+// Arcade Game Board Back End Resolution
 
 static bool32 HaveMonsBeenSwapped(void)
 {
@@ -1034,37 +1895,6 @@ static bool32 HaveMonsBeenSwapped(void)
 	return FALSE;
 }
 
-static bool32 IsEventBanned(u32 event)
-{
-#ifndef ARCADE_GEN4_EFFECTS_UNBANNED
-    if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
-        return TRUE;
-#endif
-    return FALSE;
-}
-
-struct GameResult
-{
-    u8 impact:2;
-    u8 event:5;
-};
-
-static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
-
-static void GenerateGameBoard(void)
-{
-    u32 i, impact;
-
-    for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
-    {
-        sGameBoard[i].impact = GenerateImpact();
-        sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
-		DebugPrintf("event generated");
-
-        DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
-    }
-}
-
 static void FloodGameBoard(u32 impact, u32 event)
 {
     u32 i;
@@ -1073,28 +1903,6 @@ static void FloodGameBoard(u32 impact, u32 event)
         sGameBoard[i].impact = impact;
         sGameBoard[i].event = event;
     }
-}
-
-static void SelectGameBoardSpace(u32 *impact, u32 *event)
-{
-    u32 space = GetCursorPosition();
-    *impact = sGameBoard[space].impact;
-    *event = sGameBoard[space].event;
-
-    //DebugPrintf("-----------------------");
-    //DebugPrintf("Chosen panel %d has impact %d and event %d",space,sGameBoard[space].impact,sGameBoard[space].event);
-}
-
-static void HandleGameBoardResult(u32 impact, u32 event)
-{
-    //DebugPrintf("event from saveblock %d",GAME_BOARD_EVENT);
-    //DebugPrintf("impact from saveblock %d",GAME_BOARD_IMPACT);
-    LOCAL_VAR_GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
-    BufferImpactedName(gStringVar1,impact);
-
-	FloodGameBoard(impact,event);
-	StoreEventToVar(event);
-	StoreImpactedSideToVar(impact);
 }
 
 static void StoreEventToVar(u32 event)
@@ -1152,14 +1960,6 @@ static void BufferImpactedName(u8 *dest, u32 impact)
 		StringCopy_PlayerName(dest, gSaveBlock2Ptr->playerName);
 	else
 		GetFrontierTrainerName(dest, GetImpactedTrainerId(impact));
-}
-
-static struct Pokemon *LoadSideParty(u32 impact)
-{
-    if (impact == ARCADE_IMPACT_PLAYER)
-        return gPlayerParty;
-    else
-        return gEnemyParty;
 }
 
 static bool32 BattleArcade_DoLowerHP(u32 impact)
@@ -1270,21 +2070,6 @@ static bool32 BattleArcade_DoGiveItem(u32 impact)
 {
     u32 item = VarGet(VAR_ARCADE_ITEM);
     return BattleArcade_DoGive(impact, item);
-}
-
-static u32 GetChallengeNum(void)
-{
-    return (GetCurrentArcadeWinStreak() / FRONTIER_STAGES_PER_CHALLENGE);
-}
-
-static u32 GetChallengeNumIndex(void)
-{
-    u32 challengeNum = GetChallengeNum();
-
-    if (challengeNum > ARCADE_STREAK_NUM_6)
-        return ARCADE_STREAK_NUM_6;
-    else
-        return challengeNum;
 }
 
 static bool32 BattleArcade_DoGive(u32 impact, u32 item)
@@ -1434,11 +2219,6 @@ static bool32 BattleArcade_DoRandom(void)
 {
 	SetCursorRandomMode();
 	return TRUE;
-}
-
-static bool32 IsCursorInRandomMode(void)
-{
-	return (ARCADE_CURSOR.isRandom);
 }
 
 static void SetCursorRandomMode(void)
@@ -1751,515 +2531,6 @@ static void InitRecordsWindow(void)
 static const u8 sHelpBar_Start[] =  _("{A_BUTTON}    Start Game Board");
 static const u8 sHelpBar_Stop[] =  _("{A_BUTTON}    Stop Game Board");
 
-static const struct BgTemplate sGameBoardBgTemplates[] =
-{
-    {
-        .bg = BG_BOARD_HELP_BAR,
-        .charBaseIndex = 0,
-        .mapBaseIndex = 31,
-        .priority = 1
-    },
-    {
-        .bg = BG_BOARD_EVENTS,
-        .charBaseIndex = 3,
-        .mapBaseIndex = 30,
-        .priority = 2
-    },
-    {
-        .bg = BG_BOARD_BACKGROUND,
-        .charBaseIndex = 6,
-        .mapBaseIndex = 29,
-        .priority = 4
-    },
-    {
-        .bg = BG_BOARD_BACKBOARD,
-        .charBaseIndex = 9,
-        .mapBaseIndex = 28,
-        .priority = 3
-    },
-};
-
-static const struct WindowTemplate sGameBoardWinTemplates[] =
-{
-	[WIN_BOARD_HELP_BAR] =
-	{
-		.bg = 0,
-		.tilemapLeft = 0,
-		.tilemapTop = 18,
-		.width = 30,
-		.height = 2,
-		.paletteNum = 15,
-		.baseBlock = 1,
-	},
-	DUMMY_WIN_TEMPLATE
-};
-
-enum FontColor
-{
-    FONT_BLACK,
-    FONT_WHITE,
-};
-
-static const u8 sGameBoardWindowFontColors[][3] =
-{
-	[FONT_BLACK]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY,  TEXT_COLOR_LIGHT_GRAY},
-	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
-};
-
-static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
-static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
-
-static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.bin.lz");
-static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
-
-
-static const u32 sCountdownTile1[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_1.4bpp");
-static const u32 sCountdownTile2[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_2.4bpp");
-static const u32 sCountdownTile3[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_3.4bpp");
-
-static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_burn.4bpp.lz");
-static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_fog.4bpp.lz");
-static const u32 sEventFreeze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_freeze.4bpp.lz");
-static const u32 sEventGiveBerry[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_berry.4bpp.lz");
-static const u32 sEventGiveBpBig[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_big.4bpp.lz");
-static const u32 sEventGiveBpSmall[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_small.4bpp.lz");
-static const u32 sEventGiveItem[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_item.4bpp.lz");
-static const u32 sEventHail[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_hail.4bpp.lz");
-static const u32 sEventLevelUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_level_up.4bpp.lz");
-static const u32 sEventLowerHp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_lower_hp.4bpp.lz");
-static const u32 sEventNoBattle[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_no_battle.4bpp.lz");
-static const u32 sEventParalyze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_paralyze.4bpp.lz");
-static const u32 sEventPoison[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_poison.4bpp.lz");
-static const u32 sEventRain[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_rain.4bpp.lz");
-static const u32 sEventRandom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_random.4bpp.lz");
-static const u32 sEventSand[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sand.4bpp.lz");
-static const u32 sEventSleep[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sleep.4bpp.lz");
-static const u32 sEventSpeedDown[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_down.4bpp.lz");
-static const u32 sEventSpeedUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_up.4bpp.lz");
-static const u32 sEventSun[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sun.4bpp.lz");
-static const u32 sEventSwap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_swap.4bpp.lz");
-static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_trick_room.4bpp.lz");
-static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_game/no_event.4bpp.lz");
-
-static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
-static const u32 sCursorOrange[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_orange.4bpp.lz");
-
-static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
-static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
-
-#define DEFAULT_ANIM  0
-
-static const union AnimCmd sCountdownPanelAnim[] =
-{
-    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER),
-    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER),
-    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER+10),
-    ANIMCMD_END
-};
-
-static const union AnimCmd *const sCountdownAnims[] =
-{
-    [DEFAULT_ANIM] = sCountdownPanelAnim
-};
-
-static const struct SpriteFrameImage sCountdownPanelPicTable[] =
-{
-    obj_frame_tiles(sCountdownTile3),
-    obj_frame_tiles(sCountdownTile2),
-    obj_frame_tiles(sCountdownTile1),
-};
-
-static const struct OamData CountdownPanelOam =
-{
-    .y = 0,
-    .affineMode = ST_OAM_AFFINE_OFF,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
-    .bpp = ST_OAM_4BPP,
-    .shape = SPRITE_SHAPE(32x32),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(32x32),
-    .tileNum = 0,
-    .priority = 1,
-    .paletteNum = 0,
-    .affineParam = 0,
-};
-static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
-{
-    .tileTag = TAG_NONE,
-    .paletteTag = 0,
-    .oam = &CountdownPanelOam,
-    .anims = sCountdownAnims,
-    .images = sCountdownPanelPicTable,
-    .callback = SpriteCallbackDummy,
-};
-
-static const u8 *GetHelpBarText(void)
-{
-	switch (GetGameBoardMode())
-	{
-		case ARCADE_BOARD_MODE_WAIT:
-			return sText_HelpBarStart;
-		case ARCADE_BOARD_MODE_GAME_START:
-			return sText_HelpBarFinish;
-		default:
-			return gText_Blank;
-	}
-}
-
-static void PrintHelpBar(void)
-{
-    u32 windowId = WIN_BOARD_HELP_BAR;
-    u32 fontId = FONT_NARROW;
-
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-    AddTextPrinterParameterized4(windowId, fontId, BAR_LEFT_PADDING, BAR_TOP_PADDING, GetFontAttribute(fontId, FONTATTR_LETTER_SPACING), GetFontAttribute(fontId, FONTATTR_LINE_SPACING), sGameBoardWindowFontColors[FONT_WHITE], TEXT_SKIP_DRAW, GetHelpBarText());
-
-    CopyWindowToVram(windowId, COPYWIN_GFX);
-}
-
-void Task_OpenGameBoard(u8 taskId)
-{
-	if (gPaletteFade.active)
-		return;
-
-	CleanupOverworldWindowsAndTilemaps();
-	GameBoard_Init(CB2_ReturnToFieldContinueScript);
-	DestroyTask(taskId);
-}
-
-void GameBoard_Init(MainCallback callback)
-{
-    sGameBoardState = AllocZeroed(sizeof(struct GameBoardState));
-
-    if (sGameBoardState == NULL)
-    {
-        SetMainCallback2(callback);
-        return;
-    }
-
-    sGameBoardState->loadState = 0;
-    sGameBoardState->savedCallback = callback;
-
-    SetMainCallback2(GameBoard_SetupCB);
-}
-
-static void GameBoard_SetupCB(void)
-{
-    u8 taskId;
-
-    switch (gMain.state)
-	{
-		case 0:
-			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
-			SetVBlankHBlankCallbacksToNull();
-			ClearScheduledBgCopiesToVram();
-			gMain.state++;
-			break;
-		case 1:
-			ScanlineEffect_Stop();
-			FreeAllSpritePalettes();
-			ResetPaletteFade();
-			ResetSpriteData();
-			ResetTasks();
-			gMain.state++;
-			break;
-		case 2:
-			if (GameBoard_InitBgs())
-			{
-				sGameBoardState->loadState = 0;
-				gMain.state++;
-			}
-			else
-			{
-				GameBoard_FadeAndBail();
-				return;
-			}
-			break;
-		case 3:
-			if (GameBoard_LoadGraphics() == TRUE)
-			{
-				gMain.state++;
-			}
-			break;
-		case 4:
-			GameBoard_InitWindows();
-			gMain.state++;
-			break;
-		case 5:
-			GenerateGameBoard();
-			FreeMonIconPalettes();
-			LoadMonIconPalettes();
-			PrintEnemyParty();
-			PrintPlayerParty();
-			PrintHelpBar();
-			taskId = CreateTask(Task_GameBoardWaitFadeIn, 0);
-			gMain.state++;
-			break;
-		case 6:
-			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
-			gMain.state++;
-			break;
-		case 7:
-			SetVBlankCallback(GameBoard_VBlankCB);
-			SetMainCallback2(GameBoard_MainCB);
-			break;
-	}
-}
-
-static void GameBoard_MainCB(void)
-{
-    RunTasks();
-    AnimateSprites();
-    BuildOamBuffer();
-    DoScheduledBgTilemapCopiesToVram();
-    UpdatePaletteFade();
-}
-
-static void GameBoard_VBlankCB(void)
-{
-    LoadOam();
-    ProcessSpriteCopyRequests();
-    TransferPlttBuffer();
-}
-
-static void Task_GameBoardWaitFadeIn(u8 taskId)
-{
-    if (gPaletteFade.active)
-		return;
-
-	gTasks[taskId].func = Task_GameBoardMainInput;
-}
-
-static u32 GetGameBoardMode(void)
-{
-	return sGameBoardState->gameMode;
-}
-
-static void Task_GameBoardMainInput(u8 taskId)
-{
-    if (!JOY_NEW(A_BUTTON))
-		return;
-
-	PlaySE(SE_SELECT);
-	switch (GetGameBoardMode())
-	{
-		case ARCADE_BOARD_MODE_WAIT:
-			StartCountdown();
-			break;
-		case ARCADE_BOARD_MODE_GAME_START:
-			HandleFinishMode();
-			break;
-		default:
-			return;
-	}
-}
-
-static void StartCountdown(void)
-{
-	HideBg(BG_BOARD_BACKGROUND);
-	sGameBoardState->gameMode++;
-	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
-	PopulateCountdownSprites();
-	PrintHelpBar();
-	CreateTask(Task_GameBoard_Countdown, 0);
-}
-
-static void StartGame(void)
-{
-	sGameBoardState->timer = ARCADE_BOARD_GAME_TIMER;
-	InitCursorPositionFromSaveblock();
-	CreateGameBoardCursor();
-	DestroyCountdownPanels();
-	CreateTask(Task_GameBoard_Game, 0);
-}
-
-static void PopulateCountdownSprites(void)
-{
-	u32 space, rowIndex, columnIndex, x, y, spriteId;
-
-    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
-	{
-		CalculateTilePosition(space,&x,&y);
-		sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
-    }
-}
-
-static void PopulateEventSprites(void)
-{
-	u32 space, rowIndex, columnIndex, x, y;
-
-	LoadTileSpriteSheets();
-
-    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
-	{
-		CalculateTilePosition(space,&x,&y);
-		sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
-    }
-}
-
-static const u16 GetTileTag(u32 space)
-{
-	return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
-}
-
-static const u32* GetEventGfx(u32 event)
-{
-	//DebugPrintf("event is %d",event);
-	switch (event)
-	{
-		case ARCADE_EVENT_LOWER_HP: return sEventLowerHp;
-		case ARCADE_EVENT_POISON: return sEventPoison;
-		case ARCADE_EVENT_PARALYZE: return sEventParalyze;
-		case ARCADE_EVENT_BURN: return sEventBurn;
-		case ARCADE_EVENT_SLEEP: return sEventSleep;
-		case ARCADE_EVENT_FREEZE: return sEventFreeze;
-		case ARCADE_EVENT_GIVE_BERRY: return sEventGiveBerry;
-		case ARCADE_EVENT_GIVE_ITEM: return sEventGiveItem;
-		case ARCADE_EVENT_LEVEL_UP: return sEventLevelUp;
-		case ARCADE_EVENT_SUN: return sEventSun;
-		case ARCADE_EVENT_RAIN: return sEventRain;
-		case ARCADE_EVENT_SAND: return sEventSand;
-		case ARCADE_EVENT_HAIL: return sEventHail;
-		case ARCADE_EVENT_FOG: return sEventFog;
-		case ARCADE_EVENT_TRICK_ROOM: return sEventTrickRoom;
-		case ARCADE_EVENT_SWAP: return sEventSwap;
-		case ARCADE_EVENT_SPEED_UP: return sEventSpeedUp;
-		case ARCADE_EVENT_SPEED_DOWN: return sEventSpeedDown;
-		case ARCADE_EVENT_RANDOM: return sEventRandom;
-		case ARCADE_EVENT_GIVE_BP_SMALL: return sEventGiveBpSmall;
-		case ARCADE_EVENT_NO_BATTLE: return sEventNoBattle;
-		case ARCADE_EVENT_GIVE_BP_BIG: return sEventGiveBpBig;
-		default:
-		case ARCADE_EVENT_NO_EVENT: return sEventNoEvent;
-	}
-}
-
-static void LoadTileSpriteSheets(void)
-{
-	u32 i;
-	//DebugPrintf("LoadTileSpriteSheets");
-	for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
-	{
-		u16 TileTag = GetTileTag(i);
-		const u32 *gfx = GetEventGfx(sGameBoard[i].event);
-		struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
-		LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
-		//DebugPrintf("LoadCompressedSpriteSheet tileTag%d",TileTag);
-	}
-}
-
-static u8 CreateEventSprite(u32 x, u32 y, u32 space)
-{
-    u32 spriteId;
-	u16 TileTag = GetTileTag(space);
-
-    struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
-    TempSpriteTemplate.tileTag = TileTag;
-    TempSpriteTemplate.callback = SpriteCallbackDummy;
-	//DebugPrintf("CreateEventSprite %d",TileTag);
-
-    //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
-    spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
-
-    gSprites[spriteId].oam.shape = SPRITE_SHAPE(32x32);
-    gSprites[spriteId].oam.size = SPRITE_SIZE(32x32);
-    gSprites[spriteId].oam.priority = 0;
-
-	//DebugPrintf("gsprites %d tileNum %d tileTag %d",spriteId,gSprites[spriteId].oam.tileNum,TileTag);
-
-	return spriteId;
-}
-
-static void DestroyEventSprites(void)
-{
-    u32 space;
-
-    for (space = 0; space < ARCADE_GAME_BOARD_SPACES; space++)
-    {
-        DestroySpriteAndFreeResources(&gSprites[sGameBoardState->eventIconSpriteId[space]]);
-        sGameBoardState->eventIconSpriteId[space] = 0;
-    }
-}
-static void DestroyCountdownPanels(void)
-{
-    u32 space;
-
-    for (space = 0; space < ARCADE_GAME_BOARD_SPACES; space++)
-    {
-        DestroySpriteAndFreeResources(&gSprites[sGameBoardState->countdownPanelSpriteId[space]]);
-        sGameBoardState->countdownPanelSpriteId[space] = 0;
-    }
-}
-
-static void CalculateTilePosition(u32 space, u32* x, u32* y)
-{
-	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-    u32 columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-    *x = 50 + columnIndex * 40;
-    *y = 10 + rowIndex * 35;
-}
-
-static void SpriteCB_Cursor(struct Sprite *sprite)
-{
-	u32 x, y;
-	CalculateTilePosition(GetCursorPosition(),&x,&y);
-
-	sprite->x2 = x - 50;
-    sprite->y2 = y - 10;
-	sprite->subpriority = 0;
-}
-
-static u32 CreateCountdownPanel(u32 x, u32 y)
-{
-	return CreateSprite(&sCountdownPanelSpriteTemplate, x, y, 0);
-}
-
-static void CreateGameBoardCursor(void)
-{
-	u16 TileTag = ARCADE_GFXTAG_CURSOR;
-	u32 spriteId;
-	u32 x, y;
-
-	struct CompressedSpriteSheet sSpriteSheet_Cursor = {sCursorYellow, 0x0800, TileTag};
-    struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
-
-	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
-
-    TempSpriteTemplate.tileTag = TileTag;
-    TempSpriteTemplate.callback = SpriteCB_Cursor;
-
-    spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
-
-    gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
-    gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
-    gSprites[spriteId].oam.priority = 1;
-}
-
-static void Task_GameBoard_Countdown(u8 taskId)
-{
-	sGameBoardState->timer--;
-	//DebugPrintf("timer %d",sGameBoardState->timer);
-
-	switch(sGameBoardState->timer)
-	{
-		case (ARCADE_FRAMES_PER_SECOND * 2):
-		case (ARCADE_FRAMES_PER_SECOND):
-			sGameBoardState->gameMode++;
-			break;
-		case 0:
-			sGameBoardState->gameMode++;
-			PopulateEventSprites();
-			PrintHelpBar();
-			StartGame();
-			DestroyTask(taskId);
-			break;
-		default:
-			break;
-	}
-}
-
 static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
 {
 	20,  // ARCADE_SPEED_LEVEL_0
@@ -2276,275 +2547,6 @@ u32 ReturnCursorWait(u32 speed)
 {
 	//return 20; // Debug
     return cursorWaitTable[speed];
-}
-
-static bool32 ShouldCursorMove(u32 timer)
-{
-	u32 cursorWaitValue = ReturnCursorWait(GetCursorSpeed());
-
-	if (cursorWaitValue == 0)
-		return TRUE;
-
-	return (timer % cursorWaitValue == 0);
-}
-
-static void InitCursorPositionFromSaveblock(void)
-{
-	sGameBoardState->cursorPosition = ARCADE_CURSOR.position;
-}
-
-static void IncrementCursorPosition(void)
-{
-	u32 position;
-
-	if (IsCursorInRandomMode())
-		position = Random() % ARCADE_GAME_BOARD_SPACES;
-	else
-		position = GetCursorPosition();
-
-	if ((position+1) >= ARCADE_GAME_BOARD_SPACES)
-		SetCursorPosition(0);
-	else
-		SetCursorPosition(++position);
-
-	//DebugPrintf("mode %d",sGameBoardState->gameMode);
-	//DebugPrintf("position %d",sGameBoardState->cursorPosition);
-}
-
-static void HandleFinishMode()
-{
-	u32 impact = 0, event = 0;
-	sGameBoardState->gameMode++;
-	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
-	PrintHelpBar();
-	SelectGameBoardSpace(&impact,&event);
-	HandleGameBoardResult(impact,event);
-	SaveCursorPositionToSaveblock();
-	ClearCursorRandomMode();
-	DestroyEventSprites();
-	PopulateEventSprites();
-	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
-	CreateTask(Task_GameBoard_CleanUp,0);
-}
-
-static void Task_GameBoard_Game(u8 taskId)
-{
-	u32 timer = GetGameBoardTimer();
-
-	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
-		HandleFinishMode();
-    else if (IsGameBoardTimerEmpty())
-        IncrementGameBoardMode();
-	else if (ShouldCursorMove(timer))
-		IncrementCursorPosition();
-
-	DecrementGameBoardTimer();
-}
-
-static u32 GetGameBoardTimer(void)
-{
-    return sGameBoardState->timer;
-}
-
-static void IncrementGameBoardMode(void)
-{
-    sGameBoardState->gameMode++;
-}
-
-static bool32 IsGameBoardTimerEmpty(void)
-{
-    return (GetGameBoardTimer() == 0);
-}
-
-static void DecrementGameBoardTimer(void)
-{
-    sGameBoardState->timer--;
-}
-
-static void Task_GameBoard_CleanUp(u8 taskId)
-{
-	DecrementGameBoardTimer();
-	//DebugPrintf("timer %d",sGameBoardState->timer);
-
-	if (!IsGameBoardTimerEmpty())
-		return;
-
-	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-
-	gTasks[taskId].func = Task_GameBoardWaitFadeAndExitGracefully;
-}
-
-static void Task_GameBoardWaitFadeAndBail(u8 taskId)
-{
-    if (!gPaletteFade.active)
-    {
-        SetMainCallback2(sGameBoardState->savedCallback);
-        GameBoard_FreeResources();
-        DestroyTask(taskId);
-    }
-}
-
-static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
-{
-    if (!gPaletteFade.active)
-    {
-        SetMainCallback2(sGameBoardState->savedCallback);
-        GameBoard_FreeResources();
-        DestroyTask(taskId);
-    }
-}
-
-static bool32 BattleArcade_AllocTilemapBuffers(void)
-{
-	u32 backgroundId;
-
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-	{
-		sBgTilemapBuffer[backgroundId] = AllocZeroed(TILEMAP_BUFFER_SIZE);
-
-		if (sBgTilemapBuffer[backgroundId] == NULL)
-			return FALSE;
-	}
-	return TRUE;
-}
-
-static bool8 GameBoard_InitBgs(void)
-{
-    ResetAllBgsCoordinates();
-
-	if (!BattleArcade_AllocTilemapBuffers())
-		return FALSE;
-	HandleAndShowBgs();
-
-    return TRUE;
-}
-
-static void GameBoard_FadeAndBail(void)
-{
-    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-    CreateTask(Task_GameBoardWaitFadeAndBail, 0);
-
-    SetVBlankCallback(GameBoard_VBlankCB);
-    SetMainCallback2(GameBoard_MainCB);
-}
-
-static bool8 GameBoard_LoadGraphics(void)
-{
-    switch (sGameBoardState->loadState)
-    {
-    case 0:
-        ResetTempTileDataBuffers();
-
-        DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackboardTiles, 0, 0, 0);
-        DecompressAndCopyTileDataToVram(BG_BOARD_BACKGROUND, sLogobackgroundTiles, 0, 0, 0);
-        sGameBoardState->loadState++;
-        break;
-    case 1:
-        if (FreeTempTileDataBuffersIfPossible() != TRUE)
-        {
-
-            LZDecompressWram(sBackboardTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
-            LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
-            sGameBoardState->loadState++;
-        }
-        break;
-    case 2:
-        //LoadPalette(sGameBoardPalette, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
-        sGameBoardState->loadState++;
-    default:
-        sGameBoardState->loadState = 0;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static void GameBoard_InitWindows(void)
-{
-	u32 windowId;
-    InitWindows(sGameBoardWinTemplates);
-
-    DeactivateAllTextPrinters();
-
-    ScheduleBgCopyTilemapToVram(0);
-
-	for (windowId = 0; windowId < WIN_BOARD_COUNT; windowId++)
-	{
-		FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-		PutWindowTilemap(windowId);
-		CopyWindowToVram(windowId, COPYWIN_FULL);
-	}
-}
-
-static void GameBoard_FreeResources(void)
-{
-	u32 backgroundId;
-
-	if (sGameBoardState != NULL)
-	{
-		Free(sGameBoardState);
-	}
-
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-	{
-		if (sBgTilemapBuffer[backgroundId] != NULL)
-			Free(sBgTilemapBuffer[backgroundId]);
-	}
-
-	FreeAllWindowBuffers();
-	ResetSpriteData();
-}
-
-static void HandleAndShowBgs(void)
-{
-	u32 backgroundId;
-
-    ResetBgsAndClearDma3BusyFlags(0);
-    InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
-
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-		SetScheduleShowBgs(backgroundId);
-}
-
-static void SetScheduleShowBgs(u32 backgroundId)
-{
-	SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
-	ScheduleBgCopyTilemapToVram(backgroundId);
-	ShowBg(backgroundId);
-}
-
-static u32 GetHorizontalPositionFromSide(u32 side)
-{
-	return (side == ARCADE_IMPACT_OPPONENT) ? 225 : 15;
-}
-
-static void PrintPartyIcons(u32 side)
-{
-	u32 x = GetHorizontalPositionFromSide(side);
-	u32 y = 27;
-	u32 i;
-	struct Pokemon *party = LoadSideParty(side);
-
-	for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
-	{
-		if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
-			break;
-
-		sGameBoardState->monIconSpriteId[side][i] = CreateMonIcon(GetMonData(&party[i], MON_DATA_SPECIES),SpriteCallbackDummy, x, y, 4, GetMonData(&party[i],MON_DATA_PERSONALITY),FALSE);
-		//DebugPrintf("gSprites mon %d",sGameBoardState->monIconSpriteId[side][i]);
-		//DebugPrintf("mon gsprites %d tileNum %d",sGameBoardState->monIconSpriteId[side][i],gSprites[sGameBoardState->monIconSpriteId[side[i]].oam.tileNum]);
-		gSprites[sGameBoardState->monIconSpriteId[side][i]].oam.priority = 0;
-		y += 37;
-	}
-}
-
-static void PrintEnemyParty(void)
-{
-	PrintPartyIcons(ARCADE_IMPACT_OPPONENT);
-}
-
-static void PrintPlayerParty(void)
-{
-	PrintPartyIcons(ARCADE_IMPACT_PLAYER);
 }
 
 // Arcade Board
