@@ -21,7 +21,7 @@ JPCONTESTGFXDIR := graphics/contest/japanese
 POKEDEXGFXDIR := graphics/pokedex
 STARTERGFXDIR := graphics/starter_choose
 NAMINGGFXDIR := graphics/naming_screen
-SPINDAGFXDIR := graphics/spinda_spots
+SPINDAGFXDIR := graphics/pokemon/spinda/spots
 
 types := normal fight flying poison ground rock bug ghost steel mystery fire water grass electric psychic ice dragon dark
 contest_types := cool beauty cute smart tough
@@ -30,34 +30,34 @@ contest_types := cool beauty cute smart tough
 
 ### Castform ###
 
-$(CASTFORMGFXDIR)/front.4bpp: $(CASTFORMGFXDIR)/front_normal_form.4bpp \
-                              $(CASTFORMGFXDIR)/front_sunny_form.4bpp \
-                              $(CASTFORMGFXDIR)/front_rainy_form.4bpp \
-                              $(CASTFORMGFXDIR)/front_snowy_form.4bpp
+$(CASTFORMGFXDIR)/front.4bpp: $(CASTFORMGFXDIR)/normal/front.4bpp \
+                              $(CASTFORMGFXDIR)/sunny/front.4bpp \
+                              $(CASTFORMGFXDIR)/rainy/front.4bpp \
+                              $(CASTFORMGFXDIR)/snowy/front.4bpp
 	@cat $^ >$@
 
-$(CASTFORMGFXDIR)/back.4bpp: $(CASTFORMGFXDIR)/back_normal_form.4bpp \
-                             $(CASTFORMGFXDIR)/back_sunny_form.4bpp \
-                             $(CASTFORMGFXDIR)/back_rainy_form.4bpp \
-                             $(CASTFORMGFXDIR)/back_snowy_form.4bpp
+$(CASTFORMGFXDIR)/back.4bpp: $(CASTFORMGFXDIR)/normal/back.4bpp \
+                             $(CASTFORMGFXDIR)/sunny/back.4bpp \
+                             $(CASTFORMGFXDIR)/rainy/back.4bpp \
+                             $(CASTFORMGFXDIR)/snowy/back.4bpp
 	@cat $^ >$@
 
-$(CASTFORMGFXDIR)/anim_front.4bpp: $(CASTFORMGFXDIR)/anim_front_normal_form.4bpp \
-                                   $(CASTFORMGFXDIR)/anim_front_sunny_form.4bpp \
-                                   $(CASTFORMGFXDIR)/anim_front_rainy_form.4bpp \
-                                   $(CASTFORMGFXDIR)/anim_front_snowy_form.4bpp
+$(CASTFORMGFXDIR)/anim_front.4bpp: $(CASTFORMGFXDIR)/normal/anim_front.4bpp \
+                                   $(CASTFORMGFXDIR)/sunny/anim_front.4bpp \
+                                   $(CASTFORMGFXDIR)/rainy/anim_front.4bpp \
+                                   $(CASTFORMGFXDIR)/snowy/anim_front.4bpp
 	@cat $^ >$@
 
-$(CASTFORMGFXDIR)/normal.gbapal: $(CASTFORMGFXDIR)/normal_normal_form.gbapal \
-                                 $(CASTFORMGFXDIR)/normal_sunny_form.gbapal \
-                                 $(CASTFORMGFXDIR)/normal_rainy_form.gbapal \
-                                 $(CASTFORMGFXDIR)/normal_snowy_form.gbapal
+$(CASTFORMGFXDIR)/normal.gbapal: $(CASTFORMGFXDIR)/normal/normal.gbapal \
+                                 $(CASTFORMGFXDIR)/sunny/normal.gbapal \
+                                 $(CASTFORMGFXDIR)/rainy/normal.gbapal \
+                                 $(CASTFORMGFXDIR)/snowy/normal.gbapal
 	@cat $^ >$@
 
-$(CASTFORMGFXDIR)/shiny.gbapal: $(CASTFORMGFXDIR)/shiny_normal_form.gbapal \
-                                $(CASTFORMGFXDIR)/shiny_sunny_form.gbapal \
-                                $(CASTFORMGFXDIR)/shiny_rainy_form.gbapal \
-                                $(CASTFORMGFXDIR)/shiny_snowy_form.gbapal
+$(CASTFORMGFXDIR)/shiny.gbapal: $(CASTFORMGFXDIR)/normal/shiny.gbapal \
+                                $(CASTFORMGFXDIR)/sunny/shiny.gbapal \
+                                $(CASTFORMGFXDIR)/rainy/shiny.gbapal \
+                                $(CASTFORMGFXDIR)/snowy/shiny.gbapal
 	@cat $^ >$@
 
 
@@ -290,10 +290,10 @@ $(FONTGFXDIR)/short.fwjpnfont: $(FONTGFXDIR)/japanese_short.png
 $(FONTGFXDIR)/braille.fwjpnfont: $(FONTGFXDIR)/braille.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/frlg_male.fwjpnfont: $(FONTGFXDIR)/japanese_frlg_male_font.png
+$(FONTGFXDIR)/frlg_male.fwjpnfont: $(FONTGFXDIR)/japanese_frlg_male.png
 	$(GFX) $< $@
 
-$(FONTGFXDIR)/frlg_female.fwjpnfont: $(FONTGFXDIR)/japanese_frlg_female_font.png
+$(FONTGFXDIR)/frlg_female.fwjpnfont: $(FONTGFXDIR)/japanese_frlg_female.png
 	$(GFX) $< $@
 
 
