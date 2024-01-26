@@ -12,7 +12,7 @@
 #include "constants/battle_setup.h"
 #include "constants/battle_tent.h"
 #include "constants/battle_tower.h"
-#include "constants/battle_arcade.h" 
+#include "constants/battle_arcade.h" // battle_arcade
 #include "constants/berry.h"
 #include "constants/cable_club.h"
 #include "constants/coins.h"
@@ -1057,9 +1057,11 @@ Common_EventScript_LegendaryFlewAway::
 	.include "data/text/frontier_brain.inc"
 	.include "data/text/save.inc"
 	.include "data/text/birch_speech.inc"
+// Start battle_arcade
     .include "data/scripts/battle_arcade_registration.inc"
     .include "data/scripts/battle_arcade_battle.inc"
 	.include "data/maps/BattleArcade_Lobby/scripts.inc"
 	.include "data/maps/BattleArcade_BattleRoom/scripts.inc"
-
 	.include "data/maps/BattleArcade_Hallway/scripts.inc"
+// End battle_arcade
+

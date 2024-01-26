@@ -279,8 +279,6 @@ static void Task_ArcadeRecord_CleanUp(u8);
 static void Task_ArcadeRecordWaitFadeAndExitGracefully(u8);
 static void ArcadeRecord_FreeResources(void);
 
-#ifdef BATTLE_ARCADE
-
 static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
 static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};
 
@@ -1569,14 +1567,14 @@ u32 ReturnCursorWait(u32 speed)
 {
 	static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
 	{
-		[ARCADE_SPEED_LEVEL_0] = 20,
-		[ARCADE_SPEED_LEVEL_1] = 16,
-		[ARCADE_SPEED_LEVEL_2] = 8,
-		[ARCADE_SPEED_LEVEL_3] = 3,
-		[ARCADE_SPEED_DEFAULT] = 4,
-		[ARCADE_SPEED_LEVEL_5] = 2,
-		[ARCADE_SPEED_LEVEL_6] = 1,
-		[ARCADE_SPEED_LEVEL_7] = 0
+		[ARCADE_SPEED_LEVEL_0] = ARCADE_CURSOR_WAIT_LEVEL_0,
+		[ARCADE_SPEED_LEVEL_1] = ARCADE_CURSOR_WAIT_LEVEL_1,
+		[ARCADE_SPEED_LEVEL_2] = ARCADE_CURSOR_WAIT_LEVEL_2,
+		[ARCADE_SPEED_LEVEL_3] = ARCADE_CURSOR_WAIT_LEVEL_3,
+		[ARCADE_SPEED_DEFAULT] = ARCADE_CURSOR_WAIT_LEVEL_4,
+		[ARCADE_SPEED_LEVEL_5] = ARCADE_CURSOR_WAIT_LEVEL_5,
+		[ARCADE_SPEED_LEVEL_6] = ARCADE_CURSOR_WAIT_LEVEL_6,
+		[ARCADE_SPEED_LEVEL_7] = ARCADE_CURSOR_WAIT_LEVEL_7,
 	};
 
 	//return 20; // Debug
@@ -2687,5 +2685,3 @@ static void DisplayRecordsText(void)
 // figure out why the cursor feels too fast at default
 // add branch tags
 // write documentation
-
-#endif
