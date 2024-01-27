@@ -1,4 +1,3 @@
-const VAR_FACILITY_CHALLENGE_STATUS = VAR_TEMP_0
 const VAR_ATTENDANT_TALKED = VAR_TEMP_2
 const CHALLENGE_STATUS_UNKNOWN = 0
 const CHALLENGE_STATUS_END = 255
@@ -165,7 +164,7 @@ script BattleArcade_Registration_EventScript_CancelChallenge
 script BattleArcade_Registration_EventScript_SaveBeforeChallenge
 {
     frontier_set(FRONTIER_DATA_SELECTED_MON_ORDER)
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
+    setvar(VAR_TEMP_CHALLENGE_STATUS, 0)
     arcade_init
     arcade_set(ARCADE_DATA_WIN_STREAK_ACTIVE, TRUE)
     frontier_set(FRONTIER_DATA_PAUSED, FALSE)
@@ -180,7 +179,7 @@ script BattleArcade_Registration_EventScript_SaveBeforeChallenge
 	}
 
     call(Common_EventScript_SaveGame)
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+    setvar(VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
 
     if (var(VAR_RESULT) == 0)
     {
@@ -222,7 +221,7 @@ script BattleArcade_Registration_EventScript_GoToHallway
     call(BattleArcade_Registration_EventScript_ShowYouToBattleRoom)
     special(HealPlayerParty)
     call(BattleArcade_Lobby_EventScript_WarpToHallway)
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, 0)
+    setvar(VAR_TEMP_CHALLENGE_STATUS, 0)
     waitstate
     end
 }
@@ -242,7 +241,7 @@ script BattleArcade_Registration_EventScript_GetChallengeStatus
 
 script BattleArcade_Registration_EventScript_ResetChallengeStatus
 {
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+    setvar(VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     return
 }
 
@@ -298,7 +297,7 @@ script BattleArcade_Registration_EventScript_QuitWithoutSaving
     arcade_set(ARCADE_DATA_WIN_STREAK, 0)
     arcade_set(ARCADE_DATA_WIN_STREAK_ACTIVE, FALSE)
     frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN)
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+    setvar(VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     release
     end
 }
@@ -355,7 +354,7 @@ script BattleArcade_Registration_EventScript_LostThanksForPlaying
     faceplayer
     msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou, MSGBOX_DEFAULT)
     closemessage
-    setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+    setvar(VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
     release
     end
 }
