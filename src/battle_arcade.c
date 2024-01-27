@@ -145,6 +145,7 @@ static void GameBoard_FadeAndBail(void);
 static void Task_GameBoardWaitFadeAndBail(u8);
 static bool8 GameBoard_LoadGraphics(void);
 static void GameBoard_InitWindows(void);
+static void LoadEventPalettes(void);
 static void GenerateGameBoard(void);
 static void PrintEnemyParty(void);
 static void PrintPlayerParty(void);
@@ -954,6 +955,18 @@ static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_g
 
 static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
 
+const u16 sArcadeEventPlayer_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/event_player.gbapal");
+const u16 sArcadeEventOpponent_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/event_opponent.gbapal");
+
+static const struct SpritePalette sArcadePalettes[] =
+{
+    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_OPPONENT},
+    {sArcadeEventPlayer_Pal,   ARCADE_PALTAG_PLAYER},
+    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_ALL},
+    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_SPECIAL},
+    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_COUNTDOWN},
+};
+
 static const union AnimCmd sCountdownPanelAnim[] =
 {
     ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER),
@@ -993,7 +1006,7 @@ static const struct OamData CountdownPanelOam =
 static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
 {
     .tileTag = TAG_NONE,
-    .paletteTag = 0,
+    .paletteTag = ARCADE_PALTAG_COUNTDOWN,
     .oam = &CountdownPanelOam,
     .anims = sCountdownAnims,
     .images = sCountdownPanelPicTable,
@@ -1069,6 +1082,7 @@ static void GameBoard_SetupCB(void)
 			gMain.state++;
 			break;
 		case 5:
+			LoadEventPalettes();
 			GenerateGameBoard();
 			FreeMonIconPalettes();
 			LoadMonIconPalettes();
@@ -1197,6 +1211,13 @@ static void GameBoard_InitWindows(void)
 	}
 }
 
+static void LoadEventPalettes(void)
+{
+	u32 i = 0;
+	for (i = 0; i < 5; i++)
+		LoadSpritePalette(&sArcadePalettes[i]);
+}
+
 static void GenerateGameBoard(void)
 {
     u32 i, impact;
@@ -1210,7 +1231,6 @@ static void GenerateGameBoard(void)
         DebugPrintf("spot %d has impact %d and event %d",i,sGameBoard[i].impact,sGameBoard[i].event);
     }
 }
-
 
 static void PrintEnemyParty(void)
 {
@@ -1450,13 +1470,14 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
 {
     u32 spriteId;
 	u16 TileTag = GetTileTag(space);
+	u32 impact = sGameBoard[space].impact;
 
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
     TempSpriteTemplate.tileTag = TileTag;
+	TempSpriteTemplate.paletteTag = ARCADE_PALTAG_EVENT + impact;
     TempSpriteTemplate.callback = SpriteCallbackDummy;
-	//DebugPrintf("CreateEventSprite %d",TileTag);
 
-    //LoadSpritePalette(&sGlassInterfaceSpritePalette[0]);
+	//LoadSpritePalette(&sArcadePalettes[impact]);
     spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
 
     gSprites[spriteId].oam.shape = SPRITE_SHAPE(32x32);
@@ -1464,7 +1485,6 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
     gSprites[spriteId].oam.priority = 0;
 
 	//DebugPrintf("gsprites %d tileNum %d tileTag %d",spriteId,gSprites[spriteId].oam.tileNum,TileTag);
-
 	return spriteId;
 }
 

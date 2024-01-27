@@ -20,6 +20,8 @@ script BattleArcade_Registration_EventScript_MultisAttendant
 
 script BattleArcade_Registration_EventScript_Attendant
 {
+	arcade_playgameboard
+	end
     lock
     faceplayer
     setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_ARCADE)
