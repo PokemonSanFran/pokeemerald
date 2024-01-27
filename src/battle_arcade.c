@@ -957,6 +957,7 @@ static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_g
 
 const u16 sArcadeEventPlayer_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/event_player.gbapal");
 const u16 sArcadeEventOpponent_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/event_opponent.gbapal");
+const u16 sGameBoardPalette_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/bg.gbapal");
 
 static const struct SpritePalette sArcadePalettes[] =
 {
@@ -1185,7 +1186,7 @@ static bool8 GameBoard_LoadGraphics(void)
         }
         break;
     case 2:
-        //LoadPalette(sGameBoardPalette, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+        LoadPalette(sGameBoardPalette_Pal, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
         sGameBoardState->loadState++;
     default:
         sGameBoardState->loadState = 0;
