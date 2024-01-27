@@ -66,6 +66,7 @@ struct GameBoardState
 	u8 cursorPosition;
 	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
 	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
+	u8 cursorPaletteNum[2];
 };
 
 enum GameBoard_WindowIds
@@ -173,6 +174,7 @@ static void StartGame(void);
 static void InitCursorPositionFromSaveblock(void);
 static void CreateGameBoardCursor(void);
 static void SpriteCB_Cursor(struct Sprite*);
+static u32 ReturnNextCursorPalette(u32);
 static void DestroyCountdownPanels(void);
 static void Task_GameBoard_Game(u8);
 static u32 GetGameBoardTimer(void);
@@ -963,9 +965,6 @@ static const struct SpritePalette sArcadePalettes[] =
 {
     {sArcadeEventOpponent_Pal, ARCADE_PALTAG_OPPONENT},
     {sArcadeEventPlayer_Pal,   ARCADE_PALTAG_PLAYER},
-    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_ALL},
-    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_SPECIAL},
-    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_COUNTDOWN},
 };
 
 static const union AnimCmd sCountdownPanelAnim[] =
@@ -1007,7 +1006,7 @@ static const struct OamData CountdownPanelOam =
 static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
 {
     .tileTag = TAG_NONE,
-    .paletteTag = ARCADE_PALTAG_COUNTDOWN,
+    .paletteTag = ARCADE_PALTAG_OPPONENT,
     .oam = &CountdownPanelOam,
     .anims = sCountdownAnims,
     .images = sCountdownPanelPicTable,
@@ -1215,8 +1214,8 @@ static void GameBoard_InitWindows(void)
 static void LoadEventPalettes(void)
 {
 	u32 i = 0;
-	for (i = 0; i < 5; i++)
-		LoadSpritePalette(&sArcadePalettes[i]);
+	for (i = 0; i < 2; i++)
+	sGameBoardState->cursorPaletteNum[i] = LoadSpritePalette(&sArcadePalettes[i]);
 }
 
 static void GenerateGameBoard(void)
@@ -1471,14 +1470,13 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
 {
     u32 spriteId;
 	u16 TileTag = GetTileTag(space);
-	u32 impact = sGameBoard[space].impact;
+	u32 impact = (sGameBoard[space].impact == ARCADE_IMPACT_PLAYER) ? ARCADE_IMPACT_PLAYER : ARCADE_IMPACT_OPPONENT;
 
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
     TempSpriteTemplate.tileTag = TileTag;
 	TempSpriteTemplate.paletteTag = ARCADE_PALTAG_EVENT + impact;
     TempSpriteTemplate.callback = SpriteCallbackDummy;
 
-	//LoadSpritePalette(&sArcadePalettes[impact]);
     spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
 
     gSprites[spriteId].oam.shape = SPRITE_SHAPE(32x32);
@@ -1520,12 +1518,13 @@ static void CreateGameBoardCursor(void)
 	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
 
     TempSpriteTemplate.tileTag = TileTag;
+    TempSpriteTemplate.paletteTag = ARCADE_PALTAG_COUNTDOWN_ORANGE;
     TempSpriteTemplate.callback = SpriteCB_Cursor;
 
     spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
 
-    gSprites[spriteId].oam.shape = SPRITE_SHAPE(64x64);
-    gSprites[spriteId].oam.size = SPRITE_SIZE(64x64);
+    gSprites[spriteId].oam.shape = SPRITE_SHAPE(32x32);
+    gSprites[spriteId].oam.size = SPRITE_SIZE(32x32);
     gSprites[spriteId].oam.priority = 1;
 }
 
@@ -1534,9 +1533,23 @@ static void SpriteCB_Cursor(struct Sprite *sprite)
 	u32 x, y;
 	CalculateTilePosition(GetCursorPosition(),&x,&y);
 
+	if (GetGameBoardTimer() % ARCADE_CURSOR_COLOR_CHANGE_FRAMES == 0)
+		sprite->oam.paletteNum = ReturnNextCursorPalette(sprite->oam.paletteNum);
+
 	sprite->x2 = x - 50;
-    sprite->y2 = y - 10;
-	sprite->subpriority = 0;
+	sprite->y2 = y - 10;
+}
+
+static void ChangeCursorColor(struct Sprite *sprite)
+{
+}
+
+static u32 ReturnNextCursorPalette(u32 paletteNum)
+{
+	if (paletteNum == sGameBoardState->cursorPaletteNum[1])
+		return sGameBoardState->cursorPaletteNum[0];
+	else if (paletteNum == sGameBoardState->cursorPaletteNum[0])
+		return sGameBoardState->cursorPaletteNum[1];
 }
 
 static void DestroyCountdownPanels(void)
@@ -1566,6 +1579,7 @@ static void Task_GameBoard_Game(u8 taskId)
 
 static u32 GetGameBoardTimer(void)
 {
+	DebugPrintf("timer %d",sGameBoardState->timer);
     return sGameBoardState->timer;
 }
 
