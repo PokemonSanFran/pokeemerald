@@ -15,10 +15,6 @@ BattleArcade_Registration_EventScript_MultisAttendant::
 
 
 BattleArcade_Registration_EventScript_Attendant::
-# 23 "data/scripts/battle_arcade_registration.pory"
-	arcade_playgameboard
-# 24 "data/scripts/battle_arcade_registration.pory"
-	end
 # 25 "data/scripts/battle_arcade_registration.pory"
 	lock
 # 26 "data/scripts/battle_arcade_registration.pory"

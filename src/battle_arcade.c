@@ -913,55 +913,53 @@ static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
 
 enum FontColor
 {
-    FONT_BLACK,
     FONT_WHITE,
 };
 
 static const u8 sGameBoardWindowFontColors[][3] =
 {
-	[FONT_BLACK]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY,  TEXT_COLOR_LIGHT_GRAY},
 	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
 };
 
-static const u32 sBackboardTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.bin.lz");
-static const u32 sBackboardTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/backboard.4bpp.lz");
+static const u32 sBackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/background.bin.lz");
+static const u32 sBackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/background.4bpp.lz");
 
-static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.bin.lz");
-static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_game/logobackground.4bpp.lz");
+static const u32 sLogobackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/logobackground.bin.lz");
+static const u32 sLogobackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/logobackground.4bpp.lz");
 
-static const u32 sCountdownTile1[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_1.4bpp");
-static const u32 sCountdownTile2[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_2.4bpp");
-static const u32 sCountdownTile3[] = INCBIN_U32("graphics/battle_frontier/arcade_game/countdown_3.4bpp");
+static const u32 sCountdownTile1[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/countdown/1.4bpp");
+static const u32 sCountdownTile2[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/countdown/2.4bpp");
+static const u32 sCountdownTile3[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/countdown/3.4bpp");
 
-static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_burn.4bpp.lz");
-static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_fog.4bpp.lz");
-static const u32 sEventFreeze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_freeze.4bpp.lz");
-static const u32 sEventGiveBerry[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_berry.4bpp.lz");
-static const u32 sEventGiveBpBig[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_big.4bpp.lz");
-static const u32 sEventGiveBpSmall[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_bp_small.4bpp.lz");
-static const u32 sEventGiveItem[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_give_item.4bpp.lz");
-static const u32 sEventHail[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_hail.4bpp.lz");
-static const u32 sEventLevelUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_level_up.4bpp.lz");
-static const u32 sEventLowerHp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_lower_hp.4bpp.lz");
-static const u32 sEventNoBattle[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_no_battle.4bpp.lz");
-static const u32 sEventParalyze[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_paralyze.4bpp.lz");
-static const u32 sEventPoison[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_poison.4bpp.lz");
-static const u32 sEventRain[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_rain.4bpp.lz");
-static const u32 sEventRandom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_random.4bpp.lz");
-static const u32 sEventSand[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sand.4bpp.lz");
-static const u32 sEventSleep[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sleep.4bpp.lz");
-static const u32 sEventSpeedDown[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_down.4bpp.lz");
-static const u32 sEventSpeedUp[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_speed_up.4bpp.lz");
-static const u32 sEventSun[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_sun.4bpp.lz");
-static const u32 sEventSwap[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_swap.4bpp.lz");
-static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/arcade_game/event_trick_room.4bpp.lz");
-static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/arcade_game/no_event.4bpp.lz");
+static const u32 sEventBurn[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/burn.4bpp.lz");
+static const u32 sEventFog[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/fog.4bpp.lz");
+static const u32 sEventFreeze[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/freeze.4bpp.lz");
+static const u32 sEventGiveBerry[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/give_berry.4bpp.lz");
+static const u32 sEventGiveBpBig[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/give_bp_big.4bpp.lz");
+static const u32 sEventGiveBpSmall[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/give_bp_small.4bpp.lz");
+static const u32 sEventGiveItem[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/give_item.4bpp.lz");
+static const u32 sEventHail[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/hail.4bpp.lz");
+static const u32 sEventLevelUp[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/level_up.4bpp.lz");
+static const u32 sEventLowerHp[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/lower_hp.4bpp.lz");
+static const u32 sEventNoBattle[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/no_battle.4bpp.lz");
+static const u32 sEventParalyze[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/paralyze.4bpp.lz");
+static const u32 sEventPoison[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/poison.4bpp.lz");
+static const u32 sEventRain[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/rain.4bpp.lz");
+static const u32 sEventRandom[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/random.4bpp.lz");
+static const u32 sEventSand[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/sand.4bpp.lz");
+static const u32 sEventSleep[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/sleep.4bpp.lz");
+static const u32 sEventSpeedDown[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/speed_down.4bpp.lz");
+static const u32 sEventSpeedUp[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/speed_up.4bpp.lz");
+static const u32 sEventSun[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/sun.4bpp.lz");
+static const u32 sEventSwap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/swap.4bpp.lz");
+static const u32 sEventTrickRoom[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/trick_room.4bpp.lz");
+static const u32 sEventNoEvent[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/panels/event/no_event.4bpp.lz");
 
-static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/arcade_game/cursor_yellow.4bpp.lz");
+static const u32 sCursorYellow[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/cursor.4bpp.lz");
 
-const u16 sArcadeEventPlayer_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/event_player.gbapal");
-const u16 sArcadeEventOpponent_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/event_opponent.gbapal");
-const u16 sGameBoardPalette_Pal[] = INCBIN_U16("graphics/battle_frontier/arcade_game/bg.gbapal");
+const u16 sArcadeEventPlayer_Pal[] = INCBIN_U16("graphics/battle_frontier/battle_arcade/game/palettes/event_player.gbapal");
+const u16 sArcadeEventOpponent_Pal[] = INCBIN_U16("graphics/battle_frontier/battle_arcade/game/palettes/event_opponent.gbapal");
+const u16 sGameBoardPalette_Pal[] = INCBIN_U16("graphics/battle_frontier/battle_arcade/game/palettes/background.gbapal");
 
 static const struct SpritePalette sArcadePalettes[] =
 {
@@ -1174,14 +1172,14 @@ static bool8 GameBoard_LoadGraphics(void)
     case 0:
         ResetTempTileDataBuffers();
 
-        DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackboardTiles, 0, 0, 0);
+        DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackgroundTiles, 0, 0, 0);
         DecompressAndCopyTileDataToVram(BG_BOARD_BACKGROUND, sLogobackgroundTiles, 0, 0, 0);
         sGameBoardState->loadState++;
         break;
     case 1:
         if (FreeTempTileDataBuffersIfPossible() != TRUE)
         {
-            LZDecompressWram(sBackboardTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
+            LZDecompressWram(sBackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
             LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
             sGameBoardState->loadState++;
         }
@@ -2368,9 +2366,9 @@ static const struct WindowTemplate sArcadeRecordWinTemplates[WIN_RECORD_COUNT] =
     DUMMY_WIN_TEMPLATE,
 };
 
-static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.bin.lz");
-static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/arcade_records/arcade_records.4bpp.lz");
-static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/arcade_records/arcade_records.gbapal");
+static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/records/backgrounds/background.bin.lz");
+static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/records/backgrounds/background.4bpp.lz");
+static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/battle_arcade/records/palettes/background.gbapal");
 
 static void Task_OpenArcadeRecord(u8 taskId)
 {
@@ -2727,6 +2725,4 @@ static void DisplayRecordsText(void)
 // cursor changes color with every animation
 // entire screen is glowing white as its happening
 // get Kura's opinion
-// figure out why the cursor feels too fast at default
-// add branch tags
 // write documentation
