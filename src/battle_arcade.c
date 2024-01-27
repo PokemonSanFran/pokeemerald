@@ -162,7 +162,7 @@ static void VBlankCB(void);
 static void MainCB(void);
 static void StartCountdown(void);
 static void PopulateCountdownSprites(void);
-static void CalculateTilePosition(u32, u32*, u32*);
+static void CalculatePanelPosition(u32, u32*, u32*);
 static u32 CreateCountdownPanel(u32, u32);
 static void Task_GameBoard_Countdown(u8);
 static void PopulateEventSprites(void);
@@ -1248,7 +1248,7 @@ static void PrintPlayerParty(void)
 static void PrintPartyIcons(u32 side)
 {
 	u32 x = GetHorizontalPositionFromSide(side);
-	u32 y = 27;
+	u32 y = 33;
 	u32 i;
 	struct Pokemon *party = LoadSideParty(side);
 
@@ -1261,13 +1261,13 @@ static void PrintPartyIcons(u32 side)
 		//DebugPrintf("gSprites mon %d",sGameBoardState->monIconSpriteId[side][i]);
 		//DebugPrintf("mon gsprites %d tileNum %d",sGameBoardState->monIconSpriteId[side][i],gSprites[sGameBoardState->monIconSpriteId[side[i]].oam.tileNum]);
 		gSprites[sGameBoardState->monIconSpriteId[side][i]].oam.priority = 0;
-		y += 37;
+		y += 30;
 	}
 }
 
 static u32 GetHorizontalPositionFromSide(u32 side)
 {
-	return (side == ARCADE_IMPACT_OPPONENT) ? 225 : 15;
+	return (side == ARCADE_IMPACT_OPPONENT) ? 215 : 22;
 }
 
 static struct Pokemon *LoadSideParty(u32 impact)
@@ -1369,17 +1369,17 @@ static void PopulateCountdownSprites(void)
 
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
 	{
-		CalculateTilePosition(space,&x,&y);
+		CalculatePanelPosition(space,&x,&y);
 		sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
     }
 }
 
-static void CalculateTilePosition(u32 space, u32* x, u32* y)
+static void CalculatePanelPosition(u32 space, u32* x, u32* y)
 {
 	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
     u32 columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-    *x = 50 + columnIndex * 40;
-    *y = 10 + rowIndex * 35;
+    *x = 65 + columnIndex * 32;
+    *y = 17 + rowIndex * 32;
 }
 
 static u32 CreateCountdownPanel(u32 x, u32 y)
@@ -1418,7 +1418,7 @@ static void PopulateEventSprites(void)
 
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
 	{
-		CalculateTilePosition(space,&x,&y);
+		CalculatePanelPosition(space,&x,&y);
 		sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
     }
 }
@@ -1556,7 +1556,7 @@ static u32 ReturnNextCursorPalette(u32 paletteNum)
 static void ChangeCursorSpritePosition(struct Sprite *sprite)
 {
 	u32 x, y;
-	CalculateTilePosition(GetCursorPosition(),&x,&y);
+	CalculatePanelPosition(GetCursorPosition(),&x,&y);
 	sprite->x2 = x - 50;
 	sprite->y2 = y - 10;
 }
@@ -1669,6 +1669,7 @@ static void HandleFinishMode()
 	SaveCursorPositionToSaveblock();
 	ClearCursorRandomMode();
 	DestroyEventSprites();
+	LoadEventPalettes();
 	PopulateEventSprites();
 	sGameBoardState->timer = ARCADE_BOARD_COUNTDOWN_TIMER;
 	CreateTask(Task_GameBoard_CleanUp,0);
