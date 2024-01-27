@@ -174,7 +174,9 @@ static void StartGame(void);
 static void InitCursorPositionFromSaveblock(void);
 static void CreateGameBoardCursor(void);
 static void SpriteCB_Cursor(struct Sprite*);
+static void ChangeCursorColor(struct Sprite*);
 static u32 ReturnNextCursorPalette(u32);
+static void ChangeCursorSpritePosition(struct Sprite*);
 static void DestroyCountdownPanels(void);
 static void Task_GameBoard_Game(u8);
 static u32 GetGameBoardTimer(void);
@@ -1214,8 +1216,9 @@ static void GameBoard_InitWindows(void)
 static void LoadEventPalettes(void)
 {
 	u32 i = 0;
-	for (i = 0; i < 2; i++)
-	sGameBoardState->cursorPaletteNum[i] = LoadSpritePalette(&sArcadePalettes[i]);
+
+	for (i = 0; i < sizeof(sArcadePalettes); i++)
+		sGameBoardState->cursorPaletteNum[i] = LoadSpritePalette(&sArcadePalettes[i]);
 }
 
 static void GenerateGameBoard(void)
@@ -1530,18 +1533,16 @@ static void CreateGameBoardCursor(void)
 
 static void SpriteCB_Cursor(struct Sprite *sprite)
 {
-	u32 x, y;
-	CalculateTilePosition(GetCursorPosition(),&x,&y);
-
-	if (GetGameBoardTimer() % ARCADE_CURSOR_COLOR_CHANGE_FRAMES == 0)
-		sprite->oam.paletteNum = ReturnNextCursorPalette(sprite->oam.paletteNum);
-
-	sprite->x2 = x - 50;
-	sprite->y2 = y - 10;
+	ChangeCursorColor(sprite);
+	ChangeCursorSpritePosition(sprite);
 }
 
 static void ChangeCursorColor(struct Sprite *sprite)
 {
+	if (GetGameBoardTimer() % ARCADE_CURSOR_COLOR_CHANGE_FRAMES != 0)
+		return;
+
+	sprite->oam.paletteNum = ReturnNextCursorPalette(sprite->oam.paletteNum);
 }
 
 static u32 ReturnNextCursorPalette(u32 paletteNum)
@@ -1550,6 +1551,14 @@ static u32 ReturnNextCursorPalette(u32 paletteNum)
 		return sGameBoardState->cursorPaletteNum[0];
 	else if (paletteNum == sGameBoardState->cursorPaletteNum[0])
 		return sGameBoardState->cursorPaletteNum[1];
+}
+
+static void ChangeCursorSpritePosition(struct Sprite *sprite)
+{
+	u32 x, y;
+	CalculateTilePosition(GetCursorPosition(),&x,&y);
+	sprite->x2 = x - 50;
+	sprite->y2 = y - 10;
 }
 
 static void DestroyCountdownPanels(void)
