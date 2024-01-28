@@ -97,14 +97,14 @@ static void TakePlayerHeldItems(void);
 static void GenerateItemsToBeGiven(void);
 static u32 GenerateItemOrBerry(u32);
 static u32 GetCategorySize(u32);
-static u32 GetGroupIdFromWinStreak(void);
+static u32 GetGroupIdFromStreak(void);
 static const u32 (*GetCategoryGroups(u32))[ARCADE_BERRY_GROUP_SIZE];
 static void GetArcadeData(void);
-static u16 GetCurrentArcadeWinStreak(void);
+static u16 GetCurrentStreak(void);
 static void SetArcadeData(void);
 static void SetArcadeBattleWon(void);
-static void IncrementCurrentArcadeWinStreak(void);
-static void SaveCurrentArcadeWinStreak(void);
+static void IncrementCurrentStreak(void);
+static void SaveCurrentStreak(void);
 static void SaveArcadeChallenge(void);
 static void GiveArcadeChallengeBattlePoints(void);
 static u32 CalculateBattlePoints(u32);
@@ -128,8 +128,8 @@ static void GenerateArcadeOpponent(void);
 void ConvertFacilityFromArcadeToPike(u32*);
 u32 GetArcadePrintCount(void);
 static void SetArcadeBrainObjectEvent(void);
-static void BufferPrintFromCurrentArcadeWinStreak(void);
-static u32 GetPrintFromCurrentArcadeWinStreak(void);
+static void BufferPrintFromCurrentStreak(void);
+static u32 GetPrintFromCurrentStreak(void);
 void ShowArcadeRecordsFromOverworld(void);
 void DoArcadeTrainerBattle(void);
 static void SetArcadeBattleFlags(void);
@@ -206,7 +206,7 @@ static void GameBoard_FreeResources(void);
 
 // Arcade Game Board Back End Init
 static u32 GenerateImpact(void);
-static u32 ConvertWinStreakToImpactBracket(void);
+static u32 ConvertStreakToImpactBracket(void);
 static u32 GenerateEvent(u32);
 static u32 GenerateRandomBetweenBounds(u32);
 static s32 GetPanelUpperBound(u32);
@@ -240,9 +240,9 @@ static bool32 BattleArcade_DoSun(void);
 static bool32 BattleArcade_DoRain(void);
 static bool32 BattleArcade_DoSand(void);
 static bool32 BattleArcade_DoHail(void);
-static bool32 BattleArcade_DoFog(void);
+static bool32 UNUSED BattleArcade_DoFog(void);
 static void BattleArcade_DoWeather(u32);
-static bool32 BattleArcade_DoTrickRoom(void);
+static bool32 UNUSED BattleArcade_DoTrickRoom(void);
 static bool32 BattleArcade_DoSwap(void);
 static bool32 BattleArcade_DoSpeedUp(void);
 static bool32 BattleArcade_DoSpeedDown(void);
@@ -304,21 +304,21 @@ static void (* const sBattleArcadeFuncs[])(void) =
 	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
 	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveArcadeChallengeBattlePoints,
 	[ARCADE_FUNC_CHECK_SYMBOL]           = BufferEarnedArcadePrint,
-	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentArcadeWinStreak,
+	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentStreak,
 	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
 	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
 	[ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld,
 	[ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM]  = TakePlayerHeldItems,
 };
 
-static const u32 sWinStreakFlags[][2] =
+static const u32 sStreakFlags[][2] =
 {
     {STREAK_ARCADE_SINGLES_50,     STREAK_ARCADE_SINGLES_OPEN},
     {STREAK_ARCADE_DOUBLES_50,     STREAK_ARCADE_DOUBLES_OPEN},
     {STREAK_ARCADE_LINK_MULTIS_50, STREAK_ARCADE_LINK_MULTIS_OPEN},
 };
 
-static const u32 sWinStreakMasks[][2] =
+static const u32 sStreakMasks[][2] =
 {
     {~(STREAK_ARCADE_SINGLES_50),     ~(STREAK_ARCADE_SINGLES_OPEN)},
     {~(STREAK_ARCADE_DOUBLES_50),     ~(STREAK_ARCADE_DOUBLES_OPEN)},
@@ -346,7 +346,7 @@ static void InitArcadeChallenge(void)
 	GenerateItemsToBeGiven();
     FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
-    if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
+    if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[battleMode][lvlMode]))
         ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode] = 0;
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
@@ -399,7 +399,7 @@ static u32 GenerateItemOrBerry(u32 type)
 {
     u32 heldItem = ITEM_NONE;
     u32 maxGroupSize = GetCategorySize(type);
-    u32 groupId = GetGroupIdFromWinStreak();
+    u32 groupId = GetGroupIdFromStreak();
     const u32 (*itemGroups)[ARCADE_BERRY_GROUP_SIZE] = GetCategoryGroups(type);
 
     do
@@ -418,7 +418,7 @@ static u32 GetCategorySize(u32 type)
         return ARCADE_BERRY_GROUP_SIZE;
 }
 
-static u32 GetGroupIdFromWinStreak(void)
+static u32 GetGroupIdFromStreak(void)
 {
 	u32 challengeNum = GetChallengeNum();
 
@@ -501,24 +501,24 @@ static void GetArcadeData(void)
     case 0:
         break;
     case ARCADE_DATA_WIN_STREAK:
-        gSpecialVar_Result = GetCurrentArcadeWinStreak();
+        gSpecialVar_Result = GetCurrentStreak();
         break;
     case ARCADE_DATA_WIN_STREAK_ACTIVE:
-        gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]));
+        gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[battleMode][lvlMode]));
         break;
     }
 }
 
-u16 GetCurrentArcadeWinStreak(void)
+u16 GetCurrentStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
-    u32 winStreak = ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode];
+    u32 Streak = ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode];
 
-    if (winStreak > MAX_STREAK)
+    if (Streak > MAX_STREAK)
         return MAX_STREAK;
     else
-        return winStreak;
+        return Streak;
 }
 
 static void SetArcadeData(void)
@@ -535,41 +535,36 @@ static void SetArcadeData(void)
             break;
         case ARCADE_DATA_WIN_STREAK_ACTIVE:
             if (gSpecialVar_0x8006)
-                FRONTIER_SAVEDATA.winStreakActiveFlags |= sWinStreakFlags[battleMode][lvlMode];
+                FRONTIER_SAVEDATA.winStreakActiveFlags |= sStreakFlags[battleMode][lvlMode];
             else
-                FRONTIER_SAVEDATA.winStreakActiveFlags &= sWinStreakMasks[battleMode][lvlMode];
+                FRONTIER_SAVEDATA.winStreakActiveFlags &= sStreakMasks[battleMode][lvlMode];
             break;
     }
 }
 
 static void SetArcadeBattleWon(void)
 {
-	u32 i;
-
-	//for (i = 0; i < 4; i++)
-	//{
-		IncrementCurrentArcadeWinStreak();
-		SaveCurrentArcadeWinStreak();
-	//}
-		gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
+	IncrementCurrentStreak();
+	SaveCurrentStreak();
+	gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
 }
 
-static void IncrementCurrentArcadeWinStreak(void)
+static void IncrementCurrentStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
-	u32 currentWinStreak = ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode];
+	u32 currentStreak = ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode];
 
-	if (currentWinStreak < MAX_STREAK)
+	if (currentStreak < MAX_STREAK)
 		ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode]++;
 }
 
-static void SaveCurrentArcadeWinStreak(void)
+static void SaveCurrentStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     u32 oldStreak = ARCADE_SAVEDATA_RECORD_STREAK[battleMode][lvlMode];
-    u32 currentStreak = GetCurrentArcadeWinStreak();
+    u32 currentStreak = GetCurrentStreak();
 
     if (oldStreak >= currentStreak)
         return;
@@ -579,10 +574,6 @@ static void SaveCurrentArcadeWinStreak(void)
 
 static void SaveArcadeChallenge(void)
 {
-    u16 lvlMode = FRONTIER_SAVEDATA.lvlMode;
-    u16 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
-	s32 challengeNum = (signed)(ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE);
-
     FRONTIER_SAVEDATA.challengeStatus = gSpecialVar_0x8005;
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
     FRONTIER_SAVEDATA.challengePaused = TRUE;
@@ -635,7 +626,7 @@ static void BufferEarnedArcadePrint(void)
 
 static u32 GetEarnedArcadePrint(void)
 {
-    u32 numWins = (GetCurrentArcadeWinStreak());
+    u32 numWins = (GetCurrentStreak());
 
     if (ShouldGetGoldPrint(numWins))
         return ARCADE_SYMBOL_GOLD;
@@ -678,7 +669,7 @@ static void GetArcadeBrainStatus(void)
 		return;
 	}
 
-	BufferPrintFromCurrentArcadeWinStreak();
+	BufferPrintFromCurrentStreak();
 }
 
 void ArcadeBattleCleanup(void)
@@ -796,7 +787,7 @@ void ConvertFacilityFromArcadeToPike(u32* facility)
 
 u32 GetArcadePrintCount(void)
 {
-	return (GetPrintFromCurrentArcadeWinStreak() - 1);
+	return (GetPrintFromCurrentStreak() - 1);
 }
 
 static void SetArcadeBrainObjectEvent(void)
@@ -804,14 +795,14 @@ static void SetArcadeBrainObjectEvent(void)
     SetFrontierBrainObjEventGfx(FRONTIER_FACILITY_PIKE);
 }
 
-static void BufferPrintFromCurrentArcadeWinStreak(void)
+static void BufferPrintFromCurrentStreak(void)
 {
-	gSpecialVar_Result = GetPrintFromCurrentArcadeWinStreak();
+	gSpecialVar_Result = GetPrintFromCurrentStreak();
 }
 
-static u32 GetPrintFromCurrentArcadeWinStreak(void)
+static u32 GetPrintFromCurrentStreak(void)
 {
-	switch(GetCurrentArcadeWinStreak())
+	switch(GetCurrentStreak())
 	{
 		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
 			return ARCADE_SYMBOL_SILVER;
@@ -871,13 +862,13 @@ static const struct BgTemplate sGameBoardBgTemplates[] =
     },
     {
         .bg = BG_BOARD_BACKGROUND,
-        .charBaseIndex = 6,
+        .charBaseIndex = 2,
         .mapBaseIndex = 29,
-        .priority = 4
+        .priority = 0
     },
     {
         .bg = BG_BOARD_BACKBOARD,
-        .charBaseIndex = 9,
+        .charBaseIndex = 1,
         .mapBaseIndex = 28,
         .priority = 3
     },
@@ -904,7 +895,7 @@ struct GameResult
     u8 event:5;
 };
 
-static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {0};
+static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {{0}};
 
 enum FontColor
 {
@@ -964,15 +955,22 @@ static const struct SpritePalette sArcadePalettes[] =
 
 static const union AnimCmd sCountdownPanelAnim[] =
 {
-    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER),
-    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER),
-    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER_END),
+    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+    ANIMCMD_FRAME(2, 10),
     ANIMCMD_END
 };
 
 static const union AnimCmd *const sCountdownAnims[] =
 {
-    [DEFAULT_ANIM] = sCountdownPanelAnim
+    [ARCADE_COUNTDOWN_ANIM] = sCountdownPanelAnim
 };
 
 static const struct SpriteFrameImage sCountdownPanelPicTable[] =
@@ -1036,8 +1034,6 @@ void GameBoard_Init(MainCallback callback)
 
 static void GameBoard_SetupCB(void)
 {
-    u8 taskId;
-
     switch (gMain.state)
 	{
 		case 0:
@@ -1068,9 +1064,7 @@ static void GameBoard_SetupCB(void)
 			break;
 		case 3:
 			if (GameBoard_LoadGraphics() == TRUE)
-			{
 				gMain.state++;
-			}
 			break;
 		case 4:
 			GameBoard_InitWindows();
@@ -1084,7 +1078,7 @@ static void GameBoard_SetupCB(void)
 			PrintEnemyParty();
 			PrintPlayerParty();
 			PrintHelpBar();
-			taskId = CreateTask(Task_GameBoardWaitFadeIn, 0);
+			CreateTask(Task_GameBoardWaitFadeIn, 0);
 			gMain.state++;
 			break;
 		case 6:
@@ -1216,12 +1210,12 @@ static void LoadEventPalettes(void)
 
 static void GenerateGameBoard(void)
 {
-    u32 i, impact;
+    u32 space;
 
-    for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
+    for (space = 0; space < ARCADE_GAME_BOARD_SPACES; space++)
     {
-        sGameBoard[i].impact = GenerateImpact();
-        sGameBoard[i].event = GenerateEvent(sGameBoard[i].impact);
+        sGameBoard[space].impact = GenerateImpact();
+        sGameBoard[space].event = GenerateEvent(sGameBoard[space].impact);
 
     }
 }
@@ -1364,9 +1358,9 @@ static void SetTimer(u32 value)
 
 static void PopulateCountdownSprites(void)
 {
-	u32 space, rowIndex, columnIndex, x, y, spriteId;
+	u32 space, x, y;
 
-    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
+    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_COLUMNS); space++)
 	{
 		CalculatePanelPosition(space,&x,&y);
 		sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
@@ -1375,8 +1369,8 @@ static void PopulateCountdownSprites(void)
 
 static void CalculatePanelPosition(u32 space, u32* x, u32* y)
 {
-	u32 rowIndex = space / ARCADE_GAME_BOARD_SPACES_PER_ROWS;
-    u32 columnIndex = space % ARCADE_GAME_BOARD_SPACES_PER_ROWS;
+	u32 rowIndex = space / ARCADE_GAME_BOARD_COLUMNS;
+    u32 columnIndex = space % ARCADE_GAME_BOARD_COLUMNS;
     *x = 65 + columnIndex * 32;
     *y = 17 + rowIndex * 32;
 }
@@ -1410,11 +1404,11 @@ static void Task_GameBoard_Countdown(u8 taskId)
 
 static void PopulateEventSprites(void)
 {
-	u32 space, rowIndex, columnIndex, x, y;
+	u32 space, x, y;
 
 	LoadTileSpriteSheets();
 
-    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_SPACES_PER_ROWS); space++)
+    for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_COLUMNS); space++)
 	{
 		CalculatePanelPosition(space,&x,&y);
 		sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
@@ -1512,7 +1506,6 @@ static void CreateGameBoardCursor(void)
 {
 	u16 TileTag = ARCADE_GFXTAG_CURSOR;
 	u32 spriteId;
-	u32 x, y;
 
 	struct CompressedSpriteSheet sSpriteSheet_Cursor = {sGameCursor, 0x0800, TileTag};
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
@@ -1520,7 +1513,7 @@ static void CreateGameBoardCursor(void)
 	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
 
     TempSpriteTemplate.tileTag = TileTag;
-    TempSpriteTemplate.paletteTag = ARCADE_PALTAG_COUNTDOWN_ORANGE;
+    TempSpriteTemplate.paletteTag = ARCADE_PALTAG_CURSOR;
     TempSpriteTemplate.callback = SpriteCB_Cursor;
 
     spriteId = CreateSprite(&TempSpriteTemplate,45,7, 0);
@@ -1548,7 +1541,7 @@ static u32 ReturnNextCursorPalette(u32 paletteNum)
 {
 	if (paletteNum == sGameBoardState->cursorPaletteNum[1])
 		return sGameBoardState->cursorPaletteNum[0];
-	else if (paletteNum == sGameBoardState->cursorPaletteNum[0])
+	else
 		return sGameBoardState->cursorPaletteNum[1];
 }
 
@@ -1784,16 +1777,16 @@ static u32 GenerateImpact(void)
 	static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
 	{
 		//Opponent, Player, All, Special
-		[ARCADE_WINSTREAK_BRACKET_0_4]     = {10, 75, 10, 5},
-		[ARCADE_WINSTREAK_BRACKET_5_10]    = {25, 40, 30, 5},
-		[ARCADE_WINSTREAK_BRACKET_11_15]   = {30, 30, 35, 5},
-		[ARCADE_WINSTREAK_BRACKET_16_20]   = {35, 20, 30, 15},
-		[ARCADE_WINSTREAK_BRACKET_21_PLUS] = {15, 15, 40, 30},
+		[ARCADE_STREAK_BRACKET_0_4]     = {10, 75, 10, 5},
+		[ARCADE_STREAK_BRACKET_5_10]    = {25, 40, 30, 5},
+		[ARCADE_STREAK_BRACKET_11_15]   = {30, 30, 35, 5},
+		[ARCADE_STREAK_BRACKET_16_20]   = {35, 20, 30, 15},
+		[ARCADE_STREAK_BRACKET_21_PLUS] = {15, 15, 40, 30},
 	};
 
 	u32 impactThreshold = 0, impactIndex = 0;
 	u32 randImpact = Random() % 100;
-	u32 impactBracket = ConvertWinStreakToImpactBracket();
+	u32 impactBracket = ConvertStreakToImpactBracket();
 
 	for (impactIndex = 0; impactIndex < ARCADE_IMPACT_COUNT; impactIndex++)
 	{
@@ -1804,15 +1797,15 @@ static u32 GenerateImpact(void)
 	return ARCADE_IMPACT_PLAYER;
 }
 
-static u32 ConvertWinStreakToImpactBracket(void)
+static u32 ConvertStreakToImpactBracket(void)
 {
-	u32 winStreak = GetCurrentArcadeWinStreak();
+	u32 Streak = GetCurrentStreak();
 
-	return winStreak <= 4 ? ARCADE_WINSTREAK_BRACKET_0_4 :
-		winStreak <= 10 ? ARCADE_WINSTREAK_BRACKET_5_10 :
-		winStreak <= 15 ? ARCADE_WINSTREAK_BRACKET_11_15 :
-		winStreak <= 20 ? ARCADE_WINSTREAK_BRACKET_16_20 :
-		ARCADE_WINSTREAK_BRACKET_21_PLUS;
+	return Streak <= 4 ? ARCADE_STREAK_BRACKET_0_4 :
+		Streak <= 10 ? ARCADE_STREAK_BRACKET_5_10 :
+		Streak <= 15 ? ARCADE_STREAK_BRACKET_11_15 :
+		Streak <= 20 ? ARCADE_STREAK_BRACKET_16_20 :
+		ARCADE_STREAK_BRACKET_21_PLUS;
 }
 
 static u32 GenerateEvent(u32 impact)
@@ -1964,7 +1957,7 @@ static u32 GetChallengeNumIndex(void)
 
 static u32 GetChallengeNum(void)
 {
-    return (GetCurrentArcadeWinStreak() / FRONTIER_STAGES_PER_CHALLENGE);
+    return (GetCurrentStreak() / FRONTIER_STAGES_PER_CHALLENGE);
 }
 
 // Arcade Game Board Back End Resolution
@@ -2045,7 +2038,7 @@ static bool32 BattleArcade_DoStatusAilment(u32 impact, u32 status)
 {
     struct Pokemon *party = LoadSideParty(impact);
     struct Pokemon *mon;
-    u32 i, impactedCount = 0, species;
+    u32 i, impactedCount = 0;
     u32 newIndex[MAX_FRONTIER_PARTY_SIZE];
 
     InitalizePartyIndex(newIndex);
@@ -2132,7 +2125,7 @@ static void BufferGiveString(u32 item)
 
 static bool32 BattleArcade_DoLevelUp(u32 impact)
 {
-    u32 i, newLevel, oldLevel;
+    u32 i, newLevel;
     struct Pokemon *party = LoadSideParty(impact);
 
     for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
@@ -2198,7 +2191,7 @@ static bool32 BattleArcade_DoHail(void)
     BattleArcade_DoWeather(WEATHER_SNOW);
 	return TRUE;
 }
-static bool32 BattleArcade_DoFog(void)
+static bool32 UNUSED BattleArcade_DoFog(void)
 {
     BattleArcade_DoWeather(WEATHER_FOG_HORIZONTAL);
 	return TRUE;
@@ -2210,7 +2203,7 @@ static void BattleArcade_DoWeather(u32 weather)
     DoCurrentWeather();
 }
 
-static bool32 BattleArcade_DoTrickRoom(void)
+static bool32 UNUSED BattleArcade_DoTrickRoom(void)
 {
 	return TRUE;
 }
@@ -2374,8 +2367,6 @@ static void ArcadeRecords_Init(MainCallback callback)
 
 static void ArcadeRecords_SetupCB(void)
 {
-	u8 taskId;
-
 	switch (gMain.state)
 	{
 		case 0:
@@ -2411,7 +2402,7 @@ static void ArcadeRecords_SetupCB(void)
 			break;
 		case 5:
 			DisplayRecordsText();
-			taskId = CreateTask(Task_ArcadeRecordWaitFadeIn, 0);
+			CreateTask(Task_ArcadeRecordWaitFadeIn, 0);
 			gMain.state++;
 			break;
 		case 6:
@@ -2613,8 +2604,7 @@ static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSp
 
 static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
 {
-	u8 streakStatus;
-	u32 streak, recordStreak, lvlMode, streakIndex;
+	u32 lvlMode, streakIndex;
 	u32 loopIterations = 0;
 
 	for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
@@ -2639,7 +2629,7 @@ static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpa
 
 static const u8 *BattleArcade_GetRecordHeaderName(u32 level, u32 streakIndex)
 {
-	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sWinStreakFlags[gSpecialVar_0x8006][level]));
+	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[gSpecialVar_0x8006][level]));
 
 	if (streakIndex == 0 && isStreakActive)
 		return gText_Current;
@@ -2680,10 +2670,10 @@ static u32 GetRecordValue(u32 level, u32 streakIndex)
 static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
 	u32 record = GetRecordValue(level, streakIndex);
-	static const u8 sText_GamesWinStreak[] = _("Games cleared: {STR_VAR_1}");
+	static const u8 sText_GamesStreak[] = _("Games cleared: {STR_VAR_1}");
 
 	ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
-	StringExpandPlaceholders(gStringVar4,sText_GamesWinStreak);
+	StringExpandPlaceholders(gStringVar4,sText_GamesStreak);
 	AddTextPrinterParameterized4(windowId, fontID, 95,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
