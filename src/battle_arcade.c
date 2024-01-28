@@ -956,13 +956,7 @@ static const struct SpritePalette sArcadePalettes[] =
 static const union AnimCmd sCountdownPanelAnim[] =
 {
     ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
     ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
     ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
     ANIMCMD_FRAME(2, 10),
     ANIMCMD_END
@@ -1071,10 +1065,10 @@ static void GameBoard_SetupCB(void)
 			gMain.state++;
 			break;
 		case 5:
-			LoadEventPalettes();
-			GenerateGameBoard();
 			FreeMonIconPalettes();
 			LoadMonIconPalettes();
+			LoadEventPalettes();
+			GenerateGameBoard();
 			PrintEnemyParty();
 			PrintPlayerParty();
 			PrintHelpBar();
@@ -1658,7 +1652,7 @@ static void HandleFinishMode()
 	SaveCursorPositionToSaveblock();
 	ClearCursorRandomMode();
 	DestroyEventSprites();
-	LoadEventPalettes();
+	//LoadEventPalettes();
 	PopulateEventSprites();
 	SetTimerForFinish();
 	CreateTask(Task_GameBoard_CleanUp,0);
