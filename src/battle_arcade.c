@@ -42,7 +42,6 @@
 #include "text_window.h"
 #include "tv.h"
 #include "window.h"
-#include "constants/battle_arcade.h"
 #include "constants/battle_frontier.h"
 #include "constants/field_specials.h"
 #include "constants/frontier_util.h"
@@ -67,21 +66,6 @@ struct GameBoardState
 	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
 	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
 	u8 cursorPaletteNum[2];
-};
-
-enum GameBoard_WindowIds
-{
-	WIN_BOARD_HELP_BAR,
-	WIN_BOARD_COUNT,
-};
-
-enum GameBoard_BackgroundIds
-{
-	BG_BOARD_HELP_BAR,
-	BG_BOARD_EVENTS,
-	BG_BOARD_BACKGROUND,
-	BG_BOARD_BACKBOARD,
-	BG_BOARD_COUNT,
 };
 
 // Arcade Challenge Functions
@@ -1652,7 +1636,6 @@ static void HandleFinishMode()
 	SaveCursorPositionToSaveblock();
 	ClearCursorRandomMode();
 	DestroyEventSprites();
-	//LoadEventPalettes();
 	PopulateEventSprites();
 	SetTimerForFinish();
 	CreateTask(Task_GameBoard_CleanUp,0);
