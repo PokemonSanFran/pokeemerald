@@ -1882,8 +1882,7 @@ static bool32 IsEventValidDuringCurrentBattle(u32 event)
 static bool32 IsEventValidDuringCurrentStreak(u32 event)
 {
 	static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
-	{
-                               //Streak 1  2  3  4  5  6  7
+	{                          //Streak 1  2  3  4  5  6  7
 		[ARCADE_EVENT_LOWER_HP]      = {0, 1, 1, 1, 1, 1, 1},
 		[ARCADE_EVENT_POISON]        = {1, 0, 1, 0, 0, 0, 1},
 		[ARCADE_EVENT_PARALYZE]      = {1, 0, 1, 0, 0, 0, 1},
@@ -1934,7 +1933,6 @@ static u32 GetChallengeNum(void)
 }
 
 // Arcade Game Board Back End Resolution
-
 static bool32 DoGameBoardResult(u32 event, u32 impact)
 {
     switch (event)
