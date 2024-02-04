@@ -19,5 +19,22 @@ enum GameBoard_BackgroundIds
 	BG_BOARD_COUNT,
 };
 
+enum ArcadeRecord_WindowIds
+{
+    WIN_RECORD_TEXT,
+	WIN_RECORD_DUMMY,
+    WIN_RECORD_COUNT,
+};
 
-#define ARCADE_GEN4_EFFECTS_BANNED //If the Battle Arcade feature is being used in a repo where Trick Room and Fog are implemented field effects, comment out or delete this line. Changes to BattleArcade_DoFog and BattleArcade_DoTrickRoom may be required.
+enum ArcadeRecord_BackgroundIds
+{
+    BG_RECORD_TEXT,
+    BG_RECORD_BACKGROUND,
+    BG_RECORD_COUNT,
+};
+
+struct GameResult
+{
+    u8 impact:2;
+    u8 event:5;
+};

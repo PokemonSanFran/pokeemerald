@@ -136,9 +136,9 @@ static void PrintEnemyParty(void);
 static void PrintPlayerParty(void);
 static void PrintPartyIcons(u32);
 static u32 GetHorizontalPositionFromSide(u32);
-static struct Pokemon *LoadSideParty(u32);
+static struct Pokemon* LoadSideParty(u32);
 static void PrintHelpBar(void);
-static const u8 *GetHelpBarText(void);
+static const u8* GetHelpBarText(void);
 static u32 GetGameBoardMode(void);
 static void Task_GameBoardWaitFadeIn(u8);
 static void Task_GameBoardMainInput(u8);
@@ -224,9 +224,9 @@ static bool32 BattleArcade_DoSun(void);
 static bool32 BattleArcade_DoRain(void);
 static bool32 BattleArcade_DoSand(void);
 static bool32 BattleArcade_DoHail(void);
-static bool32 UNUSED BattleArcade_DoFog(void);
-static void BattleArcade_DoWeather(u32);
-static bool32 UNUSED BattleArcade_DoTrickRoom(void);
+static bool32 BattleArcade_DoFog(void);
+static bool32 BattleArcade_DoWeather(u32);
+static bool32 BattleArcade_DoTrickRoom(void);
 static bool32 BattleArcade_DoSwap(void);
 static bool32 BattleArcade_DoSpeedUp(void);
 static bool32 BattleArcade_DoSpeedDown(void);
@@ -873,22 +873,16 @@ static const struct WindowTemplate sGameBoardWinTemplates[] =
 	DUMMY_WIN_TEMPLATE
 };
 
-struct GameResult
-{
-    u8 impact:2;
-    u8 event:5;
-};
-
 static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {{0}};
-
-enum FontColor
-{
-    FONT_WHITE,
-};
 
 static const u8 sGameBoardWindowFontColors[][3] =
 {
-	[FONT_WHITE]  = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE,      TEXT_COLOR_DARK_GRAY},
+	[TEXT_COLOR_WHITE]  =
+	{
+		TEXT_COLOR_TRANSPARENT,
+		TEXT_COLOR_WHITE,
+		TEXT_COLOR_DARK_GRAY
+	},
 };
 
 static const u32 sBackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/background.bin.lz");
@@ -974,6 +968,7 @@ static const struct OamData CountdownPanelOam =
     .paletteNum = 0,
     .affineParam = 0,
 };
+
 static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
 {
     .tileTag = TAG_NONE,
@@ -1012,7 +1007,7 @@ void GameBoard_Init(MainCallback callback)
 
 static void GameBoard_SetupCB(void)
 {
-    switch (gMain.state)
+	switch (gMain.state)
 	{
 		case 0:
 			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
@@ -1245,7 +1240,7 @@ static void PrintHelpBar(void)
     u32 fontId = FONT_NARROW;
 
     FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-    AddTextPrinterParameterized4(windowId, fontId, 4, 1, GetFontAttribute(fontId, FONTATTR_LETTER_SPACING), GetFontAttribute(fontId, FONTATTR_LINE_SPACING), sGameBoardWindowFontColors[FONT_WHITE], TEXT_SKIP_DRAW, GetHelpBarText());
+    AddTextPrinterParameterized4(windowId, fontId, 4, 1, GetFontAttribute(fontId, FONTATTR_LETTER_SPACING), GetFontAttribute(fontId, FONTATTR_LINE_SPACING), sGameBoardWindowFontColors[TEXT_COLOR_WHITE], TEXT_SKIP_DRAW, GetHelpBarText());
 
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
@@ -1852,11 +1847,12 @@ static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
 
 static bool32 IsEventBanned(u32 event)
 {
-#ifdef ARCADE_GEN4_EFFECTS_BANNED
-    if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
-        return TRUE;
+#ifdef RHH_EXPANSION
+		return FALSE;
+#else
+	if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
+		return TRUE;
 #endif
-    return FALSE;
 }
 
 static bool32 IsEventValidDuringCurrentBattle(u32 event)
@@ -1956,10 +1952,8 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         case ARCADE_EVENT_RAIN: return BattleArcade_DoRain();
         case ARCADE_EVENT_SAND: return BattleArcade_DoSand();
         case ARCADE_EVENT_HAIL: return BattleArcade_DoHail();
-#ifndef ARCADE_GEN4_EFFECTS_BANNED
         case ARCADE_EVENT_FOG: return BattleArcade_DoFog();
         case ARCADE_EVENT_TRICK_ROOM: return BattleArcade_DoTrickRoom();
-#endif
         case ARCADE_EVENT_SWAP: return BattleArcade_DoSwap();
         case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
         case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
@@ -2150,39 +2144,39 @@ static bool32 HaveMonsBeenSwapped(void)
 
 static bool32 BattleArcade_DoSun(void)
 {
-    BattleArcade_DoWeather(WEATHER_DROUGHT);
-	return TRUE;
+    return BattleArcade_DoWeather(WEATHER_DROUGHT);
 }
 static bool32 BattleArcade_DoRain(void)
 {
-    BattleArcade_DoWeather(WEATHER_DOWNPOUR);
-	return TRUE;
+    return BattleArcade_DoWeather(WEATHER_DOWNPOUR);
 }
 static bool32 BattleArcade_DoSand(void)
 {
-    BattleArcade_DoWeather(WEATHER_SANDSTORM);
-	return TRUE;
+    return BattleArcade_DoWeather(WEATHER_SANDSTORM);
 }
 static bool32 BattleArcade_DoHail(void)
 {
-    BattleArcade_DoWeather(WEATHER_SNOW);
-	return TRUE;
+    return BattleArcade_DoWeather(WEATHER_SNOW);
 }
-static bool32 UNUSED BattleArcade_DoFog(void)
+static bool32 BattleArcade_DoFog(void)
 {
-    BattleArcade_DoWeather(WEATHER_FOG_HORIZONTAL);
-	return TRUE;
+    return BattleArcade_DoWeather(WEATHER_FOG_HORIZONTAL);
 }
 
-static void BattleArcade_DoWeather(u32 weather)
+static bool32 BattleArcade_DoWeather(u32 weather)
 {
     SetSavedWeather(weather);
     DoCurrentWeather();
+	return TRUE;
 }
 
-static bool32 UNUSED BattleArcade_DoTrickRoom(void)
+static bool32 BattleArcade_DoTrickRoom(void)
 {
+#ifndef RHH_EXPANSION
 	return TRUE;
+#else
+	return VarSet(VAR_FIELD_EFFECT,STATUS_FIELD_TRICK_ROOM);
+#endif
 }
 
 static bool32 BattleArcade_DoSwap(void)
@@ -2267,24 +2261,11 @@ static bool32 BattleArcade_DoNoBattle(void)
 {
 	return TRUE;
 }
+
 static bool32 BattleArcade_DoNoEvent(void)
 {
 	return TRUE;
 }
-
-enum ArcadeRecord_WindowIds
-{
-    WIN_RECORD_TEXT,
-	WIN_RECORD_DUMMY,
-    WIN_RECORD_COUNT,
-};
-
-enum ArcadeRecord_BackgroundIds
-{
-    BG_RECORD_TEXT,
-    BG_RECORD_BACKGROUND,
-    BG_RECORD_COUNT,
-};
 
 static const struct BgTemplate sArcadeRecordBgTemplates[BG_RECORD_COUNT] =
 {
@@ -2673,7 +2654,3 @@ static void DisplayRecordsText(void)
     PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_FULL);
 }
-
-// entire screen is glowing white as its happening
-// get Kura's opinion
-// write documentation
