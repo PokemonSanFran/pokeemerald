@@ -4434,10 +4434,10 @@
     {
       "id": "LAYOUT_BATTLE_ARCADE_HALLWAY",
       "name": "BattleArcade_Hallway_Layout",
-      "width": 17,
-      "height": 5,
+      "width": 15,
+      "height": 7,
       "primary_tileset": "gTileset_Building",
-      "secondary_tileset": "gTileset_BattleFrontier",
+      "secondary_tileset": "gTileset_BattlePike",
       "border_filepath": "data/layouts/BattleArcade_Hallway/border.bin",
       "blockdata_filepath": "data/layouts/BattleArcade_Hallway/map.bin"
     }
