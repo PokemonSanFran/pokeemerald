@@ -373,7 +373,7 @@ struct CursorData
 {
 	u8 speed:3;
 	u8 position:5;
-	bool8 isRandom:1;
+	bool8 isRandom;
 }__attribute__((packed));
 // End battle_arcade
 
