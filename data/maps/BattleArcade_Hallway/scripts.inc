@@ -48,8 +48,6 @@ BattleArcade_Hallway_Movement_WalkToRoom:
 	walk_right
 # 31 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 31 "data/maps/BattleArcade_Hallway/scripts.pory"
-	walk_right
 # 32 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_up
 # 33 "data/maps/BattleArcade_Hallway/scripts.pory"
@@ -58,8 +56,6 @@ BattleArcade_Hallway_Movement_WalkToRoom:
 
 # 36 "data/maps/BattleArcade_Hallway/scripts.pory"
 BattleArcade_Hallway_Movement_Player_WalkToRoom:
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
-	walk_right
 # 38 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
 # 38 "data/maps/BattleArcade_Hallway/scripts.pory"

@@ -28,14 +28,14 @@ script BattleArcade_Hallway_EventScript_EnterCorridor
 
 movement BattleArcade_Hallway_Movement_WalkToRoom
 {
-    walk_right * 6
+    walk_right * 5
     walk_up
     set_invisible
 }
 
 movement BattleArcade_Hallway_Movement_Player_WalkToRoom
 {
-    walk_right * 7
+    walk_right * 6
     walk_up
     set_invisible
 }

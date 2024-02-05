@@ -29,7 +29,7 @@ script BattleArcade_Lobby_EventScript_PlayerFaceNorth
 
 script BattleArcade_Lobby_EventScript_WarpToHallway
 {
-    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 2)
+    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 3)
 }
 
 script BattleArcade_Lobby_EventScript_WalkToElevator
