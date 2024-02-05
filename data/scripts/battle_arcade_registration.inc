@@ -633,28 +633,34 @@ BattleArcade_Registration_EventScript_ShowResults::
 # 409 "data/scripts/battle_arcade_registration.pory"
 	copyvar VAR_0x8006, VAR_RESULT
 # 410 "data/scripts/battle_arcade_registration.pory"
-	arcade_results VAR_0x8006
+	fadescreen FADE_TO_BLACK
 # 411 "data/scripts/battle_arcade_registration.pory"
+	arcade_results VAR_0x8006
+# 412 "data/scripts/battle_arcade_registration.pory"
 	goto BattleArcade_Registration_EventScript_AskModeResultsBoard
 	return
 
 
 GiveMonDebugScript::
-# 536 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_SALAMENCE, 50, ITEM_LEFTOVERS
 # 537 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_METAGROSS, 50, ITEM_CHOICE_BAND
+	givemon SPECIES_SHELGON, 50, ITEM_LEFTOVERS
 # 538 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_LATIOS, 50, ITEM_LUM_BERRY
+	givemon SPECIES_METANG, 50, ITEM_CHOICE_BAND
 # 539 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_NUZLEAF, 50, ITEM_STARF_BERRY
+	givemon SPECIES_PUPITAR, 50, ITEM_LUM_BERRY
 # 540 "data/scripts/battle_arcade_registration.pory"
+	givemon SPECIES_SALAMENCE, 100, ITEM_LEFTOVERS
+# 541 "data/scripts/battle_arcade_registration.pory"
+	givemon SPECIES_METAGROSS, 100, ITEM_LEFTOVERS
+# 542 "data/scripts/battle_arcade_registration.pory"
+	givemon SPECIES_LATIOS, 100, ITEM_LUM_BERRY
+# 543 "data/scripts/battle_arcade_registration.pory"
 	setflag FLAG_SYS_POKEMON_GET
 	return
 
 
 BattleArcade_Entrance_Text_WelcomeToTheBattleArcade::
-# 414 "data/scripts/battle_arcade_registration.pory"
+# 415 "data/scripts/battle_arcade_registration.pory"
 	.string "Welcome to the Battle Arcade! I am your\n"
 	.string "guide to the Single and Double Battle\l"
 	.string "challenges. Please be aware that these\l"
@@ -662,59 +668,59 @@ BattleArcade_Entrance_Text_WelcomeToTheBattleArcade::
 	.string "Trainer.$"
 
 BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti::
-# 419 "data/scripts/battle_arcade_registration.pory"
+# 420 "data/scripts/battle_arcade_registration.pory"
 	.string "Welcome to the Battle Arcade! I am your\n"
 	.string "guide to the Multi Battle challenge.\l"
 	.string "Please be aware that this challenge\l"
 	.string "requires two Trainers.$"
 
 BattleArcade_Entrance_Text_WhichChallengeWouldYouLike::
-# 424 "data/scripts/battle_arcade_registration.pory"
+# 425 "data/scripts/battle_arcade_registration.pory"
 	.string "Which challenge would you like to take?$"
 
 BattleArcade_Entrance_Text_WouldYouLikeToTake::
-# 429 "data/scripts/battle_arcade_registration.pory"
+# 430 "data/scripts/battle_arcade_registration.pory"
 	.string "Would you like to take the Battle\n"
 	.string "Arcade Multi Battle challenge?$"
 
 BattleArcade_Entrance_Text_WhichLevelMode::
-# 434 "data/scripts/battle_arcade_registration.pory"
+# 435 "data/scripts/battle_arcade_registration.pory"
 	.string "The BATTLE ARCADE offers two levels of\n"
 	.string "challenge, Level 50 and Open Level.\l"
 	.string "Which is your choice?$"
 
 BattleArcade_Entrance_Text_PleaseSelectThePokemonYou::
-# 439 "data/scripts/battle_arcade_registration.pory"
+# 440 "data/scripts/battle_arcade_registration.pory"
 	.string "Please select the Pokémon you wish to\n"
 	.string "enter.$"
 
 BattleArcade_Entrance_Text_ExcuseMeYouDont::
-# 444 "data/scripts/battle_arcade_registration.pory"
+# 445 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me! You don't have\n"
 	.string "{STR_VAR_2} eligible Pokémon. You\l"
 	.string "must have {STR_VAR_2} different\l"
 	.string "Pokémon to enter.$"
 
 BattleArcade_Entrance_Text_UnderLevel50::
-# 449 "data/scripts/battle_arcade_registration.pory"
+# 450 "data/scripts/battle_arcade_registration.pory"
 	.string "The {STR_VAR_2} different Pokémon\n"
 	.string "must all be Level 50 or lower.$"
 
 BattleArcade_Entrance_Text_EggsAndAre::
-# 454 "data/scripts/battle_arcade_registration.pory"
+# 455 "data/scripts/battle_arcade_registration.pory"
 	.string "Eggs{STR_VAR_1} are not allowed to\n"
 	.string "enter.$"
 
 BattleArcade_Entrance_Text_PleaseComeSeeMeWhen::
-# 459 "data/scripts/battle_arcade_registration.pory"
+# 460 "data/scripts/battle_arcade_registration.pory"
 	.string "Please come see me when you are ready.$"
 
 BattleArcade_Entrance_Text_RightThisWayPlease::
-# 464 "data/scripts/battle_arcade_registration.pory"
+# 465 "data/scripts/battle_arcade_registration.pory"
 	.string "Right this way, please!$"
 
 BattleArcade_Entrance_Text_AtTheBattleArcade::
-# 469 "data/scripts/battle_arcade_registration.pory"
+# 470 "data/scripts/battle_arcade_registration.pory"
 	.string "At the Battle Arcade, you may take a\n"
 	.string "Single or Double Battle challenge. Here,\l"
 	.string "a game board is activated before every\l"
@@ -734,7 +740,7 @@ BattleArcade_Entrance_Text_AtTheBattleArcade::
 	.string "challenge. Please be aware of that!$"
 
 BattleArcade_Entrance_Text_YouMayTeamUpWith::
-# 474 "data/scripts/battle_arcade_registration.pory"
+# 475 "data/scripts/battle_arcade_registration.pory"
 	.string "You may team up with a friend for a\n"
 	.string "Multi Battle challenge. Here, a game\l"
 	.string "board is activated before every match.\l"
@@ -752,60 +758,60 @@ BattleArcade_Entrance_Text_YouMayTeamUpWith::
 	.string "interrupted.$"
 
 BattleArcade_Entrance_Text_WeveMissedYou::
-# 479 "data/scripts/battle_arcade_registration.pory"
+# 480 "data/scripts/battle_arcade_registration.pory"
 	.string "We've missed you! You must save the\n"
 	.string "game before you resume your challenge.\l"
 	.string "Please wait.$"
 
 BattleArcade_Entrance_Text_ExcuseMeYouDidnt::
-# 484 "data/scripts/battle_arcade_registration.pory"
+# 485 "data/scripts/battle_arcade_registration.pory"
 	.string "Excuse me! You didn't save before you\n"
 	.string "quit your challenge last time. Because\l"
 	.string "of that, you have been disqualified\l"
 	.string "from your challenge!$"
 
 BattleArcade_Entrance_Text_CongratulationsInHonorOf::
-# 489 "data/scripts/battle_arcade_registration.pory"
+# 490 "data/scripts/battle_arcade_registration.pory"
 	.string "Congratulations! In honor of your\n"
 	.string "victory, we present you with this\l"
 	.string "commemorative print!$"
 
 BattleArcade_Entrance_Text_TheSilverPrintWasAdded::
-# 494 "data/scripts/battle_arcade_registration.pory"
+# 495 "data/scripts/battle_arcade_registration.pory"
 	.string "The Silver Print was added to\n"
 	.string "{PLAYER}'s Vs. Recorder!$"
 
 BattleArcade_Entrance_Text_TheGoldPrintWasAdded::
-# 499 "data/scripts/battle_arcade_registration.pory"
+# 500 "data/scripts/battle_arcade_registration.pory"
 	.string "The Gold Print was added to\n"
 	.string "{PLAYER}'s Vs. Recorder!$"
 
 BattleArcade_Entrance_Text_WeHopeToSeeYou::
-# 504 "data/scripts/battle_arcade_registration.pory"
+# 505 "data/scripts/battle_arcade_registration.pory"
 	.string "We hope to see you again!$"
 
 BattleArcade_Entrance_Text_ReadWhichRecord::
-# 509 "data/scripts/battle_arcade_registration.pory"
+# 510 "data/scripts/battle_arcade_registration.pory"
 	.string "Which record would you like to see?$"
 
 BattleArcade_Entrance_Text_LinkMultisAreNot::
-# 514 "data/scripts/battle_arcade_registration.pory"
+# 515 "data/scripts/battle_arcade_registration.pory"
 	.string "I'm sorry! Link Multi Battles have not\n"
 	.string "been implemented at this time. Please\l"
 	.string "come back later.$"
 
 BattleArcade_Entrance_Text_OneTrainerShouldSelectBecome::
-# 521 "data/scripts/battle_arcade_registration.pory"
+# 522 "data/scripts/battle_arcade_registration.pory"
 	.string "One Trainer should select “BECOME\n"
 	.string "LEADER.” The other Trainer must select\l"
 	.string "“JOIN GROUP.”$"
 
 BattleArcade_Entrance_Text_WeNeedToLaunchDs::
-# 525 "data/scripts/battle_arcade_registration.pory"
+# 526 "data/scripts/battle_arcade_registration.pory"
 	.string "We need to launch DS Wireless\n"
 	.string "Communications.$"
 
 BattleArcade_Entrance_Text_YouMustSaveTheGame::
-# 529 "data/scripts/battle_arcade_registration.pory"
+# 530 "data/scripts/battle_arcade_registration.pory"
 	.string "You must save the game before I show\n"
 	.string "you in. Please wait.$"

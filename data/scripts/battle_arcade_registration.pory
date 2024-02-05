@@ -407,6 +407,7 @@ script BattleArcade_Registration_EventScript_ShowResults
 {
 	closemessage
 	copyvar(VAR_0x8006,VAR_RESULT)
+    fadescreen(FADE_TO_BLACK)
 	arcade_results(VAR_0x8006)
 	goto(BattleArcade_Registration_EventScript_AskModeResultsBoard)
 }
@@ -533,10 +534,12 @@ text BattleArcade_Entrance_Text_YouMustSaveTheGame
 
 script GiveMonDebugScript
 {
-    givemon(SPECIES_SALAMENCE, 50, ITEM_LEFTOVERS)
-    givemon(SPECIES_METAGROSS, 50, ITEM_CHOICE_BAND)
-    givemon(SPECIES_LATIOS, 50, ITEM_LUM_BERRY)
-    givemon(SPECIES_NUZLEAF,50,ITEM_STARF_BERRY)
+    givemon(SPECIES_SHELGON, 50, ITEM_LEFTOVERS)
+    givemon(SPECIES_METANG, 50, ITEM_CHOICE_BAND)
+    givemon(SPECIES_PUPITAR, 50, ITEM_LUM_BERRY)
+    givemon(SPECIES_SALAMENCE, 100, ITEM_LEFTOVERS)
+    givemon(SPECIES_METAGROSS, 100, ITEM_LEFTOVERS)
+    givemon(SPECIES_LATIOS, 100, ITEM_LUM_BERRY)
     setflag(FLAG_SYS_POKEMON_GET)
     return
 }
