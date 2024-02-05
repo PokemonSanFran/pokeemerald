@@ -1046,7 +1046,6 @@ static void GameBoard_SetupCB(void)
 		case 5:
 			FreeMonIconPalettes();
 			LoadMonIconPalettes();
-			LoadEventPalettes();
 			GenerateGameBoard();
 			PrintEnemyParty();
 			PrintPlayerParty();
@@ -1333,6 +1332,7 @@ static void PopulateCountdownSprites(void)
 {
 	u32 space, x, y;
 
+    LoadEventPalettes();
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_COLUMNS); space++)
 	{
 		CalculatePanelPosition(space,&x,&y);
@@ -1380,6 +1380,7 @@ static void PopulateEventSprites(void)
 	u32 space, x, y;
 
 	LoadTileSpriteSheets();
+    LoadEventPalettes();
 
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_COLUMNS); space++)
 	{
@@ -1847,12 +1848,11 @@ static bool32 IsEventValidDuringBattleOrStreak(u32 event, u32 impact)
 
 static bool32 IsEventBanned(u32 event)
 {
-#ifdef RHH_EXPANSION
-		return FALSE;
-#else
-	if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
-		return TRUE;
+#ifndef RHH_EXPANSION
+    if ((event == ARCADE_EVENT_TRICK_ROOM) || (event == ARCADE_EVENT_FOG))
+        return TRUE;
 #endif
+    return FALSE;
 }
 
 static bool32 IsEventValidDuringCurrentBattle(u32 event)
