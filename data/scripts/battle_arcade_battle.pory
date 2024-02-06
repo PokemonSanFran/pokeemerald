@@ -236,32 +236,36 @@ script BattleArcade_Challenge_EventScript_HandleBattleResult
     {
         goto(BattleArcade_Challenge_EventScript_DefeatedOpponent)
     }
-    goto(BattleArcade_Challenge_EventScript_WarpToLobbyLost)
-}
-
-script BattleArcade_Challenge_EventScript_WarpToLobbyLost
-{
-	call(BattleArcade_Challenge_EventScript_SaveLost)
-    goto(BattleArcade_Challenge_EventScript_WarpToLobby)
-}
-
-script BattleArcade_Challenge_EventScript_SaveLost
-{
-    special(LoadPlayerParty)
-    arcade_save(CHALLENGE_STATUS_LOST)
-    call(BattleArcade_Challenge_EventScript_Save)
+    goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
 }
 
 script BattleArcade_Challenge_EventScript_Save
 {
     message(gText_SavingDontTurnOff2)
     waitmessage
+    special(LoadPlayerParty)
+    call(BattleArcade_Challenge_EventScript_SetChallengeStatus)
     playse(SE_SAVE)
     waitse
+    closemessage
 }
 
-script BattleArcade_Challenge_EventScript_WarpToLobby
+script BattleArcade_Challenge_EventScript_SetChallengeStatus
 {
+    if (var(VAR_RESULT) == B_OUTCOME_WON)
+    {
+        tower_save(CHALLENGE_STATUS_WON)
+    }
+    else
+    {
+        tower_save(CHALLENGE_STATUS_LOST)
+    }
+}
+
+script BattleArcade_Challenge_EventScript_SaveWarpToLobby
+{
+    call(BattleArcade_Challenge_EventScript_Save)
+
     copyvar(VAR_RESULT,VAR_FRONTIER_BATTLE_MODE)
     if (var(VAR_RESULT) == FRONTIER_MODE_MULTIS)
     {
@@ -286,8 +290,8 @@ script BattleArcade_Challenge_EventScript_DefeatedOpponent
 	arcade_setbattlewon
 
 	call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
-	if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
-	//if (var(VAR_RESULT) == 2) // Debug
+	//if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
+	if (var(VAR_RESULT) == 2) // Debug
 	{
 		goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
 	}
@@ -305,8 +309,7 @@ script BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
     }
     call(BattleArcade_Challenge_EventScript_GiveBP)
     msgbox(BattleArcade_Challenge_Text_WeWillReturnAnyItems)
-    call(BattleArcade_Challenge_EventScript_SaveWon)
-    goto(BattleArcade_Challenge_EventScript_WarpToLobbyWon)
+    goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
 }
 
 script BattleArcade_Challenge_EventScript_GiveBP
@@ -315,20 +318,6 @@ script BattleArcade_Challenge_EventScript_GiveBP
     msgbox(BattleArcade_Challenge_Text_YouHaveClearedYourSeventh)
     msgbox(BattleFrontier_Text_ObtainedXBattlePoints, MSGBOX_GETPOINTS)
 }
-
-script BattleArcade_Challenge_EventScript_SaveWon
-{
-    special(LoadPlayerParty)
-    arcade_save(CHALLENGE_STATUS_WON)
-    call(BattleArcade_Challenge_EventScript_Save)
-}
-
-script BattleArcade_Challenge_EventScript_WarpToLobbyWon
-{
-    call(BattleArcade_Challenge_EventScript_SaveWon)
-    goto(BattleArcade_Challenge_EventScript_WarpToLobby)
-}
-
 
 script BattleArcade_Challenge_EventScript_HealPlayer
 {
@@ -446,7 +435,8 @@ script BattleArcade_Challenge_EventScript_AskRetireChallenge
 
 script BattleArcade_Challenge_EventScript_RetireChallenge
 {
-    goto(BattleArcade_Challenge_EventScript_WarpToLobbyLost)
+    setvar(VAR_RESULT,B_OUTCOME_LOST)
+    goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
 }
 
 script BattleArcade_Challenge_EventScript_ContinueChallenge
