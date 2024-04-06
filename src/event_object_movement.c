@@ -166,6 +166,10 @@ static void DestroyLevitateMovementTask(u8);
 static bool8 NpcTakeStep(struct Sprite *);
 static bool8 IsElevationMismatchAt(u8, s16, s16);
 static bool8 AreElevationsCompatible(u8, u8);
+// Start vs_seeker branch
+static u8 MovementType_RaiseHandAndStop_Callback(struct ObjectEvent *, struct Sprite *);
+static u8 MovementType_RaiseHandAndJump_Callback(struct ObjectEvent *, struct Sprite *);
+static u8 MovementType_RaiseHandAndSwim_Callback(struct ObjectEvent *, struct Sprite *);
 
 static const struct SpriteFrameImage sPicTable_PechaBerryTree[];
 
@@ -9001,7 +9005,7 @@ static u8 MovementType_RaiseHandAndSwim_Callback(struct ObjectEvent *objectEvent
     return gMovementTypeFuncs_RaiseHandAndSwim[sprite->data[1]](objectEvent, sprite);
 }
 
-static bool8 MovementType_RaiseHandAndStop_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+bool8 MovementType_RaiseHandAndStop_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     ClearObjectEventMovement(objectEvent, sprite);
     ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_RAISE_HAND_AND_STOP);
@@ -9009,7 +9013,7 @@ static bool8 MovementType_RaiseHandAndStop_Step0(struct ObjectEvent *objectEvent
     return TRUE;
 }
 
-static bool8 MovementType_RaiseHandAndStop_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+bool8 MovementType_RaiseHandAndStop_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
     {
@@ -9019,13 +9023,13 @@ static bool8 MovementType_RaiseHandAndStop_Step1(struct ObjectEvent *objectEvent
     return FALSE;
 }
 
-static bool8 MovementType_RaiseHandAndStop_Step2(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+bool8 MovementType_RaiseHandAndStop_Step2(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     objectEvent->singleMovementActive = FALSE;
     return FALSE;
 }
 
-static bool8 MovementType_RaiseHandAndJump_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+bool8 MovementType_RaiseHandAndJump_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     ClearObjectEventMovement(objectEvent, sprite);
     ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_RAISE_HAND_AND_JUMP);
@@ -9033,7 +9037,7 @@ static bool8 MovementType_RaiseHandAndJump_Step0(struct ObjectEvent *objectEvent
     return FALSE;
 }
 
-static bool8 MovementType_RaiseHandAndSwim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+bool8 MovementType_RaiseHandAndSwim_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     ClearObjectEventMovement(objectEvent, sprite);
     ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_RAISE_HAND_AND_SWIM);
@@ -9041,7 +9045,7 @@ static bool8 MovementType_RaiseHandAndSwim_Step0(struct ObjectEvent *objectEvent
     return FALSE;
 }
 
-static bool8 MovementType_RaiseHandAndMove_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+bool8 MovementType_RaiseHandAndMove_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
     {
