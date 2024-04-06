@@ -1620,8 +1620,7 @@ bool32 TrainerIsMatchCallRegistered(s32 i)
 static bool32 UpdateRandomTrainerRematches(const struct RematchTrainer *table, u16 mapGroup, u16 mapNum)
 {
     s32 i;
-    bool32 ret = FALSE;
-
+    
     // Start vs_seeker branch
     if (CheckBagHasItem(ITEM_VS_SEEKER, 1))
         return FALSE;
