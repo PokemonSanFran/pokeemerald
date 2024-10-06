@@ -290,8 +290,7 @@ script BattleArcade_Challenge_EventScript_DefeatedOpponent
 	arcade_setbattlewon
 
 	call(BattleArcade_BattleRoom_EventScript_MoveBattlersBack)
-	//if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
-	if (var(VAR_RESULT) == 2) // Debug
+	if (var(VAR_RESULT) == FRONTIER_STAGES_PER_CHALLENGE)
 	{
 		goto(BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge)
 	}
