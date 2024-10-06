@@ -69,6 +69,9 @@
 
 #define VAR_ARCADE_BERRY                        VAR_UNUSED_0x40FA
 #define VAR_ARCADE_ITEM                         VAR_UNUSED_0x409D
+#define VAR_ARCADE_PERFORMANCE_POINTS           VAR_UNUSED_0x404E
+
+#define IMPACT_PERFORMANCE_TABLE_SIZE           5
 
 #define ARCADE_BRAIN_DEFEAT_POINTS              20
 

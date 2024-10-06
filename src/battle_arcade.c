@@ -12,6 +12,7 @@
 #include "data.h"
 #include "decompress.h"
 #include "event_data.h"
+#include "field_poison.h"
 #include "field_weather.h"
 #include "frontier_util.h"
 #include "gba/defines.h"
@@ -27,6 +28,7 @@
 #include "menu_helpers.h"
 #include "overworld.h"
 #include "palette.h"
+#include "party_menu.h"
 #include "pokedex.h"
 #include "pokemon_icon.h"
 #include "random.h"
@@ -50,6 +52,7 @@
 #include "constants/items.h"
 #include "constants/moves.h"
 #include "constants/opponents.h"
+#include "constants/party_menu.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
 #include "constants/trainers.h"
@@ -85,6 +88,7 @@ static u32 GetGroupIdFromStreak(void);
 static const u32 (*GetCategoryGroups(u32))[ARCADE_BERRY_GROUP_SIZE];
 static void GetArcadeData(void);
 static u16 GetCurrentStreak(void);
+static u32 GetPerformancePoints(void);
 static void SetArcadeData(void);
 static void SetArcadeBattleWon(void);
 static void IncrementCurrentStreak(void);
@@ -106,7 +110,6 @@ static void ReturnPartyToOwner(void);
 static bool32 HaveMonsBeenSwapped(void);
 static void ResetLevelsToOriginal(void);
 static void ResetSketchedMoves(void);
-static bool32 MonKnowsMove(struct Pokemon*, u16);
 static void StartArcadeGameBoardFromOverworld(void);
 static void GenerateArcadeOpponent(void);
 void ConvertFacilityFromArcadeToPike(u32*);
@@ -309,6 +312,25 @@ static const u32 sStreakMasks[][2] =
     {~(STREAK_ARCADE_LINK_MULTIS_50), ~(STREAK_ARCADE_LINK_MULTIS_OPEN)},
 };
 
+static const u32 sArcadePerformanceTable[IMPACT_PERFORMANCE_TABLE_SIZE][3] =
+{
+    [0] = { 8, 6 },
+    [1] = { 6, 4 },
+    [2] = { 4, 2 },
+    [3] = { 0, 0 },
+    [4] = { 0, 0 },
+};
+
+static const u8 sArcadeTurnPointTable[IMPACT_PERFORMANCE_TABLE_SIZE][2] =
+{
+    { 3, 10 },
+    { 5,  6 },
+    { 7,  4 },
+    { 9,  2 },
+    { 10, 0 },
+};
+
+
 void CallBattleArcadeFunc(void)
 {
     sBattleArcadeFuncs[gSpecialVar_0x8004]();
@@ -491,6 +513,70 @@ static void GetArcadeData(void)
         gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[battleMode][lvlMode]));
         break;
     }
+}
+
+static bool32 IsMonFainted(struct Pokemon* mon)
+{
+    return (!GetMonData(mon, MON_DATA_HP));
+}
+
+static bool32 DoesMonHaveStatus(struct Pokemon* mon)
+{
+    return (GetAilmentFromStatus(GetMonData(mon, MON_DATA_STATUS)) != AILMENT_NONE);
+}
+
+static u32 CalculatePerformancePoints(void)
+{
+    u32 faintedCount = 0;
+    u32 statusCount = 0;
+    u32 turn = gBattleResults.battleTurnCounter;
+    u32 partyIndex, tableIndex;
+    u32 points;
+	struct Pokemon *playerMon;
+
+    for (partyIndex = 0; partyIndex < MAX_FRONTIER_PARTY_SIZE; partyIndex++)
+    {
+        playerMon = &gPlayerParty[partyIndex];
+
+        if (IsMonValidSpecies(playerMon))
+            break;
+
+        faintedCount += IsMonFainted(&gPlayerParty[partyIndex]);
+        statusCount += DoesMonHaveStatus(&gPlayerParty[partyIndex]);
+    }
+
+    points += sArcadePerformanceTable[statusCount][0];
+    points += sArcadePerformanceTable[faintedCount][1];
+
+    for (tableIndex = 0; tableIndex < IMPACT_PERFORMANCE_TABLE_SIZE; tableIndex++)
+    {
+        if (turn < sArcadeTurnPointTable[tableIndex][0])
+        {
+            points += sArcadeTurnPointTable[tableIndex][1];
+            break;
+        }
+    }
+    return points;
+}
+
+void SetPerformancePoints(u32 points)
+{
+    VarSet(VAR_ARCADE_PERFORMANCE_POINTS,points);
+}
+
+void ResetPerformancePoints(void)
+{
+    SetPerformancePoints(0);
+}
+
+void CalculateAndSetPerformancePoints(void)
+{
+    SetPerformancePoints(CalculatePerformancePoints());
+}
+
+u32 GetPerformancePoints(void)
+{
+    return VarGet(VAR_ARCADE_PERFORMANCE_POINTS);
 }
 
 u16 GetCurrentStreak(void)
@@ -729,17 +815,6 @@ static void ResetSketchedMoves(void)
 			break;
 		}
 	}
-}
-
-bool32 MonKnowsMove(struct Pokemon *pokemon, u16 move)
-{
-	u8 i;
-
-	for (i = 0; i < MAX_MON_MOVES; i++)
-		if (GetMonData(pokemon, MON_DATA_MOVE1 + i, NULL) == move)
-			return TRUE;
-
-	return FALSE;
 }
 
 static void StartArcadeGameBoardFromOverworld(void)
@@ -1773,6 +1848,7 @@ static u32 GenerateImpact(void)
 static u32 ConvertStreakToImpactBracket(void)
 {
 	u32 Streak = GetCurrentStreak();
+    u32 performancePoints = GetPerformancePoints();
 
 	return Streak <= 4 ? ARCADE_STREAK_BRACKET_0_4 :
 		Streak <= 10 ? ARCADE_STREAK_BRACKET_5_10 :
