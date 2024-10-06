@@ -1,86 +1,93 @@
 #ifndef GUARD_CONSTANTS_ARCADE_H
 #define GUARD_CONSTANTS_ARCADE_H
 
-#define ARCADE_FUNC_INIT                        0
-#define ARCADE_FUNC_GET_DATA                    1
-#define ARCADE_FUNC_SET_DATA                    2
-#define ARCADE_FUNC_SAVE                        3
-#define ARCADE_FUNC_GENERATE_OPPONENT           4
-#define ARCADE_FUNC_TAKE_ENEMY_ITEMS            5
-#define ARCADE_FUNC_PLAY_GAME_BOARD             6
-#define ARCADE_FUNC_BATTLE_CLEAN_UP             7
-#define ARCADE_FUNC_SET_BATTLE_WON              8
-#define ARCADE_FUNC_GIVE_BATTLE_POINTS          9
-#define ARCADE_FUNC_CHECK_SYMBOL                10
-#define ARCADE_FUNC_GET_PRINT_FROM_STREAK       11
-#define ARCADE_FUNC_CHECK_BRAIN_STATUS          12
-#define ARCADE_FUNC_SET_BRAIN_OBJECT            13
-#define ARCADE_FUNC_RECORDS                     14
-#define ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM       15
+enum ArcadeFunctions
+{
+    ARCADE_FUNC_INIT,
+    ARCADE_FUNC_GET_DATA,
+    ARCADE_FUNC_SET_DATA,
+    ARCADE_FUNC_SAVE,
+    ARCADE_FUNC_GENERATE_OPPONENT,
+    ARCADE_FUNC_TAKE_ENEMY_ITEMS,
+    ARCADE_FUNC_PLAY_GAME_BOARD,
+    ARCADE_FUNC_BATTLE_CLEAN_UP,
+    ARCADE_FUNC_SET_BATTLE_WON,
+    ARCADE_FUNC_GIVE_BATTLE_POINTS,
+    ARCADE_FUNC_CHECK_SYMBOL,
+    ARCADE_FUNC_GET_PRINT_FROM_STREAK,
+    ARCADE_FUNC_CHECK_BRAIN_STATUS,
+    ARCADE_FUNC_SET_BRAIN_OBJECT,
+    ARCADE_FUNC_RECORDS,
+    ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM,
+};
 
-#define ARCADE_DATA_WIN_STREAK                  1
-#define ARCADE_DATA_WIN_STREAK_ACTIVE           2
+enum ArcadeData
+{
+    ARCADE_DATA_WIN_STREAK = 1,
+    ARCADE_DATA_WIN_STREAK_ACTIVE,
+};
 
-#define FRONTIER_SAVEDATA                       gSaveBlock2Ptr->frontier
-#define ARCADE_SAVEDATA_CURRENT_STREAK          FRONTIER_SAVEDATA.arcadeWinStreaks
-#define ARCADE_SAVEDATA_RECORD_STREAK           FRONTIER_SAVEDATA.arcadeRecordWinStreaks
-#define ARCADE_SAVEDATA_CURSOR                  FRONTIER_SAVEDATA.gameCursor
-
-#define ARCADE_EVENT_LOWER_HP                   0
-#define ARCADE_EVENT_POISON                     1
-#define ARCADE_EVENT_PARALYZE                   2
-#define ARCADE_EVENT_BURN                       3
-#define ARCADE_EVENT_SLEEP                      4
-#define ARCADE_EVENT_FREEZE                     5
-#define ARCADE_EVENT_GIVE_BERRY                 6
-#define ARCADE_EVENT_GIVE_ITEM                  7
-#define ARCADE_EVENT_LEVEL_UP                   8
-#define ARCADE_EVENT_SUN                        9
-#define ARCADE_EVENT_RAIN                       10
-#define ARCADE_EVENT_SAND                       11
-#define ARCADE_EVENT_HAIL                       12
-#define ARCADE_EVENT_FOG                        13
-#define ARCADE_EVENT_TRICK_ROOM                 14
-#define ARCADE_EVENT_SWAP                       15
-#define ARCADE_EVENT_SPEED_UP                   16
-#define ARCADE_EVENT_SPEED_DOWN                 17
-#define ARCADE_EVENT_RANDOM                     18
-#define ARCADE_EVENT_GIVE_BP_SMALL              19
-#define ARCADE_EVENT_NO_BATTLE                  20
-#define ARCADE_EVENT_GIVE_BP_BIG                21
-#define ARCADE_EVENT_NO_EVENT                   22
-#define ARCADE_EVENT_COUNT                      ARCADE_EVENT_NO_EVENT + 1
+enum ArcadeEvents
+{
+    ARCADE_EVENT_LOWER_HP,
+    ARCADE_EVENT_POISON,
+    ARCADE_EVENT_PARALYZE,
+    ARCADE_EVENT_BURN,
+    ARCADE_EVENT_SLEEP,
+    ARCADE_EVENT_FREEZE,
+    ARCADE_EVENT_GIVE_BERRY,
+    ARCADE_EVENT_GIVE_ITEM,
+    ARCADE_EVENT_LEVEL_UP,
+    ARCADE_EVENT_SUN,
+    ARCADE_EVENT_RAIN,
+    ARCADE_EVENT_SAND,
+    ARCADE_EVENT_HAIL,
+    ARCADE_EVENT_FOG,
+    ARCADE_EVENT_TRICK_ROOM,
+    ARCADE_EVENT_SWAP,
+    ARCADE_EVENT_SPEED_UP,
+    ARCADE_EVENT_SPEED_DOWN,
+    ARCADE_EVENT_RANDOM,
+    ARCADE_EVENT_GIVE_BP_SMALL,
+    ARCADE_EVENT_NO_BATTLE,
+    ARCADE_EVENT_GIVE_BP_BIG,
+    ARCADE_EVENT_NO_EVENT,
+    ARCADE_EVENT_COUNT,
+};
 
 #define ARCADE_EVENT_INDIVIDUAL_START           ARCADE_EVENT_LOWER_HP
 #define ARCADE_EVENT_WEATHER_START              ARCADE_EVENT_SUN
 #define ARCADE_EVENT_SPECIAL_START              ARCADE_EVENT_SWAP
 
-#define ARCADE_BERRY_GROUP_1                    0
-#define ARCADE_BERRY_GROUP_2                    1
-#define ARCADE_BERRY_GROUP_3                    2
-#define ARCADE_BERRY_GROUP_COUNT                ARCADE_BERRY_GROUP_3 + 1
+enum ArcadeBerryGroups
+{
+    ARCADE_BERRY_GROUP_1,
+    ARCADE_BERRY_GROUP_2,
+    ARCADE_BERRY_GROUP_3,
+    ARCADE_BERRY_GROUP_COUNT,
+};
+
 #define ARCADE_BERRY_GROUP_SIZE                 10
 
-#define ARCADE_ITEM_GROUP_1                     ARCADE_BERRY_GROUP_1
-#define ARCADE_ITEM_GROUP_2                     ARCADE_BERRY_GROUP_2
-#define ARCADE_ITEM_GROUP_3                     ARCADE_BERRY_GROUP_3
-#define ARCADE_ITEM_GROUP_COUNT                 ARCADE_BERRY_GROUP_COUNT
+enum ArcadeItemGroups
+{
+    ARCADE_ITEM_GROUP_1,
+    ARCADE_ITEM_GROUP_2,
+    ARCADE_ITEM_GROUP_3,
+    ARCADE_ITEM_GROUP_COUNT,
+};
+
 #define ARCADE_ITEM_GROUP_SIZE                  10
 
-#define VAR_ARCADE_BERRY                        VAR_UNUSED_0x40FA
-#define VAR_ARCADE_ITEM                         VAR_UNUSED_0x409D
-#define VAR_ARCADE_PERFORMANCE_POINTS           VAR_UNUSED_0x404E
-
-#define IMPACT_PERFORMANCE_TABLE_SIZE           5
-
-#define ARCADE_BRAIN_DEFEAT_POINTS              20
+enum ArcadeSymbol
+{
+    ARCADE_SYMBOL_NONE,
+    ARCADE_SYMBOL_SILVER,
+    ARCADE_SYMBOL_GOLD
+};
 
 #define FLAG_ARCADE_SILVER_PRINT                FLAG_UNUSED_0x020
 #define FLAG_ARCADE_GOLD_PRINT                  FLAG_UNUSED_0x021
-
-#define ARCADE_SYMBOL_NONE                      0
-#define ARCADE_SYMBOL_SILVER                    1
-#define ARCADE_SYMBOL_GOLD                      2
 
 #define ARCADE_TILEMAP_BUFFER_SIZE              1024 * 2
 
@@ -91,13 +98,16 @@
 #define ARCADE_STREAK_NUM_MAX                   6
 #define ARCADE_STREAK_NUM_COUNT                 (ARCADE_STREAK_NUM_MAX + 1)
 
-#define ARCADE_BOARD_MODE_WAIT                  0
-#define ARCADE_BOARD_MODE_COUNTDOWN_3           1
-#define ARCADE_BOARD_MODE_COUNTDOWN_2           2
-#define ARCADE_BOARD_MODE_COUNTDOWN_1           3
-#define ARCADE_BOARD_MODE_GAME_START            4
-#define ARCADE_BOARD_MODE_GAME_FINISH           5
-#define ARCADE_BOARD_MODE_CLEANUP               6
+enum ArcadeBoardModes
+{
+    ARCADE_BOARD_MODE_WAIT,
+    ARCADE_BOARD_MODE_COUNTDOWN_3,
+    ARCADE_BOARD_MODE_COUNTDOWN_2,
+    ARCADE_BOARD_MODE_COUNTDOWN_1,
+    ARCADE_BOARD_MODE_GAME_START,
+    ARCADE_BOARD_MODE_GAME_FINISH,
+    ARCADE_BOARD_MODE_CLEANUP
+};
 
 #define ARCADE_BOARD_COUNTDOWN_SECONDS          3
 #define ARCADE_BOARD_GAME_SECONDS               30
@@ -116,27 +126,33 @@
 #define ARCADE_GFXTAG_CURSOR                    2000
 
 #define ARCADE_PALTAG_EVENT                     1000
-#define ARCADE_PALTAG_OPPONENT                 	(ARCADE_PALTAG_EVENT + ARCADE_IMPACT_OPPONENT)
+#define ARCADE_PALTAG_OPPONENT                  (ARCADE_PALTAG_EVENT + ARCADE_IMPACT_OPPONENT)
 #define ARCADE_PALTAG_PLAYER                    (ARCADE_PALTAG_EVENT + ARCADE_IMPACT_PLAYER)
 #define ARCADE_PALTAG_CURSOR                    (ARCADE_PALTAG_OPPONENT)
 
 #define ARCADE_CURSOR_COLOR_CHANGE_FRAMES       8
 
-#define ARCADE_IMPACT_OPPONENT                  0
-#define ARCADE_IMPACT_PLAYER                    1
-#define ARCADE_IMPACT_ALL                       2
-#define ARCADE_IMPACT_SPECIAL                   3
-#define ARCADE_IMPACT_COUNT                     4
+enum ArcadeImpactTypes
+{
+    ARCADE_IMPACT_OPPONENT,
+    ARCADE_IMPACT_PLAYER,
+    ARCADE_IMPACT_ALL,
+    ARCADE_IMPACT_SPECIAL,
+    ARCADE_IMPACT_COUNT
+};
 
-#define ARCADE_SPEED_LEVEL_0                    0
-#define ARCADE_SPEED_LEVEL_1                    1
-#define ARCADE_SPEED_LEVEL_2                    2
-#define ARCADE_SPEED_LEVEL_3                    3
-#define ARCADE_SPEED_LEVEL_4                    4
-#define ARCADE_SPEED_LEVEL_5                    5
-#define ARCADE_SPEED_LEVEL_6                    6
-#define ARCADE_SPEED_LEVEL_7                    7
-#define ARCADE_SPEED_COUNT                      ARCADE_SPEED_LEVEL_7 + 1
+enum ArcadeSpeedLevels
+{
+    ARCADE_SPEED_LEVEL_0,
+    ARCADE_SPEED_LEVEL_1,
+    ARCADE_SPEED_LEVEL_2,
+    ARCADE_SPEED_LEVEL_3,
+    ARCADE_SPEED_LEVEL_4,
+    ARCADE_SPEED_LEVEL_5,
+    ARCADE_SPEED_LEVEL_6,
+    ARCADE_SPEED_LEVEL_7,
+    ARCADE_SPEED_COUNT,
+};
 
 #define ARCADE_SPEED_DEFAULT                    ARCADE_SPEED_LEVEL_4
 #define ARCADE_SPEED_LEVEL_MIN                  ARCADE_SPEED_LEVEL_0
@@ -151,11 +167,14 @@
 #define ARCADE_CURSOR_WAIT_LEVEL_6              (1 * (ARCADE_FRAMES_PER_SECOND / 30))
 #define ARCADE_CURSOR_WAIT_LEVEL_7              (0 * (ARCADE_FRAMES_PER_SECOND / 30))
 
-#define ARCADE_STREAK_BRACKET_0_4               0
-#define ARCADE_STREAK_BRACKET_5_10              1
-#define ARCADE_STREAK_BRACKET_11_15             2
-#define ARCADE_STREAK_BRACKET_16_20             3
-#define ARCADE_STREAK_BRACKET_21_PLUS           4
+enum ArcadeStreakBrackets
+{
+    ARCADE_PERFORMANCE_BRACKET_0_4,
+    ARCADE_PERFORMANCE_BRACKET_5_10,
+    ARCADE_PERFORMANCE_BRACKET_11_15,
+    ARCADE_PERFORMANCE_BRACKET_16_20,
+    ARCADE_PERFORMANCE_BRACKET_21_PLUS
+};
 
 #define ARCADE_EVENT_LEVEL_INCREASE             3
 
@@ -171,5 +190,34 @@
 #define LOCAL_VAR_GAME_BOARD_EVENT              gSpecialVar_0x8007
 #define LOCAL_VAR_GAME_BOARD_IMPACT             gSpecialVar_0x8008
 #define LOCAL_VAR_GAME_BOARD_SUCCESS            gSpecialVar_0x8009
+
+enum GameBoard_WindowIds
+{
+    WIN_BOARD_HELP_BAR,
+    WIN_BOARD_COUNT,
+};
+
+enum GameBoard_BackgroundIds
+{
+    BG_BOARD_HELP_BAR,
+    BG_BOARD_EVENTS,
+    BG_BOARD_BACKGROUND,
+    BG_BOARD_BACKBOARD,
+    BG_BOARD_COUNT,
+};
+
+enum ArcadeRecord_WindowIds
+{
+    WIN_RECORD_TEXT,
+    WIN_RECORD_DUMMY,
+    WIN_RECORD_COUNT,
+};
+
+enum ArcadeRecord_BackgroundIds
+{
+    BG_RECORD_TEXT,
+    BG_RECORD_BACKGROUND,
+    BG_RECORD_COUNT,
+};
 
 #endif //GUARD_CONSTANTS_ARCADE_H
