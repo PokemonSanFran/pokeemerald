@@ -8,7 +8,7 @@
 #include "battle_tower.h"
 #include "battle_transition.h"
 #include "bg.h"
-#include "characters.h"
+//#include "characters.h"
 #include "data.h"
 #include "decompress.h"
 #include "event_data.h"
