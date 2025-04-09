@@ -2265,7 +2265,7 @@ static bool32 BattleArcade_DoTrickRoom(void)
 #ifndef RHH_EXPANSION
 	return TRUE;
 #else
-	return VarSet(VAR_FIELD_EFFECT,STATUS_FIELD_TRICK_ROOM);
+	return VarSet(B_VAR_STARTING_STATUS,STARTING_STATUS_TRICK_ROOM);
 #endif
 }
 
