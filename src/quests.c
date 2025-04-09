@@ -35,6 +35,7 @@
 #include "pokemon_icon.h"
 
 #include "random.h"
+#include "complex_quests.h"
 
 #define tPageItems      data[4]
 #define tItemPcParam    data[6]
@@ -143,6 +144,8 @@ static void PrintQuestLocation(s32 questId);
 static void GenerateQuestFlavorText(s32 questId);
 static void UpdateQuestFlavorText(s32 questId);
 static void PrintQuestFlavorText(s32 questId);
+static const u8 *GetQuestDesc(s32 questId);
+static const u8 *GetQuestLocation(s32 questId);
 
 static bool8 IsQuestUnlocked(s32 questId);
 static bool8 IsQuestActiveState(s32 questId);
@@ -155,6 +158,8 @@ static void DetermineSpriteType(s32 questId);
 static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType);
 static void ResetSpriteState(void);
 static void QuestMenu_DestroySprite(u8 idx);
+static u16 GetSpriteId_Complex(s32 questId);
+static u8 GetSpriteType_Complex(s32 questId);
 
 static void GenerateStateAndPrint(u8 windowId, u32 itemId, u8 y);
 static u8 GenerateSubquestState(u8 questId);
@@ -2005,7 +2010,7 @@ void GenerateQuestLocation(s32 questId)
 {
 	if (!IsSubquestMode())
 	{
-		StringCopy(gStringVar2, sSideQuests[questId].map);
+		StringCopy(gStringVar2, GetQuestLocation(questId));
 	}
 	else
 	{
@@ -2059,13 +2064,34 @@ void GenerateQuestFlavorText(s32 questId)
 }
 void UpdateQuestFlavorText(s32 questId)
 {
-	StringCopy(gStringVar1, sSideQuests[questId].desc);
+	StringExpandPlaceholders(gStringVar1, GetQuestDesc(questId));
 }
 void PrintQuestFlavorText(s32 questId)
 {
 	QuestMenu_AddTextPrinterParameterized(1, 2, gStringVar3, 40, 19, 5, 0, 0,
 	                                      4);
 }
+
+static const u8 *GetQuestLocation(s32 questId)
+{
+    switch (questId) {
+        case QUEST_3:
+            return gTable_Quest3Maps[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+        default:
+            return sSideQuests[questId].map;
+    }
+}
+
+static const u8 *GetQuestDesc(s32 questId)
+{
+    switch (questId) {
+        case QUEST_3:
+            return gTable_Quest3Descs[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+        default:
+            return sSideQuests[questId].desc;
+    }
+}
+
 
 bool8 IsSubquestCompletedState(s32 questId)
 {
@@ -2147,8 +2173,8 @@ void DetermineSpriteType(s32 questId)
 
 	if (IsSubquestMode() == FALSE)
 	{
-		spriteId = sSideQuests[questId].sprite;
-		spriteType = sSideQuests[questId].spritetype;
+		spriteId = GetSpriteId_Complex(questId);
+		spriteType = GetSpriteType_Complex(questId);
 
 		QuestMenu_CreateSprite(spriteId, sStateDataPtr->spriteIconSlot,
 		                       spriteType);
@@ -2169,6 +2195,7 @@ void DetermineSpriteType(s32 questId)
 	QuestMenu_DestroySprite(sStateDataPtr->spriteIconSlot ^ 1);
 	sStateDataPtr->spriteIconSlot ^= 1;
 }
+
 static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType)
 {
 	u8 *ptr = &sItemMenuIconSpriteIds[10];
@@ -2242,6 +2269,30 @@ static void QuestMenu_DestroySprite(u8 idx)
 		}
 	}
 }
+
+static u16 GetSpriteId_Complex(s32 questId)
+{
+	switch (questId)
+    {
+		case QUEST_3:
+		    return Quest3Sprites[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+		default:
+		    return sSideQuests[questId].sprite;
+	} 
+}
+
+static u8 GetSpriteType_Complex(s32 questId)
+{
+	switch (questId)
+    {
+		case QUEST_3:
+		    return Quest3SpriteTypes[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+		default:
+		    return sSideQuests[questId].spritetype;
+	} 
+}
+
+
 static void GenerateStateAndPrint(u8 windowId, u32 questId,
                                   u8 y)
 {

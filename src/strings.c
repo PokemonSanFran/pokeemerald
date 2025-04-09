@@ -1825,6 +1825,7 @@ const u8 gText_Berries[] = _("BERRIES");
 const u8 gText_QuestAnnounce[] = _("The quest '{STR_VAR_1}'\nis now {STR_VAR_2}.");
 const u8 gText_QuestComplete[] =_("complete");
 const u8 gText_QuestActive[] =_("active");
+const u8 gText_QuestUpdate[] = _("The quest '{STR_VAR_1}'\nhas been updated!");
 
 //names
 const u8 gText_SideQuestName_1[] = _("Side Quest 1");
