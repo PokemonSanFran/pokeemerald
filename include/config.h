@@ -6,7 +6,7 @@
 // still has them in the ROM. This is because the developers forgot
 // to define NDEBUG before release, however this has been changed as
 // Ruby's actual debug build does not use the AGBPrint features.
-#define NDEBUG
+//#define NDEBUG
 
 // To enable printf debugging, comment out "#define NDEBUG". This allows
 // the various AGBPrint functions to be used. (See include/gba/isagbprint.h).
@@ -55,11 +55,8 @@
 #endif
 #endif
 
-#define BATTLE_ARCADE // Uncomment this line to enable the battle_arcade functionality.
-#ifdef BATTLE_ARCADE
 #define VAR_ARCADE_HEAL_COUNT           VAR_UNUSED_0x40F8 // This var keeps track of how many heals the player has left during a challenge. It must be set for the game to compile.
 #define VAR_ARCADE_TYPE                 VAR_UNUSED_0x40F7 // This var keeps track of which type the player has chosen for their challenge.
 #define FLAG_ARCADE_FIRST_TYPE_WIN      FLAG_UNUSED_0x020 // During a challenge, this flag is set when the player masters a type for the first time.
 
-#endif
 #endif // GUARD_CONFIG_H

@@ -535,8 +535,7 @@ gSpecials::
 	def_special RemoveRecordsWindow
 	def_special CloseDeptStoreElevatorWindow
 	def_special TrySetBattleTowerLinkType
-    #ifdef BATTLE_ARCADE
+// Start battle_arcade
     def_special CallBattleArcadeFunc
-    def_special Arcade_CloseWinsWindow
-    def_special Arcade_ShowWinsWindow
-    #endif
+    def_special DoArcadeTrainerBattle
+// End battle_arcade

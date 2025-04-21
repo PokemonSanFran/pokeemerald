@@ -16,6 +16,7 @@
 #include "task.h"
 #include "trig.h"
 #include "gpu_regs.h"
+#include "field_camera.h" // battle_arcade
 
 #define DROUGHT_COLOR_INDEX(color) ((((color) >> 1) & 0xF) | (((color) >> 2) & 0xF0) | (((color) >> 3) & 0xF00))
 
@@ -219,6 +220,7 @@ static void Task_WeatherInit(u8 taskId)
     // When the screen fades in, this is set to TRUE.
     if (gWeatherPtr->readyForInit)
     {
+        UpdateCameraPanning(); // battle_arcade
         sWeatherFuncs[gWeatherPtr->currWeather].initAll();
         gTasks[taskId].func = Task_WeatherMain;
     }
@@ -277,7 +279,6 @@ static void BuildColorMaps(void)
     u16 brightnessDelta;
     u16 colorMapIndex;
     u16 baseBrightness;
-    u32 remainingBrightness;
     s16 diff;
 
     sPaletteColorMapTypes = sBasePaletteColorMapTypes;
@@ -305,11 +306,7 @@ static void BuildColorMaps(void)
             }
 
             baseBrightness = curBrightness;
-            remainingBrightness = 0x1f00 - curBrightness;
-            if ((0x1f00 - curBrightness) < 0)
-                remainingBrightness += 0xf;
-
-            brightnessDelta = remainingBrightness / (NUM_WEATHER_COLOR_MAPS - 3);
+            brightnessDelta = (0x1f00 - curBrightness) / (NUM_WEATHER_COLOR_MAPS - 3);
             if (colorVal < 12)
             {
                 // For shadows (color values < 12), the remaining color mappings are

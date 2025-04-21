@@ -1,33 +1,54 @@
-#ifdef BATTLE_ARCADE
-const PLAYER = OBJ_EVENT_ID_PLAYER
-
 const CHALLENGE_STATUS_UNKNOWN = 0
 const CHALLENGE_STATUS_END = 255
 
-const VAR_FACILITY_CHALLENGE_STATUS = VAR_TEMP_0
 const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
 
 mapscripts BattleArcade_Lobby_MapScripts
 {
-    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
-    [
-        VAR_NEED_TO_FACE_NORTH, 0:BattleArcade_Lobby_EventScript_PlayerFaceNorth
-    ]
-
     MAP_SCRIPT_ON_FRAME_TABLE
     [
-        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Entrance_EventScript_GetChallengeStatus
-        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: BattleArcade_Entrance_EventScript_QuitWithoutSaving
-        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: BattleArcade_Entrance_EventScript_ResumeChallenge
-        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: BattleArcade_Entrance_EventScript_JudgeChallenge
-        VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: BattleArcade_Entrance_EventScript_JudgeChallenge
+        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Registration_EventScript_GetChallengeStatus
+        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING:  BattleArcade_Registration_EventScript_QuitWithoutSaving
+        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED:  BattleArcade_Registration_EventScript_ResumeChallenge
+        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_WON:     BattleArcade_Registration_EventScript_WonChallenge
+        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST:    BattleArcade_Registration_EventScript_LostChallenge
     ]
+
+	MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+	[
+		VAR_NEED_TO_FACE_NORTH, 0 :BattleArcade_Lobby_EventScript_PlayerFaceNorth
+	]
 }
 
 script BattleArcade_Lobby_EventScript_PlayerFaceNorth
 {
     setvar(VAR_NEED_TO_FACE_NORTH, 1)
-    turnobject(PLAYER, DIR_NORTH)
+    turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
     end
 }
-#endif
+
+script BattleArcade_Lobby_EventScript_WarpToHallway
+{
+    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 3)
+}
+
+script BattleArcade_Lobby_EventScript_WalkToElevator
+{
+    closemessage
+
+    applymovement(VAR_LAST_TALKED,BattleArcade_Lobby_Movement_AttendantEnterElevator)
+    applymovement(OBJ_EVENT_ID_PLAYER, BattleArcade_Lobby_Movement_PlayerEnterElevator)
+    waitmovement(OBJ_EVENT_ID_PLAYER)
+}
+
+movement BattleArcade_Lobby_Movement_AttendantEnterElevator
+{
+    walk_up * 2
+    set_invisible
+}
+
+movement BattleArcade_Lobby_Movement_PlayerEnterElevator
+{
+    walk_up * 3
+    set_invisible
+}

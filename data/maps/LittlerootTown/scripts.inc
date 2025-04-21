@@ -393,6 +393,7 @@ LittlerootTown_EventScript_GoSaveBirchTrigger::
 	end
 
 LittlerootTown_EventScript_TownSign::
+    warp MAP_BATTLE_ARCADE_LOBBY,5,6
 	msgbox LittlerootTown_Text_TownSign, MSGBOX_SIGN
 	end
 

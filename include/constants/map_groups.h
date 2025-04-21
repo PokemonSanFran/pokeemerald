@@ -556,6 +556,7 @@
 #define MAP_TRAINER_HILL_ELEVATOR                           (88 | (26 << 8))
 #define MAP_BATTLE_ARCADE_LOBBY                             (89 | (26 << 8))
 #define MAP_BATTLE_ARCADE_BATTLE_ROOM                       (90 | (26 << 8))
+#define MAP_BATTLE_ARCADE_HALLWAY                           (91 | (26 << 8))
 
 // gMapGroup_IndoorRoute104Prototype
 #define MAP_ROUTE104_PROTOTYPE                          (0 | (27 << 8))
@@ -576,8 +577,8 @@
 #define MAP_ROUTE110_TRICK_HOUSE_PUZZLE6                 (8 | (29 << 8))
 #define MAP_ROUTE110_TRICK_HOUSE_PUZZLE7                 (9 | (29 << 8))
 #define MAP_ROUTE110_TRICK_HOUSE_PUZZLE8                 (10 | (29 << 8))
-#define MAP_ROUTE110_SEASIDE_CYCLING_ROAD_NORTH_ENTRANCE (11 | (29 << 8))
-#define MAP_ROUTE110_SEASIDE_CYCLING_ROAD_SOUTH_ENTRANCE (12 | (29 << 8))
+#define MAP_ROUTE110_SEASIDE_CYCLING_ROAD_SOUTH_ENTRANCE (11 | (29 << 8))
+#define MAP_ROUTE110_SEASIDE_CYCLING_ROAD_NORTH_ENTRANCE (12 | (29 << 8))
 
 // gMapGroup_IndoorRoute113
 #define MAP_ROUTE113_GLASS_WORKSHOP (0 | (30 << 8))

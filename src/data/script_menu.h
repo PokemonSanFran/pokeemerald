@@ -771,40 +771,24 @@ static const struct MenuAction MultichoiceList_TagMatchType[] =
     {gText_Exit},
 };
 
-#ifdef BATTLE_ARCADE
-static const struct MenuAction MultichoiceList_GoOnHealRecordRestRetire[] =
-{
-    {gText_GoOn},
-    {gText_Heal},
-    {gText_Record2},
-    {gText_Rest},
-    {gText_Retire},
-};
-
-static const struct MenuAction MultichoiceList_GoOnHealRestRetire[] =
-{
-    {gText_GoOn},
-    {gText_Heal},
-    {gText_Rest},
-    {gText_Retire},
-};
-
-static const struct MenuAction MultichoiceList_BattleArcadeRules[] =
-{
-    {gText_Overview},
-    {gText_Restrictions},
-    {gText_Rewards},
-    {gText_Exit},
-};
-
-static const struct MenuAction MultichoiceList_ChallengeTypeInfo[] =
+// Start battle_arcade
+static const struct MenuAction MultichoiceList_ChallengeTypesInfo[] =
 {
     {gText_SingleBattle},
     {gText_DoubleBattle},
     {gText_Info2},
     {gText_Cancel2},
 };
-#endif
+
+static const struct MenuAction MultichoiceList_BattleArcadeRecords[] =
+{
+    {gText_Single2},
+    {gText_Double2},
+    {gText_Multi},
+    {gText_Cancel2},
+};
+// End battle_arcade
+
 static const struct MenuAction MultichoiceList_Exit[] =
 {
     {gText_Exit},
@@ -932,12 +916,10 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_SLATEPORT_TENT_RULES]       = MULTICHOICE(MultichoiceList_SlateportTentRules),
     [MULTI_FALLARBOR_TENT_RULES]       = MULTICHOICE(MultichoiceList_FallarborTentRules),
     [MULTI_TAG_MATCH_TYPE]             = MULTICHOICE(MultichoiceList_TagMatchType),
-#ifdef BATTLE_ARCADE
-    [MULTI_GO_ON_HEAL_RECORD_REST_RETIRE] = MULTICHOICE(MultichoiceList_GoOnHealRecordRestRetire),
-    [MULTI_GO_ON_HEAL_REST_RETIRE] = MULTICHOICE(MultichoiceList_GoOnHealRestRetire),
-    [MULTI_BATTLE_ARCADE_RULES] = MULTICHOICE(MultichoiceList_BattleArcadeRules),
-    [MULTI_CHALLENGE_TYPE_INFO] = MULTICHOICE(MultichoiceList_ChallengeTypeInfo),
-#endif
+// Start battle_arcade
+    [MULTI_CHALLENGE_TYPES_INFO]       = MULTICHOICE(MultichoiceList_ChallengeTypesInfo),
+	[MULTI_BATTLE_ARCADE_RECORDS]       = MULTICHOICE(MultichoiceList_BattleArcadeRecords),
+// End battle_arcade
 };
 
 const u8 *const gStdStrings[] =

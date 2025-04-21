@@ -1,0 +1,41 @@
+const ATTENDANT = 1
+const LOCAL_VAR_WALKED_HALLWAY = VAR_TEMP_0
+
+mapscripts BattleArcade_Hallway_MapScripts
+{
+    MAP_SCRIPT_ON_LOAD
+    {
+        setmetatile(8, 0, METATILE_BattleFrontier_CorridorOpenDoor_Top, FALSE)
+        setmetatile(8, 1, METATILE_BattleFrontier_CorridorOpenDoor_Bottom, FALSE)
+    }
+    MAP_SCRIPT_ON_FRAME_TABLE
+    [
+        LOCAL_VAR_WALKED_HALLWAY, FALSE: BattleArcade_Hallway_EventScript_EnterCorridor
+    ]
+}
+
+script BattleArcade_Hallway_EventScript_EnterCorridor
+{
+    setvar(LOCAL_VAR_WALKED_HALLWAY, TRUE)
+   applymovement(ATTENDANT,BattleArcade_Hallway_Movement_WalkToRoom)
+   applymovement(OBJ_EVENT_ID_PLAYER,BattleArcade_Hallway_Movement_Player_WalkToRoom)
+    waitmovement(OBJ_EVENT_ID_PLAYER)
+	setvar(LOCAL_VAR_WALKED_HALLWAY, FALSE)
+	warp(MAP_BATTLE_ARCADE_BATTLE_ROOM, 7, 17)
+    waitstate
+    end
+}
+
+movement BattleArcade_Hallway_Movement_WalkToRoom
+{
+    walk_right * 5
+    walk_up
+    set_invisible
+}
+
+movement BattleArcade_Hallway_Movement_Player_WalkToRoom
+{
+    walk_right * 6
+    walk_up
+    set_invisible
+}

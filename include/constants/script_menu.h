@@ -122,13 +122,16 @@
 #define MULTI_SLATEPORT_TENT_RULES         111
 #define MULTI_FALLARBOR_TENT_RULES         112
 #define MULTI_TAG_MATCH_TYPE               113
+// Start battle_arcade
+#define MULTI_CHALLENGE_TYPES_INFO         114
+#define MULTI_BATTLE_ARCADE_RECORDS        115
+// End battle_arcade
 
-#ifdef BATTLE_ARCADE
 #define MULTI_GO_ON_HEAL_RECORD_REST_RETIRE 114
 #define MULTI_GO_ON_HEAL_REST_RETIRE 115
 #define MULTI_BATTLE_ARCADE_RULES 116
 #define MULTI_CHALLENGE_TYPE_INFO 117
-#endif
+
 // Lilycove SS Tidal Multichoice Selections
 #define SSTIDAL_SELECTION_SLATEPORT        0
 #define SSTIDAL_SELECTION_BATTLE_FRONTIER  1

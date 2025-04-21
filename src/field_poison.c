@@ -17,7 +17,7 @@
 #include "constants/field_poison.h"
 #include "constants/party_menu.h"
 
-static bool32 IsMonValidSpecies(struct Pokemon *pokemon)
+bool32 IsMonValidSpecies(struct Pokemon *pokemon)
 {
     u16 species = GetMonData(pokemon, MON_DATA_SPECIES_OR_EGG);
     if (species == SPECIES_NONE || species == SPECIES_EGG)
@@ -89,7 +89,11 @@ static void Task_TryFieldPoisonWhiteOut(u8 taskId)
         if (AllMonsFainted())
         {
             // Battle facilities have their own white out script to handle the challenge loss
+#ifdef BUGFIX
+            if (InBattlePyramid() || InBattlePike() || InTrainerHillChallenge())
+#else
             if (InBattlePyramid() | InBattlePike() || InTrainerHillChallenge())
+#endif
                 gSpecialVar_Result = FLDPSN_FRONTIER_WHITEOUT;
             else
                 gSpecialVar_Result = FLDPSN_WHITEOUT;

@@ -36,9 +36,7 @@
 #include "constants/trainers.h"
 #include "constants/event_objects.h"
 #include "constants/moves.h"
-#ifdef BATTLE_ARCADE
-#include "battle_arcade.h"
-#endif
+#include "battle_arcade.h" // battle_arcade
 
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_MaxieTrainer[];
 extern const u8 MossdeepCity_SpaceCenter_2F_EventScript_TabithaTrainer[];
@@ -48,7 +46,7 @@ EWRAM_DATA const struct BattleFrontierTrainer *gFacilityTrainers = NULL;
 EWRAM_DATA const struct FacilityMon *gFacilityTrainerMons = NULL;
 
 // IWRAM common
-u16 gFrontierTempParty[MAX_FRONTIER_PARTY_SIZE];
+COMMON_DATA u16 gFrontierTempParty[MAX_FRONTIER_PARTY_SIZE] = {0};
 
 // This file's functions.
 static void InitTowerChallenge(void);
@@ -78,7 +76,7 @@ static void FillTentTrainerParty_(u16 trainerId, u8 firstMonId, u8 monCount);
 static void FillFactoryFrontierTrainerParty(u16 trainerId, u8 firstMonId);
 static void FillFactoryTentTrainerParty(u16 trainerId, u8 firstMonId);
 static u8 GetFrontierTrainerFixedIvs(u16 trainerId);
-static void FillPartnerParty(u16 trainerId);
+//static void FillPartnerParty(u16 trainerId); // battle_arcade
 static void SetEReaderTrainerChecksum(struct BattleTowerEReaderTrainer *ereaderTrainer);
 static u8 SetTentPtrsGetLevel(void);
 
@@ -1971,9 +1969,7 @@ static void HandleSpecialTrainerBattleEnd(void)
     case SPECIAL_BATTLE_PIKE_SINGLE:
     case SPECIAL_BATTLE_PIKE_DOUBLE:
     case SPECIAL_BATTLE_PYRAMID:
-#ifdef BATTLE_ARCADE
     case SPECIAL_BATTLE_ARCADE:
-#endif
         if (gSaveBlock2Ptr->frontier.battlesCount < 0xFFFFFF)
         {
             gSaveBlock2Ptr->frontier.battlesCount++;
@@ -2000,7 +1996,10 @@ static void HandleSpecialTrainerBattleEnd(void)
     SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
 }
 
-static void Task_StartBattleAfterTransition(u8 taskId)
+// Start battle_arcade
+//static void Task_StartBattleAfterTransition(u8 taskId)
+void Task_StartBattleAfterTransition(u8 taskId)
+// End battle_arcade
 {
     if (IsBattleTransitionDone() == TRUE)
     {
@@ -2017,7 +2016,6 @@ void DoSpecialTrainerBattle(void)
     gBattleScripting.specialTrainerBattleType = gSpecialVar_0x8004;
     switch (gSpecialVar_0x8004)
     {
-#ifdef BATTLE_ARCADE
     case SPECIAL_BATTLE_ARCADE:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
@@ -2025,7 +2023,6 @@ void DoSpecialTrainerBattle(void)
         PlayMapChosenOrBattleBGM(0);
         BattleTransition_StartOnField(GetSpecialBattleTransition(B_TRANSITION_GROUP_B_PIKE));
         break;
-#endif
     case SPECIAL_BATTLE_TOWER:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_BATTLE_TOWER;
         switch (VarGet(VAR_FRONTIER_BATTLE_MODE))
@@ -2971,7 +2968,10 @@ void TryHideBattleTowerReporter(void)
 
 #define STEVEN_OTID 61226
 
-static void FillPartnerParty(u16 trainerId)
+// Start battle_arcade
+//static void FillPartnerParty(u16 trainerId)
+void FillPartnerParty(u16 trainerId)
+// End battle_arcade
 {
     s32 i, j;
     u32 ivs, level;

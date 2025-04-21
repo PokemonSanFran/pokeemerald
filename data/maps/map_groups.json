@@ -585,7 +585,8 @@
     "NavelRock_Bottom",
     "TrainerHill_Elevator",
     "BattleArcade_Lobby",
-    "BattleArcade_BattleRoom"
+    "BattleArcade_BattleRoom",
+    "BattleArcade_Hallway"
   ],
   "gMapGroup_IndoorRoute104Prototype": [
     "Route104_Prototype",
@@ -606,8 +607,8 @@
     "Route110_TrickHousePuzzle6",
     "Route110_TrickHousePuzzle7",
     "Route110_TrickHousePuzzle8",
-    "Route110_SeasideCyclingRoadNorthEntrance",
-    "Route110_SeasideCyclingRoadSouthEntrance"
+    "Route110_SeasideCyclingRoadSouthEntrance",
+    "Route110_SeasideCyclingRoadNorthEntrance"
   ],
   "gMapGroup_IndoorRoute113": [
     "Route113_GlassWorkshop"

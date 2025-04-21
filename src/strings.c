@@ -1819,12 +1819,4 @@ const u8 gText_Answer[] = _("ANSWER");
 const u8 gText_PokeBalls[] = _("POKé BALLS");
 const u8 gText_Berry[] = _("BERRY");
 const u8 gText_Berries[] = _("BERRIES");
-#ifdef BATTLE_ARCADE
-const u8 gText_Heal[] = _("HEAL");
-const u8 gText_Overview[] = _("OVERVIEW");
-const u8 gText_Restrictions[] = _("RESTRICTIONS");
-const u8 gText_Rewards[] = _("REWARDS");
-const u8 gText_BattleArcadeResults[] = _("{PLAYER}'s Battle Arcade Results");
-const u8 gText_BestStreak[] = _("Best Streak: {STR_VAR_2} - {STR_VAR_1}");
-const u8 gText_TypesMastered[] = _("Types Mastered: {STR_VAR_1}");
-#endif
+

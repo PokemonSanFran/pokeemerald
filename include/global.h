@@ -15,6 +15,7 @@
 #include "constants/pokemon.h"
 #include "constants/easy_chat.h"
 #include "constants/trainer_hill.h"
+#include "constants/battle_frontier.h" // battle_arcade
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
@@ -89,7 +90,7 @@
 // There are cases where GF does a&(n-1) where we would really like to have a%n, because
 // if n is changed to a value that isn't a power of 2 then a&(n-1) is unlikely to work as
 // intended, and a%n for powers of 2 isn't always optimized to use &.
-#define MOD(a, n)(((n) & ((n)-1)) ? ((a) % (n)) : ((a) & ((n)-1)))
+#define MOD(a, n) (((n) & ((n)-1)) ? ((a) % (n)) : ((a) & ((n)-1)))
 
 // Extracts the upper 16 bits of a 32-bit number
 #define HIHALF(n) (((n) & 0xFFFF0000) >> 16)
@@ -130,7 +131,7 @@
     f;                       \
 })
 
-#define DIV_ROUND_UP(val, roundBy)(((val) / (roundBy)) + (((val) % (roundBy)) ? 1 : 0))
+#define DIV_ROUND_UP(val, roundBy) (((val) / (roundBy)) + (((val) % (roundBy)) ? 1 : 0))
 
 #define ROUND_BITS_TO_BYTES(numBits) DIV_ROUND_UP(numBits, 8)
 
@@ -364,15 +365,22 @@ struct BattleDomeTrainer
     u16 forfeited:3;
 };
 
-#ifdef BATTLE_ARCADE
 struct BattleArcade
 {
     u8 winStreak;
 }__attribute__((packed));
-#endif
 
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 #define BATTLE_TOWER_RECORD_COUNT 5
+
+// Start battle_arcade
+struct CursorData
+{
+	u8 speed:3;
+	u8 position:5;
+	bool8 isRandom;
+}__attribute__((packed));
+// End battle_arcade
 
 struct BattleFrontier
 {
@@ -457,9 +465,11 @@ struct BattleFrontier
     /*0xEFA*/ u8 unused_EFA;
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
-#ifdef BATTLE_ARCADE
-              struct BattleArcade battleArcade[NUMBER_OF_MON_TYPES][FRONTIER_LVL_MODE_COUNT];
-#endif
+// Start battle_arcade
+    u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
+    u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
+	struct CursorData gameCursor;
+// End battle_arcade
 };
 struct ApprenticeQuestion
 {
@@ -658,8 +668,8 @@ struct MauvilleManBard
 {
     /*0x00*/ u8 id;
     /*0x01*/ //u8 padding1;
-    /*0x02*/ u16 songLyrics[BARD_SONG_LENGTH];
-    /*0x0E*/ u16 temporaryLyrics[BARD_SONG_LENGTH];
+    /*0x02*/ u16 songLyrics[NUM_BARD_SONG_WORDS];
+    /*0x0E*/ u16 newSongLyrics[NUM_BARD_SONG_WORDS];
     /*0x1A*/ u8 playerName[PLAYER_NAME_LENGTH + 1];
     /*0x22*/ u8 filler_2DB6[0x3];
     /*0x25*/ u8 playerTrainerId[TRAINER_ID_LENGTH];

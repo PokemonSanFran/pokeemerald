@@ -12,7 +12,7 @@
 #include "constants/battle_setup.h"
 #include "constants/battle_tent.h"
 #include "constants/battle_tower.h"
-#include "constants/battle_arcade.h" 
+#include "constants/battle_arcade.h" // battle_arcade
 #include "constants/berry.h"
 #include "constants/cable_club.h"
 #include "constants/coins.h"
@@ -61,6 +61,7 @@
 
 	.section script_data, "aw", %progbits
 
+	.set ALLOCATE_SCRIPT_CMD_TABLE, 1
 	.include "data/script_cmd_table.inc"
 
 gSpecialVars::
@@ -564,8 +565,8 @@ gStdScripts_End::
 	.include "data/maps/Route110_TrickHousePuzzle6/scripts.inc"
 	.include "data/maps/Route110_TrickHousePuzzle7/scripts.inc"
 	.include "data/maps/Route110_TrickHousePuzzle8/scripts.inc"
-	.include "data/maps/Route110_SeasideCyclingRoadNorthEntrance/scripts.inc"
 	.include "data/maps/Route110_SeasideCyclingRoadSouthEntrance/scripts.inc"
+	.include "data/maps/Route110_SeasideCyclingRoadNorthEntrance/scripts.inc"
 	.include "data/maps/Route113_GlassWorkshop/scripts.inc"
 	.include "data/maps/Route123_BerryMastersHouse/scripts.inc"
 	.include "data/maps/Route119_WeatherInstitute_1F/scripts.inc"
@@ -1057,7 +1058,11 @@ Common_EventScript_LegendaryFlewAway::
 	.include "data/text/frontier_brain.inc"
 	.include "data/text/save.inc"
 	.include "data/text/birch_speech.inc"
+// Start battle_arcade
     .include "data/scripts/battle_arcade_registration.inc"
     .include "data/scripts/battle_arcade_battle.inc"
 	.include "data/maps/BattleArcade_Lobby/scripts.inc"
 	.include "data/maps/BattleArcade_BattleRoom/scripts.inc"
+	.include "data/maps/BattleArcade_Hallway/scripts.inc"
+// End battle_arcade
+

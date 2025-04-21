@@ -770,7 +770,7 @@ void Snow_InitVars(void)
     gWeatherPtr->weatherGfxLoaded = FALSE;
     gWeatherPtr->targetColorMapIndex = 3;
     gWeatherPtr->colorMapStepDelay = 20;
-    gWeatherPtr->targetSnowflakeSpriteCount = 16;
+    gWeatherPtr->targetSnowflakeSpriteCount = NUM_SNOWFLAKE_SPRITES;
     gWeatherPtr->snowflakeVisibleCounter = 0;
 }
 
@@ -940,8 +940,10 @@ static void InitSnowflakeSpriteMovement(struct Sprite *sprite)
 
 static void WaitSnowflakeSprite(struct Sprite *sprite)
 {
-    // Timer is never incremented
-    if (gWeatherPtr->snowflakeTimer > 18)
+// Start battle_arcade
+    //if (gWeatherPtr->snowflakeTimer > 18)
+    if (++gWeatherPtr->snowflakeTimer > 18)
+// End battle_arcade
     {
         sprite->invisible = FALSE;
         sprite->callback = UpdateSnowflakeSprite;
