@@ -110,7 +110,7 @@ static void MainCB2_EndIntro(void);
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
-extern const struct SpriteTemplate gAncientPowerRockSpriteTemplate[];
+extern const struct SpriteTemplate gAncientPowerRockSpriteTemplate;
 
 enum {
     COPYRIGHT_INITIALIZE,
@@ -178,8 +178,8 @@ static EWRAM_DATA u16 sIntroCharacterGender = 0;
 static EWRAM_DATA u16 UNUSED sUnusedVar = 0;
 static EWRAM_DATA u16 sFlygonYOffset = 0;
 
-u32 gIntroFrameCounter;
-struct GcmbStruct gMultibootProgramStruct;
+COMMON_DATA u32 gIntroFrameCounter = 0;
+COMMON_DATA struct GcmbStruct gMultibootProgramStruct = {0};
 
 static const u16 sIntroDrops_Pal[]            = INCBIN_U16("graphics/intro/scene_1/drops.gbapal");
 static const u16 sIntroLogo_Pal[]             = INCBIN_U16("graphics/intro/scene_1/logo.gbapal");
@@ -1993,7 +1993,7 @@ static void CreateGroudonRockSprites(u8 taskId)
 
     for (i = 0; i < (int)ARRAY_COUNT(sGroudonRockData); i++)
     {
-        spriteId = CreateSprite(gAncientPowerRockSpriteTemplate, sGroudonRockData[i][0], DISPLAY_HEIGHT, i);
+        spriteId = CreateSprite(&gAncientPowerRockSpriteTemplate, sGroudonRockData[i][0], DISPLAY_HEIGHT, i);
         gSprites[spriteId].callback = SpriteCB_GroudonRocks;
         gSprites[spriteId].oam.priority = 0;
         gSprites[spriteId].sRockId = i;

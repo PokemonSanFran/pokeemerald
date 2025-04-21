@@ -1769,7 +1769,9 @@ static void Cmd_attackanimation(void)
             gActiveBattler = gBattlerAttacker;
 
             if (gBattleMons[gBattlerTarget].status2 & STATUS2_SUBSTITUTE)
+            {
                 multihit = gMultiHitCounter;
+            }
             else if (gMultiHitCounter != 0 && gMultiHitCounter != 1)
             {
                 if (gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage)
@@ -1778,7 +1780,9 @@ static void Cmd_attackanimation(void)
                     multihit = gMultiHitCounter;
             }
             else
+            {
                 multihit = gMultiHitCounter;
+            }
 
             BtlController_EmitMoveAnimation(BUFFER_A, gCurrentMove, gBattleScripting.animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBattlerAttacker].friendship, &gDisableStructs[gBattlerAttacker], multihit);
             gBattleScripting.animTurn++;
@@ -2276,7 +2280,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 {}
             }
             else
+            {
                 gActiveBattler = gBattlersCount;
+            }
 
             if (gBattleMons[gEffectBattler].status1)
                 break;
@@ -2409,7 +2415,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
                     RESET_RETURN
                 }
                 else
+                {
                     break;
+                }
             }
             if (gBattleMons[gEffectBattler].status1)
                 break;
@@ -3111,7 +3119,9 @@ static void Cmd_jumpifability(void)
             gBattleScripting.battlerWithAbility = battlerId - 1;
         }
         else
+        {
             gBattlescriptCurrInstr += 7;
+        }
     }
     else if (gBattlescriptCurrInstr[1] == BS_NOT_ATTACKER_SIDE)
     {
@@ -3124,7 +3134,9 @@ static void Cmd_jumpifability(void)
             gBattleScripting.battlerWithAbility = battlerId - 1;
         }
         else
+        {
             gBattlescriptCurrInstr += 7;
+        }
     }
     else
     {
@@ -3137,7 +3149,9 @@ static void Cmd_jumpifability(void)
             gBattleScripting.battlerWithAbility = battlerId;
         }
         else
+        {
             gBattlescriptCurrInstr += 7;
+        }
     }
 }
 
@@ -3387,13 +3401,10 @@ static void Cmd_getexp(void)
                     {
                         if (gBattlerPartyIndexes[2] == gBattleStruct->expGetterMonId && !(gAbsentBattlerFlags & gBitTable[2]))
                             gBattleStruct->expGetterBattlerId = 2;
+                        else if (!(gAbsentBattlerFlags & gBitTable[0]))
+                            gBattleStruct->expGetterBattlerId = 0;
                         else
-                        {
-                            if (!(gAbsentBattlerFlags & gBitTable[0]))
-                                gBattleStruct->expGetterBattlerId = 0;
-                            else
-                                gBattleStruct->expGetterBattlerId = 2;
-                        }
+                            gBattleStruct->expGetterBattlerId = 2;
                     }
                     else
                     {
@@ -7178,7 +7189,7 @@ static void Cmd_forcerandomswitch(void)
     s32 battler2PartyId = 0;
 
     s32 firstMonId;
-    s32 lastMonId = 0; // + 1
+    s32 lastMonId = 0;
     s32 monsCount;
     struct Pokemon *party = NULL;
     s32 validMons = 0;
@@ -7198,12 +7209,20 @@ static void Cmd_forcerandomswitch(void)
             if ((gBattlerTarget & BIT_FLANK) != B_FLANK_LEFT)
             {
                 firstMonId = PARTY_SIZE / 2;
+                #ifdef BUGFIX
+                lastMonId = PARTY_SIZE - 1;
+                #else
                 lastMonId = PARTY_SIZE;
+                #endif
             }
             else
             {
                 firstMonId = 0;
+                #ifdef BUGFIX
+                lastMonId = PARTY_SIZE / 2 - 1;
+                #else
                 lastMonId = PARTY_SIZE / 2;
+                #endif
             }
             monsCount = PARTY_SIZE / 2;
             minNeeded = 1;
@@ -7216,12 +7235,20 @@ static void Cmd_forcerandomswitch(void)
             if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(gBattlerTarget)) == B_FLANK_RIGHT)
             {
                 firstMonId = PARTY_SIZE / 2;
+                #ifdef BUGFIX
+                lastMonId = PARTY_SIZE - 1;
+                #else
                 lastMonId = PARTY_SIZE;
+                #endif
             }
             else
             {
                 firstMonId = 0;
+                #ifdef BUGFIX
+                lastMonId = PARTY_SIZE / 2 - 1;
+                #else
                 lastMonId = PARTY_SIZE / 2;
+                #endif
             }
             monsCount = PARTY_SIZE / 2;
             minNeeded = 1;
@@ -7233,7 +7260,11 @@ static void Cmd_forcerandomswitch(void)
             if (GetBattlerSide(gBattlerTarget) == B_SIDE_PLAYER)
             {
                 firstMonId = 0;
+                #ifdef BUGFIX
+                lastMonId = PARTY_SIZE - 1;
+                #else
                 lastMonId = PARTY_SIZE;
+                #endif
                 monsCount = PARTY_SIZE;
                 minNeeded = 2; // since there are two opponents, it has to be a double battle
             }
@@ -7242,12 +7273,20 @@ static void Cmd_forcerandomswitch(void)
                 if ((gBattlerTarget & BIT_FLANK) != B_FLANK_LEFT)
                 {
                     firstMonId = PARTY_SIZE / 2;
+                    #ifdef BUGFIX
+                    lastMonId = PARTY_SIZE - 1;
+                    #else
                     lastMonId = PARTY_SIZE;
+                    #endif
                 }
                 else
                 {
                     firstMonId = 0;
+                    #ifdef BUGFIX
+                    lastMonId = PARTY_SIZE / 2 - 1;
+                    #else
                     lastMonId = PARTY_SIZE / 2;
+                    #endif
                 }
                 monsCount = PARTY_SIZE / 2;
                 minNeeded = 1;
@@ -7258,7 +7297,11 @@ static void Cmd_forcerandomswitch(void)
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         {
             firstMonId = 0;
+            #ifdef BUGFIX
+            lastMonId = PARTY_SIZE - 1;
+            #else
             lastMonId = PARTY_SIZE;
+            #endif
             monsCount = PARTY_SIZE;
             minNeeded = 2;
             battler2PartyId = gBattlerPartyIndexes[gBattlerTarget];
@@ -7267,7 +7310,11 @@ static void Cmd_forcerandomswitch(void)
         else
         {
             firstMonId = 0;
+            #ifdef BUGFIX
+            lastMonId = PARTY_SIZE - 1;
+            #else
             lastMonId = PARTY_SIZE;
+            #endif
             monsCount = PARTY_SIZE;
             minNeeded = 1;
             battler2PartyId = gBattlerPartyIndexes[gBattlerTarget]; // there is only one Pokémon out in single battles
@@ -7290,6 +7337,38 @@ static void Cmd_forcerandomswitch(void)
         }
         else
         {
+            #ifdef BUGFIX
+            if (TryDoForceSwitchOut())
+            {
+                do
+                {
+                    do
+                    {
+                        i = Random() % monsCount;
+                        i += firstMonId;
+                    }
+                    while (i == battler2PartyId || i == battler1PartyId);
+                } while (GetMonData(&party[i], MON_DATA_SPECIES) == SPECIES_NONE
+                       || GetMonData(&party[i], MON_DATA_IS_EGG) == TRUE
+                       || GetMonData(&party[i], MON_DATA_HP) == 0); //should be one while loop, but that doesn't match.
+                *(gBattleStruct->monToSwitchIntoId + gBattlerTarget) = i;
+
+                if (!IsMultiBattle())
+                    SwitchPartyOrder(gBattlerTarget);
+
+                if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
+                    || (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
+                    || (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK && gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
+                    || (gBattleTypeFlags & BATTLE_TYPE_RECORDED_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI))
+                {
+                    SwitchPartyOrderLinkMulti(gBattlerTarget, i, 0);
+                    SwitchPartyOrderLinkMulti(BATTLE_PARTNER(gBattlerTarget), i, 1);
+                }
+
+                if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+                    SwitchPartyOrderInGameMulti(gBattlerTarget, i);
+            }
+            #else
             if (TryDoForceSwitchOut())
             {
                 do
@@ -7320,6 +7399,7 @@ static void Cmd_forcerandomswitch(void)
 
             if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
                 SwitchPartyOrderInGameMulti(gBattlerTarget, i);
+            #endif
         }
     }
     else
@@ -8558,11 +8638,17 @@ static void Cmd_presentdamagecalculation(void)
     s32 rand = Random() & 0xFF;
 
     if (rand < 102)
+    {
         gDynamicBasePower = 40;
+    }
     else if (rand < 178)
+    {
         gDynamicBasePower = 80;
+    }
     else if (rand < 204)
+    {
         gDynamicBasePower = 120;
+    }
     else
     {
         gBattleMoveDamage = gBattleMons[gBattlerTarget].maxHP / 4;
@@ -8570,10 +8656,15 @@ static void Cmd_presentdamagecalculation(void)
             gBattleMoveDamage = 1;
         gBattleMoveDamage *= -1;
     }
+
     if (rand < 204)
+    {
         gBattlescriptCurrInstr = BattleScript_HitFromCritCalc;
+    }
     else if (gBattleMons[gBattlerTarget].maxHP == gBattleMons[gBattlerTarget].hp)
+    {
         gBattlescriptCurrInstr = BattleScript_AlreadyAtFullHp;
+    }
     else
     {
         gMoveResultFlags &= ~MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -8910,6 +9001,7 @@ static void Cmd_trydobeatup(void)
                 && !GetMonData(&party[gBattleCommunication[0]], MON_DATA_STATUS))
                 break;
         }
+
         if (gBattleCommunication[0] < PARTY_SIZE)
         {
             PREPARE_MON_NICK_WITH_PREFIX_BUFFER(gBattleTextBuff1, gBattlerAttacker, gBattleCommunication[0])
@@ -8927,9 +9019,13 @@ static void Cmd_trydobeatup(void)
             gBattleCommunication[0]++;
         }
         else if (beforeLoop != 0)
+        {
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
         else
+        {
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 5);
+        }
     }
 }
 
@@ -9907,7 +10003,9 @@ static void Cmd_handleballthrow(void)
             }
         }
         else
+        {
             ballMultiplier = sBallCatchBonuses[gLastUsedItem - ITEM_ULTRA_BALL];
+        }
 
         odds = (catchRate * ballMultiplier / 10)
             * (gBattleMons[gBattlerTarget].maxHP * 3 - gBattleMons[gBattlerTarget].hp * 2)

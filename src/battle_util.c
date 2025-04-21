@@ -1336,9 +1336,13 @@ u8 DoFieldEndTurnEffects(void)
                         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_RAIN_STOPPED;
                     }
                     else if (gBattleWeather & B_WEATHER_RAIN_DOWNPOUR)
+                    {
                         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DOWNPOUR_CONTINUES;
+                    }
                     else
+                    {
                         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_RAIN_CONTINUES;
+                    }
                 }
                 else if (gBattleWeather & B_WEATHER_RAIN_DOWNPOUR)
                 {
@@ -3835,7 +3839,9 @@ u8 GetMoveTarget(u16 move, u8 setTarget)
     case MOVE_TARGET_SELECTED:
         side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
         if (gSideTimers[side].followmeTimer && gBattleMons[gSideTimers[side].followmeTarget].hp)
+        {
             targetBattler = gSideTimers[side].followmeTarget;
+        }
         else
         {
             side = GetBattlerSide(gBattlerAttacker);
@@ -3864,7 +3870,9 @@ u8 GetMoveTarget(u16 move, u8 setTarget)
     case MOVE_TARGET_RANDOM:
         side = BATTLE_OPPOSITE(GetBattlerSide(gBattlerAttacker));
         if (gSideTimers[side].followmeTimer && gBattleMons[gSideTimers[side].followmeTarget].hp)
+        {
             targetBattler = gSideTimers[side].followmeTarget;
+        }
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && moveTarget & MOVE_TARGET_RANDOM)
         {
             if (GetBattlerSide(gBattlerAttacker) == B_SIDE_PLAYER)
@@ -3885,7 +3893,9 @@ u8 GetMoveTarget(u16 move, u8 setTarget)
                 targetBattler ^= BIT_FLANK;
         }
         else
+        {
             targetBattler = GetBattlerAtPosition(BATTLE_OPPOSITE(GET_BATTLER_SIDE(gBattlerAttacker)));
+        }
         break;
     case MOVE_TARGET_USER_OR_SELECTED:
     case MOVE_TARGET_USER:
