@@ -1882,7 +1882,6 @@ static u32 GenerateEvent(u32 impact)
         event = GenerateRandomBetweenBounds(impact);
     } while (!IsEventValidDuringBattleOrStreak(event,impact));
 
-
     return event;
 }
 
@@ -2304,13 +2303,24 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
     u32 boundarySpeed = (mode == ARCADE_EVENT_SPEED_UP) ? ARCADE_SPEED_LEVEL_MAX : ARCADE_SPEED_LEVEL_MIN;
 
     if (currentSpeed == boundarySpeed)
-        return TRUE;
-	else if (mode == ARCADE_EVENT_SPEED_UP)
-		currentSpeed++;
+    {
+        currentSpeed = boundarySpeed;
+    }
+    else if (mode == ARCADE_EVENT_SPEED_UP)
+    {
+        currentSpeed++;
+        if (currentSpeed > ARCADE_SPEED_LEVEL_MAX)
+            currentSpeed = ARCADE_SPEED_LEVEL_MAX;
+    }
     else
-		currentSpeed--;
+    {
+        currentSpeed--;
 
-	SetCursorSpeed(currentSpeed);
+        if (currentSpeed < ARCADE_SPEED_LEVEL_MIN)
+            currentSpeed = ARCADE_SPEED_LEVEL_MIN;
+    }
+
+    SetCursorSpeed(currentSpeed);
     return TRUE;
 }
 
