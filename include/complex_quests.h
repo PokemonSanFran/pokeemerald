@@ -57,17 +57,17 @@ enum Quest3_Enum{
 
 //Descriptions
 //Quest 3 Descriptions
-extern const u8 gText_Quest3Desc_1[];
-extern const u8 gText_Quest3Desc_2[];
-extern const u8 gText_Quest3Desc_3[];
+extern const u8 gComplexQuest_Quest3Desc_1[];
+extern const u8 gComplexQuest_Quest3Desc_2[];
+extern const u8 gComplexQuest_Quest3Desc_3[];
 
 extern const u8 *const gTable_Quest3Descs[];
 
 //Maps
 //Quest 3
-extern const u8 gText_Quest3Map_1[];
-extern const u8 gText_Quest3Map_2[];
-extern const u8 gText_Quest3Map_3[];
+extern const u8 gComplexQuest_Quest3Map_1[];
+extern const u8 gComplexQuest_Quest3Map_2[];
+extern const u8 gComplexQuest_Quest3Map_3[];
 
 extern const u8 *const gTable_Quest3Maps[];
 
@@ -80,50 +80,19 @@ extern const u8 *const gTable_Quest3Maps[];
 /////BEGIN DESCRIPTIONS/////
 
 //Hearts and Diamonds Descriptions
-const u8 gText_Quest3Desc_1[] = _("Content 1");
-const u8 gText_Quest3Desc_2[] = _("Content 2");
-const u8 gText_Quest3Desc_3[] = _("Content 3");
+const u8 gComplexQuest_Quest3Desc_1[] = _("Content 1");
+const u8 gComplexQuest_Quest3Desc_2[] = _("Content 2");
+const u8 gComplexQuest_Quest3Desc_3[] = _("Content 3");
 
 //////END DESCRIPTIONS//////
 
 //////////BEGIN MAPS////////
 
 //Heart Quest Maps
-const u8 gText_Quest3Map_1[] = _("Content 1");
-const u8 gText_Quest3Map_2[] = _("Content 2");
-const u8 gText_Quest3Map_3[] = _("Content 3");
+const u8 gComplexQuest_Quest3Map_1[] = _("Content 1");
+const u8 gComplexQuest_Quest3Map_2[] = _("Content 2");
+const u8 gComplexQuest_Quest3Map_3[] = _("Content 3");
 
 /////////END MAPS///////////
-
-////////////////////////////////////////
-///////////BEGIN QUEST ARRAYS///////////
-
-//Hearts Quest Arrays
-const u8 *const gTable_Quest3Descs[QUEST_3_TOTAL_STATES] = {
-    gText_Quest3Desc_1,
-    gText_Quest3Desc_2,
-    gText_Quest3Desc_3,
-};
-
-const u8 *const gTable_Quest3Maps[QUEST_3_TOTAL_STATES] = {
-    gText_Quest3Map_1,
-    gText_Quest3Map_2,
-    gText_Quest3Map_3,
-};
-
-static const u16 Quest3Sprites[QUEST_3_TOTAL_STATES]={
-	OBJ_EVENT_GFX_WALLY,
-	OBJ_EVENT_GFX_WALLY,
-	OBJ_EVENT_GFX_WALLY,
-};
-
-static const u8 Quest3SpriteTypes[QUEST_3_TOTAL_STATES]={
-	OBJECT,
-	OBJECT,
-	OBJECT,
-};
-
-/////////END QUEST ARRAYS/////////
-//////////////////////////////////
 
 #endif
