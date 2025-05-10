@@ -56,7 +56,7 @@ enum Quest3_Enum{
 /////////////BEGIN STRING EXTERNS/////////////
 
 //Descriptions
-//Hearts and Diamonds
+//Quest 3 Descriptions
 extern const u8 gText_Quest3Desc_1[];
 extern const u8 gText_Quest3Desc_2[];
 extern const u8 gText_Quest3Desc_3[];
@@ -64,7 +64,7 @@ extern const u8 gText_Quest3Desc_3[];
 extern const u8 *const gTable_Quest3Descs[];
 
 //Maps
-//Heart Quest
+//Quest 3
 extern const u8 gText_Quest3Map_1[];
 extern const u8 gText_Quest3Map_2[];
 extern const u8 gText_Quest3Map_3[];
