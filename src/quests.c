@@ -563,7 +563,7 @@ static const struct SubQuest sSubQuests2[QUEST_2_SUB_COUNT] =
 ////////////////////////BEGIN QUEST CUSTOMIZATION//////////////////////////////
 
 //Declaration of side quest structures. Edits to quests are made here.
-#define side_quest(n, d, dd, m, s, st, sq, ns) {.name = n, .desc = d, .donedesc = dd, .map = m, .sprite = s, .spritetype = st, .subquests = sq, .numSubquests = ns}
+#define side_quest(n, d, dd, m, s, st, sq, ns, qvar) {.name = n, .desc = d, .donedesc = dd, .map = m, .sprite = s, .spritetype = st, .subquests = sq, .numSubquests = ns, .questVariable = qvar}
 static const struct SideQuest sSideQuests[QUEST_COUNT] =
 {
 	side_quest(
@@ -574,7 +574,8 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	      OBJ_EVENT_GFX_WALLY,
 	      OBJECT,
 	      NULL,
-	      0
+	      0,
+		  0
 	),
 	side_quest(
 	      gText_SideQuestName_2,
@@ -584,7 +585,8 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	      OBJ_EVENT_GFX_WALLY,
 	      OBJECT,
 	      sSubQuests1,
-	      QUEST_1_SUB_COUNT
+	      QUEST_1_SUB_COUNT,
+		  0
 	),
 	side_quest(
 	      gText_SideQuestName_3,
@@ -594,277 +596,305 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	      OBJ_EVENT_GFX_WALLY,
 	      OBJECT,
 	      sSubQuests2,
-	      QUEST_2_SUB_COUNT
+	      QUEST_2_SUB_COUNT,
+		  VAR_UNUSED_0x404E //First unused var in vars.h
 	),
 	side_quest(
-	      gText_SideQuestName_4,
-	      gText_SideQuestDesc_4,
-	      gText_SideQuestDoneDesc_4,
-	      gText_SideQuestMap4,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_4,
+		gText_SideQuestDesc_4,
+		gText_SideQuestDoneDesc_4,
+		gText_SideQuestMap4,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_5,
-	      gText_SideQuestDesc_5,
-	      gText_SideQuestDoneDesc_5,
-	      gText_SideQuestMap5,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_5,
+		gText_SideQuestDesc_5,
+		gText_SideQuestDoneDesc_5,
+		gText_SideQuestMap5,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_6,
-	      gText_SideQuestDesc_6,
-	      gText_SideQuestDoneDesc_6,
-	      gText_SideQuestMap6,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_6,
+		gText_SideQuestDesc_6,
+		gText_SideQuestDoneDesc_6,
+		gText_SideQuestMap6,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_7,
-	      gText_SideQuestDesc_7,
-	      gText_SideQuestDoneDesc_7,
-	      gText_SideQuestMap7,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_7,
+		gText_SideQuestDesc_7,
+		gText_SideQuestDoneDesc_7,
+		gText_SideQuestMap7,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_8,
-	      gText_SideQuestDesc_8,
-	      gText_SideQuestDoneDesc_8,
-	      gText_SideQuestMap8,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_8,
+		gText_SideQuestDesc_8,
+		gText_SideQuestDoneDesc_8,
+		gText_SideQuestMap8,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_9,
-	      gText_SideQuestDesc_9,
-	      gText_SideQuestDoneDesc_9,
-	      gText_SideQuestMap9,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_9,
+		gText_SideQuestDesc_9,
+		gText_SideQuestDoneDesc_9,
+		gText_SideQuestMap9,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_10,
-	      gText_SideQuestDesc_10,
-	      gText_SideQuestDoneDesc_10,
-	      gText_SideQuestMap10,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_10,
+		gText_SideQuestDesc_10,
+		gText_SideQuestDoneDesc_10,
+		gText_SideQuestMap10,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_11,
-	      gText_SideQuestDesc_11,
-	      gText_SideQuestDoneDesc_11,
-	      gText_SideQuestMap11,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_11,
+		gText_SideQuestDesc_11,
+		gText_SideQuestDoneDesc_11,
+		gText_SideQuestMap11,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_12,
-	      gText_SideQuestDesc_12,
-	      gText_SideQuestDoneDesc_12,
-	      gText_SideQuestMap12,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_12,
+		gText_SideQuestDesc_12,
+		gText_SideQuestDoneDesc_12,
+		gText_SideQuestMap12,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_13,
-	      gText_SideQuestDesc_13,
-	      gText_SideQuestDoneDesc_13,
-	      gText_SideQuestMap13,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_13,
+		gText_SideQuestDesc_13,
+		gText_SideQuestDoneDesc_13,
+		gText_SideQuestMap13,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_14,
-	      gText_SideQuestDesc_14,
-	      gText_SideQuestDoneDesc_14,
-	      gText_SideQuestMap14,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_14,
+		gText_SideQuestDesc_14,
+		gText_SideQuestDoneDesc_14,
+		gText_SideQuestMap14,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_15,
-	      gText_SideQuestDesc_15,
-	      gText_SideQuestDoneDesc_15,
-	      gText_SideQuestMap15,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_15,
+		gText_SideQuestDesc_15,
+		gText_SideQuestDoneDesc_15,
+		gText_SideQuestMap15,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_16,
-	      gText_SideQuestDesc_16,
-	      gText_SideQuestDoneDesc_16,
-	      gText_SideQuestMap16,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_16,
+		gText_SideQuestDesc_16,
+		gText_SideQuestDoneDesc_16,
+		gText_SideQuestMap16,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_17,
-	      gText_SideQuestDesc_17,
-	      gText_SideQuestDoneDesc_17,
-	      gText_SideQuestMap17,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_17,
+		gText_SideQuestDesc_17,
+		gText_SideQuestDoneDesc_17,
+		gText_SideQuestMap17,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_18,
-	      gText_SideQuestDesc_18,
-	      gText_SideQuestDoneDesc_18,
-	      gText_SideQuestMap18,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_18,
+		gText_SideQuestDesc_18,
+		gText_SideQuestDoneDesc_18,
+		gText_SideQuestMap18,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_19,
-	      gText_SideQuestDesc_19,
-	      gText_SideQuestDoneDesc_19,
-	      gText_SideQuestMap19,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_19,
+		gText_SideQuestDesc_19,
+		gText_SideQuestDoneDesc_19,
+		gText_SideQuestMap19,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_20,
-	      gText_SideQuestDesc_20,
-	      gText_SideQuestDoneDesc_20,
-	      gText_SideQuestMap20,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_20,
+		gText_SideQuestDesc_20,
+		gText_SideQuestDoneDesc_20,
+		gText_SideQuestMap20,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_21,
-	      gText_SideQuestDesc_21,
-	      gText_SideQuestDoneDesc_21,
-	      gText_SideQuestMap21,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_21,
+		gText_SideQuestDesc_21,
+		gText_SideQuestDoneDesc_21,
+		gText_SideQuestMap21,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_22,
-	      gText_SideQuestDesc_22,
-	      gText_SideQuestDoneDesc_22,
-	      gText_SideQuestMap22,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_22,
+		gText_SideQuestDesc_22,
+		gText_SideQuestDoneDesc_22,
+		gText_SideQuestMap22,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_23,
-	      gText_SideQuestDesc_23,
-	      gText_SideQuestDoneDesc_23,
-	      gText_SideQuestMap23,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_23,
+		gText_SideQuestDesc_23,
+		gText_SideQuestDoneDesc_23,
+		gText_SideQuestMap23,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_24,
-	      gText_SideQuestDesc_24,
-	      gText_SideQuestDoneDesc_24,
-	      gText_SideQuestMap24,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_24,
+		gText_SideQuestDesc_24,
+		gText_SideQuestDoneDesc_24,
+		gText_SideQuestMap24,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_25,
-	      gText_SideQuestDesc_25,
-	      gText_SideQuestDoneDesc_25,
-	      gText_SideQuestMap25,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_25,
+		gText_SideQuestDesc_25,
+		gText_SideQuestDoneDesc_25,
+		gText_SideQuestMap25,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_26,
-	      gText_SideQuestDesc_26,
-	      gText_SideQuestDoneDesc_26,
-	      gText_SideQuestMap26,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_26,
+		gText_SideQuestDesc_26,
+		gText_SideQuestDoneDesc_26,
+		gText_SideQuestMap26,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_27,
-	      gText_SideQuestDesc_27,
-	      gText_SideQuestDoneDesc_27,
-	      gText_SideQuestMap27,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_27,
+		gText_SideQuestDesc_27,
+		gText_SideQuestDoneDesc_27,
+		gText_SideQuestMap27,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_28,
-	      gText_SideQuestDesc_28,
-	      gText_SideQuestDoneDesc_28,
-	      gText_SideQuestMap28,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_28,
+		gText_SideQuestDesc_28,
+		gText_SideQuestDoneDesc_28,
+		gText_SideQuestMap28,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_29,
-	      gText_SideQuestDesc_29,
-	      gText_SideQuestDoneDesc_29,
-	      gText_SideQuestMap29,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_29,
+		gText_SideQuestDesc_29,
+		gText_SideQuestDoneDesc_29,
+		gText_SideQuestMap29,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 	side_quest(
-	      gText_SideQuestName_30,
-	      gText_SideQuestDesc_30,
-	      gText_SideQuestDoneDesc_30,
-	      gText_SideQuestMap30,
-	      OBJ_EVENT_GFX_WALLY,
-	      OBJECT,
-	      NULL,
-	      0
+		gText_SideQuestName_30,
+		gText_SideQuestDesc_30,
+		gText_SideQuestDoneDesc_30,
+		gText_SideQuestMap30,
+		OBJ_EVENT_GFX_WALLY,
+		OBJECT,
+		NULL,
+		0,
+		0
 	),
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2076,7 +2106,7 @@ static const u8 *GetQuestLocation(s32 questId)
 {
     switch (questId) {
         case QUEST_3:
-            return gTable_Quest3Maps[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+            return gTable_Quest3Maps[VarGet(sSideQuests[questId].questVariable)]; // uses first unused VAR in include/constants/vars.h
         default:
             return sSideQuests[questId].map;
     }
@@ -2084,9 +2114,9 @@ static const u8 *GetQuestLocation(s32 questId)
 
 static const u8 *GetQuestDesc(s32 questId)
 {
-    switch (questId) {
+	switch (questId) {
         case QUEST_3:
-            return gTable_Quest3Descs[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+            return gTable_Quest3Descs[VarGet(sSideQuests[questId].questVariable)]; // uses first unused VAR in include/constants/vars.h
         default:
             return sSideQuests[questId].desc;
     }
@@ -2275,7 +2305,7 @@ static u16 GetSpriteId_Complex(s32 questId)
 	switch (questId)
     {
 		case QUEST_3:
-		    return Quest3Sprites[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+		    return Quest3Sprites[VarGet(sSideQuests[questId].questVariable)]; // uses first unused VAR in include/constants/vars.h
 		default:
 		    return sSideQuests[questId].sprite;
 	} 
@@ -2286,7 +2316,7 @@ static u8 GetSpriteType_Complex(s32 questId)
 	switch (questId)
     {
 		case QUEST_3:
-		    return Quest3SpriteTypes[VarGet(VAR_UNUSED_0x404E)]; // uses first unused VAR in include/constants/vars.h
+		    return Quest3SpriteTypes[VarGet(sSideQuests[questId].questVariable)]; // uses first unused VAR in include/constants/vars.h
 		default:
 		    return sSideQuests[questId].spritetype;
 	} 

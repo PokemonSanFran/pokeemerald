@@ -37,7 +37,22 @@
 #include "event_object_movement.h"
 #include "pokemon_icon.h"
 
-/////////////////////////////////////////////
+//////////////////////////////////////////
+////////////BEGIN QUEST NUMS//////////////
+
+/* These will be where the number of descriptions and maps a quest has will be controlled.*/
+
+enum Quest3_Enum{
+    QUEST_3_STATE_1,
+    QUEST_3_STATE_2,
+    QUEST_3_STATE_3,
+    QUEST_3_TOTAL_STATES,
+};
+
+/////////////END QUEST NUMS/////////////
+////////////////////////////////////////
+
+//////////////////////////////////////////////
 /////////////BEGIN STRING EXTERNS/////////////
 
 //Descriptions
@@ -84,25 +99,25 @@ const u8 gText_Quest3Map_3[] = _("Content 3");
 ///////////BEGIN QUEST ARRAYS///////////
 
 //Hearts Quest Arrays
-const u8 *const gTable_Quest3Descs[3] = {
+const u8 *const gTable_Quest3Descs[QUEST_3_TOTAL_STATES] = {
     gText_Quest3Desc_1,
     gText_Quest3Desc_2,
     gText_Quest3Desc_3,
 };
 
-const u8 *const gTable_Quest3Maps[3] = {
+const u8 *const gTable_Quest3Maps[QUEST_3_TOTAL_STATES] = {
     gText_Quest3Map_1,
     gText_Quest3Map_2,
     gText_Quest3Map_3,
 };
 
-static const u16 Quest3Sprites[3]={
+static const u16 Quest3Sprites[QUEST_3_TOTAL_STATES]={
 	OBJ_EVENT_GFX_WALLY,
 	OBJ_EVENT_GFX_WALLY,
 	OBJ_EVENT_GFX_WALLY,
 };
 
-static const u8 Quest3SpriteTypes[3]={
+static const u8 Quest3SpriteTypes[QUEST_3_TOTAL_STATES]={
 	OBJECT,
 	OBJECT,
 	OBJECT,
