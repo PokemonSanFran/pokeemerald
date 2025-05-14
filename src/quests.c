@@ -594,11 +594,27 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_3] = 
 	{
 		.name = gText_SideQuestName_3,
-		.desc = {gText_SideQuestDesc_3,gComplexQuest_Quest3Desc_1,gComplexQuest_Quest3Desc_2,gComplexQuest_Quest3Desc_3},
+		.desc = {
+			gComplexQuest_Quest3Desc_1,
+			gComplexQuest_Quest3Desc_2,
+			gComplexQuest_Quest3Desc_3
+		},
 		.donedesc = gText_SideQuestDoneDesc_3,
-		.map = {gText_SideQuestMap3, gComplexQuest_Quest3Map_1,	gComplexQuest_Quest3Map_2, gComplexQuest_Quest3Map_3},
-		.sprite = {OBJ_EVENT_GFX_WALLY,OBJ_EVENT_GFX_WALLY,OBJ_EVENT_GFX_WALLY,OBJ_EVENT_GFX_WALLY},
-		.spritetype = {OBJECT,OBJECT,OBJECT,OBJECT},
+		.map = {
+			gComplexQuest_Quest3Map_1,
+			gComplexQuest_Quest3Map_2,
+			gComplexQuest_Quest3Map_3
+		},
+		.sprite = {
+			OBJ_EVENT_GFX_WALLY,
+			OBJ_EVENT_GFX_WALLY,
+			OBJ_EVENT_GFX_WALLY
+		},
+		.spritetype = {
+			OBJECT,
+			OBJECT,
+			OBJECT
+		},
 		.subquests = sSubQuests2,
 		.numSubquests = QUEST_2_SUB_COUNT,
 		.questVariable = VAR_UNUSED_0x404E //First unused var in vars.h,
