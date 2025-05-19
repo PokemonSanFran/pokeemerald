@@ -158,8 +158,8 @@ static void DetermineSpriteType(s32 questId);
 static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType);
 static void ResetSpriteState(void);
 static void QuestMenu_DestroySprite(u8 idx);
-static u16 GetSpriteId_Complex(s32 questId);
-static u8 GetSpriteType_Complex(s32 questId);
+static u32 GetQuestSprite(s32 questId);
+static u32 GetQuestSpriteType(s32 questId);
 
 static void GenerateStateAndPrint(u8 windowId, u32 itemId, u8 y);
 static u8 GenerateSubquestState(u8 questId);
