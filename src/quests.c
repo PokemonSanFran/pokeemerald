@@ -2374,7 +2374,7 @@ static void QuestMenu_DestroySprite(u8 idx)
 	}
 }
 
-static u16 GetSpriteId_Complex(s32 questId)
+static u32 GetQuestSprite(s32 questId)
 {
 	u32 qvar = VarGet(sSideQuests[questId].questVariable);
 	
@@ -2384,7 +2384,7 @@ static u16 GetSpriteId_Complex(s32 questId)
 	return sSideQuests[questId].sprite[qvar];
 }
 
-static u8 GetSpriteType_Complex(s32 questId)
+static u32 GetQuestSpriteType(s32 questId)
 {
 	u32 qvar = VarGet(sSideQuests[questId].questVariable);
 	
