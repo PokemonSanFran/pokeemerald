@@ -2393,8 +2393,6 @@ static u32 GetQuestSpriteType(s32 questId)
 
 	return sSideQuests[questId].spritetype[qvar];
 }
-
-
 static void GenerateStateAndPrint(u8 windowId, u32 questId,
                                   u8 y)
 {
