@@ -31,7 +31,7 @@ EWRAM_DATA struct Camera gCamera = {0};
 EWRAM_DATA static struct ConnectionFlags sMapConnectionFlags = {0};
 EWRAM_DATA static u32 UNUSED sFiller = 0; // without this, the next file won't align properly
 
-struct BackupMapLayout gBackupMapLayout;
+COMMON_DATA struct BackupMapLayout gBackupMapLayout = {0};
 
 static const struct ConnectionFlags sDummyConnectionFlags = {0};
 
@@ -48,7 +48,7 @@ static const struct MapConnection *GetIncomingConnection(u8 direction, int x, in
 static bool8 IsPosInIncomingConnectingMap(u8 direction, int x, int y, const struct MapConnection *connection);
 static bool8 IsCoordInIncomingConnectingMap(int coord, int srcMax, int destMax, int offset);
 
-#define GetBorderBlockAt(x, y)({                                                                   \
+#define GetBorderBlockAt(x, y) ({                                                                  \
     u16 block;                                                                                     \
     int i;                                                                                         \
     const u16 *border = gMapHeader.mapLayout->border; /* Unused, they read it again below */       \
@@ -56,7 +56,7 @@ static bool8 IsCoordInIncomingConnectingMap(int coord, int srcMax, int destMax, 
     i = (x + 1) & 1;                                                                               \
     i += ((y + 1) & 1) * 2;                                                                        \
                                                                                                    \
-    block = gMapHeader.mapLayout->border[i] | MAPGRID_COLLISION_MASK;                              \
+    block = gMapHeader.mapLayout->border[i] | MAPGRID_IMPASSABLE;                                  \
 })
 
 #define AreCoordsWithinMapGridBounds(x, y) (x >= 0 && x < gBackupMapLayout.width && y >= 0 && y < gBackupMapLayout.height)
@@ -144,7 +144,7 @@ static void InitBackupMapLayoutConnections(struct MapHeader *mapHeader)
         for (i = 0; i < count; i++, connection++)
         {
             struct MapHeader const *cMap = GetMapHeaderFromConnection(connection);
-            u32 offset = connection->offset;
+            s32 offset = connection->offset;
             switch (connection->direction)
             {
             case CONNECTION_SOUTH:
@@ -349,7 +349,7 @@ u8 MapGridGetElevationAt(int x, int y)
     if (block == MAPGRID_UNDEFINED)
         return 0;
 
-    return block >> MAPGRID_ELEVATION_SHIFT;
+    return UNPACK_ELEVATION(block);
 }
 
 u8 MapGridGetCollisionAt(int x, int y)
@@ -359,7 +359,7 @@ u8 MapGridGetCollisionAt(int x, int y)
     if (block == MAPGRID_UNDEFINED)
         return TRUE;
 
-    return (block & MAPGRID_COLLISION_MASK) >> MAPGRID_COLLISION_SHIFT;
+    return UNPACK_COLLISION(block);
 }
 
 u32 MapGridGetMetatileIdAt(int x, int y)
@@ -367,21 +367,21 @@ u32 MapGridGetMetatileIdAt(int x, int y)
     u16 block = GetMapGridBlockAt(x, y);
 
     if (block == MAPGRID_UNDEFINED)
-        return GetBorderBlockAt(x, y) & MAPGRID_METATILE_ID_MASK;
+        return UNPACK_METATILE(GetBorderBlockAt(x, y));
 
-    return block & MAPGRID_METATILE_ID_MASK;
+    return UNPACK_METATILE(block);
 }
 
 u32 MapGridGetMetatileBehaviorAt(int x, int y)
 {
     u16 metatile = MapGridGetMetatileIdAt(x, y);
-    return GetMetatileAttributesById(metatile) & METATILE_ATTR_BEHAVIOR_MASK;
+    return UNPACK_BEHAVIOR(GetMetatileAttributesById(metatile));
 }
 
 u8 MapGridGetMetatileLayerTypeAt(int x, int y)
 {
     u16 metatile = MapGridGetMetatileIdAt(x, y);
-    return (GetMetatileAttributesById(metatile) & METATILE_ATTR_LAYER_MASK) >> METATILE_ATTR_LAYER_SHIFT;
+    return UNPACK_LAYER_TYPE(GetMetatileAttributesById(metatile));
 }
 
 void MapGridSetMetatileIdAt(int x, int y, u16 metatile)
@@ -390,6 +390,8 @@ void MapGridSetMetatileIdAt(int x, int y, u16 metatile)
     if (AreCoordsWithinMapGridBounds(x, y))
     {
         i = x + y * gBackupMapLayout.width;
+
+        // Elevation is ignored in the argument, but copy metatile ID and collision
         gBackupMapLayout.map[i] = (gBackupMapLayout.map[i] & MAPGRID_ELEVATION_MASK) | (metatile & ~MAPGRID_ELEVATION_MASK);
     }
 }
@@ -832,7 +834,7 @@ static bool8 SkipCopyingMetatileFromSavedMap(u16 *mapBlock, u16 mapWidth, u8 yMo
     else
         mapBlock += mapWidth;
 
-    if (IsLargeBreakableDecoration(*mapBlock & MAPGRID_METATILE_ID_MASK, yMode) == TRUE)
+    if (IsLargeBreakableDecoration(UNPACK_METATILE(*mapBlock), yMode) == TRUE)
         return TRUE;
     return FALSE;
 }

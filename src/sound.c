@@ -14,7 +14,7 @@ struct Fanfare
     u16 duration;
 };
 
-EWRAM_DATA struct MusicPlayerInfo* gMPlay_PokemonCry = NULL;
+EWRAM_DATA struct MusicPlayerInfo *gMPlay_PokemonCry = NULL;
 EWRAM_DATA u8 gPokemonCryBGMDuckingCounter = 0;
 
 static u16 sCurrentMapMusic;
@@ -23,7 +23,7 @@ static u8 sMapMusicState;
 static u8 sMapMusicFadeInSpeed;
 static u16 sFanfareCounter;
 
-bool8 gDisableMusic;
+COMMON_DATA bool8 gDisableMusic = 0;
 
 extern struct ToneData gCryTable[];
 extern struct ToneData gCryTable_Reverse[];
