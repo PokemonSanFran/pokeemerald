@@ -1699,7 +1699,7 @@ static void ChangeCursorPosition(void)
 
 static bool32 IsCursorInRandomMode(void)
 {
-	return (ARCADE_SAVEDATA_CURSOR.isRandom);
+	return (ARCADE_SAVEDATA_CURSOR.isRandom == TRUE);
 }
 
 static bool32 IsGameBoardTimerEmpty(void)
@@ -1720,9 +1720,9 @@ static void HandleFinishMode()
 	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
 	PrintHelpBar();
 	SelectGameBoardSpace(&impact,&event);
+	ClearCursorRandomMode();
 	HandleGameBoardResult(impact,event);
 	SaveCursorPositionToSaveblock();
-	ClearCursorRandomMode();
 	DestroyEventSprites();
 	PopulateEventSprites();
 	SetTimerForFinish();
