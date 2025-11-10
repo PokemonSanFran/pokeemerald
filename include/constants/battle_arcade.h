@@ -181,8 +181,8 @@ enum ArcadeStreakBrackets
 #define ARCADE_BP_SMALL                         1
 #define ARCADE_BP_BIG                           3
 
-#define ARCADE_SILVER_BATTLE_NUMBER             35
-#define ARCADE_GOLD_BATTLE_NUMBER               70
+#define ARCADE_SILVER_BATTLE_NUMBER             21
+#define ARCADE_GOLD_BATTLE_NUMBER               49
 
 #define ARCADE_RECORD_HEADER_Y_POSITION         4
 #define ARCADE_RECORD_STREAK_INDEX_COUNT        2
