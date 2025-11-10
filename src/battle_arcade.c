@@ -2075,7 +2075,7 @@ static bool32 BattleArcade_DoLowerHP(u32 impact)
 
 static bool32 BattleArcade_DoPoison(u32 impact)
 {
-	return BattleArcade_DoStatusAilment(impact, STATUS1_POISON);
+	return BattleArcade_DoStatusAilment(impact, STATUS1_TOXIC_POISON);
 }
 static bool32 BattleArcade_DoParalyze(u32 impact)
 {
