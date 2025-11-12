@@ -16,26 +16,12 @@ mapscripts BattleArcade_Hallway_MapScripts
 
 script BattleArcade_Hallway_EventScript_EnterCorridor
 {
-    setvar(LOCAL_VAR_WALKED_HALLWAY, TRUE)
-   applymovement(ATTENDANT,BattleArcade_Hallway_Movement_WalkToRoom)
-   applymovement(OBJ_EVENT_ID_PLAYER,BattleArcade_Hallway_Movement_Player_WalkToRoom)
-    waitmovement(OBJ_EVENT_ID_PLAYER)
+	setvar(LOCAL_VAR_WALKED_HALLWAY, TRUE)
+	applymovement(ATTENDANT,moves(walk_right * 5, walk_up, set_invisible))
+	applymovement(OBJ_EVENT_ID_PLAYER,moves(walk_right * 6, walk_up, set_invisible))
+	waitmovement(OBJ_EVENT_ID_PLAYER)
 	setvar(LOCAL_VAR_WALKED_HALLWAY, FALSE)
 	warp(MAP_BATTLE_ARCADE_BATTLE_ROOM, 7, 17)
-    waitstate
-    end
-}
-
-movement BattleArcade_Hallway_Movement_WalkToRoom
-{
-    walk_right * 5
-    walk_up
-    set_invisible
-}
-
-movement BattleArcade_Hallway_Movement_Player_WalkToRoom
-{
-    walk_right * 6
-    walk_up
-    set_invisible
+	waitstate
+	end
 }

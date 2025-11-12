@@ -22,9 +22,9 @@ BattleArcade_Hallway_EventScript_EnterCorridor::
 # 19 "data/maps/BattleArcade_Hallway/scripts.pory"
 	setvar VAR_TEMP_0, TRUE
 # 20 "data/maps/BattleArcade_Hallway/scripts.pory"
-	applymovement 1, BattleArcade_Hallway_Movement_WalkToRoom
+	applymovement 1, BattleArcade_Hallway_EventScript_EnterCorridor_Movement_0
 # 21 "data/maps/BattleArcade_Hallway/scripts.pory"
-	applymovement OBJ_EVENT_ID_PLAYER, BattleArcade_Hallway_Movement_Player_WalkToRoom
+	applymovement OBJ_EVENT_ID_PLAYER, BattleArcade_Hallway_EventScript_EnterCorridor_Movement_1
 # 22 "data/maps/BattleArcade_Hallway/scripts.pory"
 	waitmovement OBJ_EVENT_ID_PLAYER
 # 23 "data/maps/BattleArcade_Hallway/scripts.pory"
@@ -36,40 +36,40 @@ BattleArcade_Hallway_EventScript_EnterCorridor::
 	end
 
 
-# 29 "data/maps/BattleArcade_Hallway/scripts.pory"
-BattleArcade_Hallway_Movement_WalkToRoom:
-# 31 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
+BattleArcade_Hallway_EventScript_EnterCorridor_Movement_0:
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 31 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 31 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 31 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 31 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 32 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_up
-# 33 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 20 "data/maps/BattleArcade_Hallway/scripts.pory"
 	set_invisible
 	step_end
 
-# 36 "data/maps/BattleArcade_Hallway/scripts.pory"
-BattleArcade_Hallway_Movement_Player_WalkToRoom:
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
+BattleArcade_Hallway_EventScript_EnterCorridor_Movement_1:
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 38 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_right
-# 39 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	walk_up
-# 40 "data/maps/BattleArcade_Hallway/scripts.pory"
+# 21 "data/maps/BattleArcade_Hallway/scripts.pory"
 	set_invisible
 	step_end
