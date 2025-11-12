@@ -93,7 +93,7 @@
 	@ Shows the results window for the Arcade's chosen mode.
 	.macro arcade_results mode:req
 	setvar VAR_0x8004, ARCADE_FUNC_RECORDS
-	setvar VAR_0x8005, \mode
+	copyvar VAR_0x8005, \mode
 	special CallBattleArcadeFunc
 	.endm
 
