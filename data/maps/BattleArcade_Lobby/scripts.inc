@@ -42,32 +42,32 @@ BattleArcade_Lobby_EventScript_WalkToElevator::
 # 37 "data/maps/BattleArcade_Lobby/scripts.pory"
 	closemessage
 # 39 "data/maps/BattleArcade_Lobby/scripts.pory"
-	applymovement VAR_LAST_TALKED, BattleArcade_Lobby_Movement_AttendantEnterElevator
+	applymovement VAR_LAST_TALKED, BattleArcade_Lobby_EventScript_WalkToElevator_Movement_0
 # 40 "data/maps/BattleArcade_Lobby/scripts.pory"
-	applymovement OBJ_EVENT_ID_PLAYER, BattleArcade_Lobby_Movement_PlayerEnterElevator
+	applymovement OBJ_EVENT_ID_PLAYER, BattleArcade_Lobby_EventScript_WalkToElevator_Movement_1
 # 41 "data/maps/BattleArcade_Lobby/scripts.pory"
 	waitmovement OBJ_EVENT_ID_PLAYER
 	return
 
 
-# 44 "data/maps/BattleArcade_Lobby/scripts.pory"
-BattleArcade_Lobby_Movement_AttendantEnterElevator:
-# 46 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 39 "data/maps/BattleArcade_Lobby/scripts.pory"
+BattleArcade_Lobby_EventScript_WalkToElevator_Movement_0:
+# 39 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 46 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 39 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 47 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 39 "data/maps/BattleArcade_Lobby/scripts.pory"
 	set_invisible
 	step_end
 
-# 50 "data/maps/BattleArcade_Lobby/scripts.pory"
-BattleArcade_Lobby_Movement_PlayerEnterElevator:
-# 52 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 40 "data/maps/BattleArcade_Lobby/scripts.pory"
+BattleArcade_Lobby_EventScript_WalkToElevator_Movement_1:
+# 40 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 52 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 40 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 52 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 40 "data/maps/BattleArcade_Lobby/scripts.pory"
 	walk_up
-# 53 "data/maps/BattleArcade_Lobby/scripts.pory"
+# 40 "data/maps/BattleArcade_Lobby/scripts.pory"
 	set_invisible
 	step_end
