@@ -1218,7 +1218,7 @@ BattleArcade_Challenge_Text_BoardmotionRandom::
 
 BattleArcade_Challenge_Text_ReceivedBp::
 # 756 "data/scripts/battle_arcade_battle.pory"
-	.string "{PLAYER} received {STR_VAR_1} BP!$"
+	.string "{PLAYER} received {STR_VAR_3} BP!$"
 
 BattleArcade_Challenge_Text_AndReceivedBp::
 # 760 "data/scripts/battle_arcade_battle.pory"

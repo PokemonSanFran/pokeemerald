@@ -699,7 +699,7 @@ static u32 CalculateBattlePoints(u32 challengeNum)
 static void GiveBattlePoints(u32 points)
 {
     IncrementDailyBattlePoints(points);
-    ConvertIntToDecimalStringN(gStringVar1, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
+    ConvertIntToDecimalStringN(gStringVar3, points, STR_CONV_MODE_LEFT_ALIGN,CountDigits(points));
 
     FRONTIER_SAVEDATA.cardBattlePoints += ((points > USHRT_MAX) ? USHRT_MAX: points);
     FRONTIER_SAVEDATA.battlePoints += ((points > MAX_BATTLE_FRONTIER_POINTS) ? MAX_BATTLE_FRONTIER_POINTS : points);

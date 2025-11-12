@@ -755,7 +755,7 @@ text BattleArcade_Challenge_Text_BoardmotionRandom
 }
 text BattleArcade_Challenge_Text_ReceivedBp
 {
-	format("{PLAYER} received {STR_VAR_1} BP!")
+	format("{PLAYER} received {STR_VAR_3} BP!")
 }
 text BattleArcade_Challenge_Text_AndReceivedBp
 {
