@@ -531,15 +531,3 @@ text BattleArcade_Entrance_Text_YouMustSaveTheGame
 {
 	format("You must save the game before I show you in. Please wait.")
 }
-
-script GiveMonDebugScript
-{
-    givemon(SPECIES_SHELGON, 50, ITEM_LEFTOVERS)
-    givemon(SPECIES_METANG, 50, ITEM_CHOICE_BAND)
-    givemon(SPECIES_PUPITAR, 50, ITEM_LUM_BERRY)
-    givemon(SPECIES_SALAMENCE, 100, ITEM_LEFTOVERS)
-    givemon(SPECIES_METAGROSS, 100, ITEM_LEFTOVERS)
-    givemon(SPECIES_LATIOS, 100, ITEM_LUM_BERRY)
-    setflag(FLAG_SYS_POKEMON_GET)
-    return
-}

@@ -641,24 +641,6 @@ BattleArcade_Registration_EventScript_ShowResults::
 	return
 
 
-GiveMonDebugScript::
-# 537 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_SHELGON, 50, ITEM_LEFTOVERS
-# 538 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_METANG, 50, ITEM_CHOICE_BAND
-# 539 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_PUPITAR, 50, ITEM_LUM_BERRY
-# 540 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_SALAMENCE, 100, ITEM_LEFTOVERS
-# 541 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_METAGROSS, 100, ITEM_LEFTOVERS
-# 542 "data/scripts/battle_arcade_registration.pory"
-	givemon SPECIES_LATIOS, 100, ITEM_LUM_BERRY
-# 543 "data/scripts/battle_arcade_registration.pory"
-	setflag FLAG_SYS_POKEMON_GET
-	return
-
-
 BattleArcade_Entrance_Text_WelcomeToTheBattleArcade::
 # 415 "data/scripts/battle_arcade_registration.pory"
 	.string "Welcome to the Battle Arcade! I am your\n"
