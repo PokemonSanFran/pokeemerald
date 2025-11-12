@@ -35,8 +35,10 @@ View the [Changelog](https://github.com/huderlem/poryscript/blob/master/CHANGELO
   * [Comments](#comments)
   * [Constants](#constants)
   * [Scope Modifiers](#scope-modifiers)
+  * [AutoVar Commands](#autovar-commands)
   * [Compile-Time Switches](#compile-time-switches)
   * [Optimization](#optimization)
+  * [Line Markers](#line-markers)
 - [Local Development](#local-development)
   * [Building from Source](#building-from-source)
   * [Running the tests](#running-the-tests)
@@ -51,6 +53,8 @@ Poryscript is a command-line program.  It reads an input script and outputs the 
 ```
 > ./poryscript -h
 Usage of poryscript:
+  -cc string
+        command config JSON file (default "command_config.json")
   -f string
         set default font id (leave empty to use default defined in font config file)
   -fc string
@@ -60,6 +64,8 @@ Usage of poryscript:
         input poryscript file (leave empty to read from standard input)
   -l int
         set default line length in pixels for formatted text (uses font config file for default)
+  -lm
+        include line markers in output (enables more helpful error messages when compiling the ROM). (To disable, use '-lm=false') (default true)
   -o string
         output script file (leave empty to write to standard output)
   -optimize
@@ -75,27 +81,28 @@ Convert a `.pory` script to a compiled `.inc` script, which can be directly incl
 ```
 
 To automatically convert your Poryscript scripts when compiling a decomp project, perform these two steps:
-1. Create a new `tools/poryscript/` directory, and add the `poryscript` command-line executable tool to it. Also copy `font_config.json` to the same location.
+1. Create a new `tools/poryscript/` directory, and add the `poryscript` command-line executable tool to it. Also copy `command_config.json` and `font_config.json` to the same location.
 ```
 # For example, on Windows, place the files here.
 pokeemerald/tools/poryscript/poryscript.exe
+pokeemerald/tools/poryscript/command_config.json
 pokeemerald/tools/poryscript/font_config.json
 ```
 It's also a good idea to add `tools/poryscript` to your `.gitignore` before your next commit.
 
 2. Update the Makefile with these changes (Note, don't add the `+` symbol at the start of the lines. That's just to show the line is being added.):
 ```diff
-FIX := tools/gbafix/gbafix$(EXE)
-MAPJSON := tools/mapjson/mapjson$(EXE)
-JSONPROC := tools/jsonproc/jsonproc$(EXE)
-+ SCRIPT := tools/poryscript/poryscript$(EXE)
+FIX       := $(TOOLS_DIR)/gbafix/gbafix$(EXE)
+MAPJSON   := $(TOOLS_DIR)/mapjson/mapjson$(EXE)
+JSONPROC  := $(TOOLS_DIR)/jsonproc/jsonproc$(EXE)
++ SCRIPT    := $(TOOLS_DIR)/poryscript/poryscript$(EXE)
 ```
 ```diff
-mostlyclean: tidynonmodern tidymodern
-	...
-	rm -f $(AUTO_GEN_TARGETS)
-	@$(MAKE) clean -C libagbsyscall
-+	rm -f $(patsubst %.pory,%.inc,$(shell find data/ -type f -name '*.pory'))
+include audio_rules.mk
+
++AUTO_GEN_TARGETS += $(patsubst %.pory,%.inc,$(shell find data/ -type f -name '*.pory'))
+
+generated: $(AUTO_GEN_TARGETS)
 ```
 ```diff
 %.s: ;
@@ -105,8 +112,8 @@ mostlyclean: tidynonmodern tidymodern
 + %.pory: ;
 ```
 ```diff
-sound/%.bin: sound/%.aif ; $(AIF) $< $@
-+ data/%.inc: data/%.pory; $(SCRIPT) -i $< -o $@ -fc tools/poryscript/font_config.json
+%.rl:     %      ; $(GFX) $< $@
++ data/%.inc: data/%.pory; $(SCRIPT) -i $< -o $@ -fc tools/poryscript/font_config.json -cc tools/poryscript/command_config.json
 ```
 
 ## Convert Existing Scripts
@@ -258,12 +265,12 @@ The `while` statement can also be written as an infinite loop by omitting the bo
 `break` can be used to break out of a loop, like many programming languages. Similary, `continue` returns to the start of the loop.
 
 ### Conditional Operators
-The condition operators have strict rules about what conditions they accept. The operand on the left side of the condition must be a `flag()`, `var()`, or `defeated()` check. They each have a different set of valid comparison operators, described below.
+The condition operators have strict rules about what conditions they accept. The operand on the left side of the condition must be a `flag()`, `var()`, `defeated()`, or [AutoVar](#autovar-commands) check. They each have a different set of valid comparison operators, described below.
 
 | Type | Valid Operators |
 | ---- | --------------- |
 | `flag` | `==` |
-| `var` | `==`, `!=`, `>`, `>=`, `<`, `<=` |
+| `var` or [AutoVar](#autovar-commands) | `==`, `!=`, `>`, `>=`, `<`, `<=` |
 | `defeated` | `==` |
 
 All operators support implicit truthiness, which means you don't have to specify any of the above operators in a condition. Below are some examples of equivalent conditions:
@@ -406,6 +413,14 @@ Becomes:
 .string "Amazing!\p"
 .string "So glad to meet you!$"
 ```
+
+Additionally, `format()` supports a special line break `\N`, which will automatically insert the appropriate `\n` or `\l` line break. While this is an uncommon use case, it's useful in situations where a line break is desired for dramatic/stylistic purposes. In the following example, we want explicit line breaks for the `"..."` texts, but we don't know if the first one should use `\n` or `\l`. Using `\N` makes it easy:
+```
+text MyText {
+    format("You are my favorite trainer!\N...\N...\N...\NBut I'm better!")
+}
+```
+
 The font id can optionally be specified as the second parameter to `format()`.
 ```
 text MyText {
@@ -420,6 +435,10 @@ Becomes:
 .string "So glad to meet you!$"
 ```
 The font configuration JSON file informs Poryscript how many pixels wide each character in the message is, as well as setting a default maximum line length. Fonts have different character widths, and games have different text box sizes. For convenience, Poryscript comes with `font_config.json`, which contains the configuration for pokeemerald's `1_latin` font as `1_latin_rse`, as well as pokefirered's equivalent as `1_latin_frlg`. More fonts can be added to this file by simply creating anothing font id node under the `fonts` key in `font_config.json`.
+
+`cursorOverlapWidth` can be used to ensure there is always enough room for the cursor icon to be displayed in the text box. (This "cursor icon" is the small icon that's shown when the player needs to press A to advance the text box.)
+
+`numLines` is the number of lines displayed within a single message box. If editing text for a taller space, this can be adjusted in `font_config.json`.
 
 The length of a line can optionally be specified as the third parameter to `format()` if a font id was specified as the second parameter.
 
@@ -439,6 +458,17 @@ Becomes:
 .string "Amazing!\p"
 .string "So glad to meet\n"
 .string "you!$"
+```
+
+Finally, `format()` takes the following optional named parameters, which override settings from the font config:
+- `fontId`
+- `maxLineLength`
+- `numLines`
+- `cursorOverlapWidth`
+```
+text MyText {
+    format("This is an example of named parameters!", numLines=3, maxLineLength=100)
+}
 ```
 
 ### Custom Text Encoding
@@ -487,6 +517,30 @@ MyMovement:
 	walk_up
 	face_down
 	step_end
+```
+
+However, movement can also be *inlined* inside commands similar to text, using the `moves()` operator. This is often much more convenient, and it can help simplify your scripts. Anything that can be used in a `movement` statement can also be used inside `moves()`.
+
+Looking at the previous example, the movement can be inlined like this:
+```
+script MyScript {
+    lock
+    applymovement(2, moves(
+        walk_left
+        walk_up * 5
+        face_down
+    ))
+    waitmovement(0)
+    release
+}
+```
+Note, whitespace doesn't matter. This can also be written all on a single line:
+```
+applymovement(2, moves(walk_left walk_up * 5 face_down))
+
+// You can even use commas to separate each movement command, since
+// that may be easier to read.
+applymovement(2, moves(walk_left, walk_up * 5, face_down))
 ```
 
 ## `mart` Statement
@@ -631,7 +685,7 @@ const ASSISTANT_ID = PROF_BIRCH_ID + 1
 const FLAG_GREETED_BIRCH = FLAG_TEMP_2
 
 script ProfBirchScript {
-    applymovement(PROF_BIRCH_ID, BirchMovementData)
+    applymovement(PROF_BIRCH_ID, moves(walk_left * 4, face_down))
     showobject(ASSISTANT_ID)
     setflag(FLAG_GREETED_BIRCH)
 }
@@ -693,6 +747,65 @@ The top-level statements have different default scopes. They are as follows:
 | `movement` | Local |
 | `mart` | Local |
 | `mapscripts` | Global |
+
+## AutoVar Commands
+Some scripting commands always store their result in the same variable. For example, `checkitem` always stores its result in `VAR_RESULT`. Poryscript can simplify working with these commands with a concept called "AutoVar" commands.
+
+*Without* using an AutoVar, a script would be written like this:
+```
+checkitem(ITEM_ROOT_FOSSIL)
+if (var(VAR_RESULT) == TRUE) {
+    // player has the Root Fossil
+}
+```
+
+However, AutoVars can be used *inside* the condition, which helps streamline the script:
+```
+if (checkitem(ITEM_ROOT_FOSSIL) == TRUE) {
+    // player has the Root Fossil
+}
+```
+
+AutoVars can be used ***anywhere*** a `var()` operator can be used.  e.g. `if` conditions, `switch` statements--any boolean expression!
+
+### Defining AutoVar Commands
+AutoVar commands are fully configurable with the `command_config.json` file.  Use the `-cc` command line parameter to specifying the location of that config.
+
+There are two types of AutoVar commands:
+1. Implicit
+    - The stored var is defined in the config file, and is not present in the authored script.
+    - Examples: `checkitem`, `getpartysize`, `random`
+2. Explicit
+    - The stored var is provided as part of the command, and the config file stores the 0-based index of the command that specifies the stored var.
+    - Examples: `specialvar`, `checkcoins`
+
+Let's take a look at the example config file:
+```json
+// command_config.json
+{
+    "autovar_commands": {
+        "specialvar": {
+            "var_name_arg_position": 0
+        },
+        "checkitem": {
+            "var_name": "VAR_RESULT"
+        },
+    ...
+}
+```
+
+With the above config, a script could be written like so:
+```
+if (checkitem(ITEM_POKEBLOCK_CASE)) {
+    if (specialvar(VAR_RESULT, GetFirstFreePokeblockSlot) != -1 && 
+        specialvar(VAR_RESULT, PlayerHasBerries)
+    ) {
+        msgbox("Great! You can use the Berry Blender!)
+    }
+} else {
+    msgbox("You don't have a Pokeblock case!")
+}
+```
 
 ## Compile-Time Switches
 Use the `poryswitch` statement to change compiler behavior depending on custom switches. This makes it easy to make scripts behave different depending on, say, the `GAME_VERSION` or `LANGUAGE`. Any content that does not match the compile-time switch will not be included in the final output. To define custom switches, use the `-s` option when running `poryscript`.  You can specify multiple switches, and each key/value pair must be separated by an equals sign. For example:
@@ -762,6 +875,9 @@ Note, `poryswitch` can also be embedded inside inlined `mapscripts` scripts.
 
 ## Optimization
 By default, Poryscript produces optimized output. It attempts to minimize the number of `goto` commands and unnecessary script labels. To disable optimizations, pass the `-optimize=false` option to `poryscript`.
+
+## Line Markers
+By default, Poryscript includes [C Preprocessor line markers](https://gcc.gnu.org/onlinedocs/gcc-3.0.2/cpp_9.html) in the compiled output.  This improves error messages.  To disable line markers, specify `-lm=false` when invoking Poryscript.
 
 # Local Development
 
