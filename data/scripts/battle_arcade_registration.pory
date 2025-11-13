@@ -26,19 +26,19 @@ script BattleArcade_Registration_EventScript_Attendant
     special(SavePlayerParty)
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
 	{
-		msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcade)
+		msgbox(format("Welcome to the Battle Arcade! I am your guide to the Single and Double Battle challenges. Please be aware that these challenges are designed for a single Trainer."))
 		goto(BattleArcade_Registration_EventScript_AskEnterChallenge)
 	}
     else
 	{
-		msgbox(BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti, MSGBOX_DEFAULT)
+		msgbox(format("Welcome to the Battle Arcade! I am your guide to the Multi Battle challenge. Please be aware that this challenge requires two Trainers."), MSGBOX_DEFAULT)
 		goto(BattleArcade_Registration_EventScript_AskEnterMultiChallenge)
 	}
 }
 
 script BattleArcade_Registration_EventScript_AskEnterChallenge
 {
-    message(BattleArcade_Entrance_Text_WhichChallengeWouldYouLike)
+    message(format("Which challenge would you like to take?"))
     waitmessage
     multichoice(17, 4, MULTI_CHALLENGE_TYPES_INFO, FALSE)
     switch(var(VAR_RESULT))
@@ -57,7 +57,7 @@ script BattleArcade_Registration_EventScript_AskEnterChallenge
 
 script BattleArcade_Registration_EventScript_AskEnterMultiChallenge
 {
-	message(BattleArcade_Entrance_Text_WouldYouLikeToTake)
+	message(format("Would you like to take the Battle Arcade Multi Battle challenge?"))
 	waitmessage
 	multichoice(17,5,MULTI_CHALLENGEINFO, FALSE)
 	switch(var(VAR_RESULT))
@@ -77,19 +77,19 @@ script BattleArcade_Registration_EventScript_ExplainChallenge
 {
     if (var(VAR_ATTENDANT_TALKED) == FRONTIER_MODE_SINGLES)
     {
-        msgbox(BattleArcade_Entrance_Text_AtTheBattleArcade, MSGBOX_DEFAULT)
+        msgbox(format("At the Battle Arcade, you may take a Single or Double Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. Some events will be good for the challenger, while others won't be. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). If you want to interrupt your challenge, please save the game. If you don't save, you will be disqualified from your challenge. Please be aware of that!"), MSGBOX_DEFAULT)
         goto(BattleArcade_Registration_EventScript_AskEnterChallenge)
     }
     else
     {
-        msgbox(BattleArcade_Entrance_Text_YouMayTeamUpWith, MSGBOX_DEFAULT)
+        msgbox(format("You may team up with a friend for a Multi Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. The events may have great impact on the match's outcome, good or bad. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). Please note: a Battle Arcade Multi Battle challenge can't be interrupted."), MSGBOX_DEFAULT)
         goto(BattleArcade_Registration_EventScript_AskEnterMultiChallenge)
     }
 }
 
 script BattleArcade_Registration_EventScript_TryEnterChallenge
 {
-    message(BattleArcade_Entrance_Text_WhichLevelMode)
+    message(format("The BATTLE ARCADE offers two levels of challenge, Level 50 and Open Level. Which is your choice?"))
     waitmessage
     multichoice(17, 4, MULTI_LEVEL_MODE, FALSE)
     switch(var(VAR_RESULT))
@@ -104,7 +104,7 @@ script BattleArcade_Registration_EventScript_TryEnterChallenge
         goto(BattleArcade_Registration_EventScript_NotEnoughValidMons)
     }
     frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
-    msgbox(BattleArcade_Entrance_Text_PleaseSelectThePokemonYou, MSGBOX_DEFAULT)
+	msgbox(BattleFrontier_BattleTowerLobby_Text_PleaseSelectMons,MSGBOX_DEFAULT)    
 
     fadescreen(FADE_TO_BLACK)
     frontier_get(FRONTIER_DATA_LVL_MODE)
@@ -134,14 +134,14 @@ script BattleArcade_Registration_EventScript_GetPartySize
 script BattleArcade_Registration_EventScript_NotEnoughValidMons
 {
     buffernumberstring(STR_VAR_2,LOCAL_VAR_PARTY_SIZE)
-    msgbox(BattleArcade_Entrance_Text_ExcuseMeYouDont, MSGBOX_DEFAULT)
+    msgbox(format("Excuse me! You don't have {STR_VAR_2} eligible Pokémon. You must have {STR_VAR_2} different Pokémon to enter."), MSGBOX_DEFAULT)
 
     call(BattleFrontier_EventScript_GetLvlMode)
     if(var(VAR_RESULT) == FRONTIER_LVL_50)
     {
-        msgbox(BattleArcade_Entrance_Text_UnderLevel50, MSGBOX_DEFAULT)
+        msgbox(format("The {STR_VAR_2} different Pokémon must all be Level 50 or lower."), MSGBOX_DEFAULT)
     }
-    msgbox(BattleArcade_Entrance_Text_EggsAndAre, MSGBOX_DEFAULT)
+    msgbox(format("Eggs{STR_VAR_1} are not allowed to enter."), MSGBOX_DEFAULT)
     closemessage
     end
 }
@@ -154,7 +154,8 @@ script BattleArcade_Registration_EventScript_LoadPartyCancelChallenge
 
 script BattleArcade_Registration_EventScript_CancelChallenge
 {
-    msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou,MSGBOX_DEFAULT)
+	msgbox(gText_WeHopeToSeeYouAgain,MSGBOX_DEFAULT)
+	closemessage
     release
     end
 }
@@ -226,7 +227,7 @@ script BattleArcade_Registration_EventScript_GoToHallway
 
 script BattleArcade_Registration_EventScript_ShowYouToBattleRoom
 {
-    msgbox(BattleArcade_Entrance_Text_RightThisWayPlease, MSGBOX_DEFAULT)
+    msgbox(BattleFrontier_BattleFactoryPreBattleRoom_Text_RightThisWay, MSGBOX_DEFAULT)
     call(BattleArcade_Lobby_EventScript_WalkToElevator)
     return
 }
@@ -254,7 +255,7 @@ script BattleArcade_Registration_EventScript_WonChallenge
         call(BattleArcade_Registration_EventScript_CheckStreakAndSymbols)
     }
     call(BattleArcade_Registration_EventScript_ResetChallengeStatus)
-    goto(BattleArcade_Registration_EventScript_LookForwardToChallenge)
+    goto(BattleArcade_Registration_EventScript_CancelChallenge)
 }
 
 script BattleArcade_Registration_EventScript_CheckStreakAndSymbols
@@ -275,14 +276,14 @@ script BattleArcade_Registration_EventScript_CheckStreakAndSymbols
 script BattleArcade_Registration_EventScript_GiveGoldPrint
 {
     msgbox(BattleArcade_Entrance_Text_CongratulationsInHonorOf,MSGBOX_DEFAULT)
-    msgbox(BattleArcade_Entrance_Text_TheGoldPrintWasAdded,MSGBOX_DEFAULT)
+    msgbox(format("The Gold Print was added to {PLAYER}'s Vs. Recorder!"),MSGBOX_DEFAULT)
         call(BattleArcade_Registration_EventScript_GivePrint)
 }
 
 script BattleArcade_Registration_EventScript_GiveSilverPrint
 {
     msgbox(BattleArcade_Entrance_Text_CongratulationsInHonorOf,MSGBOX_DEFAULT)
-    msgbox(BattleArcade_Entrance_Text_TheSilverPrintWasAdded,MSGBOX_DEFAULT)
+    msgbox(format("The Silver Print was added to {PLAYER}'s Vs. Recorder!"),MSGBOX_DEFAULT)
     call(BattleArcade_Registration_EventScript_GivePrint)
 }
 
@@ -290,7 +291,7 @@ script BattleArcade_Registration_EventScript_QuitWithoutSaving
 {
     lock
     faceplayer
-    msgbox(BattleArcade_Entrance_Text_ExcuseMeYouDidnt, MSGBOX_DEFAULT)
+    msgbox(format("Excuse me! You didn't save before you quit your challenge last time. Because of that, you have been disqualified from your challenge!"), MSGBOX_DEFAULT)
     closemessage
     arcade_set(ARCADE_DATA_WIN_STREAK, 0)
     arcade_set(ARCADE_DATA_WIN_STREAK_ACTIVE, FALSE)
@@ -326,15 +327,6 @@ script BattleArcade_Registration_EventScript_PlayFanfareMessage
     waitfanfare
 }
 
-
-script BattleArcade_Registration_EventScript_LookForwardToChallenge
-{
-    msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou, MSGBOX_DEFAULT)
-    closemessage
-    release
-    end
-}
-
 script BattleArcade_Registration_EventScript_LostChallenge
 {
     arcade_get(ARCADE_DATA_WIN_STREAK)
@@ -350,11 +342,8 @@ script BattleArcade_Registration_EventScript_LostThanksForPlaying
 {
     lock
     faceplayer
-    msgbox(BattleArcade_Entrance_Text_WeHopeToSeeYou, MSGBOX_DEFAULT)
-    closemessage
-    setvar(VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
-    release
-    end
+	setvar(VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
+	goto(BattleArcade_Registration_EventScript_CancelChallenge)
 }
 
 script BattleArcade_Registration_EventScript_ResumeChallenge
@@ -362,7 +351,7 @@ script BattleArcade_Registration_EventScript_ResumeChallenge
     lock
     faceplayer
 
-    message(BattleArcade_Entrance_Text_WeveMissedYou)
+    message(format("We've missed you! You must save the game before you resume your challenge. Please wait."))
     waitmessage
 
     arcade_save(CHALLENGE_STATUS_SAVING)
@@ -376,7 +365,7 @@ script BattleArcade_Registration_EventScript_ResumeChallenge
 
 script BattleArcade_Entrance_LinkMulti_EventScript_Cancel
 {
-	msgbox(BattleArcade_Entrance_Text_LinkMultisAreNot)
+	msgbox(format("I'm sorry! Link Multi Battles have not been implemented at this time. Please come back later."))
 	closemessage
 	frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)
 	goto(BattleArcade_Registration_EventScript_CancelChallenge)
@@ -385,7 +374,7 @@ script BattleArcade_Entrance_LinkMulti_EventScript_Cancel
 script BattleArcade_Registration_EventScript_AskModeResultsBoard
 {
     lockall
-    message(BattleArcade_Entrance_Text_ReadWhichRecord)
+    message(format("Which record would you like to see?"))
     waitmessage
     multichoice(17, 2, MULTI_BATTLE_ARCADE_RECORDS, FALSE)
     switch(var(VAR_RESULT))
@@ -412,109 +401,9 @@ script BattleArcade_Registration_EventScript_ShowResults
 	goto(BattleArcade_Registration_EventScript_AskModeResultsBoard)
 }
 
-text BattleArcade_Entrance_Text_WelcomeToTheBattleArcade
-{
-	format("Welcome to the Battle Arcade! I am your guide to the Single and Double Battle challenges. Please be aware that these challenges are designed for a single Trainer.")
-}
-
-text BattleArcade_Entrance_Text_WelcomeToTheBattleArcadeMulti
-{
-	format("Welcome to the Battle Arcade! I am your guide to the Multi Battle challenge. Please be aware that this challenge requires two Trainers.")
-}
-
-text BattleArcade_Entrance_Text_WhichChallengeWouldYouLike
-{
-	format("Which challenge would you like to take?")
-}
-
-text BattleArcade_Entrance_Text_WouldYouLikeToTake
-{
-	format("Would you like to take the Battle Arcade Multi Battle challenge?")
-}
-
-text BattleArcade_Entrance_Text_WhichLevelMode
-{
-    format("The BATTLE ARCADE offers two levels of challenge, Level 50 and Open Level. Which is your choice?")
-}
-
-text BattleArcade_Entrance_Text_PleaseSelectThePokemonYou
-{
-	format("Please select the Pokémon you wish to enter.")
-}
-
-text BattleArcade_Entrance_Text_ExcuseMeYouDont
-{
-	format("Excuse me! You don't have {STR_VAR_2} eligible Pokémon. You must have {STR_VAR_2} different Pokémon to enter.")
-}
-
-text BattleArcade_Entrance_Text_UnderLevel50
-{
-    format("The {STR_VAR_2} different Pokémon must all be Level 50 or lower.")
-}
-
-text BattleArcade_Entrance_Text_EggsAndAre
-{
-	format("Eggs{STR_VAR_1} are not allowed to enter.")
-}
-
-text BattleArcade_Entrance_Text_PleaseComeSeeMeWhen
-{
-	format("Please come see me when you are ready.")
-}
-
-text BattleArcade_Entrance_Text_RightThisWayPlease
-{
-	format("Right this way, please!")
-}
-
-text BattleArcade_Entrance_Text_AtTheBattleArcade
-{
-	format("At the Battle Arcade, you may take a Single or Double Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. Some events will be good for the challenger, while others won't be. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). If you want to interrupt your challenge, please save the game. If you don't save, you will be disqualified from your challenge. Please be aware of that!")
-}
-
-text BattleArcade_Entrance_Text_YouMayTeamUpWith
-{
-	format("You may team up with a friend for a Multi Battle challenge. Here, a game board is activated before every match. Depending on what comes up on the game board, an event takes place. The events may have great impact on the match's outcome, good or bad. The objective is to keep a winning streak alive as long as possible. During your challenge, any items held by your Pokémon will be kept in storage. If you manage to win seven matches in a row, you will earn Battle Points (BP). Please note: a Battle Arcade Multi Battle challenge can't be interrupted.")
-}
-
-text BattleArcade_Entrance_Text_WeveMissedYou
-{
-	format("We've missed you! You must save the game before you resume your challenge. Please wait.")
-}
-
-text BattleArcade_Entrance_Text_ExcuseMeYouDidnt
-{
-	format("Excuse me! You didn't save before you quit your challenge last time. Because of that, you have been disqualified from your challenge!")
-}
-
 text BattleArcade_Entrance_Text_CongratulationsInHonorOf
 {
 	format("Congratulations! In honor of your victory, we present you with this commemorative print!")
-}
-
-text BattleArcade_Entrance_Text_TheSilverPrintWasAdded
-{
-	format("The Silver Print was added to {PLAYER}'s Vs. Recorder!")
-}
-
-text BattleArcade_Entrance_Text_TheGoldPrintWasAdded
-{
-	format("The Gold Print was added to {PLAYER}'s Vs. Recorder!")
-}
-
-text BattleArcade_Entrance_Text_WeHopeToSeeYou
-{
-	format("We hope to see you again!")
-}
-
-text BattleArcade_Entrance_Text_ReadWhichRecord
-{
-    format("Which record would you like to see?")
-}
-
-text BattleArcade_Entrance_Text_LinkMultisAreNot
-{
-	format("I'm sorry! Link Multi Battles have not been implemented at this time. Please come back later.")
 }
 
 // These are not used because Link Multis have not been implemented.
