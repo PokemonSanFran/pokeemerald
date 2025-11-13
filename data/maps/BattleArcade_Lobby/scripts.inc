@@ -34,7 +34,7 @@ BattleArcade_Lobby_EventScript_PlayerFaceNorth::
 
 BattleArcade_Lobby_EventScript_WarpToHallway::
 # 32 "data/maps/BattleArcade_Lobby/scripts.pory"
-	warpsilent MAP_BATTLE_ARCADE_HALLWAY, 1, 3
+	@ warpsilent MAP_BATTLE_ARCADE_HALLWAY, 1, 3
 	return
 
 

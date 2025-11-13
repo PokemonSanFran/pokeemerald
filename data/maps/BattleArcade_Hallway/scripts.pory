@@ -21,7 +21,7 @@ script BattleArcade_Hallway_EventScript_EnterCorridor
 	applymovement(OBJ_EVENT_ID_PLAYER,moves(walk_right * 6, walk_up, set_invisible))
 	waitmovement(OBJ_EVENT_ID_PLAYER)
 	setvar(LOCAL_VAR_WALKED_HALLWAY, FALSE)
-	warp(MAP_BATTLE_ARCADE_BATTLE_ROOM, 7, 17)
+	//warp(MAP_BATTLE_ARCADE_BATTLE_ROOM, 7, 17)
 	waitstate
 	end
 }

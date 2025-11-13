@@ -475,7 +475,7 @@ BattleArcade_Challenge_EventScript_SaveWarpToLobby::
 	compare VAR_RESULT, FRONTIER_MODE_MULTIS
 	goto_if_eq BattleArcade_Challenge_EventScript_SaveWarpToLobby_2
 # 276 "data/scripts/battle_arcade_battle.pory"
-	warpsilent MAP_BATTLE_ARCADE_LOBBY, 5, 6
+	@ warpsilent MAP_BATTLE_ARCADE_LOBBY, 5, 6
 BattleArcade_Challenge_EventScript_SaveWarpToLobby_1:
 # 278 "data/scripts/battle_arcade_battle.pory"
 	waitstate
@@ -483,7 +483,7 @@ BattleArcade_Challenge_EventScript_SaveWarpToLobby_1:
 
 BattleArcade_Challenge_EventScript_SaveWarpToLobby_2:
 # 272 "data/scripts/battle_arcade_battle.pory"
-	warpsilent MAP_BATTLE_ARCADE_LOBBY, 6, 6
+	@ warpsilent MAP_BATTLE_ARCADE_LOBBY, 6, 6
 	goto BattleArcade_Challenge_EventScript_SaveWarpToLobby_1
 
 

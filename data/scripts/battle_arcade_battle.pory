@@ -269,11 +269,11 @@ script BattleArcade_Challenge_EventScript_SaveWarpToLobby
 	copyvar(VAR_RESULT,VAR_FRONTIER_BATTLE_MODE)
 	if (var(VAR_RESULT) == FRONTIER_MODE_MULTIS)
 	{
-		warpsilent(MAP_BATTLE_ARCADE_LOBBY,6,6)
+		// warpsilent(MAP_BATTLE_ARCADE_LOBBY,6,6)
 	}
 	else
 	{
-		warpsilent(MAP_BATTLE_ARCADE_LOBBY,5,6)
+		// warpsilent(MAP_BATTLE_ARCADE_LOBBY,5,6)
 	}
 	waitstate
 	end
