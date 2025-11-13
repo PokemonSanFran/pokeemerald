@@ -2622,9 +2622,9 @@ s32 GetFronterBrainSymbol(void)
     s32 facility = VarGet(VAR_FRONTIER_FACILITY);
     s32 symbol = GetPlayerSymbolCountForFacility(facility);
 
-	// Start battle_arcade
-	if (facility == FRONTIER_FACILITY_ARCADE)
-		return GetArcadePrintCount();
+    // Start battle_arcade
+    if (facility == FRONTIER_FACILITY_ARCADE)
+        return GetArcadePrintCount();
 
     ConvertFacilityFromArcadeToPike(&facility);
 	// End battle_arcade

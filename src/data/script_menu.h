@@ -918,7 +918,7 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_TAG_MATCH_TYPE]             = MULTICHOICE(MultichoiceList_TagMatchType),
 // Start battle_arcade
     [MULTI_CHALLENGE_TYPES_INFO]       = MULTICHOICE(MultichoiceList_ChallengeTypesInfo),
-	[MULTI_BATTLE_ARCADE_RECORDS]       = MULTICHOICE(MultichoiceList_BattleArcadeRecords),
+    [MULTI_BATTLE_ARCADE_RECORDS]       = MULTICHOICE(MultichoiceList_BattleArcadeRecords),
 // End battle_arcade
 };
 
