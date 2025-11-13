@@ -10,184 +10,184 @@ const ENTRANCE_STATUS_BEGUN = 2
 
 script BattleArcade_Challenge_EventScript_BeginChallenge
 {
-    setvar(VAR_ENTRANCE_STATUS, ENTRANCE_STATUS_BEGUN)
-    call(BattleArcade_BattleRoom_EventScript_MCFaceCrowd)
-    msgbox(format("Welcome to the Battle Arcade!"),MSGBOX_DEFAULT)
+	setvar(VAR_ENTRANCE_STATUS, ENTRANCE_STATUS_BEGUN)
+	call(BattleArcade_BattleRoom_EventScript_MCFaceCrowd)
+	msgbox(format("Welcome to the Battle Arcade!"),MSGBOX_DEFAULT)
 	msgbox(format("First, I’ll need to hold on to any items held by your Pokémon."),MSGBOX_DEFAULT)
 	arcade_takeplayerhelditems
-    goto(BattleArcade_Challenge_EventScript_BattleOpponent)
+	goto(BattleArcade_Challenge_EventScript_BattleOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_BattleOpponent
 {
-    tower_setopponent
+	tower_setopponent
 	goto(BattleArcade_Challenge_EventScript_SpawnOpponentStartGameBoard)
 }
 
 script BattleArcade_Challenge_EventScript_SpawnOpponentStartGameBoard
 {
-    call(BattleArcade_Challenge_EventScript_AnnounceGameNumber)
-    call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
+	call(BattleArcade_Challenge_EventScript_AnnounceGameNumber)
+	call(BattleArcade_BattleRoom_EventScript_SpawnOpponentEntrance)
 	call(BattleArcade_Challenge_EventScript_BrainIntro)
-    call(BattleArcade_Challenge_EventScript_StartGameBoard)
-    call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
-    call(BattleArcade_Challenge_EventScript_LoadOpponentText)
-    call(BattleArcade_Challenge_EventScript_StartBattle)
-    goto(BattleArcade_Challenge_EventScript_HandleBattleResult)
+	call(BattleArcade_Challenge_EventScript_StartGameBoard)
+	call(BattleArcade_BattleRoom_EventScript_OpponentBattleMovement)
+	call(BattleArcade_Challenge_EventScript_LoadOpponentText)
+	call(BattleArcade_Challenge_EventScript_StartBattle)
+	goto(BattleArcade_Challenge_EventScript_HandleBattleResult)
 }
 
 script BattleArcade_Challenge_EventScript_AnnounceGameNumber
 {
-    call(BattleArcade_Challenge_EventScript_BufferNextBattleNumber)
-    msgbox(format("Game no. {STR_VAR_1}! Come on!"),MSGBOX_DEFAULT)
-    closemessage
+	call(BattleArcade_Challenge_EventScript_BufferNextBattleNumber)
+	msgbox(format("Game no. {STR_VAR_1}! Come on!"),MSGBOX_DEFAULT)
+	closemessage
 }
 
 script BattleArcade_Challenge_EventScript_BufferNextBattleNumber
 {
-    frontier_get(FRONTIER_DATA_BATTLE_NUM)
-    addvar(VAR_RESULT,1)
-    buffernumberstring(STR_VAR_1,VAR_RESULT)
+	frontier_get(FRONTIER_DATA_BATTLE_NUM)
+	addvar(VAR_RESULT,1)
+	buffernumberstring(STR_VAR_1,VAR_RESULT)
 }
 
 script BattleArcade_Challenge_EventScript_StartGameBoard
 {
-    call(BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition)
-    call(BattleArcade_Challenge_EventScript_PlayGameBoard)
-    call(BattleArcade_Challenge_EventScript_HandleGameResults)
+	call(BattleArcade_BattleRoom_EventScript_MCMoveIntoPosition)
+	call(BattleArcade_Challenge_EventScript_PlayGameBoard)
+	call(BattleArcade_Challenge_EventScript_HandleGameResults)
 }
 
 
 script BattleArcade_Challenge_EventScript_PlayGameBoard
 {
-    msgbox(format("Without further ado... Let’s activate the game board!"),MSGBOX_DEFAULT)
-    closemessage
-    arcade_generateopponentparty
-    arcade_takeenemyhelditems
-    arcade_playgameboard
+	msgbox(format("Without further ado... Let’s activate the game board!"),MSGBOX_DEFAULT)
+	closemessage
+	arcade_generateopponentparty
+	arcade_takeenemyhelditems
+	arcade_playgameboard
 }
 
 script BattleArcade_Challenge_EventScript_HandleGameResults
 {
-    msgbox(format("This is our current event!"),MSGBOX_DEFAULT)
-    call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
-    call(BattleArcade_Challenge_AnnounceImpactGiveItem)
-    call(BattleArcade_BattleRoom_EventScript_MoveMCBack)
-    call(BattleArcade_Challenge_SkipBattle_Script)
-    msgbox(format("OK! Let the battle commence!"),MSGBOX_DEFAULT)
-    closemessage
+	msgbox(format("This is our current event!"),MSGBOX_DEFAULT)
+	call(BattleArcade_BattleRoom_EventScript_ApplyOverworldImpact)
+	call(BattleArcade_Challenge_AnnounceImpactGiveItem)
+	call(BattleArcade_BattleRoom_EventScript_MoveMCBack)
+	call(BattleArcade_Challenge_SkipBattle_Script)
+	msgbox(format("OK! Let the battle commence!"),MSGBOX_DEFAULT)
+	closemessage
 }
 
 script BattleArcade_Challenge_AnnounceImpactGiveItem
 {
-    if (var(LOCAL_VAR_GAME_BOARD_SUCCESS))
-    {
-        call(BattleArcade_Challenge_AnnounceImpactGiveItem_Success)
-    }
-    else
-    {
-        call(BattleArcade_Challenge_AnnounceImpactGiveItem_Failure)
-    }
-    closemessage
-    call(BattleArcade_Challenge_GiveItem_Script)
+	if (var(LOCAL_VAR_GAME_BOARD_SUCCESS))
+	{
+		call(BattleArcade_Challenge_AnnounceImpactGiveItem_Success)
+	}
+	else
+	{
+		call(BattleArcade_Challenge_AnnounceImpactGiveItem_Failure)
+	}
+	closemessage
+	call(BattleArcade_Challenge_GiveItem_Script)
 }
 
 script BattleArcade_Challenge_AnnounceImpactGiveItem_Success
 {
-    switch(var(LOCAL_VAR_GAME_BOARD_EVENT))
-    {
-        case ARCADE_EVENT_LOWER_HP:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon without full HP!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_POISON:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon poisoned!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_PARALYZE:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon paralyzed!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_BURN:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon burned!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SLEEP:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon asleep!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_FREEZE:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon frozen!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_GIVE_BERRY:
-        case ARCADE_EVENT_GIVE_ITEM:
-            msgbox(format("{STR_VAR_1}’s Pokémon will be loaned the {STR_VAR_3}."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_LEVEL_UP:
-            msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon leveled up!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SUN:
-            msgbox(format("This match will be conducted under harsh sunlight."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_RAIN:
-            msgbox(format("This match will be conducted under a steady rainfall."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SAND:
-            msgbox(format("This match will be conducted under a raging sandstorm."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_HAIL:
-            msgbox(format("This match will be conducted under pelting hail."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_FOG:
-            msgbox(format("This match will be conducted in a dense fog."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_TRICK_ROOM:
-            msgbox(format("This match will be conducted on a floor where time and space are distorted."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SWAP:
-            msgbox(format("Your Pokémon will be switched with the other Trainer’s for this match."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SPEED_UP:
-            msgbox(format("From the next game on, the game board’s speed will be increased."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SPEED_DOWN:
-            msgbox(format("From the next game on, the game board’s speed will be decreased."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_RANDOM:
-            msgbox(format("For the next game, the game board’s motion will become random."),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_GIVE_BP_SMALL:
-        case ARCADE_EVENT_GIVE_BP_BIG:
-            msgbox(format("{PLAYER} received {STR_VAR_3} BP!"),MSGBOX_GETPOINTS)
-        case ARCADE_EVENT_NO_BATTLE:
-            msgbox(format("Oh! Lucky! You can skip the battle!"),MSGBOX_DEFAULT)
-        default:
-        case ARCADE_EVENT_NO_EVENT:
-            msgbox(format("Too bad! There is no event this time!"),MSGBOX_DEFAULT)
-    }
+	switch(var(LOCAL_VAR_GAME_BOARD_EVENT))
+	{
+		case ARCADE_EVENT_LOWER_HP:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon without full HP!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_POISON:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon poisoned!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_PARALYZE:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon paralyzed!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_BURN:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon burned!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SLEEP:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon asleep!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_FREEZE:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon frozen!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_GIVE_BERRY:
+		case ARCADE_EVENT_GIVE_ITEM:
+			msgbox(format("{STR_VAR_1}’s Pokémon will be loaned the {STR_VAR_3}."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_LEVEL_UP:
+			msgbox(format("The match will commence with {STR_VAR_1}’s Pokémon leveled up!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SUN:
+			msgbox(format("This match will be conducted under harsh sunlight."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_RAIN:
+			msgbox(format("This match will be conducted under a steady rainfall."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SAND:
+			msgbox(format("This match will be conducted under a raging sandstorm."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_HAIL:
+			msgbox(format("This match will be conducted under pelting hail."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_FOG:
+			msgbox(format("This match will be conducted in a dense fog."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_TRICK_ROOM:
+			msgbox(format("This match will be conducted on a floor where time and space are distorted."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SWAP:
+			msgbox(format("Your Pokémon will be switched with the other Trainer’s for this match."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SPEED_UP:
+			msgbox(format("From the next game on, the game board’s speed will be increased."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SPEED_DOWN:
+			msgbox(format("From the next game on, the game board’s speed will be decreased."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_RANDOM:
+			msgbox(format("For the next game, the game board’s motion will become random."),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_GIVE_BP_SMALL:
+		case ARCADE_EVENT_GIVE_BP_BIG:
+			msgbox(format("{PLAYER} received {STR_VAR_3} BP!"),MSGBOX_GETPOINTS)
+		case ARCADE_EVENT_NO_BATTLE:
+			msgbox(format("Oh! Lucky! You can skip the battle!"),MSGBOX_DEFAULT)
+		default:
+		case ARCADE_EVENT_NO_EVENT:
+			msgbox(format("Too bad! There is no event this time!"),MSGBOX_DEFAULT)
+}
 }
 
 script BattleArcade_Challenge_AnnounceImpactGiveItem_Failure
 {
-    switch(var(LOCAL_VAR_GAME_BOARD_EVENT))
-    {
-        case ARCADE_EVENT_POISON:
-            msgbox(format("{STR_VAR_1}’s Pokémon will enter the match poisoned... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be poisoned!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_PARALYZE:
-            msgbox(format("{STR_VAR_1}’s Pokémon will enter the match paralyzed... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be paralyzed!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_BURN:
-            msgbox(format("{STR_VAR_1}’s Pokémon will enter the match burned... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be burned!"),MSGBOX_DEFAULT)
-        case ARCADE_EVENT_SLEEP:
-            msgbox(format("{STR_VAR_1}’s Pokémon will enter the match asleep... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be made to sleep!"),MSGBOX_DEFAULT)
-        default:
-        case ARCADE_EVENT_FREEZE:
-            msgbox(format("{STR_VAR_1}’s Pokémon will enter the match frozen... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be frozen!"),MSGBOX_DEFAULT)
-    }
+	switch(var(LOCAL_VAR_GAME_BOARD_EVENT))
+	{
+		case ARCADE_EVENT_POISON:
+			msgbox(format("{STR_VAR_1}’s Pokémon will enter the match poisoned... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be poisoned!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_PARALYZE:
+			msgbox(format("{STR_VAR_1}’s Pokémon will enter the match paralyzed... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be paralyzed!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_BURN:
+			msgbox(format("{STR_VAR_1}’s Pokémon will enter the match burned... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be burned!"),MSGBOX_DEFAULT)
+		case ARCADE_EVENT_SLEEP:
+			msgbox(format("{STR_VAR_1}’s Pokémon will enter the match asleep... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be made to sleep!"),MSGBOX_DEFAULT)
+		default:
+		case ARCADE_EVENT_FREEZE:
+			msgbox(format("{STR_VAR_1}’s Pokémon will enter the match frozen... Oh! A lucky break! {STR_VAR_1} has no Pokémon that can be frozen!"),MSGBOX_DEFAULT)
+	}
 }
 script BattleArcade_Challenge_GiveItem_Script
 {
-    if ((var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_BERRY) && (var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_ITEM))
-    {
-        return
-    }
-    call(BattleArcade_BattleRoom_EventScript_MoveMCToTrainer)
-    msgbox(format("Here you go!"))
-    closemessage
-    call(BattleArcade_BattleRoom_EventScript_MoveMCFromTrainer)
+	if ((var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_BERRY) && (var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_GIVE_ITEM))
+	{
+		return
+	}
+	call(BattleArcade_BattleRoom_EventScript_MoveMCToTrainer)
+	msgbox(format("Here you go!"))
+	closemessage
+	call(BattleArcade_BattleRoom_EventScript_MoveMCFromTrainer)
 }
 
 script BattleArcade_Challenge_SkipBattle_Script
 {
-    if (var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_NO_BATTLE)
-    {
-        return
-    }
+	if (var(LOCAL_VAR_GAME_BOARD_EVENT) != ARCADE_EVENT_NO_BATTLE)
+	{
+		return
+	}
 
-    call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
-    goto(BattleArcade_Challenge_EventScript_DefeatedOpponent)
+	call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
+		goto(BattleArcade_Challenge_EventScript_DefeatedOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_BattleBrain
 {
-    arcade_setbrainobj
-    goto(BattleArcade_Challenge_EventScript_SpawnOpponentStartGameBoard)
+	arcade_setbrainobj
+	goto(BattleArcade_Challenge_EventScript_SpawnOpponentStartGameBoard)
 }
 
 
@@ -196,7 +196,7 @@ script BattleArcade_Challenge_EventScript_LoadOpponentText
 	frontier_isbrain
 	if (var(VAR_RESULT) == TRUE)
 	{
-        call(BattleArcade_Challenge_EventScript_BufferBrainPreBattleText)
+		call(BattleArcade_Challenge_EventScript_BufferBrainPreBattleText)
 		msgbox(gStringVar3, MSGBOX_DEFAULT)
 	}
 	else
@@ -210,73 +210,73 @@ script BattleArcade_Challenge_EventScript_LoadOpponentText
 
 script BattleArcade_Challenge_EventScript_StartBattle
 {
-    call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
-    call(BattleArcade_Challenge_EventScript_DoArcadeBattle)
+	call(BattleArcade_BattleRoom_EventScript_MoveBattlersIntoPosition)
+	call(BattleArcade_Challenge_EventScript_DoArcadeBattle)
 }
 
 script BattleArcade_Challenge_EventScript_DoArcadeBattle
 {
-    closemessage
+	closemessage
 
-    setvar(VAR_HEARD_BRAIN_INTRO, FALSE)
-    frontier_set(FRONTIER_DATA_RECORD_DISABLED, FALSE)
-    setvar(VAR_0x8005, 0)
+	setvar(VAR_HEARD_BRAIN_INTRO, FALSE)
+	frontier_set(FRONTIER_DATA_RECORD_DISABLED, FALSE)
+	setvar(VAR_0x8005, 0)
 
-    special(DoArcadeTrainerBattle)
-    waitstate
-    arcade_eventcleanup
+	special(DoArcadeTrainerBattle)
+	waitstate
+	arcade_eventcleanup
 
-    copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)
-    frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
+	copyvar(VAR_0x8004, VAR_FRONTIER_BATTLE_MODE)
+	frontier_get(FRONTIER_DATA_BATTLE_OUTCOME)
 }
 
 script BattleArcade_Challenge_EventScript_HandleBattleResult
 {
-    if (var(VAR_RESULT) == B_OUTCOME_WON)
-    {
-        goto(BattleArcade_Challenge_EventScript_DefeatedOpponent)
-    }
-    goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
+	if (var(VAR_RESULT) == B_OUTCOME_WON)
+	{
+		goto(BattleArcade_Challenge_EventScript_DefeatedOpponent)
+	}
+	goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
 }
 
 script BattleArcade_Challenge_EventScript_Save
 {
-    message(gText_SavingDontTurnOff2)
-    waitmessage
-    special(LoadPlayerParty)
-    call(BattleArcade_Challenge_EventScript_SetChallengeStatus)
-    playse(SE_SAVE)
-    waitse
-    closemessage
+	message(gText_SavingDontTurnOff2)
+	waitmessage
+	special(LoadPlayerParty)
+	call(BattleArcade_Challenge_EventScript_SetChallengeStatus)
+	playse(SE_SAVE)
+	waitse
+	closemessage
 }
 
 script BattleArcade_Challenge_EventScript_SetChallengeStatus
 {
-    if (var(VAR_RESULT) == B_OUTCOME_WON)
-    {
-        tower_save(CHALLENGE_STATUS_WON)
-    }
-    else
-    {
-        tower_save(CHALLENGE_STATUS_LOST)
-    }
+	if (var(VAR_RESULT) == B_OUTCOME_WON)
+	{
+		tower_save(CHALLENGE_STATUS_WON)
+	}
+	else
+	{
+		tower_save(CHALLENGE_STATUS_LOST)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_SaveWarpToLobby
 {
-    call(BattleArcade_Challenge_EventScript_Save)
+	call(BattleArcade_Challenge_EventScript_Save)
 
-    copyvar(VAR_RESULT,VAR_FRONTIER_BATTLE_MODE)
-    if (var(VAR_RESULT) == FRONTIER_MODE_MULTIS)
-    {
-        warpsilent(MAP_BATTLE_ARCADE_LOBBY,6,6)
-    }
-    else
-    {
-        warpsilent(MAP_BATTLE_ARCADE_LOBBY,5,6)
-    }
-    waitstate
-    end
+	copyvar(VAR_RESULT,VAR_FRONTIER_BATTLE_MODE)
+	if (var(VAR_RESULT) == FRONTIER_MODE_MULTIS)
+	{
+		warpsilent(MAP_BATTLE_ARCADE_LOBBY,6,6)
+	}
+	else
+	{
+		warpsilent(MAP_BATTLE_ARCADE_LOBBY,5,6)
+	}
+	waitstate
+	end
 }
 
 script BattleArcade_Challenge_EventScript_DefeatedOpponent
@@ -301,243 +301,244 @@ script BattleArcade_Challenge_EventScript_DefeatedOpponent
 
 script BattleArcade_RoulettRoom_EventScript_ResolveEndChallenge
 {
-    call(BattleFrontier_EventScript_GetCantRecordBattle)
-    if(var(VAR_RESULT) == FALSE)
-    {
-        call(BattleArcade_Challenge_EventScript_AskRecordBattle)
-    }
-    call(BattleArcade_Challenge_EventScript_GiveBP)
-    msgbox(format("We will return any items we were holding for you."))
-    goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
+	call(BattleFrontier_EventScript_GetCantRecordBattle)
+	if(var(VAR_RESULT) == FALSE)
+	{
+		call(BattleArcade_Challenge_EventScript_AskRecordBattle)
+	}
+call(BattleArcade_Challenge_EventScript_GiveBP)
+	msgbox(format("We will return any items we were holding for you."))
+	goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
 }
 
 script BattleArcade_Challenge_EventScript_GiveBP
 {
-    arcade_givepoints
-    msgbox(format("You have cleared your seventh battle! Congratulations! You have earned BP as your prize!"))
-    msgbox(BattleFrontier_Text_ObtainedXBattlePoints, MSGBOX_GETPOINTS)
+	arcade_givepoints
+	msgbox(format("You have cleared your seventh battle! Congratulations! You have earned BP as your prize!"))
+	msgbox(BattleFrontier_Text_ObtainedXBattlePoints, MSGBOX_GETPOINTS)
 }
 
 script BattleArcade_Challenge_EventScript_HealPlayer
 {
-    msgbox(format("Good going! We’ll heal your Pokémon now."))
-    playfanfare(MUS_HEAL)
-    waitfanfare
-    special(HealPlayerParty)
-    closemessage
-    call(BattleArcade_BattleRoom_EventScript_AttendantLeave)
-    goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
+	msgbox(format("Good going! We’ll heal your Pokémon now."))
+	playfanfare(MUS_HEAL)
+	waitfanfare
+	special(HealPlayerParty)
+	closemessage
+	call(BattleArcade_BattleRoom_EventScript_AttendantLeave)
+	goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_AskReadyForOpponent
 {
-    arcade_getbrainstatus
-    if(var(VAR_RESULT) != FRONTIER_BRAIN_NOT_READY)
-    {
-        goto(BattleArcade_Challenge_EventScript_BrainUpNext)
-    }
+	arcade_getbrainstatus
+	if(var(VAR_RESULT) != FRONTIER_BRAIN_NOT_READY)
+	{
+		goto(BattleArcade_Challenge_EventScript_BrainUpNext)
+	}
 
-    frontier_get(FRONTIER_DATA_BATTLE_NUM)
-    call(BattleArcade_Challenge_EventScript_ReadyForOpponent)
-    call(BattleFrontier_EventScript_GetCantRecordBattle)
-    if(var(VAR_RESULT) == TRUE)
-    {
-        goto(BattleArcade_Challenge_EventScript_ReadyMenuNoRecord)
-    }
-    goto(BattleArcade_Challenge_EventScript_ReadyMenu)
+	frontier_get(FRONTIER_DATA_BATTLE_NUM)
+	call(BattleArcade_Challenge_EventScript_ReadyForOpponent)
+	call(BattleFrontier_EventScript_GetCantRecordBattle)
+	if(var(VAR_RESULT) == TRUE)
+	{
+		goto(BattleArcade_Challenge_EventScript_ReadyMenuNoRecord)
+	}
+	goto(BattleArcade_Challenge_EventScript_ReadyMenu)
 
 }
 
 script BattleArcade_Challenge_EventScript_ReadyForOpponent
 {
-    call(BattleArcade_Challenge_EventScript_BufferNextBattleNumber)
-    message(format("Next up, game no. {STR_VAR_1}! Are you ready?"))
-    waitmessage
+	call(BattleArcade_Challenge_EventScript_BufferNextBattleNumber)
+	message(format("Next up, game no. {STR_VAR_1}! Are you ready?"))
+	waitmessage
 }
 
 script BattleArcade_Challenge_EventScript_ReadyMenu
 {
-    multichoice(19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE)
-    switch(var(VAR_RESULT))
-    {
-        case 0:goto(BattleArcade_Challenge_EventScript_ContinueChallenge)
-        case 1:goto(BattleArcade_Challenge_EventScript_AskRecordBattleNextBattle)
-        case 2:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
-        case 3:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
-        case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
-    }
+	multichoice(19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE)
+	switch(var(VAR_RESULT))
+	{
+		case 0:goto(BattleArcade_Challenge_EventScript_ContinueChallenge)
+		case 1:goto(BattleArcade_Challenge_EventScript_AskRecordBattleNextBattle)
+		case 2:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
+		case 3:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
+		case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_ReadyMenuNoRecord
 {
-    multichoice(20, 6, MULTI_GO_ON_REST_RETIRE, TRUE)
-    switch(var(VAR_RESULT)){
-        case 0:goto(BattleArcade_Challenge_EventScript_ContinueChallenge)
-        case 1:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
-        case 2:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
-        case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
-    }
+	multichoice(20, 6, MULTI_GO_ON_REST_RETIRE, TRUE)
+	switch(var(VAR_RESULT))
+	{
+		case 0:goto(BattleArcade_Challenge_EventScript_ContinueChallenge)
+		case 1:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
+		case 2:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
+		case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_AskRecordBattleNextBattle
 {
-    call(BattleArcade_Challenge_EventScript_AskRecordBattle)
-    goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
+	call(BattleArcade_Challenge_EventScript_AskRecordBattle)
+	goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_AskRecordBattle
 {
-    message(BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle)
-    waitmessage
-    multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
-    if(var(VAR_RESULT) == 0)
-    {
-        call(BattleFrontier_EventScript_SaveBattle)
-    }
+	message(BattleFrontier_BattleTowerBattleRoom_Text_RecordYourBattle)
+	waitmessage
+	multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
+	if(var(VAR_RESULT) == 0)
+	{
+		call(BattleFrontier_EventScript_SaveBattle)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_AskPauseChallenge
 {
-    msgbox(format("Would you like to save and take a break from playing?"), MSGBOX_YESNO)
-    if(var(VAR_RESULT) == YES)
-{
-    goto(BattleArcade_Challenge_EventScript_PauseChallenge)
-}
-    goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
+	msgbox(format("Would you like to save and take a break from playing?"), MSGBOX_YESNO)
+	if(var(VAR_RESULT) == YES)
+	{
+		goto(BattleArcade_Challenge_EventScript_PauseChallenge)
+	}
+	goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_PauseChallenge
 {
 	message(gText_SavingDontTurnOff2)
-    waitmessage
+	waitmessage
 
-    arcade_save(CHALLENGE_STATUS_PAUSED)
-    playse(SE_SAVE)
-    waitse
+	arcade_save(CHALLENGE_STATUS_PAUSED)
+	playse(SE_SAVE)
+	waitse
 
-    fadescreen(FADE_TO_BLACK)
-    frontier_reset
-    end
+	fadescreen(FADE_TO_BLACK)
+	frontier_reset
+	end
 }
 
 script BattleArcade_Challenge_EventScript_AskRetireChallenge
 {
-    message(format("Would you like to retire from this challenge?"))
-    waitmessage
-    multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
-    if(var(VAR_RESULT) == 0)
-    {
-        goto(BattleArcade_Challenge_EventScript_RetireChallenge)
-    }
-    goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
+	message(format("Would you like to retire from this challenge?"))
+	waitmessage
+	multichoicedefault(20, 8, MULTI_YESNO, 1, FALSE)
+	if(var(VAR_RESULT) == 0)
+	{
+		goto(BattleArcade_Challenge_EventScript_RetireChallenge)
+	}
+	goto(BattleArcade_Challenge_EventScript_AskReadyForOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_RetireChallenge
 {
-    setvar(VAR_RESULT,B_OUTCOME_LOST)
-    goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
+	setvar(VAR_RESULT,B_OUTCOME_LOST)
+	goto(BattleArcade_Challenge_EventScript_SaveWarpToLobby)
 }
 
 script BattleArcade_Challenge_EventScript_ContinueChallenge
 {
-    closemessage
-    goto(BattleArcade_Challenge_EventScript_BattleOpponent)
+	closemessage
+	goto(BattleArcade_Challenge_EventScript_BattleOpponent)
 }
 
 script BattleArcade_Challenge_EventScript_BrainUpNext
 {
-    if (var(VAR_HEARD_BRAIN_INTRO) == TRUE)
-    {
-        goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
-    }
+	if (var(VAR_HEARD_BRAIN_INTRO) == TRUE)
+	{
+		goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
+	}
 
-    msgbox(format("Congratulations, Trainer! In recognition of your outstanding skill, our Frontier Brain is demanding a match with you. So, your next match is against the Arcade Star; no ifs or buts! Are you ready?"), MSGBOX_DEFAULT)
-    setvar(VAR_HEARD_BRAIN_INTRO,TRUE)
+	msgbox(format("Congratulations, Trainer! In recognition of your outstanding skill, our Frontier Brain is demanding a match with you. So, your next match is against the Arcade Star; no ifs or buts! Are you ready?"), MSGBOX_DEFAULT)
+	setvar(VAR_HEARD_BRAIN_INTRO,TRUE)
 
-    goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
+	goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
 }
 
 script BattleArcade_Challenge_EventScript_AskReadyForBrain
 {
-    call(BattleFrontier_EventScript_GetCantRecordBattle)
-    if(var(VAR_RESULT) == TRUE)
-    {
-        goto(BattleArcade_Challenge_EventScript_BrainReadyMenu)
-    }
-    else
-    {
-        goto(BattleArcade_Challenge_EventScript_BrainReadyMenuNoRecord)
-    }
+	call(BattleFrontier_EventScript_GetCantRecordBattle)
+	if(var(VAR_RESULT) == TRUE)
+	{
+		goto(BattleArcade_Challenge_EventScript_BrainReadyMenu)
+	}
+	else
+	{
+		goto(BattleArcade_Challenge_EventScript_BrainReadyMenuNoRecord)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_BrainReadyMenu
 {
-    multichoice(19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE)
-    switch(var(VAR_RESULT))
-    {
-        case 0:goto(BattleArcade_Challenge_EventScript_BattleBrain)
-        case 1:goto(BattleArcade_Challenge_EventScript_AskRecordBattleNextBattle)
-        case 2:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
-        case 3:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
-        case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
-    }
+	multichoice(19, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE)
+	switch(var(VAR_RESULT))
+	{
+		case 0:goto(BattleArcade_Challenge_EventScript_BattleBrain)
+		case 1:goto(BattleArcade_Challenge_EventScript_AskRecordBattleNextBattle)
+		case 2:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
+		case 3:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
+		case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_BrainReadyMenuNoRecord
 {
-    multichoice(20, 6, MULTI_GO_ON_REST_RETIRE, TRUE)
-    switch(var(VAR_RESULT))
-    {
-        case 0:goto(BattleArcade_Challenge_EventScript_BattleBrain)
-        case 1:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
-        case 2:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
-        case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
-    }
+	multichoice(20, 6, MULTI_GO_ON_REST_RETIRE, TRUE)
+	switch(var(VAR_RESULT))
+	{
+		case 0:goto(BattleArcade_Challenge_EventScript_BattleBrain)
+		case 1:goto(BattleArcade_Challenge_EventScript_AskPauseChallenge)
+		case 2:goto(BattleArcade_Challenge_EventScript_AskRetireChallenge)
+		case MULTI_B_PRESSED:goto(BattleArcade_Challenge_EventScript_AskReadyForBrain)
+	}
 }
 
 script BattleArcade_Challenge_EventScript_BrainIntro
 {
 	frontier_isbrain
-    if (var(VAR_RESULT) == FALSE)
+	if (var(VAR_RESULT) == FALSE)
 	{
 		return
 	}
 
-    msgbox(format("Dahlia: No need to worry. {EMOJI_NOTE}\NLet chance do what it does. Like surprises from the game board, life goes through twists and turns. No need to worry. {EMOJI_NOTE}\NThings will go as they will. But, enough of that."),MSGBOX_DEFAULT)
+	msgbox(format("Dahlia: No need to worry. {EMOJI_NOTE}\NLet chance do what it does. Like surprises from the game board, life goes through twists and turns. No need to worry. {EMOJI_NOTE}\NThings will go as they will. But, enough of that."),MSGBOX_DEFAULT)
 	arcade_getprintfromstreak
-    if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
-    {
-        msgbox(format("I know one thing for certain. You have arrived here not merely because you were lucky. Let us not waste any time. I wish to test your skills myself!"), MSGBOX_DEFAULT)
-    }
-    else
-    {
+	if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
+	{
+		msgbox(format("I know one thing for certain. You have arrived here not merely because you were lucky. Let us not waste any time. I wish to test your skills myself!"), MSGBOX_DEFAULT)
+	}
+	else
+	{
 		msgbox(format("You are proving yourself incredible. Are you incredible because you are so lucky you shrug off bad luck entirely? Or, are you so incredibly talented to not be swayed by luck, good or bad? I wish to see for myself what brought you to me today!"),MSGBOX_DEFAULT)
-    }
+	}
 }
 
 script BattleArcade_Challenge_EventScript_BufferBrainPreBattleText
 {
-    arcade_getprintfromstreak
-    if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
-    {
-    bufferstring(STR_VAR_3,format("Dahlia: Always be smiling! Luck comes to those who are happy! That's why I always keep a big smile and believe in my Pokémon when I battle."))
-    }
-    else
-    {
-    bufferstring(STR_VAR_3,format("Dahlia: Whenever I battle someone tough, I smile. I cannot help it! How about you? What do you do? Do you laugh? Cry? Get angry?"))
-}
+	arcade_getprintfromstreak
+	if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
+	{
+		bufferstring(STR_VAR_3,format("Dahlia: Always be smiling! Luck comes to those who are happy! That's why I always keep a big smile and believe in my Pokémon when I battle."))
+	}
+	else
+	{
+		bufferstring(STR_VAR_3,format("Dahlia: Whenever I battle someone tough, I smile. I cannot help it! How about you? What do you do? Do you laugh? Cry? Get angry?"))
+	}
 }
 
 script BattleArcade_Challenge_EventScript_BrainCongratsText
 {
-    arcade_getprintfromstreak
-    if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
-    {
-        msgbox(format("Dahlia: How fabulous of you! Your love of Pokémon shone through, and, in turn, your Pokémon believed in you. That is why you handled everything thrown your way splendidly. A most wonderful victory it was!"),MSGBOX_DEFAULT)
-    }
-    else
-    {
-        msgbox(format("Dahlia: Truly, it was so very fabulous of all of you! Bad luck, you cast aside, and good luck, you netted. That you did so is evidence of your abilities. By defeating me, Dahlia, you have proven your mastery brilliantly! I am sincerely happy for having this battle against you!"),MSGBOX_DEFAULT)
-    }
+	arcade_getprintfromstreak
+	if (var(VAR_RESULT) == ARCADE_SYMBOL_SILVER)
+	{
+		msgbox(format("Dahlia: How fabulous of you! Your love of Pokémon shone through, and, in turn, your Pokémon believed in you. That is why you handled everything thrown your way splendidly. A most wonderful victory it was!"),MSGBOX_DEFAULT)
+	}
+	else
+	{
+		msgbox(format("Dahlia: Truly, it was so very fabulous of all of you! Bad luck, you cast aside, and good luck, you netted. That you did so is evidence of your abilities. By defeating me, Dahlia, you have proven your mastery brilliantly! I am sincerely happy for having this battle against you!"),MSGBOX_DEFAULT)
+	}
 	closemessage
 }

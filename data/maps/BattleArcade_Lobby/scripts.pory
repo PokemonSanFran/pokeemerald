@@ -5,14 +5,14 @@ const VAR_NEED_TO_FACE_NORTH = VAR_TEMP_1
 
 mapscripts BattleArcade_Lobby_MapScripts
 {
-    MAP_SCRIPT_ON_FRAME_TABLE
-    [
-        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Registration_EventScript_GetChallengeStatus
-        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING:  BattleArcade_Registration_EventScript_QuitWithoutSaving
-        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED:  BattleArcade_Registration_EventScript_ResumeChallenge
-        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_WON:     BattleArcade_Registration_EventScript_WonChallenge
-        VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST:    BattleArcade_Registration_EventScript_LostChallenge
-    ]
+	MAP_SCRIPT_ON_FRAME_TABLE
+	[
+		VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN: BattleArcade_Registration_EventScript_GetChallengeStatus
+		VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_SAVING: BattleArcade_Registration_EventScript_QuitWithoutSaving
+		VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_PAUSED: BattleArcade_Registration_EventScript_ResumeChallenge
+		VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_WON: BattleArcade_Registration_EventScript_WonChallenge
+		VAR_TEMP_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST: BattleArcade_Registration_EventScript_LostChallenge
+	]
 
 	MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
 	[
@@ -22,21 +22,21 @@ mapscripts BattleArcade_Lobby_MapScripts
 
 script BattleArcade_Lobby_EventScript_PlayerFaceNorth
 {
-    setvar(VAR_NEED_TO_FACE_NORTH, 1)
-    turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
-    end
+	setvar(VAR_NEED_TO_FACE_NORTH, 1)
+	turnobject(OBJ_EVENT_ID_PLAYER, DIR_NORTH)
+	end
 }
 
 script BattleArcade_Lobby_EventScript_WarpToHallway
 {
-    warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 3)
+	warpsilent(MAP_BATTLE_ARCADE_HALLWAY, 1, 3)
 }
 
 script BattleArcade_Lobby_EventScript_WalkToElevator
 {
-    closemessage
+	closemessage
 
-    applymovement(VAR_LAST_TALKED,moves(walk_up * 2, set_invisible))
-    applymovement(OBJ_EVENT_ID_PLAYER, moves(walk_up * 3, set_invisible))
-    waitmovement(OBJ_EVENT_ID_PLAYER)
+	applymovement(VAR_LAST_TALKED,moves(walk_up * 2, set_invisible))
+	applymovement(OBJ_EVENT_ID_PLAYER, moves(walk_up * 3, set_invisible))
+	waitmovement(OBJ_EVENT_ID_PLAYER)
 }
