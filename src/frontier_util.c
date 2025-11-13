@@ -2627,7 +2627,7 @@ s32 GetFronterBrainSymbol(void)
         return GetArcadePrintCount();
 
     ConvertFacilityFromArcadeToPike(&facility);
-	// End battle_arcade
+    // End battle_arcade
 
     if (symbol == 2)
     {
