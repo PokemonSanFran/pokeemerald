@@ -64,11 +64,11 @@ struct GameBoardState
     u8 loadState;
     u8 gameMode;
     u8 monIconSpriteId[2][MAX_FRONTIER_PARTY_SIZE];
-	u16 timer;
-	u8 cursorPosition;
-	u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
-	u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
-	u8 cursorPaletteNum[2];
+    u16 timer;
+    u8 cursorPosition;
+    u8 eventIconSpriteId[ARCADE_GAME_BOARD_SPACES];
+    u8 countdownPanelSpriteId[ARCADE_GAME_BOARD_SPACES];
+    u8 cursorPaletteNum[2];
 };
 
 // Arcade Challenge Functions
@@ -283,56 +283,56 @@ static EWRAM_DATA struct GameBoardState *sGameBoardState = NULL;
 static EWRAM_DATA u8 *sBgTilemapBuffer[BG_BOARD_COUNT] = {NULL, NULL, NULL, NULL};
 
 static void (* const sBattleArcadeFuncs[])(void) =
-{
-	[ARCADE_FUNC_INIT]                   = InitArcadeChallenge,
-	[ARCADE_FUNC_GET_DATA]               = GetArcadeData,
-	[ARCADE_FUNC_SET_DATA]               = SetArcadeData,
-	[ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
-	[ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateArcadeOpponent,
-	[ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
-	[ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameBoardFromOverworld,
-	[ARCADE_FUNC_BATTLE_CLEAN_UP]        = ArcadeBattleCleanup,
-	[ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
-	[ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveArcadeChallengeBattlePoints,
-	[ARCADE_FUNC_CHECK_SYMBOL]           = BufferEarnedArcadePrint,
-	[ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentStreak,
-	[ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
-	[ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
-	[ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld,
-	[ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM]  = TakePlayerHeldItems,
-};
+    {
+        [ARCADE_FUNC_INIT]                   = InitArcadeChallenge,
+        [ARCADE_FUNC_GET_DATA]               = GetArcadeData,
+        [ARCADE_FUNC_SET_DATA]               = SetArcadeData,
+        [ARCADE_FUNC_SAVE]                   = SaveArcadeChallenge,
+        [ARCADE_FUNC_GENERATE_OPPONENT]      = GenerateArcadeOpponent,
+        [ARCADE_FUNC_TAKE_ENEMY_ITEMS]       = TakeEnemyHeldItems,
+        [ARCADE_FUNC_PLAY_GAME_BOARD]        = StartArcadeGameBoardFromOverworld,
+        [ARCADE_FUNC_BATTLE_CLEAN_UP]        = ArcadeBattleCleanup,
+        [ARCADE_FUNC_SET_BATTLE_WON]         = SetArcadeBattleWon,
+        [ARCADE_FUNC_GIVE_BATTLE_POINTS]     = GiveArcadeChallengeBattlePoints,
+        [ARCADE_FUNC_CHECK_SYMBOL]           = BufferEarnedArcadePrint,
+        [ARCADE_FUNC_GET_PRINT_FROM_STREAK]  = BufferPrintFromCurrentStreak,
+        [ARCADE_FUNC_CHECK_BRAIN_STATUS]     = GetArcadeBrainStatus,
+        [ARCADE_FUNC_SET_BRAIN_OBJECT]       = SetArcadeBrainObjectEvent,
+        [ARCADE_FUNC_RECORDS]                = ShowArcadeRecordsFromOverworld,
+        [ARCADE_FUNC_TAKE_PLAYER_HELD_ITEM]  = TakePlayerHeldItems,
+    };
 
 static const u32 sStreakFlags[][2] =
-{
-    {STREAK_ARCADE_SINGLES_50,     STREAK_ARCADE_SINGLES_OPEN},
-    {STREAK_ARCADE_DOUBLES_50,     STREAK_ARCADE_DOUBLES_OPEN},
-    {STREAK_ARCADE_LINK_MULTIS_50, STREAK_ARCADE_LINK_MULTIS_OPEN},
-};
+    {
+        {STREAK_ARCADE_SINGLES_50,     STREAK_ARCADE_SINGLES_OPEN},
+        {STREAK_ARCADE_DOUBLES_50,     STREAK_ARCADE_DOUBLES_OPEN},
+        {STREAK_ARCADE_LINK_MULTIS_50, STREAK_ARCADE_LINK_MULTIS_OPEN},
+    };
 
 static const u32 sStreakMasks[][2] =
-{
-    {~(STREAK_ARCADE_SINGLES_50),     ~(STREAK_ARCADE_SINGLES_OPEN)},
-    {~(STREAK_ARCADE_DOUBLES_50),     ~(STREAK_ARCADE_DOUBLES_OPEN)},
-    {~(STREAK_ARCADE_LINK_MULTIS_50), ~(STREAK_ARCADE_LINK_MULTIS_OPEN)},
-};
+    {
+        {~(STREAK_ARCADE_SINGLES_50),     ~(STREAK_ARCADE_SINGLES_OPEN)},
+        {~(STREAK_ARCADE_DOUBLES_50),     ~(STREAK_ARCADE_DOUBLES_OPEN)},
+        {~(STREAK_ARCADE_LINK_MULTIS_50), ~(STREAK_ARCADE_LINK_MULTIS_OPEN)},
+    };
 
 static const u32 sArcadePerformanceTable[IMPACT_PERFORMANCE_TABLE_SIZE][3] =
-{
-    [0] = { 8, 6 },
-    [1] = { 6, 4 },
-    [2] = { 4, 2 },
-    [3] = { 0, 0 },
-    [4] = { 0, 0 },
-};
+    {
+        [0] = { 8, 6 },
+        [1] = { 6, 4 },
+        [2] = { 4, 2 },
+        [3] = { 0, 0 },
+        [4] = { 0, 0 },
+    };
 
 static const u8 sArcadeTurnPointTable[IMPACT_PERFORMANCE_TABLE_SIZE][2] =
-{
-    { 3, 10 },
-    { 5,  6 },
-    { 7,  4 },
-    { 9,  2 },
-    { 10, 0 },
-};
+    {
+        { 3, 10 },
+        { 5,  6 },
+        { 7,  4 },
+        { 9,  2 },
+        { 10, 0 },
+    };
 
 void CallBattleArcadeFunc(void)
 {
@@ -350,10 +350,10 @@ static void InitArcadeChallenge(void)
     FRONTIER_SAVEDATA.disableRecordBattle = FALSE;
 
     ResetPerformancePoints();
-	ResetCursorPositionOnSaveblock();
+    ResetCursorPositionOnSaveblock();
     ResetCursorSpeed();
     ResetFrontierTrainerIds();
-	GenerateItemsToBeGiven();
+    GenerateItemsToBeGiven();
     FlagSet(FLAG_HIDE_BATTLE_TOWER_OPPONENT);
 
     if (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[battleMode][lvlMode]))
@@ -370,18 +370,18 @@ static void TakePlayerHeldItems(void)
 
 static void ResetCursorPositionOnSaveblock(void)
 {
-	SetCursorPosition(0);
-	SaveCursorPositionToSaveblock();
+    SetCursorPosition(0);
+    SaveCursorPositionToSaveblock();
 }
 
 static void SetCursorPosition(u32 value)
 {
-	sGameBoardState->cursorPosition = value;
+    sGameBoardState->cursorPosition = value;
 }
 
 static void SaveCursorPositionToSaveblock(void)
 {
-	ARCADE_SAVEDATA_CURSOR.position = GetCursorPosition();
+    ARCADE_SAVEDATA_CURSOR.position = GetCursorPosition();
 }
 
 static u32 GetCursorPosition(void)
@@ -391,12 +391,12 @@ static u32 GetCursorPosition(void)
 
 static void ResetCursorSpeed(void)
 {
-	ARCADE_SAVEDATA_CURSOR.speed = ARCADE_SPEED_DEFAULT;
+    ARCADE_SAVEDATA_CURSOR.speed = ARCADE_SPEED_DEFAULT;
 }
 
 static void ClearCursorRandomMode(void)
 {
-	ARCADE_SAVEDATA_CURSOR.isRandom = FALSE;
+    ARCADE_SAVEDATA_CURSOR.isRandom = FALSE;
 }
 
 static void GenerateItemsToBeGiven(void)
@@ -430,73 +430,73 @@ static u32 GetCategorySize(u32 type)
 
 static u32 GetGroupIdFromStreak(void)
 {
-	u32 challengeNum = GetChallengeNum();
+    u32 challengeNum = GetChallengeNum();
 
-	return challengeNum <= 2 ? ARCADE_BERRY_GROUP_1:
-		   challengeNum <= 6 ? ARCADE_BERRY_GROUP_2:
-		   ARCADE_BERRY_GROUP_3;
+    return challengeNum <= 2 ? ARCADE_BERRY_GROUP_1:
+    challengeNum <= 6 ? ARCADE_BERRY_GROUP_2:
+    ARCADE_BERRY_GROUP_3;
 }
 
 static const u32 (*GetCategoryGroups(u32 type))[ARCADE_BERRY_GROUP_SIZE]
 {
     static const u32 gameBerries[ARCADE_BERRY_GROUP_COUNT][ARCADE_BERRY_GROUP_SIZE] =
-    {
-        [ARCADE_BERRY_GROUP_1] =
         {
-            ITEM_CHERI_BERRY,
-            ITEM_CHESTO_BERRY,
-            ITEM_PECHA_BERRY,
-            ITEM_RAWST_BERRY,
-            ITEM_ASPEAR_BERRY,
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-        },
-        [ARCADE_BERRY_GROUP_2] =
-        {
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-        },
-        [ARCADE_BERRY_GROUP_3] =
-        {
-            ITEM_PERSIM_BERRY,
-            ITEM_SITRUS_BERRY,
-            ITEM_LUM_BERRY,
-            ITEM_LIECHI_BERRY,
-            ITEM_GANLON_BERRY,
-            ITEM_SALAC_BERRY,
-            ITEM_PETAYA_BERRY,
-            ITEM_APICOT_BERRY,
-            ITEM_LANSAT_BERRY,
-            ITEM_STARF_BERRY,
-        },
-    };
+            [ARCADE_BERRY_GROUP_1] =
+            {
+                ITEM_CHERI_BERRY,
+                ITEM_CHESTO_BERRY,
+                ITEM_PECHA_BERRY,
+                ITEM_RAWST_BERRY,
+                ITEM_ASPEAR_BERRY,
+                ITEM_PERSIM_BERRY,
+                ITEM_SITRUS_BERRY,
+                ITEM_LUM_BERRY,
+            },
+            [ARCADE_BERRY_GROUP_2] =
+            {
+                ITEM_PERSIM_BERRY,
+                ITEM_SITRUS_BERRY,
+                ITEM_LUM_BERRY,
+            },
+            [ARCADE_BERRY_GROUP_3] =
+            {
+                ITEM_PERSIM_BERRY,
+                ITEM_SITRUS_BERRY,
+                ITEM_LUM_BERRY,
+                ITEM_LIECHI_BERRY,
+                ITEM_GANLON_BERRY,
+                ITEM_SALAC_BERRY,
+                ITEM_PETAYA_BERRY,
+                ITEM_APICOT_BERRY,
+                ITEM_LANSAT_BERRY,
+                ITEM_STARF_BERRY,
+            },
+        };
 
     static const u32 gameItems[ARCADE_ITEM_GROUP_COUNT][ARCADE_ITEM_GROUP_SIZE] =
-    {
-        [ARCADE_ITEM_GROUP_1] =
         {
-            ITEM_KINGS_ROCK,
-            ITEM_QUICK_CLAW,
-            ITEM_BRIGHT_POWDER,
-            ITEM_FOCUS_BAND,
-            ITEM_LEFTOVERS,
-        },
-        [ARCADE_ITEM_GROUP_2] =
-        {
-            ITEM_WHITE_HERB,
-            ITEM_SHELL_BELL,
-            ITEM_SCOPE_LENS,
-        },
-        [ARCADE_ITEM_GROUP_3] =
-        {
-            ITEM_FOCUS_BAND,
-            ITEM_LEFTOVERS,
-            ITEM_SCOPE_LENS,
-            ITEM_CHOICE_BAND
-        },
-    };
+            [ARCADE_ITEM_GROUP_1] =
+            {
+                ITEM_KINGS_ROCK,
+                ITEM_QUICK_CLAW,
+                ITEM_BRIGHT_POWDER,
+                ITEM_FOCUS_BAND,
+                ITEM_LEFTOVERS,
+            },
+            [ARCADE_ITEM_GROUP_2] =
+            {
+                ITEM_WHITE_HERB,
+                ITEM_SHELL_BELL,
+                ITEM_SCOPE_LENS,
+            },
+            [ARCADE_ITEM_GROUP_3] =
+            {
+                ITEM_FOCUS_BAND,
+                ITEM_LEFTOVERS,
+                ITEM_SCOPE_LENS,
+                ITEM_CHOICE_BAND
+            },
+        };
 
     return (type == ARCADE_EVENT_GIVE_ITEM) ? gameItems : gameBerries;
 }
@@ -508,14 +508,14 @@ static void GetArcadeData(void)
 
     switch (gSpecialVar_0x8005)
     {
-    case 0:
-        break;
-    case ARCADE_DATA_WIN_STREAK:
-        gSpecialVar_Result = GetCurrentStreak();
-        break;
-    case ARCADE_DATA_WIN_STREAK_ACTIVE:
-        gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[battleMode][lvlMode]));
-        break;
+        case 0:
+            break;
+        case ARCADE_DATA_WIN_STREAK:
+            gSpecialVar_Result = GetCurrentStreak();
+            break;
+        case ARCADE_DATA_WIN_STREAK_ACTIVE:
+            gSpecialVar_Result = (!(FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[battleMode][lvlMode]));
+            break;
     }
 }
 
@@ -564,7 +564,7 @@ static u32 CalculatePerformancePoints(void)
     u32 points = 0;
     u32 turn = gBattleResults.battleTurnCounter;
     u32 partyIndex, tableIndex;
-	struct Pokemon *playerMon;
+    struct Pokemon *playerMon;
 
     for (partyIndex = 0; partyIndex < MAX_FRONTIER_PARTY_SIZE; partyIndex++)
     {
@@ -630,19 +630,19 @@ static void SetArcadeData(void)
 
 static void SetArcadeBattleWon(void)
 {
-	IncrementCurrentStreak();
-	SaveCurrentStreak();
-	gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
+    IncrementCurrentStreak();
+    SaveCurrentStreak();
+    gSpecialVar_Result = ++FRONTIER_SAVEDATA.curChallengeBattleNum;
 }
 
 static void IncrementCurrentStreak(void)
 {
     u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
     u32 battleMode = (VarGet(VAR_FRONTIER_BATTLE_MODE));
-	u32 currentStreak = ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode];
+    u32 currentStreak = ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode];
 
-	if (currentStreak < MAX_STREAK)
-		ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode]++;
+    if (currentStreak < MAX_STREAK)
+        ARCADE_SAVEDATA_CURRENT_STREAK[battleMode][lvlMode]++;
 }
 
 static void SaveCurrentStreak(void)
@@ -655,7 +655,7 @@ static void SaveCurrentStreak(void)
     if (oldStreak >= currentStreak)
         return;
 
-	ARCADE_SAVEDATA_RECORD_STREAK[battleMode][lvlMode] = currentStreak;
+    ARCADE_SAVEDATA_RECORD_STREAK[battleMode][lvlMode] = currentStreak;
 }
 
 static void SaveArcadeChallenge(void)
@@ -667,20 +667,20 @@ static void SaveArcadeChallenge(void)
 }
 
 static const u8 sArcadeBattlePointAwards[][FRONTIER_MODE_COUNT] =
-{
-    {2,2,2,2},
-    {2,2,2,2},
-    {2,2,2,2},
-    {2,2,2,2},
-    {4,4,4,4},
-    {4,4,4,4},
-    {4,5,5,5},
-    {6,6,6,6},
-};
+    {
+        {2,2,2,2},
+        {2,2,2,2},
+        {2,2,2,2},
+        {2,2,2,2},
+        {4,4,4,4},
+        {4,4,4,4},
+        {4,5,5,5},
+        {6,6,6,6},
+    };
 
 static void GiveArcadeChallengeBattlePoints(void)
 {
-	u32 points = CalculateBattlePoints(((ARCADE_SAVEDATA_CURRENT_STREAK[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
+    u32 points = CalculateBattlePoints(((ARCADE_SAVEDATA_CURRENT_STREAK[VarGet(VAR_FRONTIER_BATTLE_MODE)][FRONTIER_SAVEDATA.lvlMode]) / FRONTIER_STAGES_PER_CHALLENGE));
     GiveBattlePoints(points);
 }
 
@@ -693,7 +693,7 @@ static u32 CalculateBattlePoints(u32 challengeNum)
     if (challengeNum >= maxChallengeNum)
         challengeNum = (maxChallengeNum - 1);
 
-	return (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN) ? ARCADE_BRAIN_DEFEAT_POINTS : sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
+    return (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN) ? ARCADE_BRAIN_DEFEAT_POINTS : sArcadeBattlePointAwards[challengeNum][VarGet(VAR_FRONTIER_BATTLE_MODE)];
 }
 
 static void GiveBattlePoints(u32 points)
@@ -749,13 +749,13 @@ static void TakeEnemyHeldItems(void)
 
 static void GetArcadeBrainStatus(void)
 {
-	if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
-	{
-		gSpecialVar_Result = FRONTIER_BRAIN_NOT_READY;
-		return;
-	}
+    if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_LINK_MULTIS)
+    {
+        gSpecialVar_Result = FRONTIER_BRAIN_NOT_READY;
+        return;
+    }
 
-	BufferPrintFromCurrentStreak();
+    BufferPrintFromCurrentStreak();
 }
 
 void ArcadeBattleCleanup(void)
@@ -763,7 +763,7 @@ void ArcadeBattleCleanup(void)
     ResetWeatherPostBattle();
     ReturnPartyToOwner();
     ResetLevelsToOriginal();
-	ResetSketchedMoves();
+    ResetSketchedMoves();
     CalculateAndSetPerformancePoints();
     HealPlayerParty();
 }
@@ -783,55 +783,55 @@ static void ReturnPartyToOwner(void)
 
 static void ResetLevelsToOriginal(void)
 {
-	struct Pokemon *frontierMon;
-	struct Pokemon *playerMon;
-	u32 playerMonLevel, frontierMonLevel, i, monId;
+    struct Pokemon *frontierMon;
+    struct Pokemon *playerMon;
+    u32 playerMonLevel, frontierMonLevel, i, monId;
 
-	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-	{
-		monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
 
-		if (monId >= PARTY_SIZE)
-			continue;
+        if (monId >= PARTY_SIZE)
+            continue;
 
-		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
-		playerMon = &gPlayerParty[i];
+        frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+        playerMon = &gPlayerParty[i];
 
-		playerMonLevel = GetMonData(playerMon, MON_DATA_LEVEL,NULL);
-		frontierMonLevel = GetMonData(frontierMon, MON_DATA_LEVEL,NULL);
+        playerMonLevel = GetMonData(playerMon, MON_DATA_LEVEL,NULL);
+        frontierMonLevel = GetMonData(frontierMon, MON_DATA_LEVEL,NULL);
 
-		if (playerMonLevel == frontierMonLevel)
-			continue;
+        if (playerMonLevel == frontierMonLevel)
+            continue;
 
-		SetMonData(playerMon, MON_DATA_LEVEL, &frontierMonLevel);
-	}
+        SetMonData(playerMon, MON_DATA_LEVEL, &frontierMonLevel);
+    }
 }
 
 static void ResetSketchedMoves(void)
 {
-	u8 i, j;
-	struct Pokemon *frontierMon;
-	struct Pokemon *playerMon;
+    u8 i, j;
+    struct Pokemon *frontierMon;
+    struct Pokemon *playerMon;
 
-	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-	{
-		u32 monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        u32 monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
 
-		if (monId >= PARTY_SIZE)
-			continue;
+        if (monId >= PARTY_SIZE)
+            continue;
 
-		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
-		playerMon = &gPlayerParty[i];
+        frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+        playerMon = &gPlayerParty[i];
 
-		for (j = 0; j < MAX_MON_MOVES; j++)
-		{
-			if (MonKnowsMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
-				continue;
+        for (j = 0; j < MAX_MON_MOVES; j++)
+        {
+            if (MonKnowsMove(frontierMon, GetMonData(playerMon, MON_DATA_MOVE1+j, NULL)))
+                continue;
 
-			SetMonMoveSlot(playerMon, MOVE_SKETCH, j);
-			break;
-		}
-	}
+            SetMonMoveSlot(playerMon, MOVE_SKETCH, j);
+            break;
+        }
+    }
 }
 
 static void StartArcadeGameBoardFromOverworld(void)
@@ -857,13 +857,13 @@ void GenerateArcadeOpponent(void)
 
 void ConvertFacilityFromArcadeToPike(u32* facility)
 {
-	if (*facility == FRONTIER_FACILITY_ARCADE)
-		*facility = FRONTIER_FACILITY_PIKE;
+    if (*facility == FRONTIER_FACILITY_ARCADE)
+        *facility = FRONTIER_FACILITY_PIKE;
 }
 
 u32 GetArcadePrintCount(void)
 {
-	return (GetPrintFromCurrentStreak() - 1);
+    return (GetPrintFromCurrentStreak() - 1);
 }
 
 static void SetArcadeBrainObjectEvent(void)
@@ -873,25 +873,25 @@ static void SetArcadeBrainObjectEvent(void)
 
 static void BufferPrintFromCurrentStreak(void)
 {
-	gSpecialVar_Result = GetPrintFromCurrentStreak();
+    gSpecialVar_Result = GetPrintFromCurrentStreak();
 }
 
 static u32 GetPrintFromCurrentStreak(void)
 {
-	switch(GetCurrentStreak())
-	{
-		case (ARCADE_SILVER_BATTLE_NUMBER - 1):
-			return ARCADE_SYMBOL_SILVER;
-		case (ARCADE_GOLD_BATTLE_NUMBER - 1):
-			return ARCADE_SYMBOL_GOLD;
-		default:
-			return ARCADE_SYMBOL_NONE;
-	}
+    switch(GetCurrentStreak())
+    {
+        case (ARCADE_SILVER_BATTLE_NUMBER - 1):
+            return ARCADE_SYMBOL_SILVER;
+        case (ARCADE_GOLD_BATTLE_NUMBER - 1):
+            return ARCADE_SYMBOL_GOLD;
+        default:
+            return ARCADE_SYMBOL_NONE;
+    }
 }
 
 void ShowArcadeRecordsFromOverworld(void)
 {
-	CreateTask(Task_OpenArcadeRecord,0);
+    CreateTask(Task_OpenArcadeRecord,0);
 }
 
 void DoArcadeTrainerBattle(void)
@@ -914,7 +914,7 @@ void SetArcadeBattleFlags(void)
             gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
             break;
         case FRONTIER_MODE_MULTIS:
-		case FRONTIER_MODE_LINK_MULTIS:
+        case FRONTIER_MODE_LINK_MULTIS:
             gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
             break;
     }
@@ -923,59 +923,59 @@ void SetArcadeBattleFlags(void)
 // Arcade Game Board Front End
 
 static const struct BgTemplate sGameBoardBgTemplates[] =
-{
     {
-        .bg = BG_BOARD_HELP_BAR,
-        .charBaseIndex = 0,
-        .mapBaseIndex = 31,
-        .priority = 1
-    },
-    {
-        .bg = BG_BOARD_EVENTS,
-        .charBaseIndex = 3,
-        .mapBaseIndex = 30,
-        .priority = 2
-    },
-    {
-        .bg = BG_BOARD_BACKGROUND,
-        .charBaseIndex = 2,
-        .mapBaseIndex = 29,
-        .priority = 0
-    },
-    {
-        .bg = BG_BOARD_BACKBOARD,
-        .charBaseIndex = 1,
-        .mapBaseIndex = 28,
-        .priority = 3
-    },
-};
+        {
+            .bg = BG_BOARD_HELP_BAR,
+            .charBaseIndex = 0,
+            .mapBaseIndex = 31,
+            .priority = 1
+        },
+        {
+            .bg = BG_BOARD_EVENTS,
+            .charBaseIndex = 3,
+            .mapBaseIndex = 30,
+            .priority = 2
+        },
+        {
+            .bg = BG_BOARD_BACKGROUND,
+            .charBaseIndex = 2,
+            .mapBaseIndex = 29,
+            .priority = 0
+        },
+        {
+            .bg = BG_BOARD_BACKBOARD,
+            .charBaseIndex = 1,
+            .mapBaseIndex = 28,
+            .priority = 3
+        },
+    };
 
 static const struct WindowTemplate sGameBoardWinTemplates[] =
-{
-	[WIN_BOARD_HELP_BAR] =
-	{
-		.bg = 0,
-		.tilemapLeft = 0,
-		.tilemapTop = 18,
-		.width = 30,
-		.height = 2,
-		.paletteNum = 15,
-		.baseBlock = 1,
-	},
-	DUMMY_WIN_TEMPLATE
-};
+    {
+        [WIN_BOARD_HELP_BAR] =
+        {
+            .bg = 0,
+            .tilemapLeft = 0,
+            .tilemapTop = 18,
+            .width = 30,
+            .height = 2,
+            .paletteNum = 15,
+            .baseBlock = 1,
+        },
+        DUMMY_WIN_TEMPLATE
+    };
 
 static EWRAM_DATA struct GameResult sGameBoard[ARCADE_GAME_BOARD_SPACES] = {{0}};
 
 static const u8 sGameBoardWindowFontColors[][3] =
-{
-	[TEXT_COLOR_WHITE]  =
-	{
-		TEXT_COLOR_TRANSPARENT,
-		TEXT_COLOR_WHITE,
-		TEXT_COLOR_DARK_GRAY
-	},
-};
+    {
+        [TEXT_COLOR_WHITE]  =
+        {
+            TEXT_COLOR_TRANSPARENT,
+            TEXT_COLOR_WHITE,
+            TEXT_COLOR_DARK_GRAY
+        },
+    };
 
 static const u32 sBackgroundTilemap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/background.bin.lz");
 static const u32 sBackgroundTiles[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/game/backgrounds/background.4bpp.lz");
@@ -1018,67 +1018,67 @@ const u16 sArcadeEventOpponent_Pal[] = INCBIN_U16("graphics/battle_frontier/batt
 const u16 sGameBoardPalette_Pal[] = INCBIN_U16("graphics/battle_frontier/battle_arcade/game/palettes/background.gbapal");
 
 static const struct SpritePalette sArcadePalettes[] =
-{
-    {sArcadeEventOpponent_Pal, ARCADE_PALTAG_OPPONENT},
-    {sArcadeEventPlayer_Pal,   ARCADE_PALTAG_PLAYER},
-};
+    {
+        {sArcadeEventOpponent_Pal, ARCADE_PALTAG_OPPONENT},
+        {sArcadeEventPlayer_Pal,   ARCADE_PALTAG_PLAYER},
+    };
 
 static const union AnimCmd sCountdownPanelAnim[] =
-{
-    ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
-    ANIMCMD_FRAME(2, 10),
-    ANIMCMD_END
-};
+    {
+        ANIMCMD_FRAME(0, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+        ANIMCMD_FRAME(1, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+        ANIMCMD_FRAME(2, ARCADE_BOARD_COUNTDOWN_TIMER / 3),
+        ANIMCMD_FRAME(2, 10),
+        ANIMCMD_END
+    };
 
 static const union AnimCmd *const sCountdownAnims[] =
-{
-    [ARCADE_COUNTDOWN_ANIM] = sCountdownPanelAnim
-};
+    {
+        [ARCADE_COUNTDOWN_ANIM] = sCountdownPanelAnim
+    };
 
 static const struct SpriteFrameImage sCountdownPanelPicTable[] =
-{
-    obj_frame_tiles(sCountdownTile3),
-    obj_frame_tiles(sCountdownTile2),
-    obj_frame_tiles(sCountdownTile1),
-};
+    {
+        obj_frame_tiles(sCountdownTile3),
+        obj_frame_tiles(sCountdownTile2),
+        obj_frame_tiles(sCountdownTile1),
+    };
 
 static const struct OamData CountdownPanelOam =
-{
-    .y = 0,
-    .affineMode = ST_OAM_AFFINE_OFF,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = FALSE,
-    .bpp = ST_OAM_4BPP,
-    .shape = SPRITE_SHAPE(32x32),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(32x32),
-    .tileNum = 0,
-    .priority = 1,
-    .paletteNum = 0,
-    .affineParam = 0,
-};
+    {
+        .y = 0,
+        .affineMode = ST_OAM_AFFINE_OFF,
+        .objMode = ST_OAM_OBJ_NORMAL,
+        .mosaic = FALSE,
+        .bpp = ST_OAM_4BPP,
+        .shape = SPRITE_SHAPE(32x32),
+        .x = 0,
+        .matrixNum = 0,
+        .size = SPRITE_SIZE(32x32),
+        .tileNum = 0,
+        .priority = 1,
+        .paletteNum = 0,
+        .affineParam = 0,
+    };
 
 static const struct SpriteTemplate sCountdownPanelSpriteTemplate =
-{
-    .tileTag = TAG_NONE,
-    .paletteTag = ARCADE_PALTAG_OPPONENT,
-    .oam = &CountdownPanelOam,
-    .anims = sCountdownAnims,
-    .images = sCountdownPanelPicTable,
-    .callback = SpriteCallbackDummy,
-};
+    {
+        .tileTag = TAG_NONE,
+        .paletteTag = ARCADE_PALTAG_OPPONENT,
+        .oam = &CountdownPanelOam,
+        .anims = sCountdownAnims,
+        .images = sCountdownPanelPicTable,
+        .callback = SpriteCallbackDummy,
+    };
 
 void Task_OpenGameBoard(u8 taskId)
 {
-	if (gPaletteFade.active)
-		return;
+    if (gPaletteFade.active)
+        return;
 
-	CleanupOverworldWindowsAndTilemaps();
-	GameBoard_Init(CB2_ReturnToFieldContinueScript);
-	DestroyTask(taskId);
+    CleanupOverworldWindowsAndTilemaps();
+    GameBoard_Init(CB2_ReturnToFieldContinueScript);
+    DestroyTask(taskId);
 }
 
 void GameBoard_Init(MainCallback callback)
@@ -1099,104 +1099,104 @@ void GameBoard_Init(MainCallback callback)
 
 static void GameBoard_SetupCB(void)
 {
-	switch (gMain.state)
-	{
-		case 0:
-			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
-			SetVBlankHBlankCallbacksToNull();
-			ClearScheduledBgCopiesToVram();
-			gMain.state++;
-			break;
-		case 1:
-			ScanlineEffect_Stop();
-			FreeAllSpritePalettes();
-			ResetPaletteFade();
-			ResetSpriteData();
-			ResetTasks();
-			gMain.state++;
-			break;
-		case 2:
-			if (GameBoard_InitBgs())
-			{
-				sGameBoardState->loadState = 0;
-				gMain.state++;
-			}
-			else
-			{
-				GameBoard_FadeAndBail();
-				return;
-			}
-			break;
-		case 3:
-			if (GameBoard_LoadGraphics() == TRUE)
-				gMain.state++;
-			break;
-		case 4:
-			GameBoard_InitWindows();
-			gMain.state++;
-			break;
-		case 5:
-			FreeMonIconPalettes();
-			LoadMonIconPalettes();
-			GenerateGameBoard();
-			PrintEnemyParty();
-			PrintPlayerParty();
-			PrintHelpBar();
-			CreateTask(Task_GameBoardWaitFadeIn, 0);
-			gMain.state++;
-			break;
-		case 6:
-			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
-			gMain.state++;
-			break;
-		case 7:
-			SetVBlankCallback(VBlankCB);
-			SetMainCallback2(MainCB);
-			break;
-	}
+    switch (gMain.state)
+    {
+        case 0:
+            DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
+            SetVBlankHBlankCallbacksToNull();
+            ClearScheduledBgCopiesToVram();
+            gMain.state++;
+            break;
+        case 1:
+            ScanlineEffect_Stop();
+            FreeAllSpritePalettes();
+            ResetPaletteFade();
+            ResetSpriteData();
+            ResetTasks();
+            gMain.state++;
+            break;
+        case 2:
+            if (GameBoard_InitBgs())
+            {
+                sGameBoardState->loadState = 0;
+                gMain.state++;
+            }
+            else
+        {
+                GameBoard_FadeAndBail();
+                return;
+            }
+            break;
+        case 3:
+            if (GameBoard_LoadGraphics() == TRUE)
+                gMain.state++;
+            break;
+        case 4:
+            GameBoard_InitWindows();
+            gMain.state++;
+            break;
+        case 5:
+            FreeMonIconPalettes();
+            LoadMonIconPalettes();
+            GenerateGameBoard();
+            PrintEnemyParty();
+            PrintPlayerParty();
+            PrintHelpBar();
+            CreateTask(Task_GameBoardWaitFadeIn, 0);
+            gMain.state++;
+            break;
+        case 6:
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+            gMain.state++;
+            break;
+        case 7:
+            SetVBlankCallback(VBlankCB);
+            SetMainCallback2(MainCB);
+            break;
+    }
 }
 
 static bool8 GameBoard_InitBgs(void)
 {
     ResetAllBgsCoordinates();
 
-	if (!BattleArcade_AllocTilemapBuffers())
-		return FALSE;
-	GameBoard_HandleAndShowBgs();
+    if (!BattleArcade_AllocTilemapBuffers())
+        return FALSE;
+    GameBoard_HandleAndShowBgs();
 
     return TRUE;
 }
 
 static bool32 BattleArcade_AllocTilemapBuffers(void)
 {
-	u32 backgroundId;
+    u32 backgroundId;
 
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-	{
-		sBgTilemapBuffer[backgroundId] = AllocZeroed(ARCADE_TILEMAP_BUFFER_SIZE);
+    for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+    {
+        sBgTilemapBuffer[backgroundId] = AllocZeroed(ARCADE_TILEMAP_BUFFER_SIZE);
 
-		if (sBgTilemapBuffer[backgroundId] == NULL)
-			return FALSE;
-	}
-	return TRUE;
+        if (sBgTilemapBuffer[backgroundId] == NULL)
+            return FALSE;
+    }
+    return TRUE;
 }
 
 static void GameBoard_HandleAndShowBgs(void)
 {
-	u32 backgroundId;
+    u32 backgroundId;
 
     ResetBgsAndClearDma3BusyFlags(0);
     InitBgsFromTemplates(0, sGameBoardBgTemplates, NELEMS(sGameBoardBgTemplates));
 
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-		SetScheduleShowBgs(backgroundId);
+    for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+        SetScheduleShowBgs(backgroundId);
 }
 
 static void SetScheduleShowBgs(u32 backgroundId)
 {
-	SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
-	ScheduleBgCopyTilemapToVram(backgroundId);
-	ShowBg(backgroundId);
+    SetBgTilemapBuffer(backgroundId, sBgTilemapBuffer[backgroundId]);
+    ScheduleBgCopyTilemapToVram(backgroundId);
+    ShowBg(backgroundId);
 }
 
 static void GameBoard_FadeAndBail(void)
@@ -1222,54 +1222,54 @@ static bool8 GameBoard_LoadGraphics(void)
 {
     switch (sGameBoardState->loadState)
     {
-    case 0:
-        ResetTempTileDataBuffers();
+        case 0:
+            ResetTempTileDataBuffers();
 
-        DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackgroundTiles, 0, 0, 0);
-        DecompressAndCopyTileDataToVram(BG_BOARD_BACKGROUND, sLogobackgroundTiles, 0, 0, 0);
-        sGameBoardState->loadState++;
-        break;
-    case 1:
-        if (FreeTempTileDataBuffersIfPossible() != TRUE)
-        {
-            LZDecompressWram(sBackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
-            LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
+            DecompressAndCopyTileDataToVram(BG_BOARD_BACKBOARD, sBackgroundTiles, 0, 0, 0);
+            DecompressAndCopyTileDataToVram(BG_BOARD_BACKGROUND, sLogobackgroundTiles, 0, 0, 0);
             sGameBoardState->loadState++;
-        }
-        break;
-    case 2:
-        LoadPalette(sGameBoardPalette_Pal, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
-        sGameBoardState->loadState++;
-    default:
-        sGameBoardState->loadState = 0;
-        return TRUE;
+            break;
+        case 1:
+            if (FreeTempTileDataBuffersIfPossible() != TRUE)
+            {
+                LZDecompressWram(sBackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKBOARD]);
+                LZDecompressWram(sLogobackgroundTilemap, sBgTilemapBuffer[BG_BOARD_BACKGROUND]);
+                sGameBoardState->loadState++;
+            }
+            break;
+        case 2:
+            LoadPalette(sGameBoardPalette_Pal, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+            sGameBoardState->loadState++;
+        default:
+            sGameBoardState->loadState = 0;
+            return TRUE;
     }
     return FALSE;
 }
 
 static void GameBoard_InitWindows(void)
 {
-	u32 windowId;
+    u32 windowId;
     InitWindows(sGameBoardWinTemplates);
 
     DeactivateAllTextPrinters();
 
     ScheduleBgCopyTilemapToVram(0);
 
-	for (windowId = 0; windowId < WIN_BOARD_COUNT; windowId++)
-	{
-		FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-		PutWindowTilemap(windowId);
-		CopyWindowToVram(windowId, COPYWIN_FULL);
-	}
+    for (windowId = 0; windowId < WIN_BOARD_COUNT; windowId++)
+    {
+        FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+        PutWindowTilemap(windowId);
+        CopyWindowToVram(windowId, COPYWIN_FULL);
+    }
 }
 
 static void LoadEventPalettes(void)
 {
-	u32 i = 0;
+    u32 i = 0;
 
-	for (i = 0; i < sizeof(sArcadePalettes); i++)
-		sGameBoardState->cursorPaletteNum[i] = LoadSpritePalette(&sArcadePalettes[i]);
+    for (i = 0; i < sizeof(sArcadePalettes); i++)
+        sGameBoardState->cursorPaletteNum[i] = LoadSpritePalette(&sArcadePalettes[i]);
 }
 
 static void GenerateGameBoard(void)
@@ -1286,35 +1286,35 @@ static void GenerateGameBoard(void)
 
 static void PrintEnemyParty(void)
 {
-	PrintPartyIcons(ARCADE_IMPACT_OPPONENT);
+    PrintPartyIcons(ARCADE_IMPACT_OPPONENT);
 }
 
 static void PrintPlayerParty(void)
 {
-	PrintPartyIcons(ARCADE_IMPACT_PLAYER);
+    PrintPartyIcons(ARCADE_IMPACT_PLAYER);
 }
 
 static void PrintPartyIcons(u32 side)
 {
-	u32 x = GetHorizontalPositionFromSide(side);
-	u32 y = 33;
-	u32 i;
-	struct Pokemon *party = LoadSideParty(side);
+    u32 x = GetHorizontalPositionFromSide(side);
+    u32 y = 33;
+    u32 i;
+    struct Pokemon *party = LoadSideParty(side);
 
-	for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
-	{
-		if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
-			break;
+    for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
+    {
+        if (!GetMonData(&party[i], MON_DATA_SANITY_HAS_SPECIES))
+            break;
 
-		sGameBoardState->monIconSpriteId[side][i] = CreateMonIcon(GetMonData(&party[i], MON_DATA_SPECIES),SpriteCallbackDummy, x, y, 4, GetMonData(&party[i],MON_DATA_PERSONALITY),FALSE);
-		gSprites[sGameBoardState->monIconSpriteId[side][i]].oam.priority = 0;
-		y += 30;
-	}
+        sGameBoardState->monIconSpriteId[side][i] = CreateMonIcon(GetMonData(&party[i], MON_DATA_SPECIES),SpriteCallbackDummy, x, y, 4, GetMonData(&party[i],MON_DATA_PERSONALITY),FALSE);
+        gSprites[sGameBoardState->monIconSpriteId[side][i]].oam.priority = 0;
+        y += 30;
+    }
 }
 
 static u32 GetHorizontalPositionFromSide(u32 side)
 {
-	return (side == ARCADE_IMPACT_OPPONENT) ? 215 : 22;
+    return (side == ARCADE_IMPACT_OPPONENT) ? 215 : 22;
 }
 
 static struct Pokemon *LoadSideParty(u32 impact)
@@ -1338,50 +1338,50 @@ static void PrintHelpBar(void)
 
 static const u8 *GetHelpBarText(void)
 {
-	static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
-	static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
+    static const u8 sText_HelpBarStart[] =_("{A_BUTTON} Start Game");
+    static const u8 sText_HelpBarFinish[] =_("{A_BUTTON} Select Event");
 
-	switch (GetGameBoardMode())
-	{
-		case ARCADE_BOARD_MODE_WAIT:
-			return sText_HelpBarStart;
-		case ARCADE_BOARD_MODE_GAME_START:
-			return sText_HelpBarFinish;
-		default:
-			return gText_Blank;
-	}
+    switch (GetGameBoardMode())
+    {
+        case ARCADE_BOARD_MODE_WAIT:
+            return sText_HelpBarStart;
+        case ARCADE_BOARD_MODE_GAME_START:
+            return sText_HelpBarFinish;
+        default:
+            return gText_Blank;
+    }
 }
 
 static u32 GetGameBoardMode(void)
 {
-	return sGameBoardState->gameMode;
+    return sGameBoardState->gameMode;
 }
 
 static void Task_GameBoardWaitFadeIn(u8 taskId)
 {
     if (gPaletteFade.active)
-		return;
+        return;
 
-	gTasks[taskId].func = Task_GameBoardMainInput;
+    gTasks[taskId].func = Task_GameBoardMainInput;
 }
 
 static void Task_GameBoardMainInput(u8 taskId)
 {
     if (!JOY_NEW(A_BUTTON))
-		return;
+        return;
 
-	PlaySE(SE_SELECT);
-	switch (GetGameBoardMode())
-	{
-		case ARCADE_BOARD_MODE_WAIT:
-			StartCountdown();
-			break;
-		case ARCADE_BOARD_MODE_GAME_START:
-			HandleFinishMode();
-			break;
-		default:
-			return;
-	}
+    PlaySE(SE_SELECT);
+    switch (GetGameBoardMode())
+    {
+        case ARCADE_BOARD_MODE_WAIT:
+            StartCountdown();
+            break;
+        case ARCADE_BOARD_MODE_GAME_START:
+            HandleFinishMode();
+            break;
+        default:
+            return;
+    }
 }
 
 static void VBlankCB(void)
@@ -1402,39 +1402,39 @@ static void MainCB(void)
 
 static void StartCountdown(void)
 {
-	HideBg(BG_BOARD_BACKGROUND);
-	IncrementGameBoardMode();
-	SetTimerForCountdown();
-	PopulateCountdownSprites();
-	PrintHelpBar();
-	CreateTask(Task_GameBoard_Countdown, 0);
+    HideBg(BG_BOARD_BACKGROUND);
+    IncrementGameBoardMode();
+    SetTimerForCountdown();
+    PopulateCountdownSprites();
+    PrintHelpBar();
+    CreateTask(Task_GameBoard_Countdown, 0);
 }
 
 static void SetTimerForCountdown(void)
 {
-	SetTimer(ARCADE_BOARD_COUNTDOWN_TIMER);
+    SetTimer(ARCADE_BOARD_COUNTDOWN_TIMER);
 }
 
 static void SetTimer(u32 value)
 {
-	sGameBoardState->timer = value;
+    sGameBoardState->timer = value;
 }
 
 static void PopulateCountdownSprites(void)
 {
-	u32 space, x, y;
+    u32 space, x, y;
 
     LoadEventPalettes();
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_COLUMNS); space++)
-	{
-		CalculatePanelPosition(space,&x,&y);
-		sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
+    {
+        CalculatePanelPosition(space,&x,&y);
+        sGameBoardState->countdownPanelSpriteId[space] = CreateCountdownPanel(x+12,y+12);
     }
 }
 
 static void CalculatePanelPosition(u32 space, u32* x, u32* y)
 {
-	u32 rowIndex = space / ARCADE_GAME_BOARD_COLUMNS;
+    u32 rowIndex = space / ARCADE_GAME_BOARD_COLUMNS;
     u32 columnIndex = space % ARCADE_GAME_BOARD_COLUMNS;
     *x = 65 + columnIndex * 32;
     *y = 17 + rowIndex * 32;
@@ -1442,97 +1442,97 @@ static void CalculatePanelPosition(u32 space, u32* x, u32* y)
 
 static u32 CreateCountdownPanel(u32 x, u32 y)
 {
-	return CreateSprite(&sCountdownPanelSpriteTemplate, x, y, 0);
+    return CreateSprite(&sCountdownPanelSpriteTemplate, x, y, 0);
 }
 
 static void Task_GameBoard_Countdown(u8 taskId)
 {
-	DecrementGameBoardTimer();
+    DecrementGameBoardTimer();
 
-	switch(GetGameBoardTimer())
-	{
-		case ARCADE_COUNTDOWN_SHOW_FRAMES_2:
-		case ARCADE_COUNTDOWN_SHOW_FRAMES_1:
-			IncrementGameBoardMode();
-			break;
-		case 0:
-			IncrementGameBoardMode();
-			PopulateEventSprites();
-			PrintHelpBar();
-			StartGame();
-			DestroyTask(taskId);
-			break;
-		default:
-			break;
-	}
+    switch(GetGameBoardTimer())
+    {
+        case ARCADE_COUNTDOWN_SHOW_FRAMES_2:
+        case ARCADE_COUNTDOWN_SHOW_FRAMES_1:
+            IncrementGameBoardMode();
+            break;
+        case 0:
+            IncrementGameBoardMode();
+            PopulateEventSprites();
+            PrintHelpBar();
+            StartGame();
+            DestroyTask(taskId);
+            break;
+        default:
+            break;
+    }
 }
 
 static void PopulateEventSprites(void)
 {
-	u32 space, x, y;
+    u32 space, x, y;
 
-	LoadTileSpriteSheets();
+    LoadTileSpriteSheets();
     LoadEventPalettes();
 
     for (space = 0; space < (ARCADE_GAME_BOARD_ROWS * ARCADE_GAME_BOARD_COLUMNS); space++)
-	{
-		CalculatePanelPosition(space,&x,&y);
-		sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
+    {
+        CalculatePanelPosition(space,&x,&y);
+        sGameBoardState->eventIconSpriteId[space] = CreateEventSprite(x, y, space);
     }
 }
 
 static void LoadTileSpriteSheets(void)
 {
-	u32 i;
-	for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
-	{
-		u16 TileTag = GetTileTag(i);
-		const u32 *gfx = GetEventGfx(sGameBoard[i].event);
-		struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
-		LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
-	}
+    u32 i;
+    for (i = 0; i < ARCADE_GAME_BOARD_SPACES; i++)
+    {
+        u16 TileTag = GetTileTag(i);
+        const u32 *gfx = GetEventGfx(sGameBoard[i].event);
+        struct CompressedSpriteSheet sSpriteSheet_EventSpace = {gfx, 0x0200, TileTag};
+        LoadCompressedSpriteSheet(&sSpriteSheet_EventSpace);
+    }
 }
 
 static const u32* GetEventGfx(u32 event)
 {
-	switch (event)
-	{
-		case ARCADE_EVENT_LOWER_HP: return sEventLowerHp;
-		case ARCADE_EVENT_POISON: return sEventPoison;
-		case ARCADE_EVENT_PARALYZE: return sEventParalyze;
-		case ARCADE_EVENT_BURN: return sEventBurn;
-		case ARCADE_EVENT_SLEEP: return sEventSleep;
-		case ARCADE_EVENT_FREEZE: return sEventFreeze;
-		case ARCADE_EVENT_GIVE_BERRY: return sEventGiveBerry;
-		case ARCADE_EVENT_GIVE_ITEM: return sEventGiveItem;
-		case ARCADE_EVENT_LEVEL_UP: return sEventLevelUp;
-		case ARCADE_EVENT_SUN: return sEventSun;
-		case ARCADE_EVENT_RAIN: return sEventRain;
-		case ARCADE_EVENT_SAND: return sEventSand;
-		case ARCADE_EVENT_HAIL: return sEventHail;
-		case ARCADE_EVENT_FOG: return sEventFog;
-		case ARCADE_EVENT_TRICK_ROOM: return sEventTrickRoom;
-		case ARCADE_EVENT_SWAP: return sEventSwap;
-		case ARCADE_EVENT_SPEED_UP: return sEventSpeedUp;
-		case ARCADE_EVENT_SPEED_DOWN: return sEventSpeedDown;
-		case ARCADE_EVENT_RANDOM: return sEventRandom;
-		case ARCADE_EVENT_GIVE_BP_SMALL: return sEventGiveBpSmall;
-		case ARCADE_EVENT_NO_BATTLE: return sEventNoBattle;
-		case ARCADE_EVENT_GIVE_BP_BIG: return sEventGiveBpBig;
-		default:
-		case ARCADE_EVENT_NO_EVENT: return sEventNoEvent;
-	}
+    switch (event)
+    {
+        case ARCADE_EVENT_LOWER_HP: return sEventLowerHp;
+        case ARCADE_EVENT_POISON: return sEventPoison;
+        case ARCADE_EVENT_PARALYZE: return sEventParalyze;
+        case ARCADE_EVENT_BURN: return sEventBurn;
+        case ARCADE_EVENT_SLEEP: return sEventSleep;
+        case ARCADE_EVENT_FREEZE: return sEventFreeze;
+        case ARCADE_EVENT_GIVE_BERRY: return sEventGiveBerry;
+        case ARCADE_EVENT_GIVE_ITEM: return sEventGiveItem;
+        case ARCADE_EVENT_LEVEL_UP: return sEventLevelUp;
+        case ARCADE_EVENT_SUN: return sEventSun;
+        case ARCADE_EVENT_RAIN: return sEventRain;
+        case ARCADE_EVENT_SAND: return sEventSand;
+        case ARCADE_EVENT_HAIL: return sEventHail;
+        case ARCADE_EVENT_FOG: return sEventFog;
+        case ARCADE_EVENT_TRICK_ROOM: return sEventTrickRoom;
+        case ARCADE_EVENT_SWAP: return sEventSwap;
+        case ARCADE_EVENT_SPEED_UP: return sEventSpeedUp;
+        case ARCADE_EVENT_SPEED_DOWN: return sEventSpeedDown;
+        case ARCADE_EVENT_RANDOM: return sEventRandom;
+        case ARCADE_EVENT_GIVE_BP_SMALL: return sEventGiveBpSmall;
+        case ARCADE_EVENT_NO_BATTLE: return sEventNoBattle;
+        case ARCADE_EVENT_GIVE_BP_BIG: return sEventGiveBpBig;
+        default:
+        case ARCADE_EVENT_NO_EVENT: return sEventNoEvent;
+    }
 }
 
 static u8 CreateEventSprite(u32 x, u32 y, u32 space)
 {
     u32 spriteId;
-	u16 TileTag = GetTileTag(space);
-	u32 impact = (sGameBoard[space].impact == ARCADE_IMPACT_PLAYER) ? ARCADE_IMPACT_PLAYER : ARCADE_IMPACT_OPPONENT;
+    u16 TileTag = GetTileTag(space);
+    u32 impact = (sGameBoard[space].impact == ARCADE_IMPACT_PLAYER) ? ARCADE_IMPACT_PLAYER : ARCADE_IMPACT_OPPONENT;
 
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
     TempSpriteTemplate.tileTag = TileTag;
-	TempSpriteTemplate.paletteTag = ARCADE_PALTAG_EVENT + impact;
+    TempSpriteTemplate.paletteTag = ARCADE_PALTAG_EVENT + impact;
     TempSpriteTemplate.callback = SpriteCallbackDummy;
 
     spriteId = CreateSprite(&TempSpriteTemplate,x,y, 0);
@@ -1541,42 +1541,42 @@ static u8 CreateEventSprite(u32 x, u32 y, u32 space)
     gSprites[spriteId].oam.size = SPRITE_SIZE(32x32);
     gSprites[spriteId].oam.priority = 0;
 
-	return spriteId;
+    return spriteId;
 }
 
 static const u16 GetTileTag(u32 space)
 {
-	return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
+    return (sGameBoard[space].event) + ARCADE_GFXTAG_EVENT;
 }
 
 static void StartGame(void)
 {
-	SetTimerForGame();
-	InitCursorPositionFromSaveblock();
-	CreateGameBoardCursor();
-	DestroyCountdownPanels();
-	CreateTask(Task_GameBoard_Game, 0);
+    SetTimerForGame();
+    InitCursorPositionFromSaveblock();
+    CreateGameBoardCursor();
+    DestroyCountdownPanels();
+    CreateTask(Task_GameBoard_Game, 0);
 }
 
 static void SetTimerForGame(void)
 {
-	SetTimer(ARCADE_BOARD_GAME_TIMER);
+    SetTimer(ARCADE_BOARD_GAME_TIMER);
 }
 
 static void InitCursorPositionFromSaveblock(void)
 {
-	sGameBoardState->cursorPosition = ARCADE_SAVEDATA_CURSOR.position;
+    sGameBoardState->cursorPosition = ARCADE_SAVEDATA_CURSOR.position;
 }
 
 static void CreateGameBoardCursor(void)
 {
-	u16 TileTag = ARCADE_GFXTAG_CURSOR;
-	u32 spriteId;
+    u16 TileTag = ARCADE_GFXTAG_CURSOR;
+    u32 spriteId;
 
-	struct CompressedSpriteSheet sSpriteSheet_Cursor = {sGameCursor, 0x0800, TileTag};
+    struct CompressedSpriteSheet sSpriteSheet_Cursor = {sGameCursor, 0x0800, TileTag};
     struct SpriteTemplate TempSpriteTemplate = gDummySpriteTemplate;
 
-	LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
+    LoadCompressedSpriteSheet(&sSpriteSheet_Cursor);
 
     TempSpriteTemplate.tileTag = TileTag;
     TempSpriteTemplate.paletteTag = ARCADE_PALTAG_CURSOR;
@@ -1591,32 +1591,32 @@ static void CreateGameBoardCursor(void)
 
 static void SpriteCB_Cursor(struct Sprite *sprite)
 {
-	ChangeCursorColor(sprite);
-	ChangeCursorSpritePosition(sprite);
+    ChangeCursorColor(sprite);
+    ChangeCursorSpritePosition(sprite);
 }
 
 static void ChangeCursorColor(struct Sprite *sprite)
 {
-	if (GetGameBoardTimer() % ARCADE_CURSOR_COLOR_CHANGE_FRAMES != 0)
-		return;
+    if (GetGameBoardTimer() % ARCADE_CURSOR_COLOR_CHANGE_FRAMES != 0)
+        return;
 
-	sprite->oam.paletteNum = ReturnNextCursorPalette(sprite->oam.paletteNum);
+    sprite->oam.paletteNum = ReturnNextCursorPalette(sprite->oam.paletteNum);
 }
 
 static u32 ReturnNextCursorPalette(u32 paletteNum)
 {
-	if (paletteNum == sGameBoardState->cursorPaletteNum[1])
-		return sGameBoardState->cursorPaletteNum[0];
-	else
-		return sGameBoardState->cursorPaletteNum[1];
+    if (paletteNum == sGameBoardState->cursorPaletteNum[1])
+        return sGameBoardState->cursorPaletteNum[0];
+    else
+        return sGameBoardState->cursorPaletteNum[1];
 }
 
 static void ChangeCursorSpritePosition(struct Sprite *sprite)
 {
-	u32 x, y;
-	CalculatePanelPosition(GetCursorPosition(),&x,&y);
-	sprite->x2 = x - 50;
-	sprite->y2 = y - 10;
+    u32 x, y;
+    CalculatePanelPosition(GetCursorPosition(),&x,&y);
+    sprite->x2 = x - 50;
+    sprite->y2 = y - 10;
 }
 
 static void DestroyCountdownPanels(void)
@@ -1632,16 +1632,16 @@ static void DestroyCountdownPanels(void)
 
 static void Task_GameBoard_Game(u8 taskId)
 {
-	u32 timer = GetGameBoardTimer();
+    u32 timer = GetGameBoardTimer();
 
-	if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
-		HandleFinishMode();
+    if (GetGameBoardMode() > ARCADE_BOARD_MODE_GAME_START)
+        HandleFinishMode();
     else if (IsGameBoardTimerEmpty())
         IncrementGameBoardMode();
-	else if (ShouldCursorMove(timer))
-		ChangeCursorPosition();
+    else if (ShouldCursorMove(timer))
+        ChangeCursorPosition();
 
-	DecrementGameBoardTimer();
+    DecrementGameBoardTimer();
 }
 
 static u32 GetGameBoardTimer(void)
@@ -1656,50 +1656,50 @@ static void IncrementGameBoardMode(void)
 
 static bool32 ShouldCursorMove(u32 timer)
 {
-	u32 cursorWaitValue = ReturnCursorWait(GetCursorSpeed());
+    u32 cursorWaitValue = ReturnCursorWait(GetCursorSpeed());
 
-	if (cursorWaitValue == 0)
-		return TRUE;
+    if (cursorWaitValue == 0)
+        return TRUE;
 
-	return (timer % cursorWaitValue == 0);
+    return (timer % cursorWaitValue == 0);
 }
 
 u32 ReturnCursorWait(u32 speed)
 {
-	static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
-	{
-		[ARCADE_SPEED_LEVEL_0] = ARCADE_CURSOR_WAIT_LEVEL_0,
-		[ARCADE_SPEED_LEVEL_1] = ARCADE_CURSOR_WAIT_LEVEL_1,
-		[ARCADE_SPEED_LEVEL_2] = ARCADE_CURSOR_WAIT_LEVEL_2,
-		[ARCADE_SPEED_LEVEL_3] = ARCADE_CURSOR_WAIT_LEVEL_3,
-		[ARCADE_SPEED_DEFAULT] = ARCADE_CURSOR_WAIT_LEVEL_4,
-		[ARCADE_SPEED_LEVEL_5] = ARCADE_CURSOR_WAIT_LEVEL_5,
-		[ARCADE_SPEED_LEVEL_6] = ARCADE_CURSOR_WAIT_LEVEL_6,
-		[ARCADE_SPEED_LEVEL_7] = ARCADE_CURSOR_WAIT_LEVEL_7,
-	};
+    static const u32 cursorWaitTable[ARCADE_SPEED_COUNT] =
+        {
+            [ARCADE_SPEED_LEVEL_0] = ARCADE_CURSOR_WAIT_LEVEL_0,
+            [ARCADE_SPEED_LEVEL_1] = ARCADE_CURSOR_WAIT_LEVEL_1,
+            [ARCADE_SPEED_LEVEL_2] = ARCADE_CURSOR_WAIT_LEVEL_2,
+            [ARCADE_SPEED_LEVEL_3] = ARCADE_CURSOR_WAIT_LEVEL_3,
+            [ARCADE_SPEED_DEFAULT] = ARCADE_CURSOR_WAIT_LEVEL_4,
+            [ARCADE_SPEED_LEVEL_5] = ARCADE_CURSOR_WAIT_LEVEL_5,
+            [ARCADE_SPEED_LEVEL_6] = ARCADE_CURSOR_WAIT_LEVEL_6,
+            [ARCADE_SPEED_LEVEL_7] = ARCADE_CURSOR_WAIT_LEVEL_7,
+        };
 
-	return cursorWaitTable[speed];
+    return cursorWaitTable[speed];
 }
 
 static void ChangeCursorPosition(void)
 {
-	u32 newPosition = GetCursorPosition() + 1;
+    u32 newPosition = GetCursorPosition() + 1;
 
-	if (IsCursorInRandomMode())
-		SetCursorPosition(Random() % ARCADE_GAME_BOARD_SPACES);
-	else
-	{
-		if (newPosition >= ARCADE_GAME_BOARD_SPACES)
-			SetCursorPosition(0);
-		else
-			SetCursorPosition(newPosition);
-	}
+    if (IsCursorInRandomMode())
+        SetCursorPosition(Random() % ARCADE_GAME_BOARD_SPACES);
+    else
+    {
+        if (newPosition >= ARCADE_GAME_BOARD_SPACES)
+            SetCursorPosition(0);
+        else
+            SetCursorPosition(newPosition);
+    }
 
 }
 
 static bool32 IsCursorInRandomMode(void)
 {
-	return (ARCADE_SAVEDATA_CURSOR.isRandom == TRUE);
+    return (ARCADE_SAVEDATA_CURSOR.isRandom == TRUE);
 }
 
 static bool32 IsGameBoardTimerEmpty(void)
@@ -1714,24 +1714,24 @@ static void DecrementGameBoardTimer(void)
 
 static void HandleFinishMode()
 {
-	u32 impact = 0, event = 0;
+    u32 impact = 0, event = 0;
 
-	IncrementGameBoardMode();
-	DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
-	PrintHelpBar();
-	SelectGameBoardSpace(&impact,&event);
-	ClearCursorRandomMode();
-	HandleGameBoardResult(impact,event);
-	SaveCursorPositionToSaveblock();
-	DestroyEventSprites();
-	PopulateEventSprites();
-	SetTimerForFinish();
-	CreateTask(Task_GameBoard_CleanUp,0);
+    IncrementGameBoardMode();
+    DestroyTask(FindTaskIdByFunc(Task_GameBoard_Game));
+    PrintHelpBar();
+    SelectGameBoardSpace(&impact,&event);
+    ClearCursorRandomMode();
+    HandleGameBoardResult(impact,event);
+    SaveCursorPositionToSaveblock();
+    DestroyEventSprites();
+    PopulateEventSprites();
+    SetTimerForFinish();
+    CreateTask(Task_GameBoard_CleanUp,0);
 }
 
 static void SetTimerForFinish(void)
 {
-	SetTimer(ARCADE_BOARD_FINISH_TIMER);
+    SetTimer(ARCADE_BOARD_FINISH_TIMER);
 }
 
 static void SelectGameBoardSpace(u32 *impact, u32 *event)
@@ -1747,17 +1747,17 @@ static void HandleGameBoardResult(u32 impact, u32 event)
     LOCAL_VAR_GAME_BOARD_SUCCESS = DoGameBoardResult(event, impact);
     BufferImpactedName(gStringVar1,impact);
 
-	SetGameBoardToChosenEvent(impact,event);
-	StoreEventToVar(event);
-	StoreImpactedSideToVar(impact);
+    SetGameBoardToChosenEvent(impact,event);
+    StoreEventToVar(event);
+    StoreImpactedSideToVar(impact);
 }
 
 static void BufferImpactedName(u8 *dest, u32 impact)
 {
-	if (impact == ARCADE_IMPACT_PLAYER)
-		StringCopy_PlayerName(dest, gSaveBlock2Ptr->playerName);
-	else
-		GetFrontierTrainerName(dest, GetImpactedTrainerId(impact));
+    if (impact == ARCADE_IMPACT_PLAYER)
+        StringCopy_PlayerName(dest, gSaveBlock2Ptr->playerName);
+    else
+        GetFrontierTrainerName(dest, GetImpactedTrainerId(impact));
 }
 
 static u32 GetImpactedTrainerId(u32 impact)
@@ -1798,14 +1798,14 @@ static void DestroyEventSprites(void)
 
 static void Task_GameBoard_CleanUp(u8 taskId)
 {
-	DecrementGameBoardTimer();
+    DecrementGameBoardTimer();
 
-	if (!IsGameBoardTimerEmpty())
-		return;
+    if (!IsGameBoardTimerEmpty())
+        return;
 
-	BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
 
-	gTasks[taskId].func = Task_GameBoardWaitFadeAndExitGracefully;
+    gTasks[taskId].func = Task_GameBoardWaitFadeAndExitGracefully;
 }
 
 static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
@@ -1820,57 +1820,57 @@ static void Task_GameBoardWaitFadeAndExitGracefully(u8 taskId)
 
 static void GameBoard_FreeResources(void)
 {
-	u32 backgroundId;
+    u32 backgroundId;
 
-	if (sGameBoardState != NULL)
-	{
-		Free(sGameBoardState);
-	}
+    if (sGameBoardState != NULL)
+    {
+        Free(sGameBoardState);
+    }
 
-	for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
-	{
-		if (sBgTilemapBuffer[backgroundId] != NULL)
-			Free(sBgTilemapBuffer[backgroundId]);
-	}
+    for (backgroundId = 0; backgroundId < BG_BOARD_COUNT; backgroundId++)
+    {
+        if (sBgTilemapBuffer[backgroundId] != NULL)
+            Free(sBgTilemapBuffer[backgroundId]);
+    }
 
-	FreeAllWindowBuffers();
-	ResetSpriteData();
+    FreeAllWindowBuffers();
+    ResetSpriteData();
 }
 
 static u32 GenerateImpact(void)
 {
-	static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
-	{
-		//Opponent, Player, All, Special
-		[ARCADE_PERFORMANCE_BRACKET_0_4]     = {10, 75, 10, 5},
-		[ARCADE_PERFORMANCE_BRACKET_5_10]    = {25, 40, 30, 5},
-		[ARCADE_PERFORMANCE_BRACKET_11_15]   = {30, 30, 35, 5},
-		[ARCADE_PERFORMANCE_BRACKET_16_20]   = {35, 20, 30, 15},
-		[ARCADE_PERFORMANCE_BRACKET_21_PLUS] = {15, 15, 40, 30},
-	};
+    static const u32 ImpactTable[][ARCADE_IMPACT_COUNT] =
+        {
+            //Opponent, Player, All, Special
+            [ARCADE_PERFORMANCE_BRACKET_0_4]     = {10, 75, 10, 5},
+            [ARCADE_PERFORMANCE_BRACKET_5_10]    = {25, 40, 30, 5},
+            [ARCADE_PERFORMANCE_BRACKET_11_15]   = {30, 30, 35, 5},
+            [ARCADE_PERFORMANCE_BRACKET_16_20]   = {35, 20, 30, 15},
+            [ARCADE_PERFORMANCE_BRACKET_21_PLUS] = {15, 15, 40, 30},
+        };
 
-	u32 impactThreshold = 0, impactIndex = 0;
-	u32 randImpact = Random() % 100;
-	u32 impactBracket = ConvertPerformanceToImpactBracket();
+    u32 impactThreshold = 0, impactIndex = 0;
+    u32 randImpact = Random() % 100;
+    u32 impactBracket = ConvertPerformanceToImpactBracket();
 
-	for (impactIndex = 0; impactIndex < ARCADE_IMPACT_COUNT; impactIndex++)
-	{
-		impactThreshold += ImpactTable[impactBracket][impactIndex];
-		if (randImpact < impactThreshold)
-			return impactIndex;
-	}
-	return ARCADE_IMPACT_PLAYER;
+    for (impactIndex = 0; impactIndex < ARCADE_IMPACT_COUNT; impactIndex++)
+    {
+        impactThreshold += ImpactTable[impactBracket][impactIndex];
+        if (randImpact < impactThreshold)
+            return impactIndex;
+    }
+    return ARCADE_IMPACT_PLAYER;
 }
 
 static u32 ConvertPerformanceToImpactBracket(void)
 {
     u32 performancePoints = GetPerformancePoints();
 
-	return performancePoints <= 4 ? ARCADE_PERFORMANCE_BRACKET_0_4 :
-		performancePoints <= 10 ? ARCADE_PERFORMANCE_BRACKET_5_10 :
-		performancePoints <= 15 ? ARCADE_PERFORMANCE_BRACKET_11_15 :
-		performancePoints <= 20 ? ARCADE_PERFORMANCE_BRACKET_16_20 :
-		ARCADE_PERFORMANCE_BRACKET_21_PLUS;
+    return performancePoints <= 4 ? ARCADE_PERFORMANCE_BRACKET_0_4 :
+    performancePoints <= 10 ? ARCADE_PERFORMANCE_BRACKET_5_10 :
+    performancePoints <= 15 ? ARCADE_PERFORMANCE_BRACKET_11_15 :
+    performancePoints <= 20 ? ARCADE_PERFORMANCE_BRACKET_16_20 :
+    ARCADE_PERFORMANCE_BRACKET_21_PLUS;
 }
 
 static u32 GenerateEvent(u32 impact)
@@ -1900,12 +1900,12 @@ static s32 GetPanelUpperBound(u32 impact)
     {
         case ARCADE_IMPACT_PLAYER:
         case ARCADE_IMPACT_OPPONENT:
-			return ARCADE_EVENT_WEATHER_START;
+            return ARCADE_EVENT_WEATHER_START;
         case ARCADE_IMPACT_ALL:
-			return ARCADE_EVENT_SPECIAL_START;
+            return ARCADE_EVENT_SPECIAL_START;
         default:
         case ARCADE_IMPACT_SPECIAL:
-			return ARCADE_EVENT_COUNT;
+            return ARCADE_EVENT_COUNT;
     }
 }
 
@@ -1916,12 +1916,12 @@ static s32 GetPanelLowerBound(u32 impact)
     {
         case ARCADE_IMPACT_PLAYER:
         case ARCADE_IMPACT_OPPONENT:
-			return ARCADE_EVENT_INDIVIDUAL_START;
+            return ARCADE_EVENT_INDIVIDUAL_START;
         case ARCADE_IMPACT_ALL:
-			return ARCADE_EVENT_WEATHER_START;
+            return ARCADE_EVENT_WEATHER_START;
         default:
         case ARCADE_IMPACT_SPECIAL:
-			return ARCADE_EVENT_SPECIAL_START;
+            return ARCADE_EVENT_SPECIAL_START;
     }
 }
 
@@ -1948,64 +1948,64 @@ static bool32 IsEventBanned(u32 event)
 
 static bool32 IsEventValidDuringCurrentBattle(u32 event)
 {
-	static const u32 SpecialPanelTable[][FRONTIER_STAGES_PER_CHALLENGE] =
-	{
-                               //Battle 1  2  3  4  5  6  7
-		[ARCADE_EVENT_SWAP]          = {1, 1, 1, 1, 1, 1, 0},
-		[ARCADE_EVENT_SPEED_UP]      = {1, 1, 1, 1, 1, 1, 0},
-		[ARCADE_EVENT_SPEED_DOWN]    = {1, 1, 1, 1, 1, 1, 0},
-		[ARCADE_EVENT_RANDOM]        = {1, 1, 1, 1, 1, 1, 0},
-		[ARCADE_EVENT_GIVE_BP_SMALL] = {1, 0, 1, 0, 1, 0, 0},
-		[ARCADE_EVENT_NO_BATTLE]     = {0, 1, 0, 1, 0, 1, 0},
-		[ARCADE_EVENT_GIVE_BP_BIG]   = {0, 1, 0, 1, 0, 1, 0},
-		[ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
-	};
+    static const u32 SpecialPanelTable[][FRONTIER_STAGES_PER_CHALLENGE] =
+        {
+            //Battle 1  2  3  4  5  6  7
+            [ARCADE_EVENT_SWAP]          = {1, 1, 1, 1, 1, 1, 0},
+            [ARCADE_EVENT_SPEED_UP]      = {1, 1, 1, 1, 1, 1, 0},
+            [ARCADE_EVENT_SPEED_DOWN]    = {1, 1, 1, 1, 1, 1, 0},
+            [ARCADE_EVENT_RANDOM]        = {1, 1, 1, 1, 1, 1, 0},
+            [ARCADE_EVENT_GIVE_BP_SMALL] = {1, 0, 1, 0, 1, 0, 0},
+            [ARCADE_EVENT_NO_BATTLE]     = {0, 1, 0, 1, 0, 1, 0},
+            [ARCADE_EVENT_GIVE_BP_BIG]   = {0, 1, 0, 1, 0, 1, 0},
+            [ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
+        };
 
-	if (event < ARCADE_EVENT_SPECIAL_START)
-		return TRUE;
+    if (event < ARCADE_EVENT_SPECIAL_START)
+        return TRUE;
 
-	if (!SpecialPanelTable[event][FRONTIER_SAVEDATA.curChallengeBattleNum])
-		return FALSE;
+    if (!SpecialPanelTable[event][FRONTIER_SAVEDATA.curChallengeBattleNum])
+        return FALSE;
 
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 IsEventValidDuringCurrentStreak(u32 event)
 {
-	static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
-	{                          //Streak 1  2  3  4  5  6  7
-		[ARCADE_EVENT_LOWER_HP]      = {0, 1, 1, 1, 1, 1, 1},
-		[ARCADE_EVENT_POISON]        = {1, 0, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_PARALYZE]      = {1, 0, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_BURN]          = {1, 0, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_SLEEP]         = {0, 0, 0, 0, 1, 1, 1},
-		[ARCADE_EVENT_FREEZE]        = {0, 0, 0, 0, 1, 1, 1},
-		[ARCADE_EVENT_GIVE_BERRY]    = {1, 1, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_GIVE_ITEM]     = {0, 0, 0, 1, 1, 1, 1},
-		[ARCADE_EVENT_LEVEL_UP]      = {0, 1, 1, 1, 1, 1, 1},
-		[ARCADE_EVENT_SUN]           = {0, 1, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_RAIN]          = {0, 1, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_SAND]          = {0, 1, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_HAIL]          = {0, 1, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_FOG]           = {0, 0, 0, 1, 0, 1, 1},
-		[ARCADE_EVENT_TRICK_ROOM]    = {0, 0, 0, 1, 0, 1, 1},
-		[ARCADE_EVENT_SWAP]          = {1, 1, 1, 1, 1, 1, 1},
-		[ARCADE_EVENT_SPEED_UP]      = {1, 1, 1, 0, 0, 0, 1},
-		[ARCADE_EVENT_SPEED_DOWN]    = {1, 1, 1, 1, 1, 1, 1},
-		[ARCADE_EVENT_RANDOM]        = {0, 0, 0, 0, 1, 1, 1},
-		[ARCADE_EVENT_GIVE_BP_SMALL] = {0, 0, 0, 1, 1, 1, 1},
-		[ARCADE_EVENT_NO_BATTLE]     = {0, 0, 0, 0, 1, 1, 1},
-		[ARCADE_EVENT_GIVE_BP_BIG]   = {0, 0, 0, 0, 0, 0, 1},
-		[ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
-	};
+    static const u32 PanelStreakTable[][ARCADE_STREAK_NUM_COUNT] =
+        {                          //Streak 1  2  3  4  5  6  7
+            [ARCADE_EVENT_LOWER_HP]      = {0, 1, 1, 1, 1, 1, 1},
+            [ARCADE_EVENT_POISON]        = {1, 0, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_PARALYZE]      = {1, 0, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_BURN]          = {1, 0, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_SLEEP]         = {0, 0, 0, 0, 1, 1, 1},
+            [ARCADE_EVENT_FREEZE]        = {0, 0, 0, 0, 1, 1, 1},
+            [ARCADE_EVENT_GIVE_BERRY]    = {1, 1, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_GIVE_ITEM]     = {0, 0, 0, 1, 1, 1, 1},
+            [ARCADE_EVENT_LEVEL_UP]      = {0, 1, 1, 1, 1, 1, 1},
+            [ARCADE_EVENT_SUN]           = {0, 1, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_RAIN]          = {0, 1, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_SAND]          = {0, 1, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_HAIL]          = {0, 1, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_FOG]           = {0, 0, 0, 1, 0, 1, 1},
+            [ARCADE_EVENT_TRICK_ROOM]    = {0, 0, 0, 1, 0, 1, 1},
+            [ARCADE_EVENT_SWAP]          = {1, 1, 1, 1, 1, 1, 1},
+            [ARCADE_EVENT_SPEED_UP]      = {1, 1, 1, 0, 0, 0, 1},
+            [ARCADE_EVENT_SPEED_DOWN]    = {1, 1, 1, 1, 1, 1, 1},
+            [ARCADE_EVENT_RANDOM]        = {0, 0, 0, 0, 1, 1, 1},
+            [ARCADE_EVENT_GIVE_BP_SMALL] = {0, 0, 0, 1, 1, 1, 1},
+            [ARCADE_EVENT_NO_BATTLE]     = {0, 0, 0, 0, 1, 1, 1},
+            [ARCADE_EVENT_GIVE_BP_BIG]   = {0, 0, 0, 0, 0, 0, 1},
+            [ARCADE_EVENT_NO_EVENT]      = {1, 1, 1, 1, 1, 1, 1},
+        };
 
-	if (event < ARCADE_EVENT_SPECIAL_START)
-		return TRUE;
+    if (event < ARCADE_EVENT_SPECIAL_START)
+        return TRUE;
 
-	if (!PanelStreakTable[event][GetChallengeNumIndex()])
-		return FALSE;
+    if (!PanelStreakTable[event][GetChallengeNumIndex()])
+        return FALSE;
 
-	return TRUE;
+    return TRUE;
 }
 
 static u32 GetChallengeNumIndex(void)
@@ -2046,7 +2046,7 @@ static bool32 DoGameBoardResult(u32 event, u32 impact)
         case ARCADE_EVENT_SWAP: return BattleArcade_DoSwap();
         case ARCADE_EVENT_SPEED_UP: return BattleArcade_DoSpeedUp();
         case ARCADE_EVENT_SPEED_DOWN: return BattleArcade_DoSpeedDown();
-		case ARCADE_EVENT_RANDOM: return BattleArcade_DoRandom();
+        case ARCADE_EVENT_RANDOM: return BattleArcade_DoRandom();
         case ARCADE_EVENT_GIVE_BP_SMALL: return BattleArcade_DoGiveBPSmall();
         case ARCADE_EVENT_GIVE_BP_BIG: return BattleArcade_DoGiveBPBig();
         case ARCADE_EVENT_NO_BATTLE: return BattleArcade_DoNoBattle();
@@ -2075,23 +2075,23 @@ static bool32 BattleArcade_DoLowerHP(u32 impact)
 
 static bool32 BattleArcade_DoPoison(u32 impact)
 {
-	return BattleArcade_DoStatusAilment(impact, STATUS1_TOXIC_POISON);
+    return BattleArcade_DoStatusAilment(impact, STATUS1_TOXIC_POISON);
 }
 static bool32 BattleArcade_DoParalyze(u32 impact)
 {
-	return BattleArcade_DoStatusAilment(impact, STATUS1_PARALYSIS);
+    return BattleArcade_DoStatusAilment(impact, STATUS1_PARALYSIS);
 }
 static bool32 BattleArcade_DoBurn(u32 impact)
 {
-	return BattleArcade_DoStatusAilment(impact, STATUS1_BURN);
+    return BattleArcade_DoStatusAilment(impact, STATUS1_BURN);
 }
 static bool32 BattleArcade_DoSleep(u32 impact)
 {
-	return BattleArcade_DoStatusAilment(impact, STATUS1_SLEEP);
+    return BattleArcade_DoStatusAilment(impact, STATUS1_SLEEP);
 }
 static bool32 BattleArcade_DoFreeze(u32 impact)
 {
-	return BattleArcade_DoStatusAilment(impact, STATUS1_FREEZE);
+    return BattleArcade_DoStatusAilment(impact, STATUS1_FREEZE);
 }
 
 static bool32 BattleArcade_DoStatusAilment(u32 impact, u32 status)
@@ -2207,28 +2207,28 @@ static u32 CalculateAndSaveNewLevel(u32 origLevel)
 
 static bool32 HaveMonsBeenSwapped(void)
 {
-	struct Pokemon *frontierMon;
-	struct Pokemon *playerMon;
-	u32 playerMonPersonality, frontierMonPersonality, i, monId;
+    struct Pokemon *frontierMon;
+    struct Pokemon *playerMon;
+    u32 playerMonPersonality, frontierMonPersonality, i, monId;
 
-	for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
-	{
-		monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
-		if (monId >= PARTY_SIZE)
-			continue;
+    for (i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
+    {
+        monId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+        if (monId >= PARTY_SIZE)
+            continue;
 
-		frontierMon = &gSaveBlock1Ptr->playerParty[monId];
-		playerMon = &gPlayerParty[i];
+        frontierMon = &gSaveBlock1Ptr->playerParty[monId];
+        playerMon = &gPlayerParty[i];
 
-		playerMonPersonality = GetMonData(playerMon, MON_DATA_PERSONALITY,NULL);
-		frontierMonPersonality = GetMonData(frontierMon, MON_DATA_PERSONALITY,NULL);
+        playerMonPersonality = GetMonData(playerMon, MON_DATA_PERSONALITY,NULL);
+        frontierMonPersonality = GetMonData(frontierMon, MON_DATA_PERSONALITY,NULL);
 
-		if (playerMonPersonality == frontierMonPersonality)
-			continue;
+        if (playerMonPersonality == frontierMonPersonality)
+            continue;
 
-		return TRUE;
-	}
-	return FALSE;
+        return TRUE;
+    }
+    return FALSE;
 }
 
 static bool32 BattleArcade_DoSun(void)
@@ -2256,15 +2256,15 @@ static bool32 BattleArcade_DoWeather(u32 weather)
 {
     SetSavedWeather(weather);
     DoCurrentWeather();
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 BattleArcade_DoTrickRoom(void)
 {
 #ifndef RHH_EXPANSION
-	return TRUE;
+    return TRUE;
 #else
-	return VarSet(B_VAR_STARTING_STATUS,STARTING_STATUS_TRICK_ROOM);
+    return VarSet(B_VAR_STARTING_STATUS,STARTING_STATUS_TRICK_ROOM);
 #endif
 }
 
@@ -2288,13 +2288,13 @@ static bool32 BattleArcade_DoSwap(void)
 static bool32 BattleArcade_DoSpeedUp(void)
 {
     BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_UP);
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 BattleArcade_DoSpeedDown(void)
 {
     BattleArcade_ChangeSpeed(ARCADE_EVENT_SPEED_DOWN);
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 BattleArcade_ChangeSpeed(u32 mode)
@@ -2313,7 +2313,7 @@ static bool32 BattleArcade_ChangeSpeed(u32 mode)
             currentSpeed = ARCADE_SPEED_LEVEL_MAX;
     }
     else
-    {
+{
         currentSpeed--;
 
         if (currentSpeed < ARCADE_SPEED_LEVEL_MIN)
@@ -2331,78 +2331,78 @@ static u32 GetCursorSpeed(void)
 
 static void SetCursorSpeed(u32 speed)
 {
-	ARCADE_SAVEDATA_CURSOR.speed = speed;
+    ARCADE_SAVEDATA_CURSOR.speed = speed;
 }
 
 static bool32 BattleArcade_DoRandom(void)
 {
-	SetCursorRandomMode();
-	return TRUE;
+    SetCursorRandomMode();
+    return TRUE;
 }
 
 static void SetCursorRandomMode(void)
 {
-	ARCADE_SAVEDATA_CURSOR.isRandom = TRUE;
+    ARCADE_SAVEDATA_CURSOR.isRandom = TRUE;
 }
 
 static bool32 BattleArcade_DoGiveBPSmall(void)
 {
     GiveBattlePoints(ARCADE_BP_SMALL);
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 BattleArcade_DoGiveBPBig(void)
 {
     GiveBattlePoints(ARCADE_BP_BIG);
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 BattleArcade_DoNoBattle(void)
 {
-	return TRUE;
+    return TRUE;
 }
 
 static bool32 BattleArcade_DoNoEvent(void)
 {
-	return TRUE;
+    return TRUE;
 }
 
 static const struct BgTemplate sArcadeRecordBgTemplates[BG_RECORD_COUNT] =
-{
     {
-        .bg = BG_RECORD_TEXT,
-        .charBaseIndex = 1,
-        .mapBaseIndex = 31,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 0,
-        .baseTile = 0,
-    },
-    {
-        .bg = BG_RECORD_BACKGROUND,
-        .charBaseIndex = 0,
-        .mapBaseIndex = 6,
-        .screenSize = 0,
-        .paletteMode = 0,
-        .priority = 1,
-        .baseTile = 0,
-    },
-};
+        {
+            .bg = BG_RECORD_TEXT,
+            .charBaseIndex = 1,
+            .mapBaseIndex = 31,
+            .screenSize = 0,
+            .paletteMode = 0,
+            .priority = 0,
+            .baseTile = 0,
+        },
+        {
+            .bg = BG_RECORD_BACKGROUND,
+            .charBaseIndex = 0,
+            .mapBaseIndex = 6,
+            .screenSize = 0,
+            .paletteMode = 0,
+            .priority = 1,
+            .baseTile = 0,
+        },
+    };
 
 static const struct WindowTemplate sArcadeRecordWinTemplates[WIN_RECORD_COUNT] =
-{
-    [WIN_RECORD_TEXT] =
     {
-        .bg = BG_RECORD_TEXT,
-        .tilemapLeft = 3,
-        .tilemapTop = 1,
-        .width = 26,
-        .height = 16,
-        .paletteNum = 15,
-        .baseBlock = 1,
-    },
-    DUMMY_WIN_TEMPLATE,
-};
+        [WIN_RECORD_TEXT] =
+        {
+            .bg = BG_RECORD_TEXT,
+            .tilemapLeft = 3,
+            .tilemapTop = 1,
+            .width = 26,
+            .height = 16,
+            .paletteNum = 15,
+            .baseBlock = 1,
+        },
+        DUMMY_WIN_TEMPLATE,
+    };
 
 static const u32 sRecordsTilemap[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/records/backgrounds/background.bin.lz");
 static const u32 sRecordsTiles[] = INCBIN_U32("graphics/battle_frontier/battle_arcade/records/backgrounds/background.4bpp.lz");
@@ -2410,12 +2410,12 @@ static const u16 sRecordsPalettes[] = INCBIN_U16("graphics/battle_frontier/battl
 
 static void Task_OpenArcadeRecord(u8 taskId)
 {
-	if (gPaletteFade.active)
-		return;
+    if (gPaletteFade.active)
+        return;
 
-	CleanupOverworldWindowsAndTilemaps();
-	ArcadeRecords_Init(CB2_ReturnToFieldFadeFromBlack);
-	DestroyTask(taskId);
+    CleanupOverworldWindowsAndTilemaps();
+    ArcadeRecords_Init(CB2_ReturnToFieldFadeFromBlack);
+    DestroyTask(taskId);
 }
 
 static void ArcadeRecords_Init(MainCallback callback)
@@ -2425,53 +2425,53 @@ static void ArcadeRecords_Init(MainCallback callback)
 
 static void ArcadeRecords_SetupCB(void)
 {
-	switch (gMain.state)
-	{
-		case 0:
-			DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
-			SetVBlankHBlankCallbacksToNull();
-			ClearScheduledBgCopiesToVram();
-			gMain.state++;
-			break;
-		case 1:
-			ScanlineEffect_Stop();
-			FreeAllSpritePalettes();
-			ResetPaletteFade();
-			ResetSpriteData();
-			ResetTasks();
-			gMain.state++;
-			break;
-		case 2:
-			if (ArcadeRecords_InitBgs())
-				gMain.state++;
-			else
-			{
-				ArcadeRecord_FadeAndBail();
-				return;
-			}
-			break;
-		case 3:
-			if (ArcadeRecord_LoadGraphics() == TRUE)
-				gMain.state++;
-			break;
-		case 4:
-			ArcadeRecord_InitWindows();
-			gMain.state++;
-			break;
-		case 5:
-			DisplayRecordsText();
-			CreateTask(Task_ArcadeRecordWaitFadeIn, 0);
-			gMain.state++;
-			break;
-		case 6:
-			BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
-			gMain.state++;
-			break;
-		case 7:
-			SetVBlankCallback(VBlankCB);
-			SetMainCallback2(MainCB);
-			break;
-	}
+    switch (gMain.state)
+    {
+        case 0:
+            DmaClearLarge16(3, (void *)VRAM, VRAM_SIZE, 0x1000);
+            SetVBlankHBlankCallbacksToNull();
+            ClearScheduledBgCopiesToVram();
+            gMain.state++;
+            break;
+        case 1:
+            ScanlineEffect_Stop();
+            FreeAllSpritePalettes();
+            ResetPaletteFade();
+            ResetSpriteData();
+            ResetTasks();
+            gMain.state++;
+            break;
+        case 2:
+            if (ArcadeRecords_InitBgs())
+                gMain.state++;
+            else
+            {
+                ArcadeRecord_FadeAndBail();
+                return;
+            }
+            break;
+        case 3:
+            if (ArcadeRecord_LoadGraphics() == TRUE)
+                gMain.state++;
+            break;
+        case 4:
+            ArcadeRecord_InitWindows();
+            gMain.state++;
+            break;
+        case 5:
+            DisplayRecordsText();
+            CreateTask(Task_ArcadeRecordWaitFadeIn, 0);
+            gMain.state++;
+            break;
+        case 6:
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, RGB_BLACK);
+            gMain.state++;
+            break;
+        case 7:
+            SetVBlankCallback(VBlankCB);
+            SetMainCallback2(MainCB);
+            break;
+    }
 }
 
 static EWRAM_DATA u8 arcadeRecordLoadState = 0;
@@ -2542,25 +2542,25 @@ static bool8 ArcadeRecord_LoadGraphics(void)
 {
     switch (arcadeRecordLoadState)
     {
-    case 0:
-        ResetTempTileDataBuffers();
+        case 0:
+            ResetTempTileDataBuffers();
 
-        DecompressAndCopyTileDataToVram(BG_RECORD_BACKGROUND, sRecordsTiles, 0, 0, 0);
-        arcadeRecordLoadState++;
-        break;
-    case 1:
-        if (FreeTempTileDataBuffersIfPossible() != TRUE)
-        {
-            LZDecompressWram(sRecordsTilemap, sBgTilemapBuffer[BG_RECORD_BACKGROUND]);
+            DecompressAndCopyTileDataToVram(BG_RECORD_BACKGROUND, sRecordsTiles, 0, 0, 0);
             arcadeRecordLoadState++;
-        }
-        break;
-    case 2:
-        LoadPalette(sRecordsPalettes, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
-        arcadeRecordLoadState++;
-    default:
-        arcadeRecordLoadState = 0;
-        return TRUE;
+            break;
+        case 1:
+            if (FreeTempTileDataBuffersIfPossible() != TRUE)
+            {
+                LZDecompressWram(sRecordsTilemap, sBgTilemapBuffer[BG_RECORD_BACKGROUND]);
+                arcadeRecordLoadState++;
+            }
+            break;
+        case 2:
+            LoadPalette(sRecordsPalettes, BG_PLTT_ID(0), PLTT_SIZE_4BPP);
+            arcadeRecordLoadState++;
+        default:
+            arcadeRecordLoadState = 0;
+            return TRUE;
     }
     return FALSE;
 }
@@ -2632,21 +2632,21 @@ static void ArcadeRecord_FreeResources(void)
 
 static const u8 *BattleArcade_GetRecordName(void)
 {
-	switch(gSpecialVar_0x8006)
-	{
-		case FRONTIER_MODE_SINGLES:
-			return gText_Single2;
-		case FRONTIER_MODE_DOUBLES:
-			return gText_Double;
-		default:
-		case FRONTIER_MODE_LINK_MULTIS:
-			return gText_Multi;
-	}
+    switch(gSpecialVar_0x8006)
+    {
+        case FRONTIER_MODE_SINGLES:
+            return gText_Single2;
+        case FRONTIER_MODE_DOUBLES:
+            return gText_Double;
+        default:
+        case FRONTIER_MODE_LINK_MULTIS:
+            return gText_Multi;
+    }
 }
 
 static const u8 *BattleArcade_GenerateRecordName(void)
 {
-	StringCopy(gStringVar3,BattleArcade_GetRecordName());
+    StringCopy(gStringVar3,BattleArcade_GetRecordName());
     StringAppend(gStringVar3,gText_Space);
     StringAppend(gStringVar3,gText_Record);
     return gStringVar3;
@@ -2654,103 +2654,103 @@ static const u8 *BattleArcade_GenerateRecordName(void)
 
 static void HandleHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 lvlMode)
 {
-	static const u8 sText_BattleArcade[] = _("BATTLE ARCADE");
+    static const u8 sText_BattleArcade[] = _("BATTLE ARCADE");
 
-	AddTextPrinterParameterized4(windowId, fontID, 0,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, sText_BattleArcade);
-	AddTextPrinterParameterized4(windowId, fontID, 122, ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
+    AddTextPrinterParameterized4(windowId, fontID, 0,ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, sText_BattleArcade);
+    AddTextPrinterParameterized4(windowId, fontID, 122, ARCADE_RECORD_HEADER_Y_POSITION, letterSpacing, lineSpacing, color, speed, BattleArcade_GenerateRecordName());
 }
 
 static void HandleRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 mode)
 {
-	u32 lvlMode, streakIndex;
-	u32 loopIterations = 0;
+    u32 lvlMode, streakIndex;
+    u32 loopIterations = 0;
 
-	for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
-		for (streakIndex = 0; streakIndex < ARCADE_RECORD_STREAK_INDEX_COUNT; streakIndex++)
-			PrintRecordHeaderLevelRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed, streakIndex, lvlMode, loopIterations++);
+    for (lvlMode = 0; lvlMode < FRONTIER_LVL_MODE_COUNT ; lvlMode++)
+        for (streakIndex = 0; streakIndex < ARCADE_RECORD_STREAK_INDEX_COUNT; streakIndex++)
+            PrintRecordHeaderLevelRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed, streakIndex, lvlMode, loopIterations++);
 }
 
 static u32 CalculateRecordRowYPosition(u32 loopIterations)
 {
-	return (50 +
-			(loopIterations * 20));
+    return (50 +
+    (loopIterations * 20));
 }
 
 static void PrintRecordHeaderLevelRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 lvlMode, u32 loopIterations)
 {
-	u32 y = CalculateRecordRowYPosition(loopIterations);
+    u32 y = CalculateRecordRowYPosition(loopIterations);
 
-	PrintRecordHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-	PrintRecordLevelMode(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
-	PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+    PrintRecordHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+    PrintRecordLevelMode(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
+    PrintRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,streakIndex,lvlMode,y);
 }
 
 static const u8 *BattleArcade_GetRecordHeaderName(u32 level, u32 streakIndex)
 {
-	bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[gSpecialVar_0x8006][level]));
+    bool32 isStreakActive = ((FRONTIER_SAVEDATA.winStreakActiveFlags & sStreakFlags[gSpecialVar_0x8006][level]));
 
-	if (streakIndex == 0 && isStreakActive)
-		return gText_Current;
-	else if (streakIndex == 0)
-		return gText_Prev;
-	else
-		return gText_Record;
+    if (streakIndex == 0 && isStreakActive)
+        return gText_Current;
+    else if (streakIndex == 0)
+        return gText_Prev;
+    else
+        return gText_Record;
 }
 
 static void PrintRecordHeader(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
-	AddTextPrinterParameterized4(windowId, fontID, 0,y, letterSpacing, lineSpacing, color, speed, BattleArcade_GetRecordHeaderName(level, streakIndex));
+    AddTextPrinterParameterized4(windowId, fontID, 0,y, letterSpacing, lineSpacing, color, speed, BattleArcade_GetRecordHeaderName(level, streakIndex));
 }
 
 static const u8 *BattleArcade_GetLevelText(u32 level)
 {
-	if (level == FRONTIER_LVL_50)
-		return gText_Lv502;
-	else
-		return gText_OpenLv;
+    if (level == FRONTIER_LVL_50)
+        return gText_Lv502;
+    else
+        return gText_OpenLv;
 }
 
 static void PrintRecordLevelMode(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakStatus, u32 level, u32 y)
 {
-	AddTextPrinterParameterized4(windowId, fontID, 45,y, letterSpacing, lineSpacing, color, speed, BattleArcade_GetLevelText(level));
+    AddTextPrinterParameterized4(windowId, fontID, 45,y, letterSpacing, lineSpacing, color, speed, BattleArcade_GetLevelText(level));
 }
 
 static u32 GetRecordValue(u32 level, u32 streakIndex)
 {
-	u32 mode = gSpecialVar_0x8006;
+    u32 mode = gSpecialVar_0x8006;
 
-	if (streakIndex == 0)
-		return ARCADE_SAVEDATA_CURRENT_STREAK[mode][level];
-	else
-		return ARCADE_SAVEDATA_RECORD_STREAK[mode][level];
+    if (streakIndex == 0)
+        return ARCADE_SAVEDATA_CURRENT_STREAK[mode][level];
+    else
+        return ARCADE_SAVEDATA_RECORD_STREAK[mode][level];
 }
 
 static void PrintRecord(u32 windowId, u32 fontID, u32 letterSpacing, u32 lineSpacing, u8 *color, u32 speed, u32 streakIndex, u32 level, u32 y)
 {
-	u32 record = GetRecordValue(level, streakIndex);
-	static const u8 sText_GamesStreak[] = _("Games cleared: {STR_VAR_1}");
+    u32 record = GetRecordValue(level, streakIndex);
+    static const u8 sText_GamesStreak[] = _("Games cleared: {STR_VAR_1}");
 
-	ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
-	StringExpandPlaceholders(gStringVar4,sText_GamesStreak);
-	AddTextPrinterParameterized4(windowId, fontID, 95,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
+    ConvertIntToDecimalStringN(gStringVar1,record,STR_CONV_MODE_LEFT_ALIGN,CountDigits(record));
+    StringExpandPlaceholders(gStringVar4,sText_GamesStreak);
+    AddTextPrinterParameterized4(windowId, fontID, 95,y, letterSpacing, lineSpacing, color, speed, gStringVar4);
 }
 
 static void GenerateRecordText(void)
 {
-	u32 windowId = 0;
-	u32 fontID = FONT_NORMAL;
-	u32 letterSpacing = GetFontAttribute(fontID,FONTATTR_LETTER_SPACING);
-	u32 lineSpacing = GetFontAttribute(fontID,FONTATTR_LINE_SPACING);
-	u8 color[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GRAY};
-	u32 speed = TEXT_SKIP_DRAW;
+    u32 windowId = 0;
+    u32 fontID = FONT_NORMAL;
+    u32 letterSpacing = GetFontAttribute(fontID,FONTATTR_LETTER_SPACING);
+    u32 lineSpacing = GetFontAttribute(fontID,FONTATTR_LINE_SPACING);
+    u8 color[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GRAY};
+    u32 speed = TEXT_SKIP_DRAW;
 
-	HandleHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_OPEN);
-	HandleRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_50);
+    HandleHeader(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_OPEN);
+    HandleRecord(windowId, fontID, letterSpacing, lineSpacing, color, speed,FRONTIER_LVL_50);
 }
 
 static void DisplayRecordsText(void)
 {
-	GenerateRecordText();
+    GenerateRecordText();
     PutWindowTilemap(0);
     CopyWindowToVram(0, COPYWIN_FULL);
 }

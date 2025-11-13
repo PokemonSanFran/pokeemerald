@@ -9,6 +9,6 @@
 
 void TryFieldPoisonWhiteOut(void);
 s32 DoPoisonFieldEffect(void);
-bool32 IsMonValidSpecies(struct Pokemon *pokemon);
+bool32 IsMonValidSpecies(struct Pokemon *pokemon); // battle_arcade
 
 #endif //GUARD_FIELD_POISON_H

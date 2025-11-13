@@ -3,15 +3,15 @@ const LOCAL_VAR_WALKED_HALLWAY = VAR_TEMP_0
 
 mapscripts BattleArcade_Hallway_MapScripts
 {
-    MAP_SCRIPT_ON_LOAD
-    {
-        setmetatile(8, 0, METATILE_BattleFrontier_CorridorOpenDoor_Top, FALSE)
-        setmetatile(8, 1, METATILE_BattleFrontier_CorridorOpenDoor_Bottom, FALSE)
-    }
-    MAP_SCRIPT_ON_FRAME_TABLE
-    [
-        LOCAL_VAR_WALKED_HALLWAY, FALSE: BattleArcade_Hallway_EventScript_EnterCorridor
-    ]
+	MAP_SCRIPT_ON_LOAD
+	{
+		setmetatile(8, 0, METATILE_BattleFrontier_CorridorOpenDoor_Top, FALSE)
+		setmetatile(8, 1, METATILE_BattleFrontier_CorridorOpenDoor_Bottom, FALSE)
+	}
+	MAP_SCRIPT_ON_FRAME_TABLE
+	[
+		LOCAL_VAR_WALKED_HALLWAY, FALSE: BattleArcade_Hallway_EventScript_EnterCorridor
+	]
 }
 
 script BattleArcade_Hallway_EventScript_EnterCorridor

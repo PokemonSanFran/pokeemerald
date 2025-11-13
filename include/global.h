@@ -379,9 +379,9 @@ struct BattleDomeTrainer
 // Start battle_arcade
 struct CursorData
 {
-	u8 speed:3;
-	u8 position:5;
-	bool8 isRandom;
+    u8 speed:3;
+    u8 position:5;
+    bool8 isRandom;
 }__attribute__((packed));
 // End battle_arcade
 
@@ -471,7 +471,7 @@ struct BattleFrontier
 // Start battle_arcade
     u16 arcadeWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
     u16 arcadeRecordWinStreaks[FRONTIER_MODE_COUNT][FRONTIER_LVL_MODE_COUNT];
-	struct CursorData gameCursor;
+    struct CursorData gameCursor;
 // End battle_arcade
 };
 
