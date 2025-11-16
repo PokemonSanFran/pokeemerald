@@ -373,7 +373,7 @@ static u32 CountNumberTypeWin(u8 lvlMode)
     u32 i, numWins = 0;
 
     for (i = 0; i < NUMBER_OF_MON_TYPES; i++)
-        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) >= SPARRING_BP_STREAK_BONUS)
+        if ((SPARRING_SAVEDATA[i][lvlMode].winStreak) >= SPARRING_MIN_STREAK)
             numWins++;
 
     return numWins;
