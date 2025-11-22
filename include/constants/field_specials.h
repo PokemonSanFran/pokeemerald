@@ -44,8 +44,8 @@
 
 #define MAX_SCROLL_MULTI_ON_SCREEN 6
 // Start restricted_sparring
-//#define MAX_SCROLL_MULTI_LENGTH 18
-#define MAX_SCROLL_MULTI_LENGTH 16
+//#define MAX_SCROLL_MULTI_LENGTH 16
+#define MAX_SCROLL_MULTI_LENGTH 18
 // End restricted_sparring
 
 // Dept Store Floor Numbers
