@@ -65,7 +65,7 @@
 #include "constants/weather.h"
 #include "constants/metatile_labels.h"
 #include "palette.h"
-#include "restricted_sparring.h"
+#include "restricted_sparring.h" 
 
 #define TAG_ITEM_ICON 5500
 
@@ -2381,6 +2381,7 @@ void ShowScrollableMultichoice(void)
         task->tKeepOpenAfterSelect = FALSE;
         task->tTaskId = taskId;
         break;
+    // Start restricted_sparring
     case SCROLL_MULTI_POKEMON_TYPE:
         task->tMaxItemsOnScreen = MAX_SCROLL_MULTI_ON_SCREEN;
         task->tNumItems = NUMBER_OF_MON_TYPES;
@@ -2391,6 +2392,7 @@ void ShowScrollableMultichoice(void)
         task->tKeepOpenAfterSelect = FALSE;
         task->tTaskId = taskId;
         break;
+    // End restricted_sparring
     default:
         gSpecialVar_Result = MULTI_B_PRESSED;
         DestroyTask(taskId);
@@ -2552,6 +2554,7 @@ static const u8 *const sScrollableMultichoiceOptions[][MAX_SCROLL_MULTI_LENGTH] 
         gText_WhenInDanger,
         gText_Exit
     },
+    // Start restricted_sparring
     [SCROLL_MULTI_POKEMON_TYPE] =
     {
         gTypeNames[TYPE_NORMAL],
@@ -2573,6 +2576,7 @@ static const u8 *const sScrollableMultichoiceOptions[][MAX_SCROLL_MULTI_LENGTH] 
         gTypeNames[TYPE_DARK],
         gText_Cancel2,
     },
+    // End restricted_sparring
 };
 
 static void Task_ShowScrollableMultichoice(u8 taskId)
@@ -3014,8 +3018,10 @@ static void FillFrontierExchangeCornerWindowAndItemIcon(u16 menu, u16 selection)
 {
     #include "data/battle_frontier/battle_frontier_exchange_corner.h"
 
+    // Start restricted_sparring
     if (menu == SCROLL_MULTI_POKEMON_TYPE)
-        Sparring_FillWindows(selection); // restricted_sparring
+        Sparring_FillWindows(selection); 
+    // End restricted_sparring
 
     if (menu >= SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1 && menu <= SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR)
     {
@@ -3080,11 +3086,12 @@ static void HideFrontierExchangeCornerItemIcon(u16 menu, u16 unused)
     {
         switch (menu)
         {
-            case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1:
-            case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_2:
-            case SCROLL_MULTI_BF_EXCHANGE_CORNER_VITAMIN_VENDOR:
-            case SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR:
-                DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_ItemSpriteId]);
+        case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_1:
+        case SCROLL_MULTI_BF_EXCHANGE_CORNER_DECOR_VENDOR_2:
+        case SCROLL_MULTI_BF_EXCHANGE_CORNER_VITAMIN_VENDOR:
+        case SCROLL_MULTI_BF_EXCHANGE_CORNER_HOLD_ITEM_VENDOR:
+            DestroySpriteAndFreeResources(&gSprites[sScrollableMultichoice_ItemSpriteId]);
+            break;
         }
         sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
     }

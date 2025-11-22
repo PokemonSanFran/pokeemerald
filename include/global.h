@@ -372,6 +372,7 @@ struct BattleDomeTrainer
     u16 forfeited:3;
 };
 
+// Start restricted_sparring
 #ifdef RESTRICTED_SPARRING_MONS
 struct RestrictedSparringMon
 {
@@ -387,6 +388,7 @@ struct RestrictedSparring
 #endif
     u8 winStreak;
 }__attribute__((packed));
+// End restricted_sparring
 
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 #define BATTLE_TOWER_RECORD_COUNT 5
@@ -474,7 +476,7 @@ struct BattleFrontier
     /*0xEFA*/ u8 unused_EFA;
     /*0xEFB*/ u8 unused_EFB;
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
-    struct RestrictedSparring restrictedSparring[NUMBER_OF_MON_TYPES][FRONTIER_LVL_MODE_COUNT];
+    struct RestrictedSparring restrictedSparring[NUMBER_OF_MON_TYPES][FRONTIER_LVL_MODE_COUNT]; // restricted_sparring
 };
 
 struct ApprenticeQuestion
