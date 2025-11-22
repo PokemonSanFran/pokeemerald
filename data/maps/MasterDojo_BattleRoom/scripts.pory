@@ -7,64 +7,64 @@ const VAR_NEED_TO_FACE_EAST = VAR_TEMP_1
 
 mapscripts MasterDojo_BattleRoom_MapScripts
 {
-    MAP_SCRIPT_ON_FRAME_TABLE
-    [
-        VAR_TEMP_0, 0: RestrictedSparring_BattleCourt_EventScript_SetUpOpponent
-    ]
+	MAP_SCRIPT_ON_FRAME_TABLE
+	[
+	    VAR_TEMP_0, 0: RestrictedSparring_BattleCourt_EventScript_SetUpOpponent
+	]
 
-    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
-    [
-        VAR_NEED_TO_FACE_EAST, 0:MasterDojo_Lobby_EventScript_PlayerFaceEast
-    ]
+	MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+	[
+	    VAR_NEED_TO_FACE_EAST, 0:MasterDojo_Lobby_EventScript_PlayerFaceEast
+	]
 }
 
 script MasterDojo_Lobby_EventScript_PlayerFaceEast
 {
-    setvar(VAR_NEED_TO_FACE_EAST, 1)
-    turnobject(PLAYER, DIR_EAST)
-    end
+	setvar(VAR_NEED_TO_FACE_EAST, 1)
+	turnobject(PLAYER, DIR_EAST)
+	end
 }
 
 script MasterDojo_BattleRoom_EventScript_EnterRoomMovement
 {
-    applymovement(ATTENDANT,moves())
-    applymovement(PLAYER,moves(walk_right * 6))
-    waitmovement(ATTENDANT)
-    return
+	applymovement(ATTENDANT,moves())
+	applymovement(PLAYER,moves(walk_right * 6))
+	waitmovement(ATTENDANT)
+	return
 }
 
 script MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
 {
-    applymovement(PLAYER,moves(walk_right * 2))
-    applymovement(CAMERA,moves(walk_right * 5))
-    applymovement(ATTENDANT,moves(walk_up,walk_right * 3,face_down))
-    waitmovement(ATTENDANT)
-    return
+	applymovement(PLAYER,moves(walk_right * 2))
+	applymovement(CAMERA,moves(walk_right * 5))
+	applymovement(ATTENDANT,moves(walk_up,walk_right * 3,face_down))
+	waitmovement(ATTENDANT)
+	return
 }
 
 script MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
 {
-    waitmovement(CAMERA)
-    special(RemoveCameraObject)
-    applymovement(ATTENDANT,Common_Movement_WalkInPlaceDown)
-    return
+	waitmovement(CAMERA)
+	special(RemoveCameraObject)
+	applymovement(ATTENDANT,Common_Movement_WalkInPlaceDown)
+	return
 }
 
 script MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
 {
-    special(SpawnCameraObject)
-    applymovement(CAMERA,moves(walk_left * 5))
-    applymovement(PLAYER,moves(walk_left * 2, face_up))
-    applymovement(ATTENDANT,moves(walk_left * 3, walk_down))
-    waitmovement(CAMERA)
-    removeobject(OPPONENT)
-    waitmovement(ATTENDANT)
-    return
+	special(SpawnCameraObject)
+	applymovement(CAMERA,moves(walk_left * 5))
+	applymovement(PLAYER,moves(walk_left * 2, face_up))
+	applymovement(ATTENDANT,moves(walk_left * 3, walk_down))
+	waitmovement(CAMERA)
+	removeobject(OPPONENT)
+	waitmovement(ATTENDANT)
+	return
 }
 
 script MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
 {
-    removeobject(OPPONENT)
-    addobject(OPPONENT)
-    return
+	removeobject(OPPONENT)
+	addobject(OPPONENT)
+	return
 }
