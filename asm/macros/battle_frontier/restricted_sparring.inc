@@ -46,23 +46,23 @@
 	special CallRestrictedSparringFunc
 	.endm
 
-    @ Determine what continue menu type to show player
-    .macro sparring_getcontinuemenutype
-    setvar VAR_0x8004, SPARRING_FUNC_GET_CONTINUE_MENU_TYPE
-    special CallRestrictedSparringFunc
-    .endm
+	@ Determine what continue menu type to show player
+	.macro sparring_getcontinuemenutype
+	setvar VAR_0x8004, SPARRING_FUNC_GET_CONTINUE_MENU_TYPE
+	special CallRestrictedSparringFunc
+	.endm
 
-    @ Heal player in Restricted Sparring
-    .macro sparring_restore
-    call Common_EventScript_OutOfCenterPartyHeal
-    subvar VAR_RESTRICTEDSPARRING_HEAL_COUNT,1
-    .endm
+	@ Heal player in Restricted Sparring
+	.macro sparring_restore
+	call Common_EventScript_OutOfCenterPartyHeal
+	subvar VAR_RESTRICTEDSPARRING_HEAL_COUNT,1
+	.endm
 
-    @ Restore player's non-berry held items
-    .macro sparring_restorehelditems
-    setvar VAR_0x8004, SPARRING_FUNC_RESTORE_HELD_ITEMS
-    special CallRestrictedSparringFunc
-    .endm
+	@ Restore player's non-berry held items
+	.macro sparring_restorehelditems
+	setvar VAR_0x8004, SPARRING_FUNC_RESTORE_HELD_ITEMS
+	special CallRestrictedSparringFunc
+	.endm
 
 	@ If any moves were copied using Sketch during the challenge then restore them to Sketch, but don't store the party to the saveblock
 	.macro sparring_resetsketch
@@ -76,26 +76,26 @@
 	special CallRestrictedSparringFunc
 	.endm
 
-    @ Gets the name of the type chosen for Restricted Sparring and buffers it to gStringVar3
-    .macro sparring_buffersparringtype
-    setvar VAR_0x8004, SPARRING_FUNC_GET_TYPE_NAME
-    special CallRestrictedSparringFunc
-    .endm
+	@ Gets the name of the type chosen for Restricted Sparring and buffers it to gStringVar3
+	.macro sparring_buffersparringtype
+	setvar VAR_0x8004, SPARRING_FUNC_GET_TYPE_NAME
+	special CallRestrictedSparringFunc
+	.endm
 
-    @ Check the number of types the player has previously won and sets VAR_RESULT to TRUE if the player has not have the appropriate symbol but has qualified for it
-    .macro sparring_checksymbol
-    setvar VAR_0x8004, SPARRING_FUNC_CHECK_SYMBOL
-    special CallRestrictedSparringFunc
-    .endm
+	@ Check the number of types the player has previously won and sets VAR_RESULT to TRUE if the player has not have the appropriate symbol but has qualified for it
+	.macro sparring_checksymbol
+	setvar VAR_0x8004, SPARRING_FUNC_CHECK_SYMBOL
+	special CallRestrictedSparringFunc
+	.endm
 
-    @ Take the input from ShowRestrictedSparringTypeWinsWindow and set VAR_SPARRING_TYPE by skipping TYPE_MYSTERY
-    .macro sparring_convertmenutotype
-    setvar VAR_0x8004, SPARRING_FUNC_CONVERT_TYPE
-    special CallRestrictedSparringFunc
-    .endm
+	@ Take the input from ShowRestrictedSparringTypeWinsWindow and set VAR_SPARRING_TYPE by skipping TYPE_MYSTERY
+	.macro sparring_convertmenutotype
+	setvar VAR_0x8004, SPARRING_FUNC_CONVERT_TYPE
+	special CallRestrictedSparringFunc
+	.endm
 
-    @ Check the number of wins for the player, and if over the max, returns TRUE to VAR_RESULT
-    .macro sparring_checkmaxstreak
-    setvar VAR_0x8004, SPARRING_FUNC_CHECK_MAX
-    special CallRestrictedSparringFunc
-    .endm
+	@ Check the number of wins for the player, and if over the max, returns TRUE to VAR_RESULT
+	.macro sparring_checkmaxstreak
+	setvar VAR_0x8004, SPARRING_FUNC_CHECK_MAX
+	special CallRestrictedSparringFunc
+	.endm
