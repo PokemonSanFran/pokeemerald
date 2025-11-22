@@ -1,479 +1,317 @@
 RestrictedSparring_Entrance_EventScript_GetChallengeStatus::
-# 12 "data/scripts/restricted_sparring.pory"
 	frontier_getstatus
 	end
 
 
 RestrictedSparring_Entrance_EventScript_QuitWithoutSaving::
-# 18 "data/scripts/restricted_sparring.pory"
 	lock
-# 19 "data/scripts/restricted_sparring.pory"
 	faceplayer
-# 20 "data/scripts/restricted_sparring.pory"
 	delay 30
-# 21 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_QuitWithoutSaving_Text_0, MSGBOX_DEFAULT
-# 22 "data/scripts/restricted_sparring.pory"
 	sparring_set SPARRING_DATA_WIN_STREAK, 0
-# 23 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, 0
-# 24 "data/scripts/restricted_sparring.pory"
 	setvar VAR_TEMP_0, 255
-# 25 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd
 	return
 
 
 RestrictedSparring_Entrance_EventScript_AskEnterChallenge::
-# 30 "data/scripts/restricted_sparring.pory"
 	lock
-# 31 "data/scripts/restricted_sparring.pory"
 	faceplayer
-# 32 "data/scripts/restricted_sparring.pory"
 	setvar VAR_FRONTIER_FACILITY, FRONTIER_FACILITY_SPARRING
-# 33 "data/scripts/restricted_sparring.pory"
 	special SavePlayerParty
-# 34 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_EventScript_AskEnterChallenge_Text_0
-# 35 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 37 "data/scripts/restricted_sparring.pory"
 	multichoice 17, 6, MULTI_CHALLENGEINFO, FALSE
-# 38 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 40 "data/scripts/restricted_sparring.pory"
 	case 0, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_2
-# 41 "data/scripts/restricted_sparring.pory"
 	case 1, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_3
-# 42 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_4
-# 43 "data/scripts/restricted_sparring.pory"
 	case 2, RestrictedSparring_Entrance_EventScript_AskEnterChallenge_4
 	return
 
 RestrictedSparring_Entrance_EventScript_AskEnterChallenge_2:
-# 40 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_TryEnterChallenge
 	return
 
 RestrictedSparring_Entrance_EventScript_AskEnterChallenge_3:
-# 41 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_ExplainChallenge
 	return
 
 RestrictedSparring_Entrance_EventScript_AskEnterChallenge_4:
-# 43 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_DenyChallenge
 	return
 
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge::
-# 49 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_EventScript_TryEnterChallenge_Text_0
-# 50 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 52 "data/scripts/restricted_sparring.pory"
 	multichoice 17, 6, MULTI_LEVEL_MODE, FALSE
-# 53 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 55 "data/scripts/restricted_sparring.pory"
 	case FRONTIER_LVL_TENT, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_3
-# 56 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_3
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_1:
-# 59 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_EventScript_TryEnterChallenge_Text_1
-# 60 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 61 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_LVL_MODE, VAR_RESULT
-# 62 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_CreateTypeList
-# 63 "data/scripts/restricted_sparring.pory"
 	frontier_checkineligible
-# 64 "data/scripts/restricted_sparring.pory"
 	goto_if_eq VAR_0x8004, TRUE, RestrictedSparring_Entrance_EventScript_NotEnoughValidMons
-# 65 "data/scripts/restricted_sparring.pory"
 	fadescreen FADE_TO_BLACK
-# 66 "data/scripts/restricted_sparring.pory"
 	frontier_get FRONTIER_DATA_LVL_MODE
-# 67 "data/scripts/restricted_sparring.pory"
 	copyvar VAR_0x8004, VAR_RESULT
-# 68 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
-# 69 "data/scripts/restricted_sparring.pory"
 	special ChoosePartyForBattleFrontier
-# 70 "data/scripts/restricted_sparring.pory"
 	waitstate
-# 71 "data/scripts/restricted_sparring.pory"
 	goto_if_eq VAR_RESULT, 0, RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge
-# 73 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_TryEnterChallenge_Text_2, MSGBOX_YESNO
-# 74 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 76 "data/scripts/restricted_sparring.pory"
 	case YES, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_5
-# 77 "data/scripts/restricted_sparring.pory"
 	case NO, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_6
-# 78 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_TryEnterChallenge_6
 	return
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_3:
-# 56 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_CancelChallenge
 	goto RestrictedSparring_Entrance_EventScript_TryEnterChallenge_1
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_5:
-# 76 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge
 	return
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_6:
-# 78 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge
 	return
 
 
 RestrictedSparring_Entrance_EventScript_CreateTypeList::
-# 84 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8009, 0
-# 85 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8004, SCROLL_MULTI_POKEMON_TYPE
-# 86 "data/scripts/restricted_sparring.pory"
 	special Sparring_ShowWinsWindow
-# 87 "data/scripts/restricted_sparring.pory"
 	special ShowScrollableMultichoice
-# 88 "data/scripts/restricted_sparring.pory"
 	waitstate
-# 89 "data/scripts/restricted_sparring.pory"
 	special Sparring_CloseWinsWindow
-# 90 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 93 "data/scripts/restricted_sparring.pory"
 	case 17, RestrictedSparring_Entrance_EventScript_CreateTypeList_4
-# 94 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_CreateTypeList_4
-# 92 "data/scripts/restricted_sparring.pory"
 	sparring_convertmenutotype
 RestrictedSparring_Entrance_EventScript_CreateTypeList_1:
-# 97 "data/scripts/restricted_sparring.pory"
 	sparring_buffersparringtype
 	return
 
 RestrictedSparring_Entrance_EventScript_CreateTypeList_4:
-# 94 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_CancelChallenge
 	goto RestrictedSparring_Entrance_EventScript_CreateTypeList_1
 
 
 RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge::
-# 103 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_SELECTED_MON_ORDER
-# 104 "data/scripts/restricted_sparring.pory"
 	setvar VAR_TEMP_0, 0
-# 105 "data/scripts/restricted_sparring.pory"
 	sparring_init
-# 106 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
-# 107 "data/scripts/restricted_sparring.pory"
 	special LoadPlayerParty
-# 108 "data/scripts/restricted_sparring.pory"
 	closemessage
-# 109 "data/scripts/restricted_sparring.pory"
 	delay 2
-# 111 "data/scripts/restricted_sparring.pory"
 	call Common_EventScript_SaveGame
-# 112 "data/scripts/restricted_sparring.pory"
 	special HealPlayerParty
-# 113 "data/scripts/restricted_sparring.pory"
 	setvar VAR_TEMP_0, 255
-# 115 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_2
 RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_1:
-# 121 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_WarpToBattleRoom
 	return
 
 RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_2:
-# 117 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS
-# 118 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_DenyChallenge
 	goto RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge_1
 
 
 RestrictedSparring_Entrance_EventScript_ExplainChallenge::
-# 126 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_ExplainChallenge_Text_0, MSGBOX_YESNO
-# 128 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq RestrictedSparring_Entrance_EventScript_ExplainChallenge_2
 RestrictedSparring_Entrance_EventScript_ExplainChallenge_1:
-# 133 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_Text_IWontForceYou, MSGBOX_DEFAULT
-# 134 "data/scripts/restricted_sparring.pory"
 	releaseall
 	end
 
 RestrictedSparring_Entrance_EventScript_ExplainChallenge_2:
-# 130 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_TryEnterChallenge
 	goto RestrictedSparring_Entrance_EventScript_ExplainChallenge_1
 
 
 RestrictedSparring_Entrance_EventScript_NotEnoughValidMons::
-# 140 "data/scripts/restricted_sparring.pory"
 	frontier_get FRONTIER_DATA_LVL_MODE
-# 141 "data/scripts/restricted_sparring.pory"
 	copyvar VAR_0x8004, VAR_RESULT
-# 143 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, FRONTIER_LVL_50
 	goto_if_eq RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_2
-# 149 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_Text_1, MSGBOX_DEFAULT
 RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_1:
-# 152 "data/scripts/restricted_sparring.pory"
 	release
 	end
 
 RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_2:
-# 145 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_Text_0, MSGBOX_DEFAULT
 	goto RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_1
 
 
 RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge::
-# 158 "data/scripts/restricted_sparring.pory"
 	special LoadPlayerParty
-# 159 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_CancelChallenge
 	return
 
 
 RestrictedSparring_Entrance_EventScript_CancelChallenge::
-# 164 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_CancelChallenge_Text_0, MSGBOX_DEFAULT
-# 165 "data/scripts/restricted_sparring.pory"
 	release
 	end
 
 
 RestrictedSparring_Entrance_EventScript_DenyChallenge::
-# 171 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_Text_IWontForceYou, MSGBOX_DEFAULT
-# 172 "data/scripts/restricted_sparring.pory"
 	release
 	end
 
 
 RestrictedSparring_Entrance_EventScript_WarpToBattleRoom::
-# 178 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8004, FRONTIER_UTIL_FUNC_SET_PARTY_ORDER
-# 179 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8005, FRONTIER_PARTY_SIZE
-# 180 "data/scripts/restricted_sparring.pory"
 	special CallFrontierUtilFunc
-# 181 "data/scripts/restricted_sparring.pory"
 	frontier_saveparty
-# 182 "data/scripts/restricted_sparring.pory"
 	setvar VAR_RESULT, 0
-# 183 "data/scripts/restricted_sparring.pory"
 	@ warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
-# 184 "data/scripts/restricted_sparring.pory"
 	sparring_save CHALLENGE_STATUS_SAVING
 	return
 
 
 RestrictedSparring_Entrance_EventScript_JudgeChallenge::
-# 189 "data/scripts/restricted_sparring.pory"
 	sparring_get SPARRING_DATA_WIN_STREAK
-# 191 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq RestrictedSparring_Entrance_EventScript_JudgeChallenge_1
-# 197 "data/scripts/restricted_sparring.pory"
 	buffernumberstring STR_VAR_1, VAR_RESULT
-# 198 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_Results
 	return
 
 RestrictedSparring_Entrance_EventScript_JudgeChallenge_1:
-# 193 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_Results_NoWins
 	return
 
 
 RestrictedSparring_Entrance_EventScript_Results_NoWins::
-# 204 "data/scripts/restricted_sparring.pory"
 	lock
-# 205 "data/scripts/restricted_sparring.pory"
 	faceplayer
-# 206 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_SaveResult
-# 207 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_AskSaveBattle
-# 208 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_Results_NoWins_Text_0, MSGBOX_DEFAULT
-# 209 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd
 	return
 
 
 RestrictedSparring_Entrance_EventScript_Results::
-# 214 "data/scripts/restricted_sparring.pory"
 	lock
-# 215 "data/scripts/restricted_sparring.pory"
 	faceplayer
-# 216 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_SaveResult
-# 218 "data/scripts/restricted_sparring.pory"
 	sparring_buffersparringtype
-# 219 "data/scripts/restricted_sparring.pory"
 	sparring_get SPARRING_DATA_WIN_STREAK
-# 220 "data/scripts/restricted_sparring.pory"
 	buffernumberstring STR_VAR_1, VAR_RESULT
-# 222 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_Results_Text_0
-# 223 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_AwardPoints
-# 225 "data/scripts/restricted_sparring.pory"
 	goto_if_set FLAG_SPARRING_FIRST_TYPE_WIN, RestrictedSparring_Entrance_EventScript_Results_2
 RestrictedSparring_Entrance_EventScript_Results_1:
-# 231 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_AskSaveBattle
-# 232 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd
 	return
 
 RestrictedSparring_Entrance_EventScript_Results_2:
-# 227 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_Results_Text_1
-# 228 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_CheckSymbol
 	goto RestrictedSparring_Entrance_EventScript_Results_1
 
 
 RestrictedSparring_Entrance_EventScript_SaveResult::
-# 237 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_EventScript_SaveResult_Text_0
-# 238 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 239 "data/scripts/restricted_sparring.pory"
 	frontier_checkairshow
-# 240 "data/scripts/restricted_sparring.pory"
 	sparring_givepoints
-# 241 "data/scripts/restricted_sparring.pory"
 	sparring_checksymbol
-# 243 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
 	goto_if_eq RestrictedSparring_Entrance_EventScript_SaveResult_2
-# 247 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, SPARRING_SYMBOL_GOLD
 	goto_if_eq RestrictedSparring_Entrance_EventScript_SaveResult_3
 RestrictedSparring_Entrance_EventScript_SaveResult_1:
-# 252 "data/scripts/restricted_sparring.pory"
 	special LoadPlayerParty
-# 253 "data/scripts/restricted_sparring.pory"
 	sparring_save 0
-# 254 "data/scripts/restricted_sparring.pory"
 	playse SE_SAVE
-# 255 "data/scripts/restricted_sparring.pory"
 	waitse
 	return
 
 RestrictedSparring_Entrance_EventScript_SaveResult_2:
-# 245 "data/scripts/restricted_sparring.pory"
 	setflag FLAG_SYS_ARENA_SILVER
 	goto RestrictedSparring_Entrance_EventScript_SaveResult_1
 
 RestrictedSparring_Entrance_EventScript_SaveResult_3:
-# 249 "data/scripts/restricted_sparring.pory"
 	setflag FLAG_SYS_ARENA_GOLD
 	goto RestrictedSparring_Entrance_EventScript_SaveResult_1
 
 
 RestrictedSparring_Entrance_EventScript_AwardPoints::
-# 261 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_AwardPoints_Text_0
 	return
 
 
 RestrictedSparring_Entrance_EventScript_CheckSymbol::
-# 267 "data/scripts/restricted_sparring.pory"
 	sparring_checksymbol
-# 268 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, SPARRING_SYMBOL_NONE
 	goto_if_gt RestrictedSparring_Entrance_EventScript_CheckSymbol_2
 RestrictedSparring_Entrance_EventScript_CheckSymbol_1:
 	return
 
 RestrictedSparring_Entrance_EventScript_CheckSymbol_2:
-# 270 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_GiveSymbol
 	goto RestrictedSparring_Entrance_EventScript_CheckSymbol_1
 
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol::
-# 277 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_0
-# 279 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
 	goto_if_eq RestrictedSparring_Entrance_EventScript_GiveSymbol_2
-# 285 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_2
-# 286 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_3
 RestrictedSparring_Entrance_EventScript_GiveSymbol_1:
-# 289 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_4
-# 290 "data/scripts/restricted_sparring.pory"
 	playfanfare MUS_OBTAIN_SYMBOL
-# 292 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, SPARRING_SYMBOL_SILVER
 	goto_if_eq RestrictedSparring_Entrance_EventScript_GiveSymbol_6
-# 298 "data/scripts/restricted_sparring.pory"
 	message BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine
 RestrictedSparring_Entrance_EventScript_GiveSymbol_5:
-# 301 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 302 "data/scripts/restricted_sparring.pory"
 	waitfanfare
-# 304 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, SPARRING_SYMBOL_GOLD
 	goto_if_eq RestrictedSparring_Entrance_EventScript_GiveSymbol_10
 RestrictedSparring_Entrance_EventScript_GiveSymbol_9:
 	return
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_2:
-# 281 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_1
 	goto RestrictedSparring_Entrance_EventScript_GiveSymbol_1
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_6:
-# 294 "data/scripts/restricted_sparring.pory"
 	message BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol
 	goto RestrictedSparring_Entrance_EventScript_GiveSymbol_5
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_10:
-# 306 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_5
 	goto RestrictedSparring_Entrance_EventScript_GiveSymbol_9
 
 
 RestrictedSparring_Entrance_EventScript_AskSaveBattle::
-# 313 "data/scripts/restricted_sparring.pory"
 	frontier_get FRONTIER_DATA_RECORD_DISABLED
-# 315 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, TRUE
 	goto_if_eq RestrictedSparring_Entrance_EventScript_AskSaveBattle_2
-# 320 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_Text_RecordLastMatch
-# 321 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 322 "data/scripts/restricted_sparring.pory"
 	multichoicedefault 20, 8, MULTI_YESNO, 1, FALSE
-# 324 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq RestrictedSparring_Entrance_EventScript_AskSaveBattle_5
 RestrictedSparring_Entrance_EventScript_AskSaveBattle_4:
@@ -483,246 +321,166 @@ RestrictedSparring_Entrance_EventScript_AskSaveBattle_2:
 	return
 
 RestrictedSparring_Entrance_EventScript_AskSaveBattle_5:
-# 326 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_Entrance_EventScript_SaveBattle
 	goto RestrictedSparring_Entrance_EventScript_AskSaveBattle_4
 
 
 RestrictedSparring_Entrance_EventScript_SaveBattle::
-# 333 "data/scripts/restricted_sparring.pory"
 	frontier_savebattle
-# 334 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, 0
 	goto_if_ne RestrictedSparring_Entrance_EventScript_SaveBattle_2
-# 341 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_SaveBattle_Text_0, MSGBOX_DEFAULT
 RestrictedSparring_Entrance_EventScript_SaveBattle_1:
 	return
 
 RestrictedSparring_Entrance_EventScript_SaveBattle_2:
-# 336 "data/scripts/restricted_sparring.pory"
 	playse SE_SAVE
-# 337 "data/scripts/restricted_sparring.pory"
 	msgbox BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT
 	goto RestrictedSparring_Entrance_EventScript_SaveBattle_1
 
 
 RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd::
-# 348 "data/scripts/restricted_sparring.pory"
 	setvar VAR_TEMP_0, 255
-# 349 "data/scripts/restricted_sparring.pory"
 	closemessage
-# 350 "data/scripts/restricted_sparring.pory"
 	setvar VAR_SPARRING_TYPE, TYPE_NONE
-# 351 "data/scripts/restricted_sparring.pory"
 	release
 	end
 
 
 RestrictedSparring_Entrance_EventScript_ResumeChallenge::
-# 357 "data/scripts/restricted_sparring.pory"
 	lock
-# 358 "data/scripts/restricted_sparring.pory"
 	faceplayer
-# 360 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_EventScript_ResumeChallenge_Text_0
-# 361 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 362 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_Entrance_EventScript_ResumeChallenge_Text_1
-# 363 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 365 "data/scripts/restricted_sparring.pory"
 	playse SE_SAVE
-# 366 "data/scripts/restricted_sparring.pory"
 	waitse
-# 367 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_PAUSED, FALSE
-# 369 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_WarpToBattleRoom
 	end
 
 
 RestrictedSparring_Entrance_EventScript_ShowResults::
-# 375 "data/scripts/restricted_sparring.pory"
 	lockall
-# 376 "data/scripts/restricted_sparring.pory"
 	frontier_results FRONTIER_FACILITY_SPARRING, 0
-# 377 "data/scripts/restricted_sparring.pory"
 	waitbuttonpress
-# 378 "data/scripts/restricted_sparring.pory"
 	special RemoveRecordsWindow
-# 379 "data/scripts/restricted_sparring.pory"
 	releaseall
 	end
 
 
 RestrictedSparring_EventScript_RulesBoard::
-# 385 "data/scripts/restricted_sparring.pory"
 	lockall
-# 386 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_EventScript_RulesBoard_Text_0, MSGBOX_DEFAULT
-# 387 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard
 	end
 
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard::
-# 393 "data/scripts/restricted_sparring.pory"
 	message BattleFrontier_BattleTowerLobby_Text_ReadWhichHeading
-# 394 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 395 "data/scripts/restricted_sparring.pory"
 	multichoice 17, 2, MULTI_RESTRICTED_SPARRING_RULES, FALSE
-# 397 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 399 "data/scripts/restricted_sparring.pory"
 	case 0, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_3
-# 401 "data/scripts/restricted_sparring.pory"
 	case 1, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_4
-# 403 "data/scripts/restricted_sparring.pory"
 	case 2, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_5
-# 405 "data/scripts/restricted_sparring.pory"
 	case 3, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6
-# 406 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1:
-# 410 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_EventScript_RulesBoard
 	end
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_3:
-# 400 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_0, MSGBOX_DEFAULT
 	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_4:
-# 402 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_1, MSGBOX_DEFAULT
 	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_5:
-# 404 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_2, MSGBOX_DEFAULT
 	goto RestrictedSparring_Entrance_EventScript_ReadRulesBoard_1
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_6:
-# 407 "data/scripts/restricted_sparring.pory"
 	releaseall
 	end
 
 
 RestrictedSparring_BattleCourt_EventScript_RefreshOpponent::
-# 431 "data/scripts/restricted_sparring.pory"
 	tower_setopponent
-# 432 "data/scripts/restricted_sparring.pory"
 	call MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_SetUpOpponent::
-# 438 "data/scripts/restricted_sparring.pory"
 	setvar VAR_TEMP_0, 1
-# 439 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
-# 440 "data/scripts/restricted_sparring.pory"
 	call MasterDojo_BattleRoom_EventScript_EnterRoomMovement
-# 441 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter::
-# 446 "data/scripts/restricted_sparring.pory"
 	call MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
-# 448 "data/scripts/restricted_sparring.pory"
 	frontier_get FRONTIER_DATA_BATTLE_NUM
-# 449 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq RestrictedSparring_BattleCourt_EventScript_OpponentEnter_2
-# 454 "data/scripts/restricted_sparring.pory"
 	copyvar VAR_TEMP_E, VAR_RESULT
-# 455 "data/scripts/restricted_sparring.pory"
 	addvar VAR_TEMP_E, 1
-# 456 "data/scripts/restricted_sparring.pory"
 	buffernumberstring STR_VAR_1, VAR_TEMP_E
-# 457 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_BattleCourt_EventScript_OpponentEnter_Text_1, MSGBOX_DEFAULT
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_1:
-# 460 "data/scripts/restricted_sparring.pory"
 	delay 15
-# 462 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_BattleCourt_EventScript_OpponentEnter_Text_2, MSGBOX_DEFAULT
-# 463 "data/scripts/restricted_sparring.pory"
 	closemessage
-# 464 "data/scripts/restricted_sparring.pory"
 	sparring_getopponentintro
-# 465 "data/scripts/restricted_sparring.pory"
 	msgbox gStringVar4, MSGBOX_DEFAULT
-# 466 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 468 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_BattleCourt_EventScript_DoTowerBattle
-# 469 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq RestrictedSparring_BattleCourt_EventScript_OpponentEnter_6
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_5:
-# 474 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost
 	return
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_2:
-# 450 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_BattleCourt_EventScript_OpponentEnter_Text_0, MSGBOX_DEFAULT
 	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter_1
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_6:
-# 471 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent
 	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter_5
 
 
 RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost::
-# 479 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_LOST
-# 480 "data/scripts/restricted_sparring.pory"
 	sparring_set SPARRING_DATA_LVL_MODE
-# 481 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobby
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_WarpToLobby::
-# 486 "data/scripts/restricted_sparring.pory"
 	@ warp MAP_MASTER_DOJO_LOBBY, 7, 8
-# 487 "data/scripts/restricted_sparring.pory"
 	waitstate
 	end
 
 
 RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent::
-# 493 "data/scripts/restricted_sparring.pory"
 	sparring_setbattlewon
-# 494 "data/scripts/restricted_sparring.pory"
 	call MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
-# 495 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_BattleCourt_EventScript_StopChallenge
-# 496 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent_Text_0, MSGBOX_DEFAULT
-# 497 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_StopChallenge::
-# 502 "data/scripts/restricted_sparring.pory"
 	sparring_checkmaxstreak
-# 503 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, 0
 	goto_if_eq RestrictedSparring_BattleCourt_EventScript_StopChallenge_2
-# 507 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_BattleCourt_EventScript_StopChallenge_Text_0, MSGBOX_DEFAULT
-# 508 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon
 	return
 
@@ -731,417 +489,293 @@ RestrictedSparring_BattleCourt_EventScript_StopChallenge_2:
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu::
-# 513 "data/scripts/restricted_sparring.pory"
 	message RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu_Text_0
-# 514 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 515 "data/scripts/restricted_sparring.pory"
 	sparring_getcontinuemenutype
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent::
-# 521 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu
-# 522 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 524 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDYES_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_2
-# 525 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDYES_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_3
-# 526 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDNO_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_4
-# 527 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDNO_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_5
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_2:
-# 524 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_3:
-# 525 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_4:
-# 526 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_5:
-# 527 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo::
-# 533 "data/scripts/restricted_sparring.pory"
 	multichoice 22, 4, MULTI_GO_ON_RECORD_REST_RETIRE, TRUE
-# 534 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 536 "data/scripts/restricted_sparring.pory"
 	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_3
-# 537 "data/scripts/restricted_sparring.pory"
 	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_4
-# 538 "data/scripts/restricted_sparring.pory"
 	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_5
-# 539 "data/scripts/restricted_sparring.pory"
 	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_6
-# 540 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_7
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1:
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_3:
-# 536 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_4:
-# 537 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskRecordBattle
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_5:
-# 538 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_6:
-# 539 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_7:
-# 540 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo_1
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo::
-# 547 "data/scripts/restricted_sparring.pory"
 	multichoice 22, 5, MULTI_GO_ON_REST_RETIRE, TRUE
-# 548 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 550 "data/scripts/restricted_sparring.pory"
 	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_3
-# 551 "data/scripts/restricted_sparring.pory"
 	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_4
-# 552 "data/scripts/restricted_sparring.pory"
 	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_5
-# 553 "data/scripts/restricted_sparring.pory"
 	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_6
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1:
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_3:
-# 550 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_4:
-# 551 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_5:
-# 552 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_6:
-# 553 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo_1
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes::
-# 560 "data/scripts/restricted_sparring.pory"
 	multichoice 22, 2, MULTI_GO_ON_HEAL_RECORD_REST_RETIRE, TRUE
-# 561 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 563 "data/scripts/restricted_sparring.pory"
 	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_3
-# 564 "data/scripts/restricted_sparring.pory"
 	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_4
-# 565 "data/scripts/restricted_sparring.pory"
 	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_5
-# 566 "data/scripts/restricted_sparring.pory"
 	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_6
-# 567 "data/scripts/restricted_sparring.pory"
 	case 4, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_7
-# 568 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_8
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1:
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_3:
-# 563 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_4:
-# 564 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskHeal
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_5:
-# 565 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskRecordBattle
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_6:
-# 566 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_7:
-# 567 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_8:
-# 568 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes_1
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes::
-# 575 "data/scripts/restricted_sparring.pory"
 	multichoice 22, 4, MULTI_GO_ON_HEAL_REST_RETIRE, TRUE
-# 576 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 578 "data/scripts/restricted_sparring.pory"
 	case 0, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_3
-# 579 "data/scripts/restricted_sparring.pory"
 	case 1, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_4
-# 580 "data/scripts/restricted_sparring.pory"
 	case 2, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_5
-# 581 "data/scripts/restricted_sparring.pory"
 	case 3, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_6
-# 582 "data/scripts/restricted_sparring.pory"
 	case 4, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_7
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1:
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_3:
-# 578 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_ContinueChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_4:
-# 579 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskHeal
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_5:
-# 580 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_6:
-# 581 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_7:
-# 582 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes_1
 
 
 RestrictedSparring_BattleCourt_EventScript_AskHeal::
-# 589 "data/scripts/restricted_sparring.pory"
 	buffernumberstring STR_VAR_1, VAR_RESTRICTEDSPARRING_HEAL_COUNT
-# 590 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_BattleCourt_EventScript_AskHeal_Text_0, MSGBOX_YESNO
-# 591 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 592 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq RestrictedSparring_BattleCourt_EventScript_AskHeal_2
 RestrictedSparring_BattleCourt_EventScript_AskHeal_1:
-# 598 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskHeal_2:
-# 594 "data/scripts/restricted_sparring.pory"
 	frontier_restorehelditems
-# 595 "data/scripts/restricted_sparring.pory"
 	sparring_restore
-# 596 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal
 	goto RestrictedSparring_BattleCourt_EventScript_AskHeal_1
 
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal::
-# 603 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu
-# 604 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 606 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDYES_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_2
-# 607 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDYES_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_2
-# 608 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDNO_HEALYES, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_3
-# 609 "data/scripts/restricted_sparring.pory"
 	case SPARRING_RECORDNO_HEALNO, RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_3
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_2:
-# 607 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal_3:
-# 609 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_AskRecordBattle::
-# 615 "data/scripts/restricted_sparring.pory"
 	msgbox RestrictedSparring_Entrance_Text_RecordLastMatch, MSGBOX_YESNO
-# 616 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 617 "data/scripts/restricted_sparring.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_2
 RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_1:
-# 621 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_2:
-# 619 "data/scripts/restricted_sparring.pory"
 	call BattleFrontier_EventScript_SaveBattle
 	goto RestrictedSparring_BattleCourt_EventScript_AskRecordBattle_1
 
 
 RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge::
-# 626 "data/scripts/restricted_sparring.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_SaveAndQuitGame, MSGBOX_YESNO
-# 627 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 628 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 630 "data/scripts/restricted_sparring.pory"
 	case YES, RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_2
-# 631 "data/scripts/restricted_sparring.pory"
 	case NO, RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_3
-# 632 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_3
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_2:
-# 630 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_PauseChallenge
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge_3:
-# 632 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge::
-# 638 "data/scripts/restricted_sparring.pory"
 	msgbox BattleFrontier_BattleTowerBattleRoom_Text_CancelYourChallenge, MSGBOX_YESNO
-# 639 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 640 "data/scripts/restricted_sparring.pory"
 	switch VAR_RESULT
-# 642 "data/scripts/restricted_sparring.pory"
 	case YES, RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_2
-# 643 "data/scripts/restricted_sparring.pory"
 	case NO, RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3
-# 644 "data/scripts/restricted_sparring.pory"
 	case MULTI_B_PRESSED, RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_2:
-# 642 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon
 	return
 
 RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge_3:
-# 644 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_ContinueChallenge::
-# 650 "data/scripts/restricted_sparring.pory"
 	closemessage
-# 651 "data/scripts/restricted_sparring.pory"
 	call RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
-# 652 "data/scripts/restricted_sparring.pory"
 	call MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
-# 653 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon::
-# 658 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_WON
-# 659 "data/scripts/restricted_sparring.pory"
 	sparring_set TOWER_DATA_LVL_MODE
-# 660 "data/scripts/restricted_sparring.pory"
 	goto RestrictedSparring_BattleCourt_EventScript_WarpToLobby
 	return
 
 
 RestrictedSparring_BattleCourt_EventScript_PauseChallenge::
-# 665 "data/scripts/restricted_sparring.pory"
 	message BattleFrontier_BattleTowerBattleRoom_Text_SavingPleaseWait
-# 666 "data/scripts/restricted_sparring.pory"
 	waitmessage
-# 667 "data/scripts/restricted_sparring.pory"
 	sparring_save CHALLENGE_STATUS_PAUSED
-# 668 "data/scripts/restricted_sparring.pory"
 	playse SE_SAVE
-# 669 "data/scripts/restricted_sparring.pory"
 	waitse
-# 670 "data/scripts/restricted_sparring.pory"
 	fadescreen FADE_TO_BLACK
-# 671 "data/scripts/restricted_sparring.pory"
 	frontier_reset
 	end
 
 
 RestrictedSparring_BattleCourt_EventScript_DoTowerBattle::
-# 677 "data/scripts/restricted_sparring.pory"
 	closemessage
-# 678 "data/scripts/restricted_sparring.pory"
 	setvar VAR_TEMP_2, 0
-# 679 "data/scripts/restricted_sparring.pory"
 	frontier_set FRONTIER_DATA_RECORD_DISABLED, FALSE
-# 680 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8004, SPECIAL_BATTLE_SPARRING
-# 681 "data/scripts/restricted_sparring.pory"
 	setvar VAR_0x8005, 0
-# 682 "data/scripts/restricted_sparring.pory"
 	special DoSpecialTrainerBattle
-# 683 "data/scripts/restricted_sparring.pory"
 	waitstate
-# 684 "data/scripts/restricted_sparring.pory"
 	copyvar VAR_0x8004, VAR_FRONTIER_BATTLE_MODE
-# 685 "data/scripts/restricted_sparring.pory"
 	sparring_restorehelditems
-# 686 "data/scripts/restricted_sparring.pory"
 	sparring_resetsketch
-# 687 "data/scripts/restricted_sparring.pory"
 	frontier_get FRONTIER_DATA_BATTLE_OUTCOME
 	return
 
 
 RestrictedSparring_Entrance_EventScript_QuitWithoutSaving_Text_0:
-# 21 "data/scripts/restricted_sparring.pory"
 	.string "Oops! {PLAYER}, it seems you didn't\n"
 	.string "save before quitting your challenge\l"
 	.string "last time. Because of that, your\l"
@@ -1149,29 +783,24 @@ RestrictedSparring_Entrance_EventScript_QuitWithoutSaving_Text_0:
 	.string "Sorry!$"
 
 RestrictedSparring_Entrance_EventScript_AskEnterChallenge_Text_0:
-# 34 "data/scripts/restricted_sparring.pory"
 	.string "Hi-yah! {PLAYER}! Do you want to try\n"
 	.string "RESTRICTED SPARRING?$"
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_Text_0:
-# 49 "data/scripts/restricted_sparring.pory"
 	.string "RESTRICTED SPARRING offers two levels\n"
 	.string "of challenge, Level 50 and Open Level.\l"
 	.string "So, which one is your pick?$"
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_Text_1:
-# 59 "data/scripts/restricted_sparring.pory"
 	.string "Select the type you want to use for\n"
 	.string "sparring.$"
 
 RestrictedSparring_Entrance_EventScript_TryEnterChallenge_Text_2:
-# 73 "data/scripts/restricted_sparring.pory"
 	.string "Before diving into RESTRICTED\n"
 	.string "SPARRING, your progress must be saved.\l"
 	.string "Is that cool?$"
 
 RestrictedSparring_Entrance_EventScript_ExplainChallenge_Text_0:
-# 126 "data/scripts/restricted_sparring.pory"
 	.string "RESTRICTED SPARRING is a training\n"
 	.string "course that restricts the type of\l"
 	.string "POKéMON you can use. Select a type\l"
@@ -1188,7 +817,6 @@ RestrictedSparring_Entrance_EventScript_ExplainChallenge_Text_0:
 	.string "SPARRING?$"
 
 RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_Text_0:
-# 145 "data/scripts/restricted_sparring.pory"
 	.string "Hold up, {PLAYER}! You need three\n"
 	.string "different POKéMON of Level 50 or less\l"
 	.string "to enter. They must all share the\l"
@@ -1198,7 +826,6 @@ RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_Text_0:
 	.string "ready!$"
 
 RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_Text_1:
-# 149 "data/scripts/restricted_sparring.pory"
 	.string "Hold up, {PLAYER}! You need three\n"
 	.string "different POKéMON to enter. They must\l"
 	.string "all share the {STR_VAR_3}-type and\l"
@@ -1207,18 +834,15 @@ RestrictedSparring_Entrance_EventScript_NotEnoughValidMons_Text_1:
 	.string "back when you're ready!$"
 
 RestrictedSparring_Entrance_EventScript_CancelChallenge_Text_0:
-# 164 "data/scripts/restricted_sparring.pory"
 	.string "Oh, you changed your mind? Some other\n"
 	.string "time, then.$"
 
 RestrictedSparring_Entrance_EventScript_Results_NoWins_Text_0:
-# 208 "data/scripts/restricted_sparring.pory"
 	.string "You lost...but train yourself and your\n"
 	.string "POKéMON, and try again! I'm looking\l"
 	.string "forward to your next challenge.$"
 
 RestrictedSparring_Entrance_EventScript_Results_Text_0:
-# 222 "data/scripts/restricted_sparring.pory"
 	.string "Your result for this RESTRICTED\n"
 	.string "SPARRING set is... You had\l"
 	.string "{STR_VAR_1} win(s) with the\l"
@@ -1226,70 +850,56 @@ RestrictedSparring_Entrance_EventScript_Results_Text_0:
 	.string "restriction!$"
 
 RestrictedSparring_Entrance_EventScript_Results_Text_1:
-# 227 "data/scripts/restricted_sparring.pory"
 	.string "The way you handle\n"
 	.string "{STR_VAR_3}-type POKéMON is\l"
 	.string "flawless!$"
 
 RestrictedSparring_Entrance_EventScript_SaveResult_Text_0:
-# 237 "data/scripts/restricted_sparring.pory"
 	.string "Your record will be saved soon.$"
 
 RestrictedSparring_Entrance_EventScript_AwardPoints_Text_0:
-# 261 "data/scripts/restricted_sparring.pory"
 	.string "You earned {STR_VAR_2} BP!$"
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_0:
-# 277 "data/scripts/restricted_sparring.pory"
 	.string "What?! You completed RESTRICTED\n"
 	.string "SPARRING with {STR_VAR_1} type(s)?!$"
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_1:
-# 281 "data/scripts/restricted_sparring.pory"
 	.string "That's excellent work!$"
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_2:
-# 285 "data/scripts/restricted_sparring.pory"
 	.string "I can't believe it... Your achievement is\n"
 	.string "just phenomenal!$"
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_3:
-# 286 "data/scripts/restricted_sparring.pory"
 	.string "This accomplishment is sure to go down\n"
 	.string "in dojo history!$"
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_4:
-# 289 "data/scripts/restricted_sparring.pory"
 	.string "To commemorate this monumental\n"
 	.string "achievement, I'll grant you this!$"
 
 RestrictedSparring_Entrance_EventScript_GiveSymbol_Text_5:
-# 306 "data/scripts/restricted_sparring.pory"
 	.string "I hope you'll keep exceeding your own\n"
 	.string "limits!$"
 
 RestrictedSparring_Entrance_EventScript_SaveBattle_Text_0:
-# 341 "data/scripts/restricted_sparring.pory"
 	.string "Oops! There was a glitch, and your\n"
 	.string "record couldn't be saved. Better luck\l"
 	.string "next time!$"
 
 RestrictedSparring_Entrance_EventScript_ResumeChallenge_Text_0:
-# 360 "data/scripts/restricted_sparring.pory"
 	.string "We've been waiting for you, {PLAYER}!$"
 
 RestrictedSparring_Entrance_EventScript_ResumeChallenge_Text_1:
-# 362 "data/scripts/restricted_sparring.pory"
 	.string "Before entering the BATTLE COURT, your\n"
 	.string "progress will be saved. Hang tight!$"
 
 RestrictedSparring_EventScript_RulesBoard_Text_0:
-# 386 "data/scripts/restricted_sparring.pory"
 	.string "The RESTRICTED SPARRING rules are\n"
 	.string "listed.$"
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_0:
-# 400 "data/scripts/restricted_sparring.pory"
 	.string "RESTRICTED SPARRING is challenges you\n"
 	.string "to battle using up to three POKéMON of\l"
 	.string "a single type. Select a level mode and a\l"
@@ -1297,14 +907,12 @@ RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_0:
 	.string "consecutive battles.$"
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_1:
-# 402 "data/scripts/restricted_sparring.pory"
 	.string "No duplicate POKéMON or items are\n"
 	.string "allowed. You can only restore your\l"
 	.string "POKéMON twice in total, so use your\l"
 	.string "opportunities wisely.$"
 
 RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_2:
-# 404 "data/scripts/restricted_sparring.pory"
 	.string "If you can win five times in a row, you\n"
 	.string "will complete the training, but you can\l"
 	.string "continue to increase your streak. You'll\l"
@@ -1312,49 +920,39 @@ RestrictedSparring_Entrance_EventScript_ReadRulesBoard_Text_2:
 	.string "training for all types in a level mode.$"
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_Text_0:
-# 450 "data/scripts/restricted_sparring.pory"
 	.string "Let the battles begin! Battle No. 1!\n"
 	.string "Ready...$"
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_Text_1:
-# 457 "data/scripts/restricted_sparring.pory"
 	.string "Next. Battle No. {STR_VAR_1}!\n"
 	.string "Ready...$"
 
 RestrictedSparring_BattleCourt_EventScript_OpponentEnter_Text_2:
-# 462 "data/scripts/restricted_sparring.pory"
 	.string "Go!$"
 
 RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent_Text_0:
-# 496 "data/scripts/restricted_sparring.pory"
 	.string "Well done!$"
 
 RestrictedSparring_BattleCourt_EventScript_StopChallenge_Text_0:
-# 507 "data/scripts/restricted_sparring.pory"
 	.string "Wow, {PLAYER}, {STR_VAR_1} win(s)\n"
 	.string "in a row... I think we all need a break!$"
 
 RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu_Text_0:
-# 513 "data/scripts/restricted_sparring.pory"
 	.string "Do you want to continue sparring?$"
 
 RestrictedSparring_BattleCourt_EventScript_AskHeal_Text_0:
-# 590 "data/scripts/restricted_sparring.pory"
 	.string "Do you want to restore your POKéMON?\n"
 	.string "(You can restore them {STR_VAR_1}\l"
 	.string "more time(s).)$"
 
 RestrictedSparring_Entrance_Text_SelectTheTypeYouWant::
-# 414 "data/scripts/restricted_sparring.pory"
 	.string "Select the type you want to use for\n"
 	.string "sparring.$"
 
 RestrictedSparring_Entrance_Text_IWontForceYou::
-# 419 "data/scripts/restricted_sparring.pory"
 	.string "I won't force you to do anything you\n"
 	.string "don't want to do. Some other time, then.$"
 
 RestrictedSparring_Entrance_Text_RecordLastMatch::
-# 424 "data/scripts/restricted_sparring.pory"
 	.string "Want me to record your last RESTRICTED\n"
 	.string "SPARRING match on your FRONTIER PASS?$"
