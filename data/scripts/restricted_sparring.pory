@@ -397,15 +397,15 @@ script RestrictedSparring_Entrance_EventScript_ReadRulesBoard
 	switch(var(VAR_RESULT))
 	{
 		case 0:
-		    msgbox(format("RESTRICTED SPARRING is challenges you to battle using up to three POKéMON of a single type. Select a level mode and a type, then battle your way through five consecutive battles."),MSGBOX_DEFAULT)
+			msgbox(format("RESTRICTED SPARRING is challenges you to battle using up to three POKéMON of a single type. Select a level mode and a type, then battle your way through five consecutive battles."),MSGBOX_DEFAULT)
 		case 1:
-		    msgbox(format("No duplicate POKéMON or items are allowed. You can only restore your POKéMON twice in total, so use your opportunities wisely."),MSGBOX_DEFAULT)
+			msgbox(format("No duplicate POKéMON or items are allowed. You can only restore your POKéMON twice in total, so use your opportunities wisely."),MSGBOX_DEFAULT)
 		case 2:
 			msgbox(format("If you can win five times in a row, you will complete the training, but you can continue to increase your streak. You'll recieve a reward for completing training for all types in a level mode."),MSGBOX_DEFAULT)
 		case 3:
 		case MULTI_B_PRESSED:
-		    releaseall
-		    end
+			releaseall
+			end
 	}
 	goto(RestrictedSparring_EventScript_RulesBoard)
 	end
@@ -452,9 +452,9 @@ script RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 	else
 	{
 		copyvar(VAR_CURRENT_BATTLE_NUM, VAR_RESULT)
-		    addvar(VAR_CURRENT_BATTLE_NUM,1)
-		    buffernumberstring(STR_VAR_1,VAR_CURRENT_BATTLE_NUM)
-		    msgbox(format("Next. Battle No. {STR_VAR_1}! Ready..."),MSGBOX_DEFAULT)
+		addvar(VAR_CURRENT_BATTLE_NUM,1)
+		buffernumberstring(STR_VAR_1,VAR_CURRENT_BATTLE_NUM)
+		msgbox(format("Next. Battle No. {STR_VAR_1}! Ready..."),MSGBOX_DEFAULT)
 	}
 
 	delay(15)
