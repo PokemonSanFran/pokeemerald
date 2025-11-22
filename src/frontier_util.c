@@ -949,7 +949,7 @@ static void ShowFacilityResultsWindow(void)
         ShowLinkContestResultsWindow();
         break;
     case FRONTIER_FACILITY_SPARRING:
-        Sparring_ShowResultsWindow(); // master_dojo
+        Sparring_ShowResultsWindow(); // restricted_sparring 
         break;
     }
 }
