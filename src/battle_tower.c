@@ -1637,7 +1637,7 @@ static void FillTrainerParty(u16 trainerId, u8 firstMonId, u8 monCount)
     s32 i, j;
     u16 chosenMonIndices[MAX_FRONTIER_PARTY_SIZE];
     u8 friendship = MAX_FRIENDSHIP;
-    u8 level = SetFacilityPtrsGetLevel(); 
+    u8 level = SetFacilityPtrsGetLevel();
     u8 fixedIV = 0;
     u8 bfMonCount;
     const u16 *monSet = NULL;

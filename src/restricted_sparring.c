@@ -74,58 +74,58 @@ static void CompareStreakToMax(void);
 //void void FillRestrictedSparringMarkWindow(u16);
 
 static const struct WindowTemplate sRestrictedSparring_TypeWinsWindowTemplate =
-{
-    .bg = 0,
-    .tilemapLeft = 1,
-    .tilemapTop = 1,
-    .width = 10,
-    .height = 2,
-    .paletteNum = 15,
-    .baseBlock = 20,
-};
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 1,
+        .width = 10,
+        .height = 2,
+        .paletteNum = 15,
+        .baseBlock = 20,
+    };
 #ifdef RESTRICTED_SPARRING_MONS
 static void InitRestrictedSparringMons(void);
 static void ShowRestrictedSparringTypeMonsWindow(void);
 static void CloseRestrictedSparringTypeMonsWindow(void);
 static const struct WindowTemplate sRestrictedSparring_TypeMonsWindowTemplate =
-{
-    .bg = 0,
-    .tilemapLeft = 1,
-    .tilemapTop = 10,
-    .width = 12,
-    .height = 3,
-    .paletteNum = 15,
-    .baseBlock = 41,
-};
+    {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 10,
+        .width = 12,
+        .height = 3,
+        .paletteNum = 15,
+        .baseBlock = 41,
+    };
 static const struct WindowTemplate sRestrictedSparring_MarkWindowTemplate =
-{
-    .bg = 0,
-    .tilemapLeft = 24,
-    .tilemapTop = 1,
-    .width = 12,
-    .height = 12,
-    .paletteNum = 15,
-    .baseBlock = 41 + (12 * 12),
-};
+    {
+        .bg = 0,
+        .tilemapLeft = 24,
+        .tilemapTop = 1,
+        .width = 12,
+        .height = 12,
+        .paletteNum = 15,
+        .baseBlock = 41 + (12 * 12),
+    };
 #endif
 
 static void (* const sRestrictedSparringFuncs[])(void) =
-{
-    [SPARRING_FUNC_INIT]                   = InitSparringChallenge,
-    [SPARRING_FUNC_GET_DATA]               = GetSparringData,
-    [SPARRING_FUNC_SET_DATA]               = SetSparringData,
-    [SPARRING_FUNC_SET_BATTLE_WON]         = SetSparringBattleWon,
-    [SPARRING_FUNC_SAVE]                   = SaveSparringChallenge,
-    [SPARRING_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
-    [SPARRING_FUNC_GET_CONTINUE_MENU_TYPE] = GetContinueMenuType,
-    [SPARRING_FUNC_RESTORE_HELD_ITEMS]     = RestoreNonConsumableHeldItems,
-    [SPARRING_FUNC_RESET_SKETCH_MOVES]     = ResetSketchedMoves,
-    [SPARRING_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePoints,
-    [SPARRING_FUNC_GET_TYPE_NAME]          = BufferSparringTypeNameToString,
-    [SPARRING_FUNC_CHECK_SYMBOL]           = CheckSparringSymbol,
-    [SPARRING_FUNC_CONVERT_TYPE]           = ConvertMenuInputToTypeAndSetVar,
-    [SPARRING_FUNC_CHECK_MAX]              = CompareStreakToMax,
-};
+    {
+        [SPARRING_FUNC_INIT]                   = InitSparringChallenge,
+        [SPARRING_FUNC_GET_DATA]               = GetSparringData,
+        [SPARRING_FUNC_SET_DATA]               = SetSparringData,
+        [SPARRING_FUNC_SET_BATTLE_WON]         = SetSparringBattleWon,
+        [SPARRING_FUNC_SAVE]                   = SaveSparringChallenge,
+        [SPARRING_FUNC_GET_OPPONENT_INTRO]     = GetOpponentIntroSpeech,
+        [SPARRING_FUNC_GET_CONTINUE_MENU_TYPE] = GetContinueMenuType,
+        [SPARRING_FUNC_RESTORE_HELD_ITEMS]     = RestoreNonConsumableHeldItems,
+        [SPARRING_FUNC_RESET_SKETCH_MOVES]     = ResetSketchedMoves,
+        [SPARRING_FUNC_GIVE_BATTLE_POINTS]     = GiveBattlePoints,
+        [SPARRING_FUNC_GET_TYPE_NAME]          = BufferSparringTypeNameToString,
+        [SPARRING_FUNC_CHECK_SYMBOL]           = CheckSparringSymbol,
+        [SPARRING_FUNC_CONVERT_TYPE]           = ConvertMenuInputToTypeAndSetVar,
+        [SPARRING_FUNC_CHECK_MAX]              = CompareStreakToMax,
+    };
 
 void CallRestrictedSparringFunc(void)
 {
@@ -153,14 +153,14 @@ static void GetSparringData(void)
 
     switch (gSpecialVar_0x8005)
     {
-    case SPARRING_DATA_WIN_STREAK:
-        gSpecialVar_Result = (FRONTIER_SAVEDATA.curChallengeBattleNum);
-        break;
-    case SPARRING_DATA_LVL_MODE:
-        gSpecialVar_Result = lvlMode;
-        break;
-    case SPARRING_DATA_TYPE_MODE:
-        gSpecialVar_Result = typeMode;
+        case SPARRING_DATA_WIN_STREAK:
+            gSpecialVar_Result = (FRONTIER_SAVEDATA.curChallengeBattleNum);
+            break;
+        case SPARRING_DATA_LVL_MODE:
+            gSpecialVar_Result = lvlMode;
+            break;
+        case SPARRING_DATA_TYPE_MODE:
+            gSpecialVar_Result = typeMode;
     }
 }
 
@@ -168,9 +168,9 @@ static void SetSparringData(void)
 {
     switch (gSpecialVar_0x8005)
     {
-    case SPARRING_DATA_WIN_STREAK:
-        FRONTIER_SAVEDATA.curChallengeBattleNum = gSpecialVar_0x8006;
-        break;
+        case SPARRING_DATA_WIN_STREAK:
+            FRONTIER_SAVEDATA.curChallengeBattleNum = gSpecialVar_0x8006;
+            break;
     }
 }
 
@@ -185,22 +185,22 @@ static void SetSparringBattleWon(void)
 
 static void SaveCurrentStreak(void)
 {
-    u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
-    u32 typeMode = VarGet(VAR_SPARRING_TYPE);
-    u32 oldStreak = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak;
-    u32 currentStreak = FRONTIER_SAVEDATA.curChallengeBattleNum;
+u8 lvlMode = FRONTIER_SAVEDATA.lvlMode;
+u32 typeMode = VarGet(VAR_SPARRING_TYPE);
+u32 oldStreak = SPARRING_SAVEDATA[typeMode][lvlMode].winStreak;
+u32 currentStreak = FRONTIER_SAVEDATA.curChallengeBattleNum;
 
-    if (oldStreak >= currentStreak)
-        return;
+if (oldStreak >= currentStreak)
+    return;
 
-    SPARRING_SAVEDATA[typeMode][lvlMode].winStreak = currentStreak;
+SPARRING_SAVEDATA[typeMode][lvlMode].winStreak = currentStreak;
 
-    if (oldStreak < SPARRING_MIN_STREAK)
-        if (currentStreak >= SPARRING_MIN_STREAK)
-            FlagSet(FLAG_SPARRING_FIRST_TYPE_WIN);
+if (oldStreak < SPARRING_MIN_STREAK)
+    if (currentStreak >= SPARRING_MIN_STREAK)
+        FlagSet(FLAG_SPARRING_FIRST_TYPE_WIN);
 
 #ifdef RESTRICTED_SPARRING_MONS
-    SaveCurrentParty(typeMode,lvlMode);
+SaveCurrentParty(typeMode,lvlMode);
 }
 
 static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
@@ -220,7 +220,7 @@ static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
         SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].species = species;
         SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].personality = personality;
     }
-#endif
+    #endif
 }
 
 static void SaveSparringChallenge(void)
@@ -261,11 +261,11 @@ static bool32 IsItemConsumable(u16 item)
     u32 holdEffect = gItems[item].holdEffect;
 
     return (
-            (holdEffect > HOLD_EFFECT_NONE
-             && holdEffect < HOLD_EFFECT_EVASION_UP)
-            || (holdEffect == HOLD_EFFECT_RESTORE_STATS)
-            || (holdEffect == HOLD_EFFECT_CURE_ATTRACT)
-           );
+    (holdEffect > HOLD_EFFECT_NONE
+    && holdEffect < HOLD_EFFECT_EVASION_UP)
+    || (holdEffect == HOLD_EFFECT_RESTORE_STATS)
+    || (holdEffect == HOLD_EFFECT_CURE_ATTRACT)
+);
 }
 
 static void RestoreNonConsumableHeldItems(void)
@@ -302,12 +302,12 @@ static void ResetSketchedMoves(void)
             for (k = 0; k < MAX_MON_MOVES; k++)
             {
                 if (GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_MOVE1 + k, NULL)
-                        == GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j, NULL))
+                    == GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j, NULL))
                     break;
             }
             if (k == MAX_MON_MOVES)
                 SetMonMoveSlot(&gPlayerParty[i], MOVE_SKETCH, j);
-                PokemonUseItemEffects(&gPlayerParty[i],ITEM_MAX_ETHER,i,MON_DATA_MOVE1 + k,FALSE);
+            PokemonUseItemEffects(&gPlayerParty[i],ITEM_MAX_ETHER,i,MON_DATA_MOVE1 + k,FALSE);
         }
     }
 }
@@ -584,15 +584,15 @@ static void PrintSparringStreak(const u8 *str, u16 num, u8 x, u8 y)
 void Sparring_ShowResultsWindow(void)
 {
     static const struct WindowTemplate sFrontierResultsWindowTemplate =
-    {
-        .bg = 0,
-        .tilemapLeft = 1,
-        .tilemapTop = 1,
-        .width = 28,
-        .height = 18,
-        .paletteNum = 15,
-        .baseBlock = 1,
-    };
+        {
+            .bg = 0,
+            .tilemapLeft = 1,
+            .tilemapTop = 1,
+            .width = 28,
+            .height = 18,
+            .paletteNum = 15,
+            .baseBlock = 1,
+        };
 
     gRecordsWindowId = AddWindow(&sFrontierResultsWindowTemplate);
     DrawStdWindowFrame(gRecordsWindowId, FALSE);
@@ -626,7 +626,6 @@ static void CompareStreakToMax(void)
 
 void Sparring_FillWindows(u16 selection)
 {
-    //FillRestrictedSparringMarkWindow(selection);
     FillRestrictedSparringWinWindow(selection);
 #ifdef RESTRICTED_SPARRING_MONS
     FillRestrictedSparringTypeMons(selection);

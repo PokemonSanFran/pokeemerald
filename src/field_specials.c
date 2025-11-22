@@ -3096,7 +3096,9 @@ static void HideFrontierExchangeCornerItemIcon(u16 menu, u16 unused)
         sScrollableMultichoice_ItemSpriteId = MAX_SPRITES;
     }
 // Start restricted_sparring
+#ifdef RESTRICTED_SPARRING_MONS
     Sparring_DestroyMonIconFreeResources(menu);
+#endif
 // End restricted_sparring
 }
 
