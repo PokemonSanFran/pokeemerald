@@ -280,7 +280,7 @@ RestrictedSparring_Entrance_EventScript_WarpToBattleRoom::
 # 182 "data/scripts/restricted_sparring.pory"
 	setvar VAR_RESULT, 0
 # 183 "data/scripts/restricted_sparring.pory"
-	warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
+	@ warp MAP_MASTER_DOJO_BATTLE_ROOM, 0, 6
 # 184 "data/scripts/restricted_sparring.pory"
 	sparring_save CHALLENGE_STATUS_SAVING
 	return
@@ -694,7 +694,7 @@ RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost::
 
 RestrictedSparring_BattleCourt_EventScript_WarpToLobby::
 # 486 "data/scripts/restricted_sparring.pory"
-	warp MAP_MASTER_DOJO_LOBBY, 7, 8
+	@ warp MAP_MASTER_DOJO_LOBBY, 7, 8
 # 487 "data/scripts/restricted_sparring.pory"
 	waitstate
 	end
