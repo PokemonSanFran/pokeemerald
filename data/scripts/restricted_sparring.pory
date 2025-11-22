@@ -18,7 +18,7 @@ script RestrictedSparring_Entrance_EventScript_QuitWithoutSaving
 	lock
 	faceplayer
 	delay(30)
-	msgbox(RestrictedSparring_Entrance_Text_DidntSaveBeforeQuitting, MSGBOX_DEFAULT)
+	msgbox(format("Oops! {PLAYER}, it seems you didn't save before quitting your challenge last time. Because of that, your challenge so far has been disqualified. Sorry!"), MSGBOX_DEFAULT)
 	sparring_set(SPARRING_DATA_WIN_STREAK, 0)
 	frontier_set(FRONTIER_DATA_CHALLENGE_STATUS, CHALLENGE_STATUS_UNKNOWN)
 	setvar(VAR_FACILITY_CHALLENGE_STATUS, CHALLENGE_STATUS_END)
@@ -31,32 +31,32 @@ script RestrictedSparring_Entrance_EventScript_AskEnterChallenge
 	faceplayer
 	setvar(VAR_FRONTIER_FACILITY,FRONTIER_FACILITY_SPARRING)
 	special(SavePlayerParty)
-	message(RestrictedSparring_Entrance_Text_HiyahDo)
+	message(format("Hi-yah! {PLAYER}! Do you want to try RESTRICTED SPARRING?"))
 	waitmessage
 
 	multichoice(17, 6, MULTI_CHALLENGEINFO, FALSE)
 	switch(var(VAR_RESULT))
 	{
-	    case 0: goto(RestrictedSparring_Entrance_EventScript_TryEnterChallenge)
-	    case 1: goto(RestrictedSparring_Entrance_EventScript_ExplainChallenge)
-	    case MULTI_B_PRESSED:
-	    case 2: goto(RestrictedSparring_Entrance_EventScript_DenyChallenge)
+		case 0: goto(RestrictedSparring_Entrance_EventScript_TryEnterChallenge)
+		case 1: goto(RestrictedSparring_Entrance_EventScript_ExplainChallenge)
+		case MULTI_B_PRESSED:
+		case 2: goto(RestrictedSparring_Entrance_EventScript_DenyChallenge)
 	}
 }
 
 script RestrictedSparring_Entrance_EventScript_TryEnterChallenge
 {
-	message(RestrictedSparring_Entrance_Text_OffersTwoLevels)
+	message(format("RESTRICTED SPARRING offers two levels of challenge, Level 50 and Open Level. So, which one is your pick?"))
 	waitmessage
 
 	multichoice(17, 6, MULTI_LEVEL_MODE, FALSE)
 	switch(var(VAR_RESULT))
 	{
-	    case FRONTIER_LVL_TENT:
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_Entrance_EventScript_CancelChallenge)
+		case FRONTIER_LVL_TENT:
+		case MULTI_B_PRESSED: goto(RestrictedSparring_Entrance_EventScript_CancelChallenge)
 	}
 
-	message(RestrictedSparring_Entrance_Text_SelectTheTypeYouWant)
+	message(format("Select the type you want to use for sparring."))
 	waitmessage
 	frontier_set(FRONTIER_DATA_LVL_MODE, VAR_RESULT)
 	call(RestrictedSparring_Entrance_EventScript_CreateTypeList)
@@ -70,12 +70,12 @@ script RestrictedSparring_Entrance_EventScript_TryEnterChallenge
 	waitstate
 	goto_if_eq(VAR_RESULT, 0, RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge)
 
-	msgbox(RestrictedSparring_Entrance_Text_BeforeDivingInto, MSGBOX_YESNO)
+	msgbox(format("Before diving into RESTRICTED SPARRING, your progress must be saved. Is that cool?"), MSGBOX_YESNO)
 	switch(var(VAR_RESULT))
 	{
-	    case YES: goto(RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge)
-	    case NO:
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge)
+		case YES: goto(RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge)
+		case NO:
+		case MULTI_B_PRESSED: goto(RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge)
 	}
 }
 
@@ -89,9 +89,9 @@ script RestrictedSparring_Entrance_EventScript_CreateTypeList
 	special(Sparring_CloseWinsWindow)
 	switch(var(VAR_RESULT))
 	{
-	    default: sparring_convertmenutotype
-	    case 17:
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_Entrance_EventScript_CancelChallenge)
+		default: sparring_convertmenutotype
+		case 17:
+		case MULTI_B_PRESSED: goto(RestrictedSparring_Entrance_EventScript_CancelChallenge)
 	}
 
 	sparring_buffersparringtype
@@ -114,8 +114,8 @@ script RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge
 
 	if (var(VAR_RESULT) == 0)
 	{
-	    frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)  // No status provided, so it relies on VAR_0x8006 being 0 already
-	    goto(RestrictedSparring_Entrance_EventScript_DenyChallenge)
+		frontier_set(FRONTIER_DATA_CHALLENGE_STATUS)  // No status provided, so it relies on VAR_0x8006 being 0 already
+		goto(RestrictedSparring_Entrance_EventScript_DenyChallenge)
 	}
 
 	goto(RestrictedSparring_Entrance_EventScript_WarpToBattleRoom)
@@ -123,11 +123,11 @@ script RestrictedSparring_Entrance_EventScript_SaveBeforeChallenge
 
 script RestrictedSparring_Entrance_EventScript_ExplainChallenge
 {
-	msgbox(RestrictedSparring_Entrance_Text_RestrictedSparringIsATraining, MSGBOX_YESNO)
+	msgbox(format("RESTRICTED SPARRING is a training course that restricts the type of POKéMON you can use. Select a type first, and then battle using up to three POKéMON of that type. No duplicate POKéMON or items are allowed. If you can win five times in a row, you'll complete the training. However, if you lose even once, the sparring will end there! You can restore your POKéMON between battles, but only twice in total, so use the opportunities very wisely. That's all! Do you want to try RESTRICTED SPARRING?"), MSGBOX_YESNO)
 
 	if (var(VAR_RESULT) == YES)
 	{
-	    goto(RestrictedSparring_Entrance_EventScript_TryEnterChallenge)
+		goto(RestrictedSparring_Entrance_EventScript_TryEnterChallenge)
 	}
 
 	msgbox(RestrictedSparring_Entrance_Text_IWontForceYou,MSGBOX_DEFAULT)
@@ -142,11 +142,11 @@ script RestrictedSparring_Entrance_EventScript_NotEnoughValidMons
 
 	if(var(VAR_RESULT) == FRONTIER_LVL_50)
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_NotEnoughValidMonsLv50Singles, MSGBOX_DEFAULT)
+		msgbox(format("Hold up, {PLAYER}! You need three different POKéMON of Level 50 or less to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!"), MSGBOX_DEFAULT)
 	}
 	else
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_NotEnoughValidMonsLvOpenSingles, MSGBOX_DEFAULT)
+		msgbox(format("Hold up, {PLAYER}! You need three different POKéMON to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!"), MSGBOX_DEFAULT)
 	}
 
 	release
@@ -161,7 +161,7 @@ script RestrictedSparring_Entrance_EventScript_LoadPartyCancelChallenge
 
 script RestrictedSparring_Entrance_EventScript_CancelChallenge
 {
-	msgbox(RestrictedSparring_Entrance_Text_OhYouChangedYour, MSGBOX_DEFAULT)
+	msgbox(format("Oh, you changed your mind? Some other time, then."), MSGBOX_DEFAULT)
 	release
 	end
 }
@@ -190,12 +190,12 @@ script RestrictedSparring_Entrance_EventScript_JudgeChallenge
 
 	if (var(VAR_RESULT) == 0)
 	{
-	    goto(RestrictedSparring_Entrance_EventScript_Results_NoWins)
+		goto(RestrictedSparring_Entrance_EventScript_Results_NoWins)
 	}
 	else
 	{
-	    buffernumberstring(STR_VAR_1,VAR_RESULT)
-	    goto(RestrictedSparring_Entrance_EventScript_Results)
+		buffernumberstring(STR_VAR_1,VAR_RESULT)
+		goto(RestrictedSparring_Entrance_EventScript_Results)
 	}
 }
 
@@ -205,7 +205,7 @@ script RestrictedSparring_Entrance_EventScript_Results_NoWins
 	faceplayer
 	call(RestrictedSparring_Entrance_EventScript_SaveResult)
 	call(RestrictedSparring_Entrance_EventScript_AskSaveBattle)
-	msgbox(RestrictedSparring_Entrance_Text_YouLostbutTrainYourself, MSGBOX_DEFAULT)
+	msgbox(format("You lost...but train yourself and your POKéMON, and try again! I'm looking forward to your next challenge."), MSGBOX_DEFAULT)
 	goto(RestrictedSparring_Entrance_EventScript_SetChallengeStatusEnd)
 }
 
@@ -219,13 +219,13 @@ script RestrictedSparring_Entrance_EventScript_Results
 	sparring_get(SPARRING_DATA_WIN_STREAK)
 	buffernumberstring(STR_VAR_1,VAR_RESULT)
 
-	msgbox(RestrictedSparring_Entrance_Text_YourResultForThisRestricted)
+	msgbox(format("Your result for this RESTRICTED SPARRING set is... You had {STR_VAR_1} win(s) with the {STR_VAR_3}-type POKéMON restriction!"))
 	call(RestrictedSparring_Entrance_EventScript_AwardPoints)
 
 	if (flag(FLAG_SPARRING_FIRST_TYPE_WIN))
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_TheWayYouHandleType)
-	    call(RestrictedSparring_Entrance_EventScript_CheckSymbol)
+		msgbox(format("The way you handle {STR_VAR_3}-type POKéMON is flawless!"))
+		call(RestrictedSparring_Entrance_EventScript_CheckSymbol)
 	}
 
 	call(RestrictedSparring_Entrance_EventScript_AskSaveBattle)
@@ -234,7 +234,7 @@ script RestrictedSparring_Entrance_EventScript_Results
 
 script RestrictedSparring_Entrance_EventScript_SaveResult
 {
-	message(RestrictedSparring_Entrance_Text_RecordWillBeSaved)
+	message(format("Your record will be saved soon."))
 	waitmessage
 	frontier_checkairshow
 	sparring_givepoints
@@ -242,11 +242,11 @@ script RestrictedSparring_Entrance_EventScript_SaveResult
 
 	if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER)
 	{
-	    setflag(FLAG_SYS_ARENA_SILVER)
+		setflag(FLAG_SYS_ARENA_SILVER)
 	}
 	elif (var(VAR_RESULT) == SPARRING_SYMBOL_GOLD)
 	{
-	    setflag(FLAG_SYS_ARENA_GOLD)
+		setflag(FLAG_SYS_ARENA_GOLD)
 	}
 
 	special(LoadPlayerParty)
@@ -256,8 +256,9 @@ script RestrictedSparring_Entrance_EventScript_SaveResult
 	return
 }
 
-script RestrictedSparring_Entrance_EventScript_AwardPoints{
-	msgbox(RestrictedSparring_Entrance_Text_YouEarned)
+script RestrictedSparring_Entrance_EventScript_AwardPoints
+{
+	msgbox(format("You earned {STR_VAR_2} BP!"))
 	return
 }
 
@@ -266,35 +267,35 @@ script RestrictedSparring_Entrance_EventScript_CheckSymbol
 	sparring_checksymbol
 	if (var(VAR_RESULT) > SPARRING_SYMBOL_NONE)
 	{
-	    call(RestrictedSparring_Entrance_EventScript_GiveSymbol)
+		call(RestrictedSparring_Entrance_EventScript_GiveSymbol)
 	}
 	return
 }
 
 script RestrictedSparring_Entrance_EventScript_GiveSymbol
 {
-	msgbox(RestrictedSparring_Entrance_Text_WhatYouCompletedRestricted)
+	msgbox(format("What?! You completed RESTRICTED SPARRING with {STR_VAR_1} type(s)?!"))
 
 	if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER)
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_ThatsExcellentWork)
+		msgbox(format("That's excellent work!"))
 	}
 	else
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_ICantBelieveIt)
-	    msgbox(RestrictedSparring_Entrance_Text_ThisAccomplishmentIsSureTo)
+		msgbox(format("I can't believe it... Your achievement is just phenomenal!"))
+		msgbox(format("This accomplishment is sure to go down in dojo history!"))
 	}
 
-	msgbox(RestrictedSparring_Entrance_Text_ToCommemorateThisMonumentalAchievement)
+	msgbox(format("To commemorate this monumental achievement, I'll grant you this!"))
 	playfanfare(MUS_OBTAIN_SYMBOL)
 
 	if (var(VAR_RESULT) == SPARRING_SYMBOL_SILVER)
 	{
-	    message(BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol)
+		message(BattleFrontier_BattleArenaBattleRoom_Text_ReceivedGutsSymbol)
 	}
 	else
 	{
-	    message(BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine)
+		message(BattleFrontier_BattleArenaBattleRoom_Text_GutsSymbolTookGoldenShine)
 	}
 
 	waitmessage
@@ -302,7 +303,7 @@ script RestrictedSparring_Entrance_EventScript_GiveSymbol
 
 	if (var(VAR_RESULT) == SPARRING_SYMBOL_GOLD)
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_IHopeYoullKeep)
+		msgbox(format("I hope you'll keep exceeding your own limits!"))
 	}
 	return
 }
@@ -313,7 +314,7 @@ script RestrictedSparring_Entrance_EventScript_AskSaveBattle
 
 	if (var(VAR_RESULT) == TRUE)
 	{
-	    return
+		return
 	}
 
 	message(RestrictedSparring_Entrance_Text_RecordLastMatch)
@@ -322,7 +323,7 @@ script RestrictedSparring_Entrance_EventScript_AskSaveBattle
 
 	if (var(VAR_RESULT) == 0)
 	{
-	    call(RestrictedSparring_Entrance_EventScript_SaveBattle)
+		call(RestrictedSparring_Entrance_EventScript_SaveBattle)
 	}
 	return
 }
@@ -332,12 +333,12 @@ script RestrictedSparring_Entrance_EventScript_SaveBattle
 	frontier_savebattle
 	if (var(VAR_RESULT))
 	{
-	    playse(SE_SAVE)
-	    msgbox(BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT)
+		playse(SE_SAVE)
+		msgbox(BattleFrontier_BattleTowerLobby_Text_BattleRecordedOnPass, MSGBOX_DEFAULT)
 	}
 	else
 	{
-	    msgbox(RestrictedSparring_Entrance_Text_ThereWasAGlitch, MSGBOX_DEFAULT)
+		msgbox(format("Oops! There was a glitch, and your record couldn't be saved. Better luck next time!"), MSGBOX_DEFAULT)
 	}
 	return
 }
@@ -356,9 +357,9 @@ script RestrictedSparring_Entrance_EventScript_ResumeChallenge
 	lock
 	faceplayer
 
-	message(RestrictedSparring_Entrance_Text_WeveBeenWaitingForYou)
+	message(format("We've been waiting for you, {PLAYER}!"))
 	waitmessage
-	message(RestrictedSparring_Entrance_Text_ProgressWillBeSaved)
+	message(format("Before entering the BATTLE COURT, your progress will be saved. Hang tight!"))
 	waitmessage
 
 	playse(SE_SAVE)
@@ -382,7 +383,7 @@ script RestrictedSparring_Entrance_EventScript_ShowResults
 script RestrictedSparring_EventScript_RulesBoard
 {
 	lockall
-	msgbox(RestrictedSparring_Entrance_Text_RulesAreListed,MSGBOX_DEFAULT)
+	msgbox(format("The RESTRICTED SPARRING rules are listed."),MSGBOX_DEFAULT)
 	goto(RestrictedSparring_Entrance_EventScript_ReadRulesBoard)
 	end
 }
@@ -395,44 +396,19 @@ script RestrictedSparring_Entrance_EventScript_ReadRulesBoard
 
 	switch(var(VAR_RESULT))
 	{
-	    case 0:
-	        msgbox(RestrictedSparring_Entrance_Text_OverviewBoard,MSGBOX_DEFAULT)
-	    case 1:
-	        msgbox(RestrictedSparring_Entrance_Text_RestrictionsBoard,MSGBOX_DEFAULT)
-	    case 2:
-	        msgbox(RestrictedSparring_Entrance_Text_RewardsBoard,MSGBOX_DEFAULT)
-	    case 3:
-	    case MULTI_B_PRESSED:
-	        releaseall
-	        end
+		case 0:
+		    msgbox(format("RESTRICTED SPARRING is challenges you to battle using up to three POKéMON of a single type. Select a level mode and a type, then battle your way through five consecutive battles."),MSGBOX_DEFAULT)
+		case 1:
+		    msgbox(format("No duplicate POKéMON or items are allowed. You can only restore your POKéMON twice in total, so use your opportunities wisely."),MSGBOX_DEFAULT)
+		case 2:
+			msgbox(format("If you can win five times in a row, you will complete the training, but you can continue to increase your streak. You'll recieve a reward for completing training for all types in a level mode."),MSGBOX_DEFAULT)
+		case 3:
+		case MULTI_B_PRESSED:
+		    releaseall
+		    end
 	}
 	goto(RestrictedSparring_EventScript_RulesBoard)
 	end
-}
-
-text RestrictedSparring_Entrance_Text_RulesAreListed
-{
-	format("The RESTRICTED SPARRING rules are listed.")
-}
-
-text RestrictedSparring_Entrance_Text_OverviewBoard
-{
-	format("RESTRICTED SPARRING is challenges you to battle using up to three POKéMON of a single type. Select a level mode and a type, then battle your way through five consecutive battles.")
-}
-
-text RestrictedSparring_Entrance_Text_RestrictionsBoard
-{
-	format("No duplicate POKéMON or items are allowed. You can only restore your POKéMON twice in total, so use your opportunities wisely.")
-}
-
-text RestrictedSparring_Entrance_Text_RewardsBoard
-{
-	format("If you can win five times in a row, you will complete the training, but you can continue to increase your streak. You'll recieve a reward for completing training for all types in a level mode.")
-}
-
-text RestrictedSparring_Entrance_Text_HiyahDo
-{
-	format("Hi-yah! {PLAYER}! Do you want to try RESTRICTED SPARRING?")
 }
 
 text RestrictedSparring_Entrance_Text_SelectTheTypeYouWant
@@ -445,120 +421,9 @@ text RestrictedSparring_Entrance_Text_IWontForceYou
 	format("I won't force you to do anything you don't want to do. Some other time, then.")
 }
 
-text RestrictedSparring_Entrance_Text_RestrictedSparringIsATraining
-{
-	format("RESTRICTED SPARRING is a training course that restricts the type of POKéMON you can use. Select a type first, and then battle using up to three POKéMON of that type. No duplicate POKéMON or items are allowed. If you can win five times in a row, you'll complete the training. However, if you lose even once, the sparring will end there! You can restore your POKéMON between battles, but only twice in total, so use the opportunities very wisely. That's all! Do you want to try RESTRICTED SPARRING?")
-}
-
-text RestrictedSparring_Entrance_Text_OhYouChangedYour
-{
-	format("Oh, you changed your mind? Some other time, then.")
-}
-
-text RestrictedSparring_Entrance_Text_YouLostbutTrainYourself
-{
-	format("You lost...but train yourself and your POKéMON, and try again! I'm looking forward to your next challenge.")
-}
-
-text RestrictedSparring_Entrance_Text_YourResultForThisRestricted
-{
-	format("Your result for this RESTRICTED SPARRING set is... You had {STR_VAR_1} win(s) with the {STR_VAR_3}-type POKéMON restriction!")
-}
-
-text RestrictedSparring_Entrance_Text_TheWayYouHandleType
-{
-	format("The way you handle {STR_VAR_3}-type POKéMON is flawless!")
-}
-
-text RestrictedSparring_Entrance_Text_WhatYouCompletedRestricted
-{
-	format("What?! You completed RESTRICTED SPARRING with {STR_VAR_1} type(s)?!")
-}
-
-text RestrictedSparring_Entrance_Text_ThatsExcellentWork
-{
-	format("That's excellent work!")
-}
-
-text RestrictedSparring_Entrance_Text_ICantBelieveIt
-{
-	format("I can't believe it... Your achievement is just phenomenal!")
-}
-
-text RestrictedSparring_Entrance_Text_ThisAccomplishmentIsSureTo
-{
-	format("This accomplishment is sure to go down in dojo history!")
-}
-
-text RestrictedSparring_Entrance_Text_ToCommemorateThisMonumentalAchievement
-{
-	format("To commemorate this monumental achievement, I'll grant you this!")
-}
-
-text RestrictedSparring_Entrance_Text_IHopeYoullKeep
-{
-	format("I hope you'll keep exceeding your own limits!")
-}
-
-text RestrictedSparring_Entrance_Text_DidntSaveBeforeQuitting
-{
-	format("Oops! {PLAYER}, it seems you didn't save before quitting your challenge last time. Because of that, your challenge so far has been disqualified. Sorry!")
-}
-
-text RestrictedSparring_Entrance_Text_ThankYouForPlaying
-{
-	format("Thanks for playing, {PLAYER}!")
-}
-
-text RestrictedSparring_Entrance_Text_RecordWillBeSaved
-{
-	format("Your record will be saved soon.")
-}
-
-text RestrictedSparring_Entrance_Text_WeveBeenWaitingForYou
-{
-	format("We've been waiting for you, {PLAYER}!")
-}
-
-text RestrictedSparring_Entrance_Text_ProgressWillBeSaved
-{
-	format("Before entering the BATTLE COURT, your progress will be saved. Hang tight!")
-}
-
-text RestrictedSparring_Entrance_Text_ThereWasAGlitch
-{
-	format("Oops! There was a glitch, and your record couldn't be saved. Better luck next time!")
-}
-
-text RestrictedSparring_Entrance_Text_OffersTwoLevels
-{
-	format("RESTRICTED SPARRING offers two levels of challenge, Level 50 and Open Level. So, which one is your pick?")
-}
-
-text RestrictedSparring_Entrance_Text_BeforeDivingInto
-{
-	format("Before diving into RESTRICTED SPARRING, your progress must be saved. Is that cool?")
-}
-
-
-text RestrictedSparring_Entrance_Text_NotEnoughValidMonsLv50Singles
-{
-	format("Hold up, {PLAYER}! You need three different POKéMON of Level 50 or less to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!")
-}
-
-text RestrictedSparring_Entrance_Text_NotEnoughValidMonsLvOpenSingles
-{
-	format("Hold up, {PLAYER}! You need three different POKéMON to enter. They must all share the {STR_VAR_3}-type and hold different items. EGGS{STR_VAR_1} not allowed. Come back when you're ready!")
-}
-
 text RestrictedSparring_Entrance_Text_RecordLastMatch
 {
 	format("Want me to record your last RESTRICTED SPARRING match on your FRONTIER PASS?")
-}
-
-text RestrictedSparring_Entrance_Text_YouEarned
-{
-	format("You earned {STR_VAR_2} BP!")
 }
 
 script RestrictedSparring_BattleCourt_EventScript_RefreshOpponent
@@ -582,14 +447,14 @@ script RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 
 	frontier_get(FRONTIER_DATA_BATTLE_NUM)
 	if (var(VAR_RESULT) == 0){
-	    msgbox(format("Let the battles begin! Battle No. 1! Ready..."),MSGBOX_DEFAULT)
+		msgbox(format("Let the battles begin! Battle No. 1! Ready..."),MSGBOX_DEFAULT)
 	}
 	else
 	{
-	    copyvar(VAR_CURRENT_BATTLE_NUM, VAR_RESULT)
-	        addvar(VAR_CURRENT_BATTLE_NUM,1)
-	        buffernumberstring(STR_VAR_1,VAR_CURRENT_BATTLE_NUM)
-	        msgbox(format("Next. Battle No. {STR_VAR_1}! Ready..."),MSGBOX_DEFAULT)
+		copyvar(VAR_CURRENT_BATTLE_NUM, VAR_RESULT)
+		    addvar(VAR_CURRENT_BATTLE_NUM,1)
+		    buffernumberstring(STR_VAR_1,VAR_CURRENT_BATTLE_NUM)
+		    msgbox(format("Next. Battle No. {STR_VAR_1}! Ready..."),MSGBOX_DEFAULT)
 	}
 
 	delay(15)
@@ -603,7 +468,7 @@ script RestrictedSparring_BattleCourt_EventScript_OpponentEnter
 	call(RestrictedSparring_BattleCourt_EventScript_DoTowerBattle)
 	if (var(VAR_RESULT) == B_OUTCOME_WON)
 	{
-	    goto(RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent)
+		goto(RestrictedSparring_BattleCourt_EventScript_DefeatedOpponent)
 	}
 
 	goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyLost)
@@ -637,7 +502,7 @@ script RestrictedSparring_BattleCourt_EventScript_StopChallenge
 	sparring_checkmaxstreak
 	if (!var(VAR_RESULT))
 	{
-	    return
+		return
 	}
 	msgbox(format("Wow, {PLAYER}, {STR_VAR_1} win(s) in a row... I think we all need a break!"),MSGBOX_DEFAULT)
 	goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon)
@@ -656,10 +521,10 @@ script RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent
 	call(RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu)
 	switch(var(VAR_RESULT))
 	{
-	    case SPARRING_RECORDYES_HEALYES: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes)
-	    case SPARRING_RECORDYES_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo)
-	    case SPARRING_RECORDNO_HEALYES: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes)
-	    case SPARRING_RECORDNO_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo)
+		case SPARRING_RECORDYES_HEALYES: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealYes)
+		case SPARRING_RECORDYES_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo)
+		case SPARRING_RECORDNO_HEALYES: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealYes)
+		case SPARRING_RECORDNO_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo)
 	}
 }
 
@@ -668,11 +533,11 @@ script RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHe
 	multichoice(22,4,MULTI_GO_ON_RECORD_REST_RETIRE,TRUE)
 	switch(var(VAR_RESULT))
 	{
-	    case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
-	    case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskRecordBattle)
-	    case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
-	    case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
+		case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
+		case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskRecordBattle)
+		case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
+		case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
+		case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 	}
 	return
 }
@@ -682,10 +547,10 @@ script RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHea
 	multichoice(22,5,MULTI_GO_ON_REST_RETIRE,TRUE)
 	switch(var(VAR_RESULT))
 	{
-	    case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
-	    case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
-	    case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
-	    case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
+		case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
+		case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
+		case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
+		case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 	}
 	return
 }
@@ -695,12 +560,12 @@ script RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHe
 	multichoice(22,2,MULTI_GO_ON_HEAL_RECORD_REST_RETIRE,TRUE)
 	switch(var(VAR_RESULT))
 	{
-	    case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
-	    case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskHeal)
-	    case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskRecordBattle)
-	    case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
-	    case 4: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
+		case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
+		case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskHeal)
+		case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskRecordBattle)
+		case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
+		case 4: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
+		case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 	}
 	return
 }
@@ -710,11 +575,11 @@ script RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHea
 	multichoice(22,4,MULTI_GO_ON_HEAL_REST_RETIRE,TRUE)
 	switch(var(VAR_RESULT))
 	{
-	    case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
-	    case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskHeal)
-	    case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
-	    case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
-	    case 4: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
+		case 0: goto(RestrictedSparring_BattleCourt_EventScript_ContinueChallenge)
+		case 1: goto(RestrictedSparring_BattleCourt_EventScript_AskHeal)
+		case 2: goto(RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge)
+		case 3: goto(RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge)
+		case 4: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 	}
 	return
 }
@@ -726,9 +591,9 @@ script RestrictedSparring_BattleCourt_EventScript_AskHeal
 	waitmessage
 	if(var(VAR_RESULT) == YES)
 	{
-	    frontier_restorehelditems
-	    sparring_restore
-	    goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal)
+		frontier_restorehelditems
+		sparring_restore
+		goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal)
 	}
 	goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 }
@@ -738,10 +603,10 @@ script RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent_PostHeal
 	call(RestrictedSparring_BattleCourt_EventScript_AskReadyGetMenu)
 	switch(var(VAR_RESULT))
 	{
-	    case SPARRING_RECORDYES_HEALYES:
-	    case SPARRING_RECORDYES_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo)
-	    case SPARRING_RECORDNO_HEALYES:
-	    case SPARRING_RECORDNO_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo)
+		case SPARRING_RECORDYES_HEALYES:
+		case SPARRING_RECORDYES_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordYesHealNo)
+		case SPARRING_RECORDNO_HEALYES:
+		case SPARRING_RECORDNO_HEALNO: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponentRecordNoHealNo)
 	}
 }
 
@@ -751,7 +616,7 @@ script RestrictedSparring_BattleCourt_EventScript_AskRecordBattle
 	waitmessage
 	if(var(VAR_RESULT) == YES)
 	{
-	    call(BattleFrontier_EventScript_SaveBattle)
+		call(BattleFrontier_EventScript_SaveBattle)
 	}
 	goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 }
@@ -762,9 +627,9 @@ script RestrictedSparring_BattleCourt_EventScript_AskPauseChallenge
 	waitmessage
 	switch (var(VAR_RESULT))
 	{
-	    case YES: goto(RestrictedSparring_BattleCourt_EventScript_PauseChallenge)
-	    case NO:
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
+		case YES: goto(RestrictedSparring_BattleCourt_EventScript_PauseChallenge)
+		case NO:
+		case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 	}
 }
 
@@ -774,9 +639,9 @@ script RestrictedSparring_BattleCourt_EventScript_AskRetireChallenge
 	waitmessage
 	switch(var(VAR_RESULT))
 	{
-	    case YES: goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon)
-	    case NO:
-	    case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
+		case YES: goto(RestrictedSparring_BattleCourt_EventScript_WarpToLobbyWon)
+		case NO:
+		case MULTI_B_PRESSED: goto(RestrictedSparring_BattleCourt_EventScript_AskReadyForOpponent)
 	}
 }
 
