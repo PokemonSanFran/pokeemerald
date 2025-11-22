@@ -27,17 +27,17 @@ script MasterDojo_Lobby_EventScript_PlayerFaceEast
 
 script MasterDojo_BattleRoom_EventScript_EnterRoomMovement
 {
-    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantEnter)
-    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerEnter)
+    applymovement(ATTENDANT,moves())
+    applymovement(PLAYER,moves(walk_right * 6))
     waitmovement(ATTENDANT)
     return
 }
 
 script MasterDojo_BattleRoom_EventScript_ContinueChallengeMovement
 {
-    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerStartBattle)
-    applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanRight)
-    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantReturnToPosition)
+    applymovement(PLAYER,moves(walk_right * 2))
+    applymovement(CAMERA,moves(walk_right * 5))
+    applymovement(ATTENDANT,moves(walk_up,walk_right * 3,face_down))
     waitmovement(ATTENDANT)
     return
 }
@@ -53,9 +53,9 @@ script MasterDojo_BattleRoom_EventScript_OpponentEnterMovement
 script MasterDojo_BattleRoom_EventScript_DeafeatedOpponentMovement
 {
     special(SpawnCameraObject)
-    applymovement(CAMERA,MasterDojo_BattleRoom_Movement_CameraPanLeft)
-    applymovement(PLAYER,MasterDojo_BattleRoom_Movement_PlayerReturnPosition)
-    applymovement(ATTENDANT,MasterDojo_BattleRoom_Movement_AttendantApproachPlayer)
+    applymovement(CAMERA,moves(walk_left * 5))
+    applymovement(PLAYER,moves(walk_left * 2, face_up))
+    applymovement(ATTENDANT,moves(walk_left * 3, walk_down))
     waitmovement(CAMERA)
     removeobject(OPPONENT)
     waitmovement(ATTENDANT)
@@ -68,50 +68,3 @@ script MasterDojo_BattleRoom_EventScript_RefreshOpponentObject
     addobject(OPPONENT)
     return
 }
-
-movement MasterDojo_BattleRoom_Movement_AttendantEnter{
-    walk_right * 6
-        walk_up * 2
-        face_down
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_AttendantApproachPlayer{
-    walk_left * 3
-        walk_down
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_AttendantReturnToPosition{
-    walk_up
-        walk_right * 3
-        face_down
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_PlayerEnter{
-    walk_right * 6
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_PlayerStartBattle{
-    walk_right * 2
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_PlayerReturnPosition{
-    walk_left * 2
-        face_up
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_CameraPanLeft{
-    walk_left * 5
-        step_end
-}
-
-movement MasterDojo_BattleRoom_Movement_CameraPanRight{
-    walk_right * 5
-        step_end
-}
-
