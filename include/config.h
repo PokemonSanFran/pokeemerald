@@ -61,6 +61,16 @@
 // https://github.com/PokemonSanFran/pokeemerald/wiki/restricted_sparring#record-used-mons
 //#define RESTRICTED_SPARRING_MONS
 
+// To use the following features, change the 0 for a var present in include/constants/vars.h, preferably an unused one.
+// Eg: You may rename VAR_UNUSED_0x404E to a descriptive name and use it below.
+
+#define VAR_RESTRICTEDSPARRING_HEAL_COUNT 0 // This variable stores how many times the player has healed during this challenge. If this is not set, the player will never be able to heal.
+#define VAR_SPARRING_TYPE 0 // This variable stores the type that the player has chosen to challenge with. If this is not set, the player will only be able to challenge with Normal-tupe Pokemon.
+
+// Flag settings
+// To use the following features, change the 0 for a flag present in include/constants/flags.h, preferably an unused one.
+// Eg: You may rename FLAG_UNUSED_0x264 to a descriptive name and use it below.
+#define FLAG_SPARRING_FIRST_TYPE_WIN 0 // This flag is set when the player clears a type for the first time. If this is not set, the player will never be acknowledged (or rewarded) for mastering a type.
 // End restricted_sparring
 
 #endif // GUARD_CONFIG_H
