@@ -58,7 +58,7 @@
 // Start restricted_sparring
 
 // Uncomment to enable the storage of which Pokémon were used during a Restricted Sparring challenge
-// https://github.com/PokemonSanFran/pokeemerald/wiki/restricted_sparring#record-used-mons
+// https://github.com/PokemonSanFran/pokeemerald/wiki/Restricted-Sparring#record-used-mons
 //#define RESTRICTED_SPARRING_MONS
 
 // To use the following features, change the 0 for a var present in include/constants/vars.h, preferably an unused one.
