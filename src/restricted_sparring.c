@@ -217,8 +217,8 @@ static void SaveCurrentParty(u32 typeMode, u8 lvlMode)
         species = GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_SPECIES, NULL);
         personality = GetMonData(&gSaveBlock1Ptr->playerParty[FRONTIER_SAVEDATA.selectedPartyMons[i] - 1], MON_DATA_PERSONALITY, NULL);
 
-        SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].species = species;
-        SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[i].personality = personality;
+        SPARRING_SAVEDATA[typeMode][lvlMode].sparringMon[i].species = species;
+        SPARRING_SAVEDATA[typeMode][lvlMode].sparringMon[i].personality = personality;
     }
     #endif
 }
@@ -497,11 +497,11 @@ void FillRestrictedSparringTypeMons(u16 selection)
 
     for (index = 0; index < FRONTIER_PARTY_SIZE; index++)
     {
-        species = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].species;
+        species = SPARRING_SAVEDATA[typeMode][lvlMode].sparringMon[index].species;
 
         if (species == SPECIES_NONE)
             continue;
-        personality = SPARRING_SAVEDATA[lvlMode][typeMode].sparringMon[index].personality;
+        personality = SPARRING_SAVEDATA[typeMode][lvlMode].sparringMon[index].personality;
 
         LoadMonIconPalette(species);
         sScrollableMultichoice_MonIconId[index] = CreateMonIcon(species,SpriteCallbackDummy,x,y,priority,personality,FALSE);
