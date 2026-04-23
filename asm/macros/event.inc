@@ -1787,9 +1787,10 @@
 	.endm
 
 	@ Updates the complex quest's variable to give it its next state.
-	.macro updatequest quest:req, questvar:req
-	addvar \questvar, 1
-	questmenu QUEST_MENU_BUFFER_QUEST_NAME \quest
+	.macro updatequest questId:req, varId:req
+	.byte SCR_OP_UPDATEQUEST
+	.byte \questId
+	.byte \varId
 	bufferstring 1 gText_QuestUpdate
 	playse SE_PIN
 	msgbox gText_QuestUpdate, MSGBOX_SIGN

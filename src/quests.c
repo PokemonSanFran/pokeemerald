@@ -2959,3 +2959,8 @@ void QuestMenu_ResetMenuSaveData(void)
 	memset(&gSaveBlock2Ptr->subQuests, 0,
 	       sizeof(gSaveBlock2Ptr->subQuests));
 }
+
+u32 QuestMenu_GetQuestVariable(u8 quest)
+{
+	return VarGet(sSideQuests[quest].questVariable);
+}

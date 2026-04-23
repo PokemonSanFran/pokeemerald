@@ -2418,3 +2418,13 @@ bool8 ScrCmd_subquestmenu(struct ScriptContext *ctx)
 
     return TRUE;
 }
+
+bool8 ScrCmd_updatequest(struct ScriptContext *ctx)
+{
+	u8 questId = VarGet(ScriptReadByte(ctx));
+    u32 varId = QuestMenu_GetQuestVariable(questId);
+    u16 *ptr = GetVarPointer(varId);
+
+    *ptr += 1;
+    return FALSE;
+}
