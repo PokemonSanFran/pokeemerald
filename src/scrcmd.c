@@ -2419,12 +2419,14 @@ bool8 ScrCmd_subquestmenu(struct ScriptContext *ctx)
     return TRUE;
 }
 
+//updatequest by mudskipper
 bool8 ScrCmd_updatequest(struct ScriptContext *ctx)
 {
-	u8 questId = VarGet(ScriptReadByte(ctx));
-    u32 varId = QuestMenu_GetQuestVariable(questId);
-    u16 *ptr = GetVarPointer(varId);
+    u8 questId = VarGet(ScriptReadByte(ctx));
+    u32 varId = QuestMenu_GetQuestVariableId(questId); // VAR_UNUSED_XXXX
+    u32 varValue = QuestMenu_GetQuestVariable(questId); // the value that VAR_UNUSED_XXXX holds
 
-    *ptr += 1;
+    VarSet(varId, varValue + 1);
+
     return FALSE;
 }

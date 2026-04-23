@@ -2277,8 +2277,8 @@ void DetermineSpriteType(s32 questId)
 
 	if (IsSubquestMode() == FALSE)
 	{
-		spriteId = GetSpriteId_Complex(questId);
-		spriteType = GetSpriteType_Complex(questId);
+		spriteId = GetQuestSprite(questId);
+		spriteType = GetQuestSpriteType(questId);
 
 		QuestMenu_CreateSprite(spriteId, sStateDataPtr->spriteIconSlot,
 		                       spriteType);
@@ -2960,7 +2960,12 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock2Ptr->subQuests));
 }
 
+u32 QuestMenu_GetQuestVariableId(u8 quest)
+{
+    return sSideQuests[quest].questVariable;
+}
+
 u32 QuestMenu_GetQuestVariable(u8 quest)
 {
-	return VarGet(sSideQuests[quest].questVariable);
+    return VarGet(QuestMenu_GetQuestVariableId(quest));
 }
