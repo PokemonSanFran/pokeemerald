@@ -1,6 +1,11 @@
 	.set ALLOCATE_SCRIPT_CMD_TABLE, 0
 	.include "data/script_cmd_table.inc"
 
+	.set ALLOCATE_SPECIAL_TABLE, 0
+	.include "data/specials.inc"
+
+	.set _last_implicit_waitstate, -1
+
 	@ Does nothing.
 	.macro nop
 	.byte SCR_OP_NOP
@@ -275,6 +280,9 @@
 	.macro special function:req
 	.byte SCR_OP_SPECIAL
 	.2byte SPECIAL_\function
+	.if SPECIAL_WAITSTATE_\function
+	waitstate implicit=1
+	.endif
 	.endm
 
 	@ Calls a function listed in the table in data/specials.inc.
@@ -283,12 +291,25 @@
 	.byte SCR_OP_SPECIALVAR
 	.2byte \output
 	.2byte SPECIAL_\function
+	.if SPECIAL_WAITSTATE_\function
+	waitstate implicit=1
+	.endif
 	.endm
 
 	@ Blocks script execution until a command or C code manually unblocks it. Generally used with specific
 	@ commands and specials. Calling ScriptContext_Enable for instance will allow execution to continue.
-	.macro waitstate
+	@
+	@ implicit is set when a waitstate is generated as part of another command (e.g. special)
+	@ if an implicit waitstate is immediately followed by another waitstate, a warning is raised
+	.macro waitstate implicit=0
+	.if _last_implicit_waitstate == .
+	.warning "explicit waitstate follows implicit waitstate, ignoring"
+	.else
 	.byte SCR_OP_WAITSTATE
+	.endif
+	.if \implicit
+	.set _last_implicit_waitstate, .
+	.endif
 	.endm
 
 	@ Blocks script execution for frames. (Pokemon Emerald runs at just shy of 60 frames per second.)
@@ -1794,28 +1815,28 @@
 	.endif
 	.endm
 
-	.macro goto_if_lt a:req, b, c @ LESS THAN
-	trycompare goto_if, 0, \a, \b, \c
+	.macro goto_if_lt a:req, b, c
+	trycompare goto_if, LESS_THAN, \a, \b, \c
 	.endm
 
-	.macro goto_if_eq a:req, b, c @ EQUAL
-	trycompare goto_if, 1, \a, \b, \c
+	.macro goto_if_eq a:req, b, c
+	trycompare goto_if, EQUAL, \a, \b, \c
 	.endm
 
-	.macro goto_if_gt a:req, b, c @ GREATER THAN
-	trycompare goto_if, 2, \a, \b, \c
+	.macro goto_if_gt a:req, b, c
+	trycompare goto_if, GREATER_THAN, \a, \b, \c
 	.endm
 
-	.macro goto_if_le a:req, b, c @ LESS THAN OR EQUAL
-	trycompare goto_if, 3, \a, \b, \c
+	.macro goto_if_le a:req, b, c
+	trycompare goto_if, LESS_THAN_OR_EQUAL, \a, \b, \c
 	.endm
 
-	.macro goto_if_ge a:req, b, c @ GREATER THAN OR EQUAL
-	trycompare goto_if, 4, \a, \b, \c
+	.macro goto_if_ge a:req, b, c
+	trycompare goto_if, GREATER_THAN_OR_EQUAL, \a, \b, \c
 	.endm
 
-	.macro goto_if_ne a:req, b, c @ NOT EQUAL
-	trycompare goto_if, 5, \a, \b, \c
+	.macro goto_if_ne a:req, b, c
+	trycompare goto_if, NOT_EQUAL, \a, \b, \c
 	.endm
 
 	.macro call_if_unset flag:req, dest:req
@@ -1828,28 +1849,28 @@
 	call_if TRUE, \dest
 	.endm
 
-	.macro call_if_lt a:req, b, c @ LESS THAN
-	trycompare call_if, 0, \a, \b, \c
+	.macro call_if_lt a:req, b, c
+	trycompare call_if, LESS_THAN, \a, \b, \c
 	.endm
 
-	.macro call_if_eq a:req, b, c @ EQUAL
-	trycompare call_if, 1, \a, \b, \c
+	.macro call_if_eq a:req, b, c
+	trycompare call_if, EQUAL, \a, \b, \c
 	.endm
 
-	.macro call_if_gt a:req, b, c @ GREATER THAN
-	trycompare call_if, 2, \a, \b, \c
+	.macro call_if_gt a:req, b, c
+	trycompare call_if, GREATER_THAN, \a, \b, \c
 	.endm
 
-	.macro call_if_le a:req, b, c @ LESS THAN OR EQUAL
-	trycompare call_if, 3, \a, \b, \c
+	.macro call_if_le a:req, b, c
+	trycompare call_if, LESS_THAN_OR_EQUAL, \a, \b, \c
 	.endm
 
-	.macro call_if_ge a:req, b, c @ GREATER THAN OR EQUAL
-	trycompare call_if, 4, \a, \b, \c
+	.macro call_if_ge a:req, b, c
+	trycompare call_if, GREATER_THAN_OR_EQUAL, \a, \b, \c
 	.endm
 
-	.macro call_if_ne a:req, b, c @ NOT EQUAL
-	trycompare call_if, 5, \a, \b, \c
+	.macro call_if_ne a:req, b, c
+	trycompare call_if, NOT_EQUAL, \a, \b, \c
 	.endm
 
 	.macro vgoto_if_eq a:req, b, c
