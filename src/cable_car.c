@@ -131,11 +131,11 @@ static const struct BgTemplate sBgTemplates[4] = {
     },
 };
 
-static const u16 sGround_Tilemap[] = INCBIN_U16("graphics/cable_car/ground.bin.lz");
-static const u16 sTrees_Tilemap[] = INCBIN_U16("graphics/cable_car/trees.bin.lz");
-static const u16 sBgMountains_Tilemap[] = INCBIN_U16("graphics/cable_car/bg_mountains.bin.lz");
+static const u16 sGround_Tilemap[] = INCGFX_U16("graphics/cable_car/ground.bin", ".lz");
+static const u16 sTrees_Tilemap[] = INCGFX_U16("graphics/cable_car/trees.bin", ".lz");
+static const u16 sBgMountains_Tilemap[] = INCGFX_U16("graphics/cable_car/bg_mountains.bin", ".lz");
 static const u16 sPylonTop_Tilemap[] = INCBIN_U16("graphics/cable_car/pylon_top.bin");
-static const u16 sPylonPole_Tilemap[] = INCBIN_U16("graphics/cable_car/pylon_pole.bin.lz");
+static const u16 sPylonPole_Tilemap[] = INCGFX_U16("graphics/cable_car/pylon_pole.bin", ".lz");
 
 static const struct CompressedSpriteSheet sSpriteSheets[] = {
     { gCableCar_Gfx,      0x800, TAG_CABLE_CAR },
@@ -242,7 +242,6 @@ void CableCar(void)
 
 static void CB2_LoadCableCar(void)
 {
-    u16 imebak;
     u8 i = 0;
     u32 sizeOut = 0;
 
@@ -347,10 +346,7 @@ static void CB2_LoadCableCar(void)
         gMain.state++;
         break;
     case 9:
-        imebak = REG_IME;
-        REG_IME = 0;
-        REG_IE |= INTR_FLAG_VBLANK;
-        REG_IME = imebak;
+        IntrEnable(INTR_FLAG_VBLANK);
         SetVBlankCallback(VBlankCB_CableCar);
         SetMainCallback2(CB2_CableCar);
         CreateTask(Task_CableCar, 0);
